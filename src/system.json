@@ -1,0 +1,37 @@
+{
+    "id": "deathwatch",
+    "title": "Warhammer 40k: Deathwatch",
+    "description": "A system for Warhammer 40k Deathwatch games on Foundry VTT.",
+    "version": "0.0.1",
+    "compatibility": {
+        "minimum": "10",
+        "verified": "11",
+        "maximum": "11"
+    },
+    "authors": [
+        {
+            "name": "Aleslammer"
+        }
+    ],
+    "scripts": [],
+    "esmodules": [],
+    "styles": [],
+    "packs": [],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
+    "socket": false,
+    "initiative": "1d20",
+    "gridDistance": 3,
+    "gridUnits": "m",
+    "primaryTokenAttribute": "wounds",
+    "secondaryTokenAttribute": "fatigue",
+    "url": "https://github.com/Aleslammer/deathwatch_foundryvtt/",
+    "background": "systems/mysystem/assets/splash.webp",
+    "manifest": "https://github.com/Aleslammer/deathwatch_foundryvtt/system.json",
+    "download": "https://your/packaged/download/archive.zip"
+}
