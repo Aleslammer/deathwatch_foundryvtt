@@ -13,25 +13,16 @@
             "name": "Aleslammer"
         }
     ],
-    "scripts": [],
-    "esmodules": [],
-    "styles": [],
-    "packs": [],
-    "languages": [
-        {
-            "lang": "en",
-            "name": "English",
-            "path": "lang/en.json"
-        }
+    "esmodules": [
+        "module/deathwatch.mjs"
     ],
-    "socket": false,
-    "initiative": "1d20",
+    "styles": [
+        "styles/system-style.css"
+    ],
+    "packs": [],
+    "initiative": "1d10 + @agBonus",
     "gridDistance": 3,
     "gridUnits": "m",
     "primaryTokenAttribute": "wounds",
-    "secondaryTokenAttribute": "fatigue",
-    "url": "https://github.com/Aleslammer/deathwatch_foundryvtt/",
-    "background": "systems/mysystem/assets/splash.webp",
-    "manifest": "https://github.com/Aleslammer/deathwatch_foundryvtt/system.json",
-    "download": "https://your/packaged/download/archive.zip"
+    "secondaryTokenAttribute": "fatigue"
 }

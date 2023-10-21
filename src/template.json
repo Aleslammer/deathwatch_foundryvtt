@@ -9,7 +9,7 @@
                 "wounds": {
                     "value": 0,
                     "max": 0
-                }.
+                },
                 "fatigue": {
                     "value": 0,
                     "max": 0
@@ -64,6 +64,32 @@
                     }
                 }
             }
+        }
+    },
+    "Item": {
+        "types": [
+            "weapon",
+            "armor"
+        ],
+        "templates": {
+            "itemDescription": {
+                "description": ""
+            }
+        },
+        "weapon": {
+            "templates": [
+                "itemDescription"
+            ],
+            "damage": "1d10"
+        },
+        "armor": {
+            "templates": [
+                "itemDescription"
+            ],
+            "head": 0,
+            "left_arm": 0,
+            "right_arm": 0,
+            "body": 0
         }
     }
 }
