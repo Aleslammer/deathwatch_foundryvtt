@@ -7,7 +7,7 @@ export class DeathwatchItemSheet extends ItemSheet {
     /** @override */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["DeathWatch", "sheet", "item"],
+            classes: ["deathwatch", "sheet", "item"],
             width: 520,
             height: 480,
             tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]

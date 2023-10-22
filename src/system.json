@@ -17,7 +17,7 @@
         "module/deathwatch.mjs"
     ],
     "styles": [
-        "styles/system-style.css"
+        "styles/deathwatch.css"
     ],
     "packs": [],
     "initiative": "1d10 + @agBonus",

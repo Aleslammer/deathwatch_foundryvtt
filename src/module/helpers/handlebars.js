@@ -19,11 +19,11 @@ function registerHandlebarsHelpers() {
     */
 
     Handlebars.registerHelper("config", function (key) {
-        return game.dw.config[key]
+        return game.deathwatch.config[key]
     })
 
     Handlebars.registerHelper("configLookup", function (obj, key) {
-        return game.dw.config[obj][key]
+        return game.deathwatch.config[obj][key]
     })
 
 

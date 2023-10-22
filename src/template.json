@@ -15,7 +15,7 @@
                     "max": 0
                 }
             },
-            "characteristics": {
+            "character"{
                 "characteristics": {
                     "weapon_skill": {
                         "value": 0,
@@ -53,9 +53,7 @@
                         "value": 0,
                         "bonus": 0
                     }
-                }
-            },
-            "skills": {
+                },
                 "skills": {
                     "Awareness": {
                         "isBasic": true,
@@ -72,13 +70,13 @@
             "armor"
         ],
         "templates": {
-            "itemDescription": {
-                "description": "Hello Dolly"
+            "base": {
+                "description": ""
             }
         },
         "weapon": {
             "templates": [
-                "itemDescription"
+                "base"
             ],
             "damage": "1d10",
             "damageType": "",
@@ -86,7 +84,7 @@
         },
         "armor": {
             "templates": [
-                "itemDescription"
+                "base"
             ],
             "body": 0,
             "head": 0,
