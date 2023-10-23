@@ -17,6 +17,7 @@ export class DeathwatchActor extends Actor {
   prepareBaseData() {
     // Data modifications in this step occur before processing embedded
     // documents or derived data.
+
   }
 
   /**
@@ -49,9 +50,8 @@ export class DeathwatchActor extends Actor {
     const systemData = actorData.system;
 
     // Loop through ability scores, and add their modifiers to our sheet output.
-    for (let [key, ability] of Object.entries(systemData.characteristics)) {
-      // Calculate the modifier using d20 rules.
-      ability.mod = Math.floor((ability.value - 10) / 2);
+    for (let [key, characteristic] of Object.entries(systemData.characteristics)) {
+      characteristic.mod = Math.floor((characteristic.value / 10));
     }
   }
 
@@ -93,10 +93,11 @@ export class DeathwatchActor extends Actor {
       }
     }
 
+    // TODO: Figure out level stuff
     // Add level for easier access, or fall back to 0.
-    if (data.attributes.level) {
-      data.lvl = data.attributes.level.value ?? 0;
-    }
+    // if (data.attributes.level) {
+    //  data.lvl = data.attributes.level.value ?? 0;
+    // }
   }
 
   /**

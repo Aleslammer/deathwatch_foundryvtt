@@ -1,3 +1,2 @@
-Need to research ES6 modules of script loading.
-Crete a build that zips up this output
-Create a script that copies to local foundry
+Need to work on character sheet.   WE got the basics of an item created
+Need a functional char sheet

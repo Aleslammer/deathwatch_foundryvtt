@@ -18,39 +18,39 @@
         },
         "character": {
             "characteristics": {
-                "weapon_skill": {
+                "ws": {
                     "value": 0,
                     "bonus": 0
                 },
-                "ballistic_skill": {
+                "bs": {
                     "value": 0,
                     "bonus": 0
                 },
-                "strength": {
+                "str": {
                     "value": 0,
                     "bonus": 0
                 },
-                "toughness": {
+                "tg": {
                     "value": 0,
                     "bonus": 0
                 },
-                "agility": {
+                "ag": {
                     "value": 0,
                     "bonus": 0
                 },
-                "intelligence": {
+                "int": {
                     "value": 0,
                     "bonus": 0
                 },
-                "perception": {
+                "per": {
                     "value": 0,
                     "bonus": 0
                 },
-                "willpower": {
+                "wil": {
                     "value": 0,
                     "bonus": 0
                 },
-                "fellowship": {
+                "fs": {
                     "value": 0,
                     "bonus": 0
                 }

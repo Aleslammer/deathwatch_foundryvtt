@@ -68,8 +68,8 @@ export class DeathwatchActorSheet extends ActorSheet {
    */
   _prepareCharacterData(context) {
     // Handle ability scores.
-    for (let [k, v] of Object.entries(context.system.abilities)) {
-      v.label = game.i18n.localize(CONFIG.DWConfig.abilities[k]) ?? k;
+    for (let [k, v] of Object.entries(context.system.characteristics)) {
+      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
   }
 
