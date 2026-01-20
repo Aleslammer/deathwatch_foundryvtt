@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 $InformationPreference = "Continue"
 
-$localDir = "D:\rpg\FoundryVTT\Data\systems\deathwatch\"
+$localDir = "\\thebrewery\Foundry\Data\systems\deathwatch\"
 
 
 Get-ChildItem $localDir | Remove-Item -Force -Recurse

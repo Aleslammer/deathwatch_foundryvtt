@@ -4,9 +4,9 @@
     "description": "A system for Warhammer 40k Deathwatch games on Foundry VTT.",
     "version": "0.0.1",
     "compatibility": {
-        "minimum": "10",
-        "verified": "11",
-        "maximum": "11"
+        "minimum": "13",
+        "verified": "13",
+        "maximum": "13"
     },
     "authors": [
         {
@@ -21,8 +21,10 @@
     ],
     "packs": [],
     "initiative": "1d10 + @agBonus",
-    "gridDistance": 3,
-    "gridUnits": "m",
+    "grid":{
+        "distance": 3,
+        "units": "m"
+    },
     "primaryTokenAttribute": "wounds",
     "secondaryTokenAttribute": "fatigue"
 }
