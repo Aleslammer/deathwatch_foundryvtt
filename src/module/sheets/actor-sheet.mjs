@@ -13,7 +13,7 @@ export class DeathwatchActorSheet extends ActorSheet {
       template: "systems/deathwatch/templates/actor/actor-sheet.html",
       width: 600,
       height: 600,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "features" }]
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "characteristics" }]
     });
   }
 
@@ -83,7 +83,7 @@ export class DeathwatchActorSheet extends ActorSheet {
   _prepareItems(context) {
     // Initialize containers.
     const gear = [];
-    const features = [];
+    const characteristics = [];
     const spells = {
       0: [],
       1: [],
@@ -104,9 +104,9 @@ export class DeathwatchActorSheet extends ActorSheet {
       if (i.type === 'item') {
         gear.push(i);
       }
-      // Append to features.
-      else if (i.type === 'feature') {
-        features.push(i);
+      // Append to characteristics.
+      else if (i.type === 'characteristic') {
+        characteristics.push(i);
       }
       // Append to spells.
       else if (i.type === 'spell') {
@@ -118,7 +118,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Assign and return
     context.gear = gear;
-    context.features = features;
+    context.characteristics = characteristics;
     context.spells = spells;
   }
 

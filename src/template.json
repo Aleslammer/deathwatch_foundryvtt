@@ -67,7 +67,8 @@
     "Item": {
         "types": [
             "weapon",
-            "armor"
+            "armor",
+            "characteristic"
         ],
         "templates": {
             "base": {
@@ -90,6 +91,11 @@
             "head": 0,
             "left_arm": 0,
             "right_arm": 0
+        },
+        "characteristic": {
+            "templates": [
+                "base"
+            ]
         }
     }
 }

@@ -7,7 +7,7 @@ export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
 
     // Actor partials.
-    "systems/deathwatch/templates/actor/parts/actor-features.html",
+    "systems/deathwatch/templates/actor/parts/actor-characteristics.html",
     "systems/deathwatch/templates/actor/parts/actor-items.html",
     "systems/deathwatch/templates/actor/parts/actor-spells.html",
     "systems/deathwatch/templates/actor/parts/actor-effects.html",
