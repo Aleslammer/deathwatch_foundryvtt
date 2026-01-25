@@ -1,4 +1,5 @@
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/effects.mjs";
+import { DWConfig } from "../helpers/config.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -238,16 +239,36 @@ export class DeathwatchActorSheet extends ActorSheet {
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
     const baseFormula = dataset.roll;
+    const characteristicKey = dataset.characteristic;
     const label = dataset.label ? `[Characteristic] ${dataset.label}` : '';
 
-    // Create the dialog content
-    const content = `
-      <form>
+    // Get the characteristic modifier
+    const characteristicMod = this.actor.system.characteristics[characteristicKey]?.mod || 0;
+
+    // Create the dialog content with difficulty dropdown and free-form modifier
+    let content = `
+      <div class="modifier-dialog">
         <div class="form-group">
-          <label for="modifier">Modifier:</label>
-          <input type="number" id="modifier" name="modifier" value="0" />
+          <label for="difficulty-select">Difficulty:</label>
+          <select id="difficulty-select" name="difficulty">
+    `;
+
+    // Add options for each difficulty level
+    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
+      const selected = key === 'challenging' ? 'selected' : '';
+      content += `
+            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
+      `;
+    }
+
+    content += `
+          </select>
         </div>
-      </form>
+        <div class="form-group modifier-row">
+          <label for="modifier">Additional Modifier:</label>
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+        </div>
+      </div>
     `;
 
     // Show the dialog
@@ -257,40 +278,80 @@ export class DeathwatchActorSheet extends ActorSheet {
       buttons: {
         roll: {
           label: "Roll",
+          class: "dialog-button roll",
           callback: (html) => {
-            const modifier = parseInt(html.find('#modifier').val()) || 0;
-            const modifiedFormula = this._modifyRollFormula(baseFormula, modifier);
-            let roll = new Roll(modifiedFormula, rollData);
+            const selectedDifficulty = html.find('#difficulty-select').val();
+            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
+            
+            const additionalModifierInput = html.find('#modifier').val().trim();
+            let additionalModifier = 0;
+            
+            // Parse the additional modifier (allow free-form input)
+            if (additionalModifierInput) {
+              // Try to evaluate simple expressions like "+5", "-10", "2d6", etc.
+              try {
+                // If it starts with + or -, treat as modifier
+                if (additionalModifierInput.match(/^[-+]\d+$/)) {
+                  additionalModifier = parseInt(additionalModifierInput);
+                } else if (additionalModifierInput.match(/^\d+$/)) {
+                  additionalModifier = parseInt(additionalModifierInput);
+                } else {
+                  // For more complex expressions, we'll add them as-is to the formula
+                  additionalModifier = additionalModifierInput;
+                }
+              } catch (e) {
+                // If parsing fails, treat as string to add to formula
+                additionalModifier = additionalModifierInput;
+              }
+            }
+            
+            // Calculate total modifier: characteristic + difficulty + additional
+            const totalModifier = characteristicMod + difficultyModifier + (typeof additionalModifier === 'number' ? additionalModifier : 0);
+            
+            // Build detailed roll formula showing each component
+            let rollFormula = 'd100';
+            const formulaParts = [];
+            
+            if (characteristicMod !== 0) {
+              rollFormula += ` ${characteristicMod >= 0 ? '+' : ''}${characteristicMod}`;
+              formulaParts.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} (${dataset.label})`);
+            }
+            
+            if (difficultyModifier !== 0) {
+              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
+              formulaParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+            }
+            
+            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
+              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
+              formulaParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Additional)`);
+            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
+              rollFormula += ` + ${additionalModifier}`;
+              formulaParts.push(`+ ${additionalModifier} (Additional)`);
+            }
+            
+            let roll = new Roll(rollFormula, rollData);
+            
+            // Create flavor text
+            let flavorText = label;
+            if (formulaParts.length > 0) {
+              flavorText += ` (${formulaParts.join(', ')})`;
+            }
+            
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: modifier !== 0 ? `${label} (Modifier: ${modifier >= 0 ? '+' : ''}${modifier})` : label,
+              flavor: flavorText,
               rollMode: game.settings.get('core', 'rollMode'),
             });
           }
         },
         cancel: {
-          label: "Cancel"
+          label: "Cancel",
+          class: "dialog-button cancel"
         }
       },
       default: "roll"
     }).render(true);
-  }
-
-  /**
-   * Modify a roll formula by adding a modifier.
-   * @param {string} formula The base roll formula
-   * @param {number} modifier The modifier to add
-   * @returns {string} The modified formula
-   * @private
-   */
-  _modifyRollFormula(formula, modifier) {
-    if (modifier === 0) return formula;
-    
-    // Parse the formula and add the modifier
-    // For simplicity, assume the formula is like "d100+@characteristics.str.mod"
-    // We'll add the modifier to the end
-    const sign = modifier >= 0 ? '+' : '';
-    return `${formula}${sign}${modifier}`;
   }
 
 }

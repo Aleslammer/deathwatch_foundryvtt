@@ -18,3 +18,19 @@ DWConfig.CharacteristicWords = {
     "wil": "Willpower",
     "fs": "Fellowship"
 };
+
+DWConfig.TestDifficulties = {
+    "trivial": { label: "Trivial", modifier: 60 },
+    "elementary": { label: "Elementary", modifier: 50 },    
+    "simple": { label: "Simple", modifier: 40 },    
+    "easy": { label: "Easy", modifier: 30 },
+    "routine": { label: "Routine", modifier: 20 },
+    "ordinary": { label: "Ordinary", modifier: 10 },
+    "challenging": { label: "Challenging", modifier: 0 },
+    "difficult": { label: "Difficult", modifier: -10 },
+    "hard": { label: "Hard", modifier: -20 },
+    "very-hard": { label: "Very Hard", modifier: -30 },
+    "arduous": { label: "Arduous", modifier: -40 },
+    "punishing": { label: "Punishing", modifier: -50 },
+    "hellish": { label: "Hellish", modifier: -60 }
+};

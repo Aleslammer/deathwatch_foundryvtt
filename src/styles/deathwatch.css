@@ -237,6 +237,156 @@
   font-family: "Roboto", sans-serif;
 }
 
+/* Modifier Dialog Styling (Starfinder-inspired) */
+.deathwatch .modifier-dialog {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  font-family: "Roboto", sans-serif;
+  color: #212529;
+}
+
+.deathwatch .modifier-dialog .form-group {
+  margin-bottom: 15px;
+}
+
+.deathwatch .modifier-dialog .form-group.modifier-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deathwatch .modifier-dialog .form-group.modifier-row label {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+  min-width: 120px;
+}
+
+.deathwatch .modifier-dialog label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.deathwatch .modifier-dialog .difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.deathwatch .modifier-dialog .difficulty-option {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85em;
+}
+
+.deathwatch .modifier-dialog .difficulty-option:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+}
+
+.deathwatch .modifier-dialog .difficulty-option input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: #007bff;
+}
+
+.deathwatch .modifier-dialog select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9em;
+  background: #ffffff;
+  color: #495057;
+  transition: border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.deathwatch .modifier-dialog select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.deathwatch .modifier-dialog select option {
+  padding: 4px;
+  background: #ffffff;
+  color: #495057;
+}
+
+.deathwatch .modifier-dialog .form-group.modifier-row input[type="text"] {
+  flex: 1;
+  width: auto;
+}
+
+.deathwatch .modifier-dialog input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9em;
+  background: #ffffff;
+  color: #495057;
+  transition: border-color 0.2s ease;
+}
+
+.deathwatch .modifier-dialog input[type="text"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.deathwatch .modifier-dialog .dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.deathwatch .modifier-dialog .dialog-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.deathwatch .modifier-dialog .dialog-button.roll {
+  background: #007bff;
+  color: white;
+}
+
+.deathwatch .modifier-dialog .dialog-button.roll:hover {
+  background: #0056b3;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.deathwatch .modifier-dialog .dialog-button.cancel {
+  background: #6c757d;
+  color: white;
+}
+
+.deathwatch .modifier-dialog .dialog-button.cancel:hover {
+  background: #545b62;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
 .deathwatch .sheet-header {
   -webkit-box-flex: 0;
   -ms-flex: 0 auto;
