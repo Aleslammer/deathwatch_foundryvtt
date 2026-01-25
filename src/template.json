@@ -79,9 +79,35 @@
                     "advanced": false,
                     "modifier": 0
                 },
+                "carouse": {
+                    "isBasic": true,
+                    "characteristic": "tg",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "charm": {
+                    "isBasic": true,
+                    "characteristic": "fs",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Interaction"
+                },
                 "climb": {
                     "isBasic": true,
                     "characteristic": "str",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Movement"
+                },
+                "command": {
+                    "isBasic": true,
+                    "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
@@ -101,7 +127,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Movement"
                 },
                 "deceive": {
                     "isBasic": true,
@@ -109,15 +136,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
-                },
-                "disguise": {
-                    "isBasic": true,
-                    "characteristic": "fs",
-                    "trained": false,
-                    "mastered": false,
-                    "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Interaction"
                 },
                 "dodge": {
                     "isBasic": true,
@@ -127,9 +147,18 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "drive": {
+                "evaluate": {
                     "isBasic": true,
-                    "characteristic": "ag",
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "gamble": {
+                    "isBasic": true,
+                    "characteristic": "per",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
@@ -141,7 +170,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Investigation"
                 },
                 "intimidate": {
                     "isBasic": true,
@@ -149,7 +179,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Interaction"
                 },
                 "logic": {
                     "isBasic": true,
@@ -157,7 +188,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Investigation"
                 },
                 "scrutiny": {
                     "isBasic": true,
@@ -181,7 +213,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Movement"
                 },
                 "swim": {
                     "isBasic": true,
@@ -189,7 +222,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Movement"
                 },
                 "acrobatics": {
                     "isBasic": false,
@@ -197,25 +231,19 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Movement"
                 },
-                "athletics": {
+                "chem_use": {
                     "isBasic": false,
-                    "characteristic": "str",
+                    "characteristic": "int",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Crafting, Investigation"
                 },
-                "command": {
-                    "isBasic": false,
-                    "characteristic": "fs",
-                    "trained": false,
-                    "mastered": false,
-                    "advanced": false,
-                    "modifier": 0
-                },
-                "common_lore": {
+                "ciphers": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -223,17 +251,103 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "forbidden_lore": {
+                "demolitions": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "drive": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Operator"
+                },
+                "interrogation": {
+                    "isBasic": false,
+                    "characteristic": "wil",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "invocation": {
+                    "isBasic": false,
+                    "characteristic": "wil",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "lip_reading": {
+                    "isBasic": false,
+                    "characteristic": "per",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "literacty": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
                     "modifier": 0
+                },
+                "lore_common": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
                 },
                 "medicae": {
                     "isBasic": false,
                     "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "navigation": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "performer": {
+                    "isBasic": false,
+                    "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
@@ -245,11 +359,12 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": "Operator"
                 },
-                "scholastic_lore": {
+                "psyniscience": {
                     "isBasic": false,
-                    "characteristic": "int",
+                    "characteristic": "per",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
@@ -263,7 +378,7 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "sleight_of_hand": {
+                "shadowing": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
@@ -271,9 +386,33 @@
                     "advanced": false,
                     "modifier": 0
                 },
+                "slight_of_hand": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
                 "survival": {
                     "isBasic": false,
-                    "characteristic": "per",
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "tactics": {
+                    "isBasic": false,
+                    "characteristic": "int",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
@@ -287,7 +426,24 @@
                     "advanced": false,
                     "modifier": 0
                 },
+                "tracking": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
                 "trade": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "wrangling": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
