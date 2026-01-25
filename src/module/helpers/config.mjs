@@ -34,3 +34,34 @@ DWConfig.TestDifficulties = {
     "punishing": { label: "Punishing", modifier: -50 },
     "hellish": { label: "Hellish", modifier: -60 }
 };
+
+DWConfig.Skills = {
+    "awareness": "Awareness",
+    "climb": "Climb",
+    "concealment": "Concealment",
+    "contortionist": "Contortionist",
+    "deceive": "Deceive",
+    "disguise": "Disguise",
+    "dodge": "Dodge",
+    "drive": "Drive",
+    "inquiry": "Inquiry",
+    "intimidate": "Intimidate",
+    "logic": "Logic",
+    "scrutiny": "Scrutiny",
+    "search": "Search",
+    "silent_move": "Silent Move",
+    "swim": "Swim",
+    "acrobatics": "Acrobatics",
+    "athletics": "Athletics",
+    "command": "Command",
+    "common_lore": "Common Lore",
+    "forbidden_lore": "Forbidden Lore",
+    "medicae": "Medicae",
+    "pilot": "Pilot",
+    "scholastic_lore": "Scholastic Lore",
+    "security": "Security",
+    "sleight_of_hand": "Sleight of Hand",
+    "survival": "Survival",
+    "tech_use": "Tech-Use",
+    "trade": "Trade"
+};

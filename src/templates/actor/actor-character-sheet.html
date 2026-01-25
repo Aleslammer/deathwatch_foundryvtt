@@ -46,6 +46,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
     <a class="item" data-tab="characteristics">Characteristics</a>
+    <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="description">Description</a>
     <a class="item" data-tab="items">Items</a>
     <a class="item" data-tab="spells">Spells</a>
@@ -82,6 +83,11 @@
         </section>
 
       </section>
+    </div>
+
+    {{!-- Skills Tab --}}
+    <div class="tab skills" data-group="primary" data-tab="skills">
+      {{> "systems/deathwatch/templates/actor/parts/actor-skills.html"}}
     </div>
 
     {{!-- Biography Tab --}}

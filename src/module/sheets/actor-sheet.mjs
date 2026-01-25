@@ -72,6 +72,24 @@ export class DeathwatchActorSheet extends ActorSheet {
     for (let [k, v] of Object.entries(context.system.characteristics)) {
       v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
+
+    // Handle skills.
+    if (context.system.skills) {
+      for (let [k, v] of Object.entries(context.system.skills)) {
+        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+        
+        // Calculate skill total
+        const characteristic = context.system.characteristics[v.characteristic];
+        const charMod = characteristic ? characteristic.mod : 0;
+        const trainedBonus = v.trained ? 10 : 0;
+        const advancedPenalty = (!v.isBasic && !v.trained) ? -20 : 0;
+        
+        v.total = charMod + trainedBonus + v.modifier + advancedPenalty;
+      }
+    }
+
+    // Add config to context for template access
+    context.config = game.deathwatch.config;
   }
 
   /**
@@ -216,6 +234,10 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (dataset.rollType == 'characteristic') {
         return this._onCharacteristicRoll(dataset);
       }
+      // Handle skill rolls.
+      else if (dataset.rollType == 'skill') {
+        return this._onSkillRoll(dataset);
+      }
     }
 
     // Handle rolls that supply the formula directly.
@@ -346,6 +368,149 @@ export class DeathwatchActorSheet extends ActorSheet {
               flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
             }
             
+            roll.toMessage({
+              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+              flavor: flavorText,
+              rollMode: game.settings.get('core', 'rollMode'),
+            });
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          class: "dialog-button cancel"
+        }
+      },
+      default: "roll"
+    }).render(true);
+  }
+  /**
+   * Handle skill rolls with modifier dialog.
+   * @param {Object} dataset The dataset from the clicked element
+   * @private
+   */
+  async _onSkillRoll(dataset) {
+    const rollData = this.actor.getRollData();
+    const skillKey = dataset.skill;
+    const skill = this.actor.system.skills[skillKey];
+    const label = dataset.label ? `[Skill] ${dataset.label}` : '';
+
+    if (!skill) {
+      ui.notifications.warn(`Skill ${skillKey} not found`);
+      return;
+    }
+
+    // Check if advanced skill is trained
+    if (!skill.isBasic && !skill.trained) {
+      ui.notifications.warn(`${skill.label || skillKey} is an advanced skill and must be trained to use.`);
+      return;
+    }
+
+    // Recalculate skill total to ensure it's current
+    const characteristic = this.actor.system.characteristics[skill.characteristic];
+    const charMod = characteristic ? characteristic.mod : 0;
+    const trainedBonus = skill.trained ? 10 : 0;
+    const advancedPenalty = (!skill.isBasic && !skill.trained) ? -20 : 0;
+    const skillTotal = charMod + trainedBonus + skill.modifier + advancedPenalty;
+
+    // Create the dialog content with difficulty dropdown and free-form modifier
+    let content = `
+      <div class="modifier-dialog">
+        <div class="form-group">
+          <label for="difficulty-select">Difficulty:</label>
+          <select id="difficulty-select" name="difficulty">
+    `;
+
+    // Add options for each difficulty level
+    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
+      const selected = key === 'challenging' ? 'selected' : '';
+      content += `
+            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
+      `;
+    }
+
+    content += `
+          </select>
+        </div>
+        <div class="form-group modifier-row">
+          <label for="modifier">Misc:</label>
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+        </div>
+      </div>
+    `;
+
+    // Show the dialog
+    return new Dialog({
+      title: `Roll ${dataset.label}`,
+      content: content,
+      render: (html) => {
+        // Add input validation to restrict misc field to numbers only
+        const miscInput = html.find('#modifier');
+        miscInput.on('input', function() {
+          // Allow only numbers, +, -, and spaces
+          const value = this.value.replace(/[^0-9+\-\s]/g, '');
+          if (this.value !== value) {
+            this.value = value;
+          }
+        });
+      },
+      buttons: {
+        roll: {
+          label: "Roll",
+          class: "dialog-button roll",
+          callback: (html) => {
+            const selectedDifficulty = html.find('#difficulty-select').val();
+            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
+            
+            const additionalModifierInput = html.find('#modifier').val().trim();
+            let additionalModifier = 0;
+            
+            // Parse the additional modifier
+            if (additionalModifierInput) {
+              try {
+                if (additionalModifierInput.match(/^[-+]\d+$/)) {
+                  additionalModifier = parseInt(additionalModifierInput);
+                } else if (additionalModifierInput.match(/^\d+$/)) {
+                  additionalModifier = parseInt(additionalModifierInput);
+                } else {
+                  additionalModifier = additionalModifierInput;
+                }
+              } catch (e) {
+                additionalModifier = additionalModifierInput;
+              }
+            }
+            
+            // Build roll formula and modifier breakdown
+            let rollFormula = 'd100';
+            let modifierBreakdown = [];
+            
+            // Add skill total
+            if (skillTotal !== 0) {
+              rollFormula += ` ${skillTotal >= 0 ? '+' : ''}${skillTotal}`;
+              modifierBreakdown.push(`${skillTotal >= 0 ? '+' : ''}${skillTotal} (${dataset.label})`);
+            }
+            
+            if (difficultyModifier !== 0) {
+              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
+              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+            }
+            
+            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
+              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
+              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
+            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
+              rollFormula += ` + ${additionalModifier}`;
+              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
+            }
+            
+            let roll = new Roll(rollFormula, rollData);
+            
+            // Create detailed flavor text with modifier breakdown
+            let flavorText = `${label}`;
+            if (modifierBreakdown.length > 0) {
+              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
+            }
+            
+            console.log("roll formula:", rollFormula);
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
               flavor: flavorText,
