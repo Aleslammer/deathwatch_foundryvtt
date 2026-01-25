@@ -305,37 +305,34 @@ export class DeathwatchActorSheet extends ActorSheet {
               }
             }
             
-            // Calculate total modifier: characteristic + difficulty + additional
-            const totalModifier = characteristicMod + difficultyModifier + (typeof additionalModifier === 'number' ? additionalModifier : 0);
-            
-            // Build detailed roll formula showing each component
+            // Build roll formula and modifier breakdown
             let rollFormula = 'd100';
-            const formulaParts = [];
+            let modifierBreakdown = [];
             
             if (characteristicMod !== 0) {
               rollFormula += ` ${characteristicMod >= 0 ? '+' : ''}${characteristicMod}`;
-              formulaParts.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} (${dataset.label})`);
+              modifierBreakdown.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} (${dataset.label})`);
             }
             
             if (difficultyModifier !== 0) {
               rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
-              formulaParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
             }
             
             if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
               rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
-              formulaParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Additional)`);
+              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Additional)`);
             } else if (additionalModifierInput && typeof additionalModifier === 'string') {
               rollFormula += ` + ${additionalModifier}`;
-              formulaParts.push(`+ ${additionalModifier} (Additional)`);
+              modifierBreakdown.push(`+ ${additionalModifier} (Additional)`);
             }
             
             let roll = new Roll(rollFormula, rollData);
             
-            // Create flavor text
-            let flavorText = label;
-            if (formulaParts.length > 0) {
-              flavorText += ` (${formulaParts.join(', ')})`;
+            // Create detailed flavor text with modifier breakdown
+            let flavorText = `${label}`;
+            if (modifierBreakdown.length > 0) {
+              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
             }
             
             roll.toMessage({
