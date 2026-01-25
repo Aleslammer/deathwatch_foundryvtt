@@ -243,7 +243,55 @@
                     "modifier": 0,
                     "descriptor": "Crafting, Investigation"
                 },
-                "ciphers": {
+                "cipher_xenos_markings": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "cipher_deathwatch": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "cipher_chapter_runes": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "cipher_imperial_codes": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "cipher_mercenary_cant": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "cipher_inquisition": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "cipher_underworld": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -260,7 +308,25 @@
                     "modifier": 0,
                     "descriptor": "Crafting"
                 },
-                "drive": {
+                "drive_ground": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Operator"
+                },
+                "drive_hover_skimmer": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Operator"
+                },
+                "drive_walker": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
@@ -302,7 +368,7 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "lore_common": {
+                "lore_common_adeptus_arbites": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -311,7 +377,7 @@
                     "modifier": 0,
                     "descriptor": "Investigation"
                 },
-                "lore_forbidden": {
+                "lore_common_adeptus_astartes": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -320,7 +386,340 @@
                     "modifier": 0,
                     "descriptor": "Investigation"
                 },
-                "lore_scholastic": {
+                "lore_common_adeptus_mechanicus": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_administratum": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_deathwatch": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_ecclesiarchy": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_imperial_creed": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_imperial_guard": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_imperial_navy": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_imperium": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_jericho_reach": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_tech": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_common_war": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_adeptus_astartes": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_adeptus_mechanicus": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_archeotech": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_black_library": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_daemonology": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_heresy": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_inquisition": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_mutants": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_psykers": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_traitor_legions": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_warp": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_forbidden_xenos": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_archaic": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_astromancy": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_beasts": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_bureaucracy": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_chymistry": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_codex_astartes": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_cryptology": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_heraldry": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_imperial_creed": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_judgement": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_legend": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_numerology": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_occult": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_philosophy": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Investigation"
+                },
+                "lore_scholastic_tactica_imperialis": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -337,7 +736,7 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "navigation": {
+                "navigation_surface": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -345,7 +744,15 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "performer": {
+                "navigation_stellar": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "performer_dancer": {
                     "isBasic": false,
                     "characteristic": "fs",
                     "trained": false,
@@ -353,7 +760,31 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "pilot": {
+                "performer_musician": {
+                    "isBasic": false,
+                    "characteristic": "fs",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "performer_singer": {
+                    "isBasic": false,
+                    "characteristic": "fs",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "performer_storyteller": {
+                    "isBasic": false,
+                    "characteristic": "fs",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "pilot_personal": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
@@ -362,7 +793,25 @@
                     "modifier": 0,
                     "descriptor": "Operator"
                 },
-                "psyniscience": {
+                 "pilot_flyer": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Operator"
+                },
+                "pilot_space_craft": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Operator"
+                },
+               "psyniscience": {
                     "isBasic": false,
                     "characteristic": "per",
                     "trained": false,
@@ -394,7 +843,55 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "speak_language": {
+                "speak_language_eldar": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language_high_gothic": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language_kroot": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language_low_gothic": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language_ork": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language_techna_lingua": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "speak_language_tau": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -410,7 +907,47 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "tactics": {
+                "tactics_air_combat": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "tactics_armoured": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "tactics_assault_doctrine": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "tactics_defensive_doctrine": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "tactics_orbital_drop": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0
+                },
+                "tactics_recon_and_stealth": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
@@ -434,9 +971,108 @@
                     "advanced": false,
                     "modifier": 0
                 },
-                "trade": {
+                "trade_archaeologist": {
                     "isBasic": false,
                     "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_armorer": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_astrographer": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_chymist": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_cryptographer": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_explorer": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_linguist": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_remembrancer": {
+                    "isBasic": false,
+                    "characteristic": "ag",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_shipwright": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_soothsayer": {
+                    "isBasic": false,
+                    "characteristic": "fs",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_technomat": {
+                    "isBasic": false,
+                    "characteristic": "int",
+                    "trained": false,
+                    "mastered": false,
+                    "advanced": false,
+                    "modifier": 0,
+                    "descriptor": "Crafting"
+                },
+                "trade_trader": {
+                    "isBasic": false,
+                    "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
