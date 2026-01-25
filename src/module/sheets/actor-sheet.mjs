@@ -265,7 +265,7 @@ export class DeathwatchActorSheet extends ActorSheet {
           </select>
         </div>
         <div class="form-group modifier-row">
-          <label for="modifier">Additional Modifier:</label>
+          <label for="modifier">Misc:</label>
           <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
         </div>
       </div>
@@ -275,6 +275,17 @@ export class DeathwatchActorSheet extends ActorSheet {
     return new Dialog({
       title: `Roll ${dataset.label}`,
       content: content,
+      render: (html) => {
+        // Add input validation to restrict misc field to numbers only
+        const miscInput = html.find('#modifier');
+        miscInput.on('input', function() {
+          // Allow only numbers, +, -, and spaces
+          const value = this.value.replace(/[^0-9+\-\s]/g, '');
+          if (this.value !== value) {
+            this.value = value;
+          }
+        });
+      },
       buttons: {
         roll: {
           label: "Roll",
@@ -321,10 +332,10 @@ export class DeathwatchActorSheet extends ActorSheet {
             
             if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
               rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
-              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Additional)`);
+              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
             } else if (additionalModifierInput && typeof additionalModifier === 'string') {
               rollFormula += ` + ${additionalModifier}`;
-              modifierBreakdown.push(`+ ${additionalModifier} (Additional)`);
+              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
             }
             
             let roll = new Roll(rollFormula, rollData);
