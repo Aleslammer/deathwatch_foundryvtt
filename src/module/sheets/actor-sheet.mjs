@@ -531,7 +531,6 @@ export class DeathwatchActorSheet extends ActorSheet {
               flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
             }
             
-            console.log("roll formula:", rollFormula);
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
               flavor: flavorText,

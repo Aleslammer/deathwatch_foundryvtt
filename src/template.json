@@ -77,7 +77,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "carouse": {
                     "isBasic": true,
@@ -85,7 +86,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "charm": {
                     "isBasic": true,
@@ -111,7 +113,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "concealment": {
                     "isBasic": true,
@@ -119,7 +122,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "contortionist": {
                     "isBasic": true,
@@ -145,7 +149,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "evaluate": {
                     "isBasic": true,
@@ -162,7 +167,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "inquiry": {
                     "isBasic": true,
@@ -197,7 +203,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "search": {
                     "isBasic": true,
@@ -205,7 +212,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "silent_move": {
                     "isBasic": true,
@@ -249,7 +257,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "cipher_deathwatch": {
                     "isBasic": false,
@@ -257,7 +266,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "cipher_chapter_runes": {
                     "isBasic": false,
@@ -265,7 +275,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "cipher_imperial_codes": {
                     "isBasic": false,
@@ -273,7 +284,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "cipher_mercenary_cant": {
                     "isBasic": false,
@@ -281,7 +293,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "cipher_inquisition": {
                     "isBasic": false,
@@ -289,7 +302,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "cipher_underworld": {
                     "isBasic": false,
@@ -297,7 +311,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "demolitions": {
                     "isBasic": false,
@@ -350,7 +365,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "lip_reading": {
                     "isBasic": false,
@@ -358,7 +374,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "literacty": {
                     "isBasic": false,
@@ -366,7 +383,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "lore_common_adeptus_arbites": {
                     "isBasic": false,
@@ -734,7 +752,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "navigation_surface": {
                     "isBasic": false,
@@ -742,7 +761,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "navigation_stellar": {
                     "isBasic": false,
@@ -750,7 +770,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "performer_dancer": {
                     "isBasic": false,
@@ -758,7 +779,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "performer_musician": {
                     "isBasic": false,
@@ -766,7 +788,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "performer_singer": {
                     "isBasic": false,
@@ -774,7 +797,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "performer_storyteller": {
                     "isBasic": false,
@@ -782,7 +806,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "pilot_personal": {
                     "isBasic": false,
@@ -817,7 +842,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "security": {
                     "isBasic": false,
@@ -825,7 +851,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "shadowing": {
                     "isBasic": false,
@@ -833,7 +860,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "slight_of_hand": {
                     "isBasic": false,
@@ -841,7 +869,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_eldar": {
                     "isBasic": false,
@@ -849,7 +878,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_high_gothic": {
                     "isBasic": false,
@@ -857,7 +887,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_kroot": {
                     "isBasic": false,
@@ -865,7 +896,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_low_gothic": {
                     "isBasic": false,
@@ -873,7 +905,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_ork": {
                     "isBasic": false,
@@ -881,7 +914,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_techna_lingua": {
                     "isBasic": false,
@@ -889,7 +923,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "speak_language_tau": {
                     "isBasic": false,
@@ -897,7 +932,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "survival": {
                     "isBasic": false,
@@ -905,7 +941,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tactics_air_combat": {
                     "isBasic": false,
@@ -913,7 +950,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tactics_armoured": {
                     "isBasic": false,
@@ -921,7 +959,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tactics_assault_doctrine": {
                     "isBasic": false,
@@ -929,7 +968,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tactics_defensive_doctrine": {
                     "isBasic": false,
@@ -937,7 +977,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tactics_orbital_drop": {
                     "isBasic": false,
@@ -945,7 +986,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tactics_recon_and_stealth": {
                     "isBasic": false,
@@ -953,7 +995,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tech_use": {
                     "isBasic": false,
@@ -961,7 +1004,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "tracking": {
                     "isBasic": false,
@@ -969,7 +1013,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 },
                 "trade_archaeologist": {
                     "isBasic": false,
@@ -1085,7 +1130,8 @@
                     "trained": false,
                     "mastered": false,
                     "advanced": false,
-                    "modifier": 0
+                    "modifier": 0,
+                    "descriptor": ""
                 }
             }
         },
