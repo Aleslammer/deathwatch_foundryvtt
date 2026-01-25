@@ -1,0 +1,2 @@
+Need to work on character sheet.   WE got the basics of an item created
+Need a functional char sheet

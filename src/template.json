@@ -1,0 +1,101 @@
+{
+    "Actor": {
+        "types": [
+            "character",
+            "npc"
+        ],
+        "templates": {
+            "base": {
+                "wounds": {
+                    "value": 0,
+                    "max": 0
+                },
+                "fatigue": {
+                    "value": 0,
+                    "max": 0
+                }
+            }
+        },
+        "character": {
+            "characteristics": {
+                "ws": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "bs": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "str": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "tg": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "ag": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "int": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "per": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "wil": {
+                    "value": 0,
+                    "bonus": 0
+                },
+                "fs": {
+                    "value": 0,
+                    "bonus": 0
+                }
+            },
+            "skills": {
+                "Awareness": {
+                    "isBasic": true,
+                    "characteristic": "perception",
+                    "descriptor": ""
+                }
+            }
+        }
+    },
+    "Item": {
+        "types": [
+            "weapon",
+            "armor",
+            "characteristic"
+        ],
+        "templates": {
+            "base": {
+                "description": ""
+            }
+        },
+        "weapon": {
+            "templates": [
+                "base"
+            ],
+            "damage": "1d10",
+            "damageType": "",
+            "weaponType": ""
+        },
+        "armor": {
+            "templates": [
+                "base"
+            ],
+            "body": 0,
+            "head": 0,
+            "left_arm": 0,
+            "right_arm": 0
+        },
+        "characteristic": {
+            "templates": [
+                "base"
+            ]
+        }
+    }
+}
