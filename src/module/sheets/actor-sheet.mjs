@@ -199,7 +199,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event   The originating click event
    * @private
    */
-  _onRoll(event) {
+  async _onRoll(event) {
     event.preventDefault();
     const element = event.currentTarget;
     const dataset = element.dataset;
@@ -210,6 +210,10 @@ export class DeathwatchActorSheet extends ActorSheet {
         const itemId = element.closest('.item').dataset.itemId;
         const item = this.actor.items.get(itemId);
         if (item) return item.roll();
+      }
+      // Handle characteristic rolls.
+      else if (dataset.rollType == 'characteristic') {
+        return this._onCharacteristicRoll(dataset);
       }
     }
 
@@ -224,6 +228,69 @@ export class DeathwatchActorSheet extends ActorSheet {
       });
       return roll;
     }
+  }
+
+  /**
+   * Handle characteristic rolls with modifier dialog.
+   * @param {Object} dataset The dataset from the clicked element
+   * @private
+   */
+  async _onCharacteristicRoll(dataset) {
+    const rollData = this.actor.getRollData();
+    const baseFormula = dataset.roll;
+    const label = dataset.label ? `[Characteristic] ${dataset.label}` : '';
+
+    // Create the dialog content
+    const content = `
+      <form>
+        <div class="form-group">
+          <label for="modifier">Modifier:</label>
+          <input type="number" id="modifier" name="modifier" value="0" />
+        </div>
+      </form>
+    `;
+
+    // Show the dialog
+    return new Dialog({
+      title: `Roll ${dataset.label}`,
+      content: content,
+      buttons: {
+        roll: {
+          label: "Roll",
+          callback: (html) => {
+            const modifier = parseInt(html.find('#modifier').val()) || 0;
+            const modifiedFormula = this._modifyRollFormula(baseFormula, modifier);
+            let roll = new Roll(modifiedFormula, rollData);
+            roll.toMessage({
+              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+              flavor: modifier !== 0 ? `${label} (Modifier: ${modifier >= 0 ? '+' : ''}${modifier})` : label,
+              rollMode: game.settings.get('core', 'rollMode'),
+            });
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "roll"
+    }).render(true);
+  }
+
+  /**
+   * Modify a roll formula by adding a modifier.
+   * @param {string} formula The base roll formula
+   * @param {number} modifier The modifier to add
+   * @returns {string} The modified formula
+   * @private
+   */
+  _modifyRollFormula(formula, modifier) {
+    if (modifier === 0) return formula;
+    
+    // Parse the formula and add the modifier
+    // For simplicity, assume the formula is like "d100+@characteristics.str.mod"
+    // We'll add the modifier to the end
+    const sign = modifier >= 0 ? '+' : '';
+    return `${formula}${sign}${modifier}`;
   }
 
 }
