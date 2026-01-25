@@ -80,11 +80,12 @@ export class DeathwatchActorSheet extends ActorSheet {
         
         // Calculate skill total
         const characteristic = context.system.characteristics[v.characteristic];
-        const charMod = characteristic ? characteristic.mod : 0;
-        const trainedBonus = v.trained ? 10 : 0;
+        const baseCharValue = characteristic ? characteristic.value : 0;
+        const charMod = v.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+        const skillBonus = v.advanced ? 20 : (v.mastered ? 10 : 0);
         const advancedPenalty = (!v.isBasic && !v.trained) ? -20 : 0;
         
-        v.total = charMod + trainedBonus + v.modifier + advancedPenalty;
+        v.total = charMod + skillBonus + v.modifier + advancedPenalty;
       }
     }
 
@@ -407,10 +408,11 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Recalculate skill total to ensure it's current
     const characteristic = this.actor.system.characteristics[skill.characteristic];
-    const charMod = characteristic ? characteristic.mod : 0;
-    const trainedBonus = skill.trained ? 10 : 0;
+    const baseCharValue = characteristic ? characteristic.value : 0;
+    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     const advancedPenalty = (!skill.isBasic && !skill.trained) ? -20 : 0;
-    const skillTotal = charMod + trainedBonus + skill.modifier + advancedPenalty;
+    const skillTotal = charMod + skillBonus + skill.modifier + advancedPenalty;
 
     // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `

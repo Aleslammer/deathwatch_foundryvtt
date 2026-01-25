@@ -647,7 +647,15 @@
 }
 
 .deathwatch .skill-trained-header {
-  flex: 0 0 40px;
+  flex: 0 0 20px;
+}
+
+.deathwatch .skill-mastered-header {
+  flex: 0 0 20px;
+}
+
+.deathwatch .skill-advanced-header {
+  flex: 0 0 20px;
 }
 
 .deathwatch .skill-modifier-header {
@@ -714,11 +722,23 @@
 }
 
 .deathwatch .skill-trained {
-  flex: 0 0 40px;
+  flex: 0 0 20px;
   text-align: center;
 }
 
-.deathwatch .skill-trained input[type="checkbox"] {
+.deathwatch .skill-mastered {
+  flex: 0 0 20px;
+  text-align: center;
+}
+
+.deathwatch .skill-advanced {
+  flex: 0 0 20px;
+  text-align: center;
+}
+
+.deathwatch .skill-trained input[type="checkbox"],
+.deathwatch .skill-mastered input[type="checkbox"],
+.deathwatch .skill-advanced input[type="checkbox"] {
   margin: 0;
 }
 

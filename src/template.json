@@ -75,168 +75,224 @@
                     "isBasic": true,
                     "characteristic": "per",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "climb": {
                     "isBasic": true,
                     "characteristic": "str",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "concealment": {
                     "isBasic": true,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "contortionist": {
                     "isBasic": true,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "deceive": {
                     "isBasic": true,
                     "characteristic": "fs",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "disguise": {
                     "isBasic": true,
                     "characteristic": "fs",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "dodge": {
                     "isBasic": true,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "drive": {
                     "isBasic": true,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "inquiry": {
                     "isBasic": true,
                     "characteristic": "fs",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "intimidate": {
                     "isBasic": true,
                     "characteristic": "str",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "logic": {
                     "isBasic": true,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "scrutiny": {
                     "isBasic": true,
                     "characteristic": "per",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "search": {
                     "isBasic": true,
                     "characteristic": "per",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "silent_move": {
                     "isBasic": true,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "swim": {
                     "isBasic": true,
                     "characteristic": "str",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "acrobatics": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "athletics": {
                     "isBasic": false,
                     "characteristic": "str",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "command": {
                     "isBasic": false,
                     "characteristic": "fs",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "common_lore": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "forbidden_lore": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "medicae": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "pilot": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "scholastic_lore": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "security": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "sleight_of_hand": {
                     "isBasic": false,
                     "characteristic": "ag",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "survival": {
                     "isBasic": false,
                     "characteristic": "per",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "tech_use": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 },
                 "trade": {
                     "isBasic": false,
                     "characteristic": "int",
                     "trained": false,
+                    "mastered": false,
+                    "advanced": false,
                     "modifier": 0
                 }
             }

@@ -3,7 +3,9 @@
   <div class="skills-header-row flexrow">
     <div class="skill-name-header">Skill</div>
     <div class="skill-characteristic-header">Characteristic</div>
-    <div class="skill-trained-header">Trained</div>
+    <div class="skill-trained-header">T</div>
+    <div class="skill-mastered-header">M</div>
+    <div class="skill-advanced-header">A</div>
     <div class="skill-modifier-header">Modifier</div>
     <div class="skill-total-header">Total</div>
   </div>
@@ -24,6 +26,12 @@
           </div>
           <div class="skill-trained">
             <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} />
+          </div>
+          <div class="skill-mastered">
+            <input type="checkbox" name="system.skills.{{key}}.mastered" {{checked skill.mastered}} {{#unless skill.trained}}disabled{{/unless}} />
+          </div>
+          <div class="skill-advanced">
+            <input type="checkbox" name="system.skills.{{key}}.advanced" {{checked skill.advanced}} {{#unless skill.mastered}}disabled{{/unless}} />
           </div>
           <div class="skill-modifier">
             <input type="number" name="system.skills.{{key}}.modifier" value="{{skill.modifier}}" data-dtype="Number" />
@@ -53,6 +61,12 @@
           </div>
           <div class="skill-trained">
             <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} />
+          </div>
+          <div class="skill-mastered">
+            <input type="checkbox" name="system.skills.{{key}}.mastered" {{checked skill.mastered}} {{#unless skill.trained}}disabled{{/unless}} />
+          </div>
+          <div class="skill-advanced">
+            <input type="checkbox" name="system.skills.{{key}}.advanced" {{checked skill.advanced}} {{#unless skill.mastered}}disabled{{/unless}} />
           </div>
           <div class="skill-modifier">
             <input type="number" name="system.skills.{{key}}.modifier" value="{{skill.modifier}}" data-dtype="Number" />
