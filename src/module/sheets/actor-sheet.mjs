@@ -18,6 +18,22 @@ export class DeathwatchActorSheet extends ActorSheet {
     });
   }
 
+
+  /**
+   * Calculate skill total
+   * @param {Object} skill The skill object
+   * @param {Object} characteristics The actor's characteristics
+   * @returns {number} The calculated skill total
+   */
+  static calculateSkillTotal(skill, characteristics) {
+    const characteristic = characteristics[skill.characteristic];
+    const baseCharValue = characteristic ? characteristic.value : 0;
+    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
+    
+    return charMod + skillBonus + skill.modifier;
+  }
+
   /** @override */
   get template() {
     return `systems/deathwatch/templates/actor/actor-${this.actor.type}-sheet.html`;
@@ -72,6 +88,18 @@ export class DeathwatchActorSheet extends ActorSheet {
     for (let [k, v] of Object.entries(context.system.characteristics)) {
       v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
+
+    // Handle skills.
+    if (context.system.skills) {
+      for (let [k, v] of Object.entries(context.system.skills)) {
+        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+        
+        v.total = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+      }
+    }
+
+    // Add config to context for template access
+    context.config = game.deathwatch.config;
   }
 
   /**
@@ -154,6 +182,22 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Active Effect management
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
+    // Skill checkbox cascade logic
+    html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
+      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.trained/)[1];
+      if (!ev.target.checked) {
+        html.find(`input[name="system.skills.${skillKey}.mastered"]`).prop('checked', false);
+        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+      }
+    });
+
+    html.find('input[type="checkbox"][name*=".mastered"]').change(ev => {
+      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.mastered/)[1];
+      if (!ev.target.checked) {
+        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+      }
+    });
+
     // Rollable abilities.
     html.find('.rollable').click(this._onRoll.bind(this));
 
@@ -215,6 +259,10 @@ export class DeathwatchActorSheet extends ActorSheet {
       // Handle characteristic rolls.
       else if (dataset.rollType == 'characteristic') {
         return this._onCharacteristicRoll(dataset);
+      }
+      // Handle skill rolls.
+      else if (dataset.rollType == 'skill') {
+        return this._onSkillRoll(dataset);
       }
     }
 
@@ -323,6 +371,143 @@ export class DeathwatchActorSheet extends ActorSheet {
             if (characteristicMod !== 0) {
               rollFormula += ` ${characteristicMod >= 0 ? '+' : ''}${characteristicMod}`;
               modifierBreakdown.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} (${dataset.label})`);
+            }
+            
+            if (difficultyModifier !== 0) {
+              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
+              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+            }
+            
+            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
+              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
+              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
+            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
+              rollFormula += ` + ${additionalModifier}`;
+              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
+            }
+            
+            let roll = new Roll(rollFormula, rollData);
+            
+            // Create detailed flavor text with modifier breakdown
+            let flavorText = `${label}`;
+            if (modifierBreakdown.length > 0) {
+              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
+            }
+            
+            roll.toMessage({
+              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+              flavor: flavorText,
+              rollMode: game.settings.get('core', 'rollMode'),
+            });
+          }
+        },
+        cancel: {
+          label: "Cancel",
+          class: "dialog-button cancel"
+        }
+      },
+      default: "roll"
+    }).render(true);
+  }
+  /**
+   * Handle skill rolls with modifier dialog.
+   * @param {Object} dataset The dataset from the clicked element
+   * @private
+   */
+  async _onSkillRoll(dataset) {
+    const rollData = this.actor.getRollData();
+    const skillKey = dataset.skill;
+    const skill = this.actor.system.skills[skillKey];
+    const label = dataset.label ? `[Skill] ${dataset.label}` : '';
+
+    if (!skill) {
+      ui.notifications.warn(`Skill ${skillKey} not found`);
+      return;
+    }
+
+    // Check if advanced skill is trained
+    if (!skill.isBasic && !skill.trained) {
+      ui.notifications.warn(`${skill.label || skillKey} is an advanced skill and must be trained to use.`);
+      return;
+    }
+
+    const skillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+
+    // Create the dialog content with difficulty dropdown and free-form modifier
+    let content = `
+      <div class="modifier-dialog">
+        <div class="form-group">
+          <label for="difficulty-select">Difficulty:</label>
+          <select id="difficulty-select" name="difficulty">
+    `;
+
+    // Add options for each difficulty level
+    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
+      const selected = key === 'challenging' ? 'selected' : '';
+      content += `
+            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
+      `;
+    }
+
+    content += `
+          </select>
+        </div>
+        <div class="form-group modifier-row">
+          <label for="modifier">Misc:</label>
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+        </div>
+      </div>
+    `;
+
+    // Show the dialog
+    return new Dialog({
+      title: `Roll ${dataset.label}`,
+      content: content,
+      render: (html) => {
+        // Add input validation to restrict misc field to numbers only
+        const miscInput = html.find('#modifier');
+        miscInput.on('input', function() {
+          // Allow only numbers, +, -, and spaces
+          const value = this.value.replace(/[^0-9+\-\s]/g, '');
+          if (this.value !== value) {
+            this.value = value;
+          }
+        });
+      },
+      buttons: {
+        roll: {
+          label: "Roll",
+          class: "dialog-button roll",
+          callback: (html) => {
+            const selectedDifficulty = html.find('#difficulty-select').val();
+            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
+            
+            const additionalModifierInput = html.find('#modifier').val().trim();
+            let additionalModifier = 0;
+            
+            // Parse the additional modifier
+            if (additionalModifierInput) {
+              try {
+                if (additionalModifierInput.match(/^[-+]\d+$/)) {
+                  additionalModifier = parseInt(additionalModifierInput);
+                } else if (additionalModifierInput.match(/^\d+$/)) {
+                  additionalModifier = parseInt(additionalModifierInput);
+                } else {
+                  additionalModifier = additionalModifierInput;
+                }
+              } catch (e) {
+                additionalModifier = additionalModifierInput;
+              }
+            }
+            
+            // Build roll formula and modifier breakdown
+            let rollFormula = 'd100';
+            let modifierBreakdown = [];
+            
+            // Add skill total
+            if (skillTotal !== 0) {
+              rollFormula += ` ${skillTotal >= 0 ? '+' : ''}${skillTotal}`;
+              modifierBreakdown.push(`${skillTotal >= 0 ? '+' : ''}${skillTotal} (${dataset.label})`);
             }
             
             if (difficultyModifier !== 0) {
