@@ -18,6 +18,22 @@ export class DeathwatchActorSheet extends ActorSheet {
     });
   }
 
+
+  /**
+   * Calculate skill total
+   * @param {Object} skill The skill object
+   * @param {Object} characteristics The actor's characteristics
+   * @returns {number} The calculated skill total
+   */
+  static calculateSkillTotal(skill, characteristics) {
+    const characteristic = characteristics[skill.characteristic];
+    const baseCharValue = characteristic ? characteristic.value : 0;
+    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
+    
+    return charMod + skillBonus + skill.modifier;
+  }
+
   /** @override */
   get template() {
     return `systems/deathwatch/templates/actor/actor-${this.actor.type}-sheet.html`;
@@ -78,13 +94,7 @@ export class DeathwatchActorSheet extends ActorSheet {
       for (let [k, v] of Object.entries(context.system.skills)) {
         v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
         
-        // Calculate skill total
-        const characteristic = context.system.characteristics[v.characteristic];
-        const baseCharValue = characteristic ? characteristic.value : 0;
-        const charMod = v.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
-        const skillBonus = v.advanced ? 20 : (v.mastered ? 10 : 0);
-        
-        v.total = charMod + skillBonus + v.modifier;
+        v.total = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
       }
     }
 
@@ -421,12 +431,7 @@ export class DeathwatchActorSheet extends ActorSheet {
       return;
     }
 
-    // Recalculate skill total to ensure it's current
-    const characteristic = this.actor.system.characteristics[skill.characteristic];
-    const baseCharValue = characteristic ? characteristic.value : 0;
-    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
-    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
-    const skillTotal = charMod + skillBonus + skill.modifier + advancedPenalty;
+    const skillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
 
     // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `
