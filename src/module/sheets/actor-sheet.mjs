@@ -173,6 +173,22 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Active Effect management
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
+    // Skill checkbox cascade logic
+    html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
+      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.trained/)[1];
+      if (!ev.target.checked) {
+        html.find(`input[name="system.skills.${skillKey}.mastered"]`).prop('checked', false);
+        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+      }
+    });
+
+    html.find('input[type="checkbox"][name*=".mastered"]').change(ev => {
+      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.mastered/)[1];
+      if (!ev.target.checked) {
+        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+      }
+    });
+
     // Rollable abilities.
     html.find('.rollable').click(this._onRoll.bind(this));
 
