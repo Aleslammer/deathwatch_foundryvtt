@@ -1143,6 +1143,7 @@
         "types": [
             "weapon",
             "armor",
+            "gear",
             "characteristic"
         ],
         "templates": {
@@ -1166,6 +1167,14 @@
             "head": 0,
             "left_arm": 0,
             "right_arm": 0
+        },
+        "gear": {
+            "templates": [
+                "base"
+            ],
+            "shortDescription": "",
+            "book": "",
+            "page": ""
         },
         "characteristic": {
             "templates": [

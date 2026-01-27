@@ -110,7 +110,8 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @return {undefined}
    */
   _prepareItems(context) {
-    // Initialize containers.
+    const weapons = [];
+    const armor = [];
     const gear = [];
     const characteristics = [];
     const spells = {
@@ -126,18 +127,20 @@ export class DeathwatchActorSheet extends ActorSheet {
       9: []
     };
 
-    // Iterate through items, allocating to containers
     for (let i of context.items) {
       i.img = i.img || DEFAULT_TOKEN;
-      // Append to gear.
-      if (i.type === 'item') {
+      if (i.type === 'weapon') {
+        weapons.push(i);
+      }
+      else if (i.type === 'armor') {
+        armor.push(i);
+      }
+      else if (i.type === 'gear') {
         gear.push(i);
       }
-      // Append to characteristics.
       else if (i.type === 'characteristic') {
         characteristics.push(i);
       }
-      // Append to spells.
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
@@ -145,7 +148,8 @@ export class DeathwatchActorSheet extends ActorSheet {
       }
     }
 
-    // Assign and return
+    context.weapons = weapons;
+    context.armor = armor;
     context.gear = gear;
     context.characteristics = characteristics;
     context.spells = spells;
