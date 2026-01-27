@@ -6,7 +6,7 @@ export class DeathwatchItemSheet extends ItemSheet {
 
     /** @override */
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             classes: ["deathwatch", "sheet", "item"],
             width: 520,
             height: 480,

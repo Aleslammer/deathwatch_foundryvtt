@@ -9,7 +9,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["deathwatch", "sheet", "actor"],
       template: "systems/deathwatch/templates/actor/actor-sheet.html",
       width: 600,
@@ -427,7 +427,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Check if advanced skill is trained
     if (!skill.isBasic && !skill.trained) {
-      ui.notifications.warn(`${skill.label || skillKey} is an advanced skill and must be trained to use.`);
+      ui.notifications.warn(`${dataset.label || skillKey} is an advanced skill and must be trained to use.`);
       return;
     }
 
