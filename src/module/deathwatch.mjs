@@ -51,30 +51,7 @@ Hooks.once('init', async function () {
     return preloadHandlebarsTemplates();
 });
 
-/* -------------------------------------------- */
-/*  Handlebars Helpers                          */
-/* -------------------------------------------- */
-
-// If you need to add Handlebars helpers, here are a few useful examples:
-Handlebars.registerHelper('concat', function () {
-    var outStr = '';
-    for (var arg in arguments) {
-        if (typeof arguments[arg] != 'object') {
-            outStr += arguments[arg];
-        }
-    }
-    return outStr;
-});
-
-Handlebars.registerHelper('toLowerCase', function (str) {
-    return str.toLowerCase();
-});
-
-/* -------------------------------------------- */
-/*  Ready Hook                                  */
-/* -------------------------------------------- */
-
-Hooks.once("ready", async function () {
+Hooks.once('ready', async function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
 });

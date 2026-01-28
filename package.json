@@ -1,0 +1,11 @@
+{
+  "name": "deathwatch-foundryvtt",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build:packs": "node builds/scripts/compilePacks.mjs"
+  },
+  "devDependencies": {
+    "classic-level": "^1.4.1"
+  }
+}

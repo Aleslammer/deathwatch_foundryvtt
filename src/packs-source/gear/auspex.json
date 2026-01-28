@@ -1,0 +1,12 @@
+{
+  "_id": "auspex0000000001",
+  "name": "Auspex",
+  "type": "gear",
+  "img": "icons/sundries/gaming/dice-runed-brown.webp",
+  "system": {
+    "description": "These devices are used to detect engergy emissions, motion, and biological life signs. A character using an auspex gains a +20 bonus to Awareness Tests and may make a Tech-Use Test to spot things not normally detectable to human senses alone, such as invisible gases, nerby bio-signs, or ambient radiation. THe standard range for an auspex is 50m, though walls more than 50cm thick and certain shielding materials can block the scanner.",
+    "shortDescription": "Scanner",
+    "book": "Core Rulebook",
+    "page": "174"
+  }
+}

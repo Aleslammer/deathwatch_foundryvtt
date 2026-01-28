@@ -2,7 +2,7 @@
     "id": "deathwatch",
     "title": "Warhammer 40k: Deathwatch",
     "description": "A system for Warhammer 40k Deathwatch games on Foundry VTT.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "compatibility": {
         "minimum": "13",
         "verified": "13",
@@ -19,7 +19,29 @@
     "styles": [
         "styles/deathwatch.css"
     ],
-    "packs": [],
+    "packs": [
+        {
+            "name": "gear",
+            "label": "Gear",
+            "path": "packs/gear",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
+            "name": "weapons",
+            "label": "Weapons",
+            "path": "packs/weapons",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
+            "name": "armor",
+            "label": "Armor",
+            "path": "packs/armor",
+            "type": "Item",
+            "system": "deathwatch"
+        }
+    ],
     "initiative": "1d10 + @agBonus",
     "grid":{
         "distance": 3,

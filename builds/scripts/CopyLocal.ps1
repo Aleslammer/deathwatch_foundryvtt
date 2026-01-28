@@ -3,8 +3,9 @@ $InformationPreference = "Continue"
 
 $localDir = "\\thebrewery\Foundry\Data\systems\deathwatch\"
 
-
-Get-ChildItem $localDir | Remove-Item -Force -Recurse
+if (Test-Path $localDir) {
+    Get-ChildItem $localDir | Remove-Item -Force -Recurse
+}
 
 Write-Information "Copy Core Files to '$localDir'"
-Get-ChildItem .\src | Copy-Item -Destination $localDir -Recurse 
+Get-ChildItem .\src  | Copy-Item -Destination $localDir -Recurse 
