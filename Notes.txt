@@ -1,2 +1,6 @@
 Need to work on character sheet.   WE got the basics of an item created
 Need a functional char sheet
+
+to convert a png to webp!
+https://developers.google.com/speed/webp/download
+C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/lamp.png" -o "./src/icons/gear/lamp.webp"
