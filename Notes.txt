@@ -1,6 +1,10 @@
 Need to work on character sheet.   WE got the basics of an item created
 Need a functional char sheet
 
+
+file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
+
+
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/toxin.png" -o "./src/icons/gear/toxin.webp"
+C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/repair-cement.png" -o "./src/icons/gear/repair-cement.webp"
