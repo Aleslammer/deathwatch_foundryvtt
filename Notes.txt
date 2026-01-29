@@ -3,4 +3,4 @@ Need a functional char sheet
 
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/lamp.png" -o "./src/icons/gear/lamp.webp"
+C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/backbanner.jpg" -o "./src/icons/gear/backbanner.webp"

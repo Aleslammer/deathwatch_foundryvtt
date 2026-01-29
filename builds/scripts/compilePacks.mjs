@@ -58,7 +58,7 @@ async function compilePackFile(packName) {
 
 async function compileAll() {
     const packs = fs.readdirSync(PACKS_SOURCE).filter(f => 
-        fs.statSync(path.join(PACKS_SOURCE, f)).isDirectory()
+        fs.statSync(path.join(PACKS_SOURCE, f)).isDirectory() && !f.startsWith('_')
     );
     
     for (const pack of packs) {
