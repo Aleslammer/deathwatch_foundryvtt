@@ -5,7 +5,7 @@
   "img": "systems/deathwatch/icons/gear/lamp.webp",
   "system": {
     "description": "<p>These common devices can illuminate an aread a dozen or more meters in diameter. A typical lamp lasts 1d5 hours before is needs to be recharged.</p>",
-    "shortDescription": "Light Source",
+    "shortDescription": "General",
     "book": "Core Rulebook",
     "page": "175",
     "wt": 0.5,
