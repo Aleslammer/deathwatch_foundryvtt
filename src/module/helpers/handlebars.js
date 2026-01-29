@@ -38,4 +38,8 @@ function registerHandlebarsHelpers() {
         else
             return array.join(", ")
     })
+
+    Handlebars.registerHelper("substring", function (str, start, length) {
+        return str ? str.substring(start, start + length) : ""
+    })
 }

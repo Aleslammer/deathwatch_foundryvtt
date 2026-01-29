@@ -7,6 +7,9 @@
     "description": "<p>Offering more safety than a grapnel but less noise and bulk than a jump pack, this Battle-Brother-sized harness can be used to aid in safely descending from terrain or buildings. The simple harness fits over a character's power amour. A hook-shaped magnetic clip can then be anchored to a wide variety of surfaces as the coiled safety line slowly unspools. The Battle-Brother gains a +30 bonus to Climb Tests, and will not fall if he fails.</p>",
     "shortDescription": "Harness",
     "book": "Core Rulebook",
-    "page": "171"
+    "page": "171",
+    "wt": 8,
+    "req": 4,
+    "renown": ""
   }
 }

@@ -18,6 +18,20 @@
         <label>Short Description:</label>
         <input type="text" name="system.shortDescription" value="{{system.shortDescription}}" />
       </div>
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Weight:</label>
+          <input type="number" name="system.wt" value="{{system.wt}}" />
+        </div>
+        <div class="flex1">
+          <label>Requisition:</label>
+          <input type="number" name="system.req" value="{{system.req}}" />
+        </div>
+        <div class="flex1">
+          <label>Renown:</label>
+          <input type="text" name="system.renown" value="{{system.renown}}" />
+        </div>
+      </div>
     </div>
     <div class="tab" data-group="primary" data-tab="description">
       {{editor system.description target="system.description" button=true owner=owner editable=editable}}
