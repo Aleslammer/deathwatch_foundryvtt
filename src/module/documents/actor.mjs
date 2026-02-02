@@ -46,12 +46,32 @@ export class DeathwatchActor extends Actor {
   _prepareCharacterData(actorData) {
     if (actorData.type !== 'character') return;
 
-    // Make modifications to data here. For example:
     const systemData = actorData.system;
+    const modifiers = systemData.modifiers || [];
 
-    // Loop through ability scores, and add their modifiers to our sheet output.
+    // Loop through characteristics and calculate totals with modifiers
     for (let [key, characteristic] of Object.entries(systemData.characteristics)) {
-      characteristic.mod = Math.floor((characteristic.value / 10));
+      // Store base value if not already stored
+      if (characteristic.base === undefined) {
+        characteristic.base = characteristic.value;
+      }
+      
+      // Start with base value
+      let total = characteristic.base || 0;
+      const appliedMods = [];
+      
+      // Apply modifiers
+      for (const mod of modifiers) {
+        if (mod.enabled && mod.effectType === 'characteristic' && mod.valueAffected === key) {
+          const modValue = parseInt(mod.modifier) || 0;
+          total += modValue;
+          appliedMods.push({ name: mod.name, value: modValue });
+        }
+      }
+      
+      characteristic.value = total;
+      characteristic.modifiers = appliedMods;
+      characteristic.mod = Math.floor(total / 10);
     }
   }
 

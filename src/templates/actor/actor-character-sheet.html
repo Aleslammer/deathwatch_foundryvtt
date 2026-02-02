@@ -67,8 +67,9 @@
           <div class="characteristics flexcol">
             {{#each system.characteristics as |characteristic key|}}
             <div class="characteristic flexrow flex-group-center">
-              <label for="system.characteristics.{{key}}.value" class="resource-label rollable flexlarge align-left" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}">{{characteristic.label}}</label>
-              <input type="text" name="system.characteristics.{{key}}.value" value="{{characteristic.value}}" data-dtype="Number" />
+              <label for="system.characteristics.{{key}}.base" class="resource-label rollable flexlarge align-left" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" title="{{#if characteristic.modifiers.length}}Modifiers:\n{{#each characteristic.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}}\n{{/each}}{{/if}}">{{characteristic.label}}</label>
+              <input type="text" name="system.characteristics.{{key}}.base" value="{{characteristic.base}}" data-dtype="Number" />
+              <span class="characteristic-total">{{characteristic.value}}</span>
               <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
             </div>
             {{/each}}

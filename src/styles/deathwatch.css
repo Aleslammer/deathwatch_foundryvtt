@@ -790,3 +790,39 @@
   text-align: center;
   border-left: 1px solid #c9c7b8;
 }
+
+
+/* Modifiers List Styles */
+.deathwatch .modifiers-list .modifier-name {
+  flex: 2;
+}
+
+.deathwatch .modifiers-list .modifier-mod,
+.deathwatch .modifiers-list .modifier-type,
+.deathwatch .modifiers-list .modifier-effect-type,
+.deathwatch .modifiers-list .modifier-value-affected {
+  flex: 0 0 100px;
+  text-align: center;
+  border-left: 1px solid #c9c7b8;
+  font-size: 12px;
+}
+
+.deathwatch .modifiers-list .modifier {
+  padding: 4px 8px;
+}
+
+.deathwatch .modifiers-list .modifier:hover {
+  background: #f8f9fa;
+}
+
+.deathwatch .modifiers-list .modifier-toggle {
+  cursor: pointer;
+}
+
+
+.deathwatch .characteristic-total {
+  font-weight: bold;
+  min-width: 30px;
+  text-align: center;
+  color: #007bff;
+}

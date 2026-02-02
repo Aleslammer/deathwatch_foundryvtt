@@ -32,6 +32,7 @@
                 }
             },
             "biography": "",
+            "modifiers": [],
             "characteristics": {
                 "ws": {
                     "value": 0,
