@@ -826,3 +826,83 @@
   text-align: center;
   color: #007bff;
 }
+
+
+.deathwatch .characteristics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.deathwatch .characteristics .characteristic {
+  height: 94px;
+  width: 105px;
+  flex: 0 0 105px;
+  margin: 0 2px 4px;
+  text-align: center;
+  border: 2px groove #eeede0;
+  border-radius: 3px;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-header {
+  height: 24px;
+  margin: 0;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-header input[type="text"].characteristic-damage {
+  flex: 1;
+  height: 24px;
+  border-bottom: 2px groove #eeede0;
+  border-right: 2px groove #eeede0;
+  border-radius: 0;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-header input[type="text"].characteristic-penalty {
+  flex: 1;
+  height: 24px;
+  border-bottom: 2px groove #eeede0;
+  border-radius: 0;
+}
+
+.deathwatch .characteristics .characteristic h4.box-title {
+  line-height: 14px;
+  margin: 4px 4px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid #b5b3a4;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers {
+  height: 32px;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers span.characteristic-mod,
+.deathwatch .characteristics .characteristic .characteristic-modifiers input[type="text"].characteristic-base {
+  flex: 0 0 32px;
+  height: 30px;
+  overflow: hidden;
+  border-top: 2px groove #eeede0;
+  font-size: 12px;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers span.characteristic-mod {
+  border-right: 2px groove #eeede0;
+  padding: 8px 0 0;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers div.characteristic-center {
+  margin: -10px 0 10px;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers input[type="text"].characteristic-base {
+  border-left: 2px groove #eeede0;
+  border-radius: 0;
+}
+
+
+.deathwatch .tab.characteristics .characteristics {
+  flex: 0 0 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
