@@ -183,6 +183,13 @@ export class DeathwatchActorSheet extends ActorSheet {
       li.slideUp(200, () => this.render(false));
     });
 
+    // Toggle Equip Item
+    html.find('.item-equip').click(ev => {
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      item.update({ "system.equipped": !item.system.equipped });
+    });
+
     // Active Effect management
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
