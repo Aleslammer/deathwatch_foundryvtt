@@ -49,6 +49,21 @@ export class DeathwatchActor extends Actor {
     const systemData = actorData.system;
     const modifiers = systemData.modifiers || [];
 
+    // Collect modifiers from equipped items
+    const itemModifiers = [];
+    for (const item of actorData.items) {
+      if (item.system.equipped && item.system.modifiers) {
+        for (const mod of item.system.modifiers) {
+          if (mod.enabled !== false) {
+            itemModifiers.push({ ...mod, source: item.name });
+          }
+        }
+      }
+    }
+
+    // Combine actor and item modifiers
+    const allModifiers = [...modifiers, ...itemModifiers];
+
     // Loop through characteristics and calculate totals with modifiers
     for (let [key, characteristic] of Object.entries(systemData.characteristics)) {
       // Store base value if not already stored
@@ -61,8 +76,8 @@ export class DeathwatchActor extends Actor {
       const appliedMods = [];
       
       // Apply modifiers
-      for (const mod of modifiers) {
-        if (mod.enabled && mod.effectType === 'characteristic' && mod.valueAffected === key) {
+      for (const mod of allModifiers) {
+        if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
           const modValue = parseInt(mod.modifier) || 0;
           total += modValue;
           appliedMods.push({ name: mod.name, value: modValue });
@@ -78,8 +93,8 @@ export class DeathwatchActor extends Actor {
     if (systemData.skills) {
       for (let [key, skill] of Object.entries(systemData.skills)) {
         let skillModTotal = 0;
-        for (const mod of modifiers) {
-          if (mod.enabled && mod.effectType === 'skill' && mod.valueAffected === key) {
+        for (const mod of allModifiers) {
+          if (mod.enabled !== false && mod.effectType === 'skill' && mod.valueAffected === key) {
             skillModTotal += parseInt(mod.modifier) || 0;
           }
         }
