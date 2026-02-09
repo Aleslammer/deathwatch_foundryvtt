@@ -774,14 +774,24 @@
 
 
 /* Gear inventory columns */
+.deathwatch .items-list .item-equipped,
+.deathwatch .items-header .item-equipped {
+  flex: 0 0 24px;
+  text-align: center;
+}
+
 .deathwatch .items-list .item-name,
 .deathwatch .items-header .item-name {
   flex: 3;
+  padding-left: 5px;
+  text-align: left;
 }
 
 .deathwatch .items-list .item-description,
 .deathwatch .items-header .item-description {
   flex: 2;
+  text-align: left;
+  padding-left: 5px;
 }
 
 .deathwatch .items-list .item-stat,
@@ -791,10 +801,11 @@
   border-left: 1px solid #c9c7b8;
 }
 
-.deathwatch .items-list .item-equipped,
-.deathwatch .items-header .item-equipped {
-  flex: 0 0 24px;
-  text-align: center;
+.deathwatch .items-list .item-controls,
+.deathwatch .items-header .item-controls {
+  flex: 0 0 100px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 
@@ -803,14 +814,38 @@
   flex: 2;
 }
 
-.deathwatch .modifiers-list .modifier-mod,
-.deathwatch .modifiers-list .modifier-type,
-.deathwatch .modifiers-list .modifier-effect-type,
-.deathwatch .modifiers-list .modifier-value-affected {
+.deathwatch .modifiers-list .modifier-mod {
   flex: 0 0 100px;
   text-align: center;
   border-left: 1px solid #c9c7b8;
   font-size: 12px;
+}
+
+.deathwatch .modifiers-list .modifier-type {
+  flex: 0 0 100px;
+  text-align: center;
+  border-left: 1px solid #c9c7b8;
+  font-size: 12px;
+}
+
+.deathwatch .modifiers-list .modifier-effect-type {
+  flex: 0 0 100px;
+  text-align: center;
+  border-left: 1px solid #c9c7b8;
+  font-size: 12px;
+}
+
+.deathwatch .modifiers-list .modifier-value-affected {
+  flex: 0 0 120px;
+  text-align: center;
+  border-left: 1px solid #c9c7b8;
+  font-size: 12px;
+}
+
+.deathwatch .modifiers-list .item-controls {
+  flex: 0 0 100px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .deathwatch .modifiers-list .modifier {
