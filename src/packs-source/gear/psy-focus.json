@@ -10,6 +10,18 @@
     "page": "175",
     "wt": 0,
     "req": 15,
-    "renown": ""
+    "renown": "",
+    "equipped": false,
+    "modifiers": [
+      {
+        "_id": "psyfocusmod0000001",
+        "name": "Invocation Bonus",
+        "modifier": "10",
+        "type": "equipment",
+        "effectType": "skill",
+        "valueAffected": "invocation",
+        "enabled": true
+      }
+    ]
   }
 }

@@ -10,6 +10,18 @@
     "page": "171",
     "wt": 8,
     "req": 4,
-    "renown": ""
+    "renown": "",
+    "equipped": false,
+    "modifiers": [
+      {
+        "_id": "harnessmod0000001",
+        "name": "Climb Bonus",
+        "modifier": "30",
+        "type": "equipment",
+        "effectType": "skill",
+        "valueAffected": "climb",
+        "enabled": true
+      }
+    ]
   }
 }

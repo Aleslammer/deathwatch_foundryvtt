@@ -10,6 +10,18 @@
     "page": "175",
     "wt": 0,
     "req": 15,
-    "renown": ""
+    "renown": "",
+    "equipped": false,
+    "modifiers": [
+      {
+        "_id": "multikeymod0000001",
+        "name": "Security Bonus",
+        "modifier": "30",
+        "type": "equipment",
+        "effectType": "skill",
+        "valueAffected": "security",
+        "enabled": true
+      }
+    ]
   }
 }

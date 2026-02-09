@@ -10,6 +10,18 @@
     "page": "174",
     "wt": 1,
     "req": 15,
-    "renown": ""
+    "renown": "",
+    "equipped": false,
+    "modifiers": [
+      {
+        "_id": "combitoolmod0001",
+        "name": "Tech-Use Bonus",
+        "modifier": "10",
+        "type": "equipment",
+        "effectType": "skill",
+        "valueAffected": "tech_use",
+        "enabled": true
+      }
+    ]
   }
 }

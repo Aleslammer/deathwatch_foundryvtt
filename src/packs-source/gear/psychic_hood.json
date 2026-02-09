@@ -10,6 +10,7 @@
     "page": "171",
     "wt": 15,
     "req": 25,
-    "renown": "Distinguished"
+    "renown": "Distinguished",
+    "equipped": false
   }
 }

@@ -10,6 +10,18 @@
     "page": "173",
     "wt": 5,
     "req": 10,
-    "renown": ""
+    "renown": "",
+    "equipped": false,
+    "modifiers": [
+      {
+        "_id": "nartheciummod0000001",
+        "name": "Medicae Bonus",
+        "modifier": "20",
+        "type": "equipment",
+        "effectType": "skill",
+        "valueAffected": "medicae",
+        "enabled": true
+      }
+    ]
   }
 }
