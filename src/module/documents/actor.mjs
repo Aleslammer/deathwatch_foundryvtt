@@ -73,6 +73,19 @@ export class DeathwatchActor extends Actor {
       characteristic.modifiers = appliedMods;
       characteristic.mod = Math.floor(total / 10);
     }
+
+    // Apply skill modifiers
+    if (systemData.skills) {
+      for (let [key, skill] of Object.entries(systemData.skills)) {
+        let skillModTotal = 0;
+        for (const mod of modifiers) {
+          if (mod.enabled && mod.effectType === 'skill' && mod.valueAffected === key) {
+            skillModTotal += parseInt(mod.modifier) || 0;
+          }
+        }
+        skill.modifierTotal = skillModTotal;
+      }
+    }
   }
 
   /**

@@ -460,7 +460,10 @@ export class DeathwatchActorSheet extends ActorSheet {
       return;
     }
 
-    const skillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+    // Get skill total with modifiers applied
+    const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+    const skillModTotal = skill.modifierTotal || 0;
+    const skillTotal = baseSkillTotal + skillModTotal;
 
     // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `
@@ -634,6 +637,13 @@ export class DeathwatchActorSheet extends ActorSheet {
           <option value="fs" ${modifier.valueAffected === 'fs' ? 'selected' : ''}>Fellowship</option>
         </select>
       `;
+    } else if (modifier.effectType === 'skill') {
+      valueAffectedField = '<select name="valueAffected"><option value="">Select Skill</option>';
+      for (const [key, label] of Object.entries(DWConfig.Skills)) {
+        const selected = modifier.valueAffected === key ? 'selected' : '';
+        valueAffectedField += `<option value="${key}" ${selected}>${label}</option>`;
+      }
+      valueAffectedField += '</select>';
     } else {
       valueAffectedField = `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
     }
@@ -693,6 +703,14 @@ export class DeathwatchActorSheet extends ActorSheet {
                 <option value="fs">Fellowship</option>
               </select>
             `);
+          } else if (effectType === 'skill') {
+            group.find('input, select').remove();
+            let skillOptions = '<select name="valueAffected"><option value="">Select Skill</option>';
+            for (const [key, label] of Object.entries(DWConfig.Skills)) {
+              skillOptions += `<option value="${key}">${label}</option>`;
+            }
+            skillOptions += '</select>';
+            group.append(skillOptions);
           } else {
             group.find('input, select').remove();
             group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
