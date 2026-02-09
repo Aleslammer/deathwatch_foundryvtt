@@ -92,21 +92,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
 
-    // Handle skills.
+    // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
-      const modifiers = context.system.modifiers || [];
       for (let [k, v] of Object.entries(context.system.skills)) {
         v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
-        
-        // Apply skill modifiers
-        let skillModTotal = 0;
-        for (const mod of modifiers) {
-          if (mod.enabled && mod.effectType === 'skill' && mod.valueAffected === k) {
-            skillModTotal += parseInt(mod.modifier) || 0;
-          }
-        }
-        
-        v.total = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics) + skillModTotal;
+        const liveSkill = this.actor.system.skills[k];
+        const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const skillModTotal = liveSkill?.modifierTotal || 0;
+        v.total = baseSkillTotal + skillModTotal;
       }
     }
 
