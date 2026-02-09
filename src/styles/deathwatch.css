@@ -791,6 +791,12 @@
   border-left: 1px solid #c9c7b8;
 }
 
+.deathwatch .items-list .item-equipped,
+.deathwatch .items-header .item-equipped {
+  flex: 0 0 24px;
+  text-align: center;
+}
+
 
 /* Modifiers List Styles */
 .deathwatch .modifiers-list .modifier-name {
