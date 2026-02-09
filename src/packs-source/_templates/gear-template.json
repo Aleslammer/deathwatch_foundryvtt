@@ -10,6 +10,8 @@
     "page": "",
     "wt": 0,
     "req": 0,
-    "renown": ""
+    "renown": "",
+    "equipped": false,
+    "modifiers": []
   }
 }
