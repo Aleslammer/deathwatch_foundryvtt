@@ -32,6 +32,7 @@
                 }
             },
             "biography": "",
+            "modifiers": [],
             "characteristics": {
                 "ws": {
                     "value": 0,
@@ -1143,6 +1144,7 @@
         "types": [
             "weapon",
             "armor",
+            "gear",
             "characteristic"
         ],
         "templates": {
@@ -1156,7 +1158,9 @@
             ],
             "damage": "1d10",
             "damageType": "",
-            "weaponType": ""
+            "weaponType": "",
+            "equipped": false,
+            "modifiers": []
         },
         "armor": {
             "templates": [
@@ -1165,7 +1169,22 @@
             "body": 0,
             "head": 0,
             "left_arm": 0,
-            "right_arm": 0
+            "right_arm": 0,
+            "equipped": false,
+            "modifiers": []
+        },
+        "gear": {
+            "templates": [
+                "base"
+            ],
+            "shortDescription": "",
+            "book": "",
+            "page": "",
+            "wt": 0,
+            "req": 0,
+            "renown": "",
+            "equipped": false,
+            "modifiers": []
         },
         "characteristic": {
             "templates": [

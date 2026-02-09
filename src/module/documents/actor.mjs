@@ -46,12 +46,60 @@ export class DeathwatchActor extends Actor {
   _prepareCharacterData(actorData) {
     if (actorData.type !== 'character') return;
 
-    // Make modifications to data here. For example:
     const systemData = actorData.system;
+    const modifiers = systemData.modifiers || [];
 
-    // Loop through ability scores, and add their modifiers to our sheet output.
+    // Collect modifiers from equipped items
+    const itemModifiers = [];
+    for (const item of actorData.items) {
+      if (item.system.equipped && item.system.modifiers) {
+        for (const mod of item.system.modifiers) {
+          if (mod.enabled !== false) {
+            itemModifiers.push({ ...mod, source: item.name });
+          }
+        }
+      }
+    }
+
+    // Combine actor and item modifiers
+    const allModifiers = [...modifiers, ...itemModifiers];
+
+    // Loop through characteristics and calculate totals with modifiers
     for (let [key, characteristic] of Object.entries(systemData.characteristics)) {
-      characteristic.mod = Math.floor((characteristic.value / 10));
+      // Store base value if not already stored
+      if (characteristic.base === undefined) {
+        characteristic.base = characteristic.value;
+      }
+      
+      // Start with base value
+      let total = characteristic.base || 0;
+      const appliedMods = [];
+      
+      // Apply modifiers
+      for (const mod of allModifiers) {
+        if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
+          const modValue = parseInt(mod.modifier) || 0;
+          total += modValue;
+          appliedMods.push({ name: mod.name, value: modValue });
+        }
+      }
+      
+      characteristic.value = total;
+      characteristic.modifiers = appliedMods;
+      characteristic.mod = Math.floor(total / 10);
+    }
+
+    // Apply skill modifiers
+    if (systemData.skills) {
+      for (let [key, skill] of Object.entries(systemData.skills)) {
+        let skillModTotal = 0;
+        for (const mod of allModifiers) {
+          if (mod.enabled !== false && mod.effectType === 'skill' && mod.valueAffected === key) {
+            skillModTotal += parseInt(mod.modifier) || 0;
+          }
+        }
+        skill.modifierTotal = skillModTotal;
+      }
     }
   }
 

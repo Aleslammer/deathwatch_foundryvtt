@@ -48,7 +48,7 @@
     <a class="item" data-tab="characteristics">Characteristics</a>
     <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="description">Description</a>
-    <a class="item" data-tab="items">Items</a>
+    <a class="item" data-tab="items">Gear</a>
     <a class="item" data-tab="spells">Spells</a>
     <a class="item" data-tab="effects">Effects</a>
   </nav>
@@ -58,31 +58,22 @@
 
     {{!-- Owned Characteristics Tab --}}
     <div class="tab characteristics" data-group="primary" data-tab="characteristics">
-      <section class="grid grid-3col">
-        <aside class="sidebar">
-
-          {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
-          use both the "grid" and "grid-Ncol" class where "N" can be any number
-          from 1 to 12 and will create that number of columns. --}}
-          <div class="characteristics flexcol">
-            {{#each system.characteristics as |characteristic key|}}
-            <div class="characteristic flexrow flex-group-center">
-              <label for="system.characteristics.{{key}}.value" class="resource-label rollable flexlarge align-left" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}">{{characteristic.label}}</label>
-              <input type="text" name="system.characteristics.{{key}}.value" value="{{characteristic.value}}" data-dtype="Number" />
-              <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
-            </div>
-            {{/each}}
+      <ul class="characteristics flexrow">
+        {{#each system.characteristics as |characteristic key|}}
+        <li class="characteristic" data-characteristic="{{key}}">
+          <div class="characteristic-header flexrow">
+            <input class="characteristic-damage" name="system.characteristics.{{key}}.damage" type="text" title="Damage" value="{{#if characteristic.damage}}{{characteristic.damage}}{{/if}}" data-dtype="Number" placeholder="0"/>
+            <input class="characteristic-penalty" name="system.characteristics.{{key}}.penalty" type="text" title="Penalty" value="{{#if characteristic.penalty}}{{characteristic.penalty}}{{/if}}" data-dtype="Number" placeholder="0"/>
           </div>
-        </aside>
-
-        {{!-- For the main characteristics list, span the right two columns --}}
-        <section class="main grid-span-2">
-          {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in
-          module/helpers/templates.mjs --}}
-          {{> "systems/deathwatch/templates/actor/parts/actor-characteristics.html"}}
-        </section>
-
-      </section>
+          <h4 class="characteristic-name box-title rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" data-tooltip="{{#if characteristic.modifiers.length}}<strong>Modifiers:</strong><br>{{#each characteristic.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}}<br>{{/each}}{{/if}}">{{characteristic.label}}</h4>
+          <div class="characteristic-modifiers flexrow">
+            <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
+            <div class="characteristic-center">{{characteristic.value}}</div>
+            <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
     </div>
 
     {{!-- Skills Tab --}}

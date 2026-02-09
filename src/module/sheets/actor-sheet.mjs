@@ -9,7 +9,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["deathwatch", "sheet", "actor"],
       template: "systems/deathwatch/templates/actor/actor-sheet.html",
       width: 600,
@@ -73,6 +73,9 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Prepare active effects
     context.effects = prepareActiveEffectCategories(this.actor.effects);
 
+    // Prepare modifiers
+    context.modifiers = actorData.system.modifiers || [];
+
     return context;
   }
 
@@ -89,12 +92,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
 
-    // Handle skills.
+    // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
       for (let [k, v] of Object.entries(context.system.skills)) {
         v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
-        
-        v.total = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const liveSkill = this.actor.system.skills[k];
+        const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const skillModTotal = liveSkill?.modifierTotal || 0;
+        v.total = baseSkillTotal + skillModTotal;
       }
     }
 
@@ -110,7 +115,8 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @return {undefined}
    */
   _prepareItems(context) {
-    // Initialize containers.
+    const weapons = [];
+    const armor = [];
     const gear = [];
     const characteristics = [];
     const spells = {
@@ -126,18 +132,20 @@ export class DeathwatchActorSheet extends ActorSheet {
       9: []
     };
 
-    // Iterate through items, allocating to containers
     for (let i of context.items) {
       i.img = i.img || DEFAULT_TOKEN;
-      // Append to gear.
-      if (i.type === 'item') {
+      if (i.type === 'weapon') {
+        weapons.push(i);
+      }
+      else if (i.type === 'armor') {
+        armor.push(i);
+      }
+      else if (i.type === 'gear') {
         gear.push(i);
       }
-      // Append to characteristics.
       else if (i.type === 'characteristic') {
         characteristics.push(i);
       }
-      // Append to spells.
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
@@ -145,7 +153,8 @@ export class DeathwatchActorSheet extends ActorSheet {
       }
     }
 
-    // Assign and return
+    context.weapons = weapons;
+    context.armor = armor;
     context.gear = gear;
     context.characteristics = characteristics;
     context.spells = spells;
@@ -179,8 +188,21 @@ export class DeathwatchActorSheet extends ActorSheet {
       li.slideUp(200, () => this.render(false));
     });
 
+    // Toggle Equip Item
+    html.find('.item-equip').click(ev => {
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      item.update({ "system.equipped": !item.system.equipped });
+    });
+
     // Active Effect management
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
+
+    // Modifier management
+    html.find('.modifier-create').click(this._onModifierCreate.bind(this));
+    html.find('.modifier-edit').click(this._onModifierEdit.bind(this));
+    html.find('.modifier-delete').click(this._onModifierDelete.bind(this));
+    html.find('.modifier-toggle').click(this._onToggleModifierEnabled.bind(this));
 
     // Skill checkbox cascade logic
     html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
@@ -427,11 +449,14 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Check if advanced skill is trained
     if (!skill.isBasic && !skill.trained) {
-      ui.notifications.warn(`${skill.label || skillKey} is an advanced skill and must be trained to use.`);
+      ui.notifications.warn(`${dataset.label || skillKey} is an advanced skill and must be trained to use.`);
       return;
     }
 
-    const skillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+    // Get skill total with modifiers applied
+    const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+    const skillModTotal = skill.modifierTotal || 0;
+    const skillTotal = baseSkillTotal + skillModTotal;
 
     // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `
@@ -545,6 +570,184 @@ export class DeathwatchActorSheet extends ActorSheet {
       },
       default: "roll"
     }).render(true);
+  }
+
+  /**
+   * Add a modifier to this actor.
+   * @param {Event} event The originating click event
+   */
+  async _onModifierCreate(event) {
+    event.preventDefault();
+    const modifiers = Array.isArray(this.actor.system.modifiers) ? [...this.actor.system.modifiers] : [];
+    modifiers.push({
+      _id: foundry.utils.randomID(),
+      name: "New Modifier",
+      modifier: "0",
+      type: "untyped",
+      modifierType: "constant",
+      effectType: "characteristic",
+      valueAffected: "",
+      enabled: true,
+      source: "Actor"
+    });
+    await this.actor.update({ "system.modifiers": modifiers });
+  }
+
+  /**
+   * Delete a modifier from the actor.
+   * @param {Event} event The originating click event
+   */
+  async _onModifierDelete(event) {
+    event.preventDefault();
+    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
+    const modifiers = Array.isArray(this.actor.system.modifiers) ? this.actor.system.modifiers.filter(m => m._id !== modifierId) : [];
+    await this.actor.update({ "system.modifiers": modifiers });
+  }
+
+  /**
+   * Edit a modifier for an actor.
+   * @param {Event} event The originating click event
+   */
+  async _onModifierEdit(event) {
+    event.preventDefault();
+    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
+    const modifier = this.actor.system.modifiers?.find(m => m._id === modifierId);
+    if (!modifier) return;
+
+    let valueAffectedField = '';
+    if (modifier.effectType === 'characteristic') {
+      valueAffectedField = `
+        <select name="valueAffected">
+          <option value="">Select Characteristic</option>
+          <option value="ws" ${modifier.valueAffected === 'ws' ? 'selected' : ''}>Weapon Skill</option>
+          <option value="bs" ${modifier.valueAffected === 'bs' ? 'selected' : ''}>Ballistic Skill</option>
+          <option value="str" ${modifier.valueAffected === 'str' ? 'selected' : ''}>Strength</option>
+          <option value="tg" ${modifier.valueAffected === 'tg' ? 'selected' : ''}>Toughness</option>
+          <option value="ag" ${modifier.valueAffected === 'ag' ? 'selected' : ''}>Agility</option>
+          <option value="int" ${modifier.valueAffected === 'int' ? 'selected' : ''}>Intelligence</option>
+          <option value="per" ${modifier.valueAffected === 'per' ? 'selected' : ''}>Perception</option>
+          <option value="wil" ${modifier.valueAffected === 'wil' ? 'selected' : ''}>Willpower</option>
+          <option value="fs" ${modifier.valueAffected === 'fs' ? 'selected' : ''}>Fellowship</option>
+        </select>
+      `;
+    } else if (modifier.effectType === 'skill') {
+      valueAffectedField = '<select name="valueAffected"><option value="">Select Skill</option>';
+      for (const [key, label] of Object.entries(DWConfig.Skills)) {
+        const selected = modifier.valueAffected === key ? 'selected' : '';
+        valueAffectedField += `<option value="${key}" ${selected}>${label}</option>`;
+      }
+      valueAffectedField += '</select>';
+    } else {
+      valueAffectedField = `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
+    }
+
+    const content = `
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" name="name" value="${modifier.name}" />
+      </div>
+      <div class="form-group">
+        <label>Modifier:</label>
+        <input type="text" name="modifier" value="${modifier.modifier}" />
+      </div>
+      <div class="form-group">
+        <label>Type:</label>
+        <select name="type">
+          <option value="untyped" ${modifier.type === 'untyped' ? 'selected' : ''}>Untyped</option>
+          <option value="circumstance" ${modifier.type === 'circumstance' ? 'selected' : ''}>Circumstance</option>
+          <option value="equipment" ${modifier.type === 'equipment' ? 'selected' : ''}>Equipment</option>
+          <option value="trait" ${modifier.type === 'trait' ? 'selected' : ''}>Trait</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Effect Type:</label>
+        <select name="effectType" id="effectType">
+          <option value="characteristic" ${modifier.effectType === 'characteristic' ? 'selected' : ''}>Characteristic</option>
+          <option value="skill" ${modifier.effectType === 'skill' ? 'selected' : ''}>Skill</option>
+          <option value="characteristic-bonus" ${modifier.effectType === 'characteristic-bonus' ? 'selected' : ''}>Characteristic Bonus</option>
+        </select>
+      </div>
+      <div class="form-group" id="valueAffectedGroup">
+        <label>Value Affected:</label>
+        ${valueAffectedField}
+      </div>
+    `;
+
+    new Dialog({
+      title: "Edit Modifier",
+      content: content,
+      render: (html) => {
+        html.find('#effectType').change((ev) => {
+          const effectType = ev.target.value;
+          const group = html.find('#valueAffectedGroup');
+          if (effectType === 'characteristic') {
+            group.find('input, select').remove();
+            group.append(`
+              <select name="valueAffected">
+                <option value="">Select Characteristic</option>
+                <option value="ws">Weapon Skill</option>
+                <option value="bs">Ballistic Skill</option>
+                <option value="str">Strength</option>
+                <option value="tg">Toughness</option>
+                <option value="ag">Agility</option>
+                <option value="int">Intelligence</option>
+                <option value="per">Perception</option>
+                <option value="wil">Willpower</option>
+                <option value="fs">Fellowship</option>
+              </select>
+            `);
+          } else if (effectType === 'skill') {
+            group.find('input, select').remove();
+            let skillOptions = '<select name="valueAffected"><option value="">Select Skill</option>';
+            for (const [key, label] of Object.entries(DWConfig.Skills)) {
+              skillOptions += `<option value="${key}">${label}</option>`;
+            }
+            skillOptions += '</select>';
+            group.append(skillOptions);
+          } else {
+            group.find('input, select').remove();
+            group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
+          }
+        });
+      },
+      buttons: {
+        save: {
+          label: "Save",
+          callback: async (html) => {
+            const modifiers = [...this.actor.system.modifiers];
+            const index = modifiers.findIndex(m => m._id === modifierId);
+            if (index >= 0) {
+              modifiers[index] = {
+                ...modifiers[index],
+                name: html.find('[name="name"]').val(),
+                modifier: html.find('[name="modifier"]').val(),
+                type: html.find('[name="type"]').val(),
+                effectType: html.find('[name="effectType"]').val(),
+                valueAffected: html.find('[name="valueAffected"]').val()
+              };
+              await this.actor.update({ "system.modifiers": modifiers });
+            }
+          }
+        },
+        cancel: { label: "Cancel" }
+      },
+      default: "save"
+    }).render(true);
+  }
+
+  /**
+   * Toggle a modifier to be enabled or disabled.
+   * @param {Event} event The originating click event
+   */
+  async _onToggleModifierEnabled(event) {
+    event.preventDefault();
+    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
+    const modifiers = [...this.actor.system.modifiers];
+    const index = modifiers.findIndex(m => m._id === modifierId);
+    if (index >= 0) {
+      modifiers[index].enabled = !modifiers[index].enabled;
+      await this.actor.update({ "system.modifiers": modifiers });
+    }
   }
 
 }
