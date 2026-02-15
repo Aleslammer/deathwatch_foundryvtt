@@ -1,8 +1,8 @@
 {
   "_id": "boltpistol00001",
-  "name": "AstartesBolt Pistol",
-  "type": "ranged-weapon",
-  "img": "systems/deathwatch/icons/weapons/ranged/astartes-bolt-pistol.webp",
+  "name": "Astartes Bolt Pistol",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/bolt-pistol.webp",
   "system": {
     "description": "<p>As destructive as its full-size counterpart, a bolt pistol’s primary drawbacks are its smaller clip and slower rate of fire. However, they are ideal for Devastator units needing to take down an enemy at close quarters and for Assault specialists needing a vehicle for the Deathwatch’s many special bolt types.</p>",
     "class": "Pistol",

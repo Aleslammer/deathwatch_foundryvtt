@@ -794,6 +794,24 @@
   padding-left: 5px;
 }
 
+.deathwatch .items-list .item-damage,
+.deathwatch .items-header .item-damage {
+  flex: 0 0 80px;
+  text-align: center;
+}
+
+.deathwatch .items-list .item-type,
+.deathwatch .items-header .item-type {
+  flex: 0 0 60px;
+  text-align: center;
+}
+
+.deathwatch .items-list .item-armor,
+.deathwatch .items-header .item-armor {
+  flex: 0 0 60px;
+  text-align: center;
+}
+
 .deathwatch .items-list .item-stat,
 .deathwatch .items-header .item-stat {
   flex: 0 0 50px;
@@ -806,6 +824,14 @@
   flex: 0 0 100px;
   display: flex;
   justify-content: flex-end;
+}
+
+.deathwatch .item-image.rollable {
+  cursor: pointer;
+}
+
+.deathwatch .item-image.rollable:hover {
+  box-shadow: 0 0 8px red;
 }
 
 

@@ -223,6 +223,9 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Rollable abilities.
     html.find('.rollable').click(this._onRoll.bind(this));
 
+    // Rollable weapon images for attacks
+    html.find('.item-image.rollable').click(this._onWeaponAttack.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -569,6 +572,92 @@ export class DeathwatchActorSheet extends ActorSheet {
         }
       },
       default: "roll"
+    }).render(true);
+  }
+
+  /**
+   * Handle weapon attack rolls.
+   * @param {Event} event The originating click event
+   * @private
+   */
+  async _onWeaponAttack(event) {
+    event.preventDefault();
+    const itemId = $(event.currentTarget).data('itemId');
+    const weapon = this.actor.items.get(itemId);
+    
+    if (!weapon) return;
+
+    const weaponData = weapon.system;
+    const bsChar = this.actor.system.characteristics.bs;
+    const bsValue = bsChar?.value || 0;
+
+    // Create attack dialog
+    const content = `
+      <div class="form-group">
+        <label>Attack Type:</label>
+        <select id="attack-type" name="attackType">
+          <option value="standard">Standard Attack (BS: ${bsValue})</option>
+          <option value="aimed">Aimed Shot (+10)</option>
+          <option value="called">Called Shot (-20)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Range Modifier:</label>
+        <input type="number" id="range-mod" name="rangeMod" value="0" />
+      </div>
+    `;
+
+    new Dialog({
+      title: `Attack with ${weapon.name}`,
+      content: content,
+      buttons: {
+        attack: {
+          label: "Attack",
+          callback: async (html) => {
+            const attackType = html.find('#attack-type').val();
+            const rangeMod = parseInt(html.find('#range-mod').val()) || 0;
+            
+            let attackMod = 0;
+            if (attackType === 'aimed') attackMod = 10;
+            if (attackType === 'called') attackMod = -20;
+            
+            const totalMod = attackMod + rangeMod;
+            const targetNumber = bsValue + totalMod;
+            
+            // Roll to hit
+            const hitRoll = new Roll('1d100');
+            await hitRoll.evaluate();
+            const hitResult = hitRoll.total;
+            const success = hitResult <= targetNumber;
+            
+            let chatContent = `<div class="deathwatch weapon-attack">
+              <h3>${weapon.name} Attack</h3>
+              <div><strong>Target:</strong> ${targetNumber} (BS ${bsValue} ${totalMod >= 0 ? '+' : ''}${totalMod})</div>
+              <div><strong>Roll:</strong> ${hitResult}</div>
+              <div><strong>Result:</strong> ${success ? '<span style="color: green;">HIT</span>' : '<span style="color: red;">MISS</span>'}</div>`;
+            
+            if (success) {
+              // Roll damage
+              const damageRoll = new Roll(weaponData.dmg);
+              await damageRoll.evaluate();
+              chatContent += `<div><strong>Damage:</strong> ${damageRoll.total} (${weaponData.dmgType})</div>`;
+              chatContent += `<div><strong>Penetration:</strong> ${weaponData.penetration}</div>`;
+              if (weaponData.isTearing) chatContent += `<div><em>Tearing: Reroll damage dice, take highest</em></div>`;
+            }
+            
+            chatContent += `</div>`;
+            
+            ChatMessage.create({
+              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+              content: chatContent
+            });
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "attack"
     }).render(true);
   }
 

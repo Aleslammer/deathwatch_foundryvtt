@@ -11,6 +11,21 @@ function randomID() {
     ).join('');
 }
 
+function getAllJsonFiles(dir) {
+    let results = [];
+    const list = fs.readdirSync(dir);
+    list.forEach(file => {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        if (stat.isDirectory()) {
+            results = results.concat(getAllJsonFiles(filePath));
+        } else if (file.endsWith('.json')) {
+            results.push(filePath);
+        }
+    });
+    return results;
+}
+
 async function compilePackFile(packName) {
     const srcPath = path.join(PACKS_SOURCE, packName);
     const destPath = path.join(PACKS_DEST, packName);
@@ -19,11 +34,10 @@ async function compilePackFile(packName) {
         fs.rmSync(destPath, { recursive: true });
     }
 
-    const sourceFiles = fs.readdirSync(srcPath).filter(f => f.endsWith('.json'));
+    const sourceFiles = getAllJsonFiles(srcPath);
     const db = new ClassicLevel(destPath, { keyEncoding: 'utf8', valueEncoding: 'json' });
     
-    for (const file of sourceFiles) {
-        const filePath = path.join(srcPath, file);
+    for (const filePath of sourceFiles) {
         const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const id = doc._id || randomID();
         
