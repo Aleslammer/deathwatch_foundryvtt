@@ -1,12 +1,58 @@
-import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./constants.mjs";
+import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, RANGE_MODIFIERS } from "./constants.mjs";
+import { debug } from "./debug.mjs";
 
 export class CombatHelper {
+
+  static calculateRangeModifier(distance, weaponRange) {
+    debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
+    if (distance <= 2) {
+      return { modifier: RANGE_MODIFIERS.POINT_BLANK, label: "Point Blank" };
+    } else if (distance < (weaponRange * 0.5)) {
+      return { modifier: RANGE_MODIFIERS.SHORT, label: "Short" };
+    } else if (distance >= (weaponRange * 3)) {
+      return { modifier: RANGE_MODIFIERS.EXTREME, label: "Extreme" };
+    } else if (distance >= (weaponRange * 2)) {
+      return { modifier: RANGE_MODIFIERS.LONG, label: "Long" };
+    } else {
+      return { modifier: RANGE_MODIFIERS.NORMAL, label: "Normal" };
+    }
+  }
+
+  static getTokenDistance(token1, token2) {
+    if (!token1 || !token2) return null;
+    if (token1.scene.id !== token2.scene.id) return null;
+
+    const distance = canvas.grid.measurePath([token1.center, token2.center]).distance;
+    return distance;
+  }
   
   static async weaponAttackDialog(actor, weapon) {
     const bs = actor.system.characteristics.bs.value;
     const bsAdv = actor.system.characteristics.bs.advances || 0;
 
+    // Get selected tokens for range calculation
+    const attackerToken = canvas.tokens.controlled[0];
+    const targetToken = game.user.targets.first();
+    
+    let autoRangeMod = 0;
+    let rangeLabel = "Unknown";
+    let distanceText = "";
+    
+    if (attackerToken && targetToken && weapon.system.range) {
+      const weaponRange = parseInt(weapon.system.range) || 0;
+      if (weaponRange > 0) {
+        const distance = this.getTokenDistance(attackerToken, targetToken);
+        if (distance !== null) {
+          const rangeInfo = this.calculateRangeModifier(distance, weaponRange);
+          autoRangeMod = rangeInfo.modifier;
+          rangeLabel = rangeInfo.label;
+          distanceText = `<div class="form-group"><strong>Distance:</strong> ${Math.round(distance)}m (${rangeLabel} Range: ${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod})</div>`;
+        }
+      }
+    }
+
     const content = `
+      ${distanceText}
       <div class="form-group">
         <label>Aim:</label>
         <select id="aim" name="aim">
@@ -33,11 +79,11 @@ export class CombatHelper {
       </div>
       <div class="form-group">
         <label>Range Modifier:</label>
-        <input type="number" id="range" name="range" value="0" />
+        <input type="number" id="range" name="range" value="${autoRangeMod}" readonly />
       </div>
       <div class="form-group">
         <label>Misc Modifier:</label>
-        <input type="text" id="miscModifier" name="miscModifier" value="0" pattern="[+-]?[0-9]+" />
+        <input type="text" id="miscModifier" name="miscModifier" value="0" pattern="[\+\-]?[0-9]+" />
       </div>
     `;
 
