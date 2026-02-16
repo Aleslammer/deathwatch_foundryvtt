@@ -63,6 +63,10 @@ export class DeathwatchItemSheet extends ItemSheet {
         html.find('.modifier-edit').click(this._onModifierEdit.bind(this));
         html.find('.modifier-delete').click(this._onModifierDelete.bind(this));
         html.find('.modifier-toggle').click(this._onToggleModifierEnabled.bind(this));
+
+        // Weapon attack/damage rolls
+        html.find('.weapon-attack').click(this._onWeaponAttack.bind(this));
+        html.find('.weapon-damage').click(this._onWeaponDamage.bind(this));
     }
 
     async _onModifierCreate(event) {
@@ -224,5 +228,39 @@ export class DeathwatchItemSheet extends ItemSheet {
             modifiers[index].enabled = !modifiers[index].enabled;
             await this.item.update({ "system.modifiers": modifiers });
         }
+    }
+
+    async _onWeaponAttack(event) {
+        event.preventDefault();
+        const actor = this.item.actor;
+        if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll attacks.");
+
+        const bs = actor.system.characteristics.bs.value;
+        const roll = await new Roll("1d100").evaluate();
+        const total = roll.total;
+        const target = bs;
+        const isHit = total <= target;
+
+        const flavor = `<h2>${this.item.name} - Attack Roll</h2><p>Target: ${target}</p>`;
+        roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: flavor + `<p><strong>${isHit ? 'HIT!' : 'MISS!'}</strong></p>`
+        });
+    }
+
+    async _onWeaponDamage(event) {
+        event.preventDefault();
+        const actor = this.item.actor;
+        if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll damage.");
+
+        const dmg = this.item.system.dmg;
+        if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
+
+        const roll = await new Roll(dmg).evaluate();
+        const flavor = `<h2>${this.item.name} - Damage Roll</h2><p>Penetration: ${this.item.system.penetration}</p>`;
+        roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: flavor
+        });
     }
 }

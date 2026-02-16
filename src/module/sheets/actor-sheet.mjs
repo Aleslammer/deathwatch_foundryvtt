@@ -226,6 +226,10 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Rollable weapon images for attacks
     html.find('.item-image.rollable').click(this._onWeaponAttack.bind(this));
 
+    // Weapon attack and damage buttons
+    html.find('.weapon-attack-btn').click(this._onWeaponAttackBtn.bind(this));
+    html.find('.weapon-damage-btn').click(this._onWeaponDamageBtn.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -837,6 +841,120 @@ export class DeathwatchActorSheet extends ActorSheet {
       modifiers[index].enabled = !modifiers[index].enabled;
       await this.actor.update({ "system.modifiers": modifiers });
     }
+  }
+
+  async _onWeaponAttackBtn(event) {
+    event.preventDefault();
+    const itemId = $(event.currentTarget).data('itemId');
+    const weapon = this.actor.items.get(itemId);
+    if (!weapon) return;
+
+    const bs = this.actor.system.characteristics.bs.value;
+    const bsAdv = this.actor.system.characteristics.bs.advances || 0;
+
+    const content = `
+      <div class="form-group">
+        <label>Aim Modifier:</label>
+        <input type="number" id="aim" name="aim" value="0" />
+      </div>
+      <div class="form-group">
+        <label>Rate of Fire:</label>
+        <select id="autoFire" name="autoFire">
+          <option value="0">Single</option>
+          <option value="10">Semi-Auto (+10)</option>
+          <option value="20">Full-Auto (+20)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Called Shot:</label>
+        <input type="number" id="calledShot" name="calledShot" value="0" />
+      </div>
+      <div class="form-group">
+        <label>Range Modifier:</label>
+        <input type="number" id="range" name="range" value="0" />
+      </div>
+      <div class="form-group">
+        <label>Running Target:</label>
+        <input type="number" id="runningTarget" name="runningTarget" value="0" />
+      </div>
+      <div class="form-group">
+        <label>Misc Modifier:</label>
+        <input type="number" id="miscModifier" name="miscModifier" value="0" />
+      </div>
+    `;
+
+    new Dialog({
+      title: `Attack with ${weapon.name}`,
+      content: content,
+      buttons: {
+        attack: {
+          label: "Attack",
+          callback: async (html) => {
+            const aim = parseInt(html.find('#aim').val()) || 0;
+            const autoFire = parseInt(html.find('#autoFire').val()) || 0;
+            const calledShot = parseInt(html.find('#calledShot').val()) || 0;
+            const range = parseInt(html.find('#range').val()) || 0;
+            const runningTarget = parseInt(html.find('#runningTarget').val()) || 0;
+            const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
+
+            const fullModifier = bs + bsAdv + aim + autoFire + calledShot + range + runningTarget + miscModifier;
+            const hitRoll = await new Roll('1d100').evaluate();
+            const hitValue = hitRoll.total;
+            const hitsTotal = fullModifier - hitValue >= 0 ? 1 + Math.floor((fullModifier - hitValue) / 10) : 0;
+
+            let chatContent = `<div class="deathwatch weapon-attack">
+              <h3>${weapon.name} Attack</h3>
+              <div><strong>Ballistic Skill:</strong> ${bs}</div>
+              <div><strong>BS Advances:</strong> ${bsAdv}</div>`;
+            
+            if (aim !== 0) chatContent += `<div><strong>Aim:</strong> ${aim}</div>`;
+            if (autoFire !== 0) chatContent += `<div><strong>Rate of Fire:</strong> +${autoFire}</div>`;
+            if (calledShot !== 0) chatContent += `<div><strong>Called Shot:</strong> ${calledShot}</div>`;
+            if (range !== 0) chatContent += `<div><strong>Range:</strong> ${range}</div>`;
+            if (runningTarget !== 0) chatContent += `<div><strong>Running Target:</strong> ${runningTarget}</div>`;
+            if (miscModifier !== 0) chatContent += `<div><strong>Misc:</strong> ${miscModifier}</div>`;
+            
+            chatContent += `<div><strong>Total Modifier:</strong> ${fullModifier}</div>
+              <div><strong>Roll:</strong> ${hitValue}</div>
+              <div><strong>Hits:</strong> ${hitsTotal}</div>`;
+
+            if (hitsTotal > 0) {
+              chatContent += `<div style="color: green;"><strong>HIT!</strong></div>`;
+            } else {
+              chatContent += `<div style="color: red;"><strong>MISS!</strong></div>`;
+            }
+
+            chatContent += `</div>`;
+
+            ChatMessage.create({
+              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+              content: chatContent
+            });
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "attack"
+    }).render(true);
+  }
+
+  async _onWeaponDamageBtn(event) {
+    event.preventDefault();
+    const itemId = $(event.currentTarget).data('itemId');
+    const weapon = this.actor.items.get(itemId);
+    if (!weapon) return;
+
+    const dmg = weapon.system.dmg;
+    if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
+
+    const roll = await new Roll(dmg).evaluate();
+    const flavor = `<h2>${weapon.name} - Damage Roll</h2><p>Penetration: ${weapon.system.penetration}</p>`;
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: flavor
+    });
   }
 
 }
