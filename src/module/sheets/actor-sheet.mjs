@@ -854,8 +854,12 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     const content = `
       <div class="form-group">
-        <label>Aim Modifier:</label>
-        <input type="number" id="aim" name="aim" value="0" />
+        <label>Aim:</label>
+        <select id="aim" name="aim">
+          <option value="0">None</option>
+          <option value="10">Half (+10)</option>
+          <option value="20">Full (+20)</option>
+        </select>
       </div>
       <div class="form-group">
         <label>Rate of Fire:</label>
@@ -865,36 +869,59 @@ export class DeathwatchActorSheet extends ActorSheet {
           <option value="20">Full-Auto (+20)</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Called Shot:</label>
-        <input type="number" id="calledShot" name="calledShot" value="0" />
+      <div class="form-group" style="display: flex; gap: 20px;">
+        <label><i class="far fa-square" id="calledShotIcon"></i> Called Shot (-20)
+          <input type="checkbox" id="calledShot" name="calledShot" style="display:none;" />
+        </label>
+        <label><i class="far fa-square" id="runningTargetIcon"></i> Running Target (-20)
+          <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
+        </label>
       </div>
       <div class="form-group">
         <label>Range Modifier:</label>
         <input type="number" id="range" name="range" value="0" />
       </div>
       <div class="form-group">
-        <label>Running Target:</label>
-        <input type="number" id="runningTarget" name="runningTarget" value="0" />
-      </div>
-      <div class="form-group">
         <label>Misc Modifier:</label>
-        <input type="number" id="miscModifier" name="miscModifier" value="0" />
+        <input type="text" id="miscModifier" name="miscModifier" value="0" pattern="[+-]?[0-9]+" />
       </div>
     `;
 
     new Dialog({
       title: `Attack with ${weapon.name}`,
       content: content,
+      render: (html) => {
+        html.find('#miscModifier').on('input', function() {
+          this.value = this.value.replace(/[^0-9+\-]/g, '');
+        });
+        
+        html.find('label:has(#calledShot)').click(function(e) {
+          if (e.target.tagName !== 'INPUT') {
+            const checkbox = $(this).find('#calledShot');
+            const icon = $(this).find('#calledShotIcon');
+            checkbox.prop('checked', !checkbox.prop('checked'));
+            icon.toggleClass('fa-square fa-check');
+          }
+        });
+        
+        html.find('label:has(#runningTarget)').click(function(e) {
+          if (e.target.tagName !== 'INPUT') {
+            const checkbox = $(this).find('#runningTarget');
+            const icon = $(this).find('#runningTargetIcon');
+            checkbox.prop('checked', !checkbox.prop('checked'));
+            icon.toggleClass('fa-square fa-check');
+          }
+        });
+      },
       buttons: {
         attack: {
           label: "Attack",
           callback: async (html) => {
             const aim = parseInt(html.find('#aim').val()) || 0;
             const autoFire = parseInt(html.find('#autoFire').val()) || 0;
-            const calledShot = parseInt(html.find('#calledShot').val()) || 0;
+            const calledShot = html.find('#calledShot').is(':checked') ? -20 : 0;
             const range = parseInt(html.find('#range').val()) || 0;
-            const runningTarget = parseInt(html.find('#runningTarget').val()) || 0;
+            const runningTarget = html.find('#runningTarget').is(':checked') ? -20 : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
             const fullModifier = bs + bsAdv + aim + autoFire + calledShot + range + runningTarget + miscModifier;
