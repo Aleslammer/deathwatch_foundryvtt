@@ -37,9 +37,50 @@ async function compilePackFile(packName) {
     const sourceFiles = getAllJsonFiles(srcPath);
     const db = new ClassicLevel(destPath, { keyEncoding: 'utf8', valueEncoding: 'json' });
     
+    // Create folder map based on directory structure
+    const folderMap = {};
+    const folders = [];
+    
+    // Scan for subdirectories and create folder entries
+    const subdirs = fs.readdirSync(srcPath).filter(f => {
+        const fullPath = path.join(srcPath, f);
+        return fs.statSync(fullPath).isDirectory() && !f.startsWith('_');
+    });
+    
+    for (const subdir of subdirs) {
+        const folderId = randomID();
+        const folderName = subdir.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        folderMap[subdir] = folderId;
+        folders.push({
+            _id: folderId,
+            name: folderName,
+            sorting: 'a',
+            folder: null,
+            type: 'Item',
+            _stats: {
+                systemId: 'deathwatch',
+                systemVersion: '0.0.2',
+                coreVersion: '13.351'
+            }
+        });
+    }
+    
+    // Write folders to database
+    for (const folder of folders) {
+        await db.put(`!folders!${folder._id}`, folder);
+    }
+    
     for (const filePath of sourceFiles) {
         const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const id = doc._id || randomID();
+        
+        // Determine folder based on file path
+        let folderId = null;
+        const relativePath = path.relative(srcPath, filePath);
+        const firstDir = relativePath.split(path.sep)[0];
+        if (folderMap[firstDir]) {
+            folderId = folderMap[firstDir];
+        }
         
         const entry = {
             _id: id,
@@ -48,7 +89,7 @@ async function compilePackFile(packName) {
             img: doc.img || '',
             system: doc.system || {},
             effects: doc.effects || [],
-            folder: doc.folder || null,
+            folder: folderId,
             sort: doc.sort || 0,
             ownership: doc.ownership || { default: 0 },
             flags: doc.flags || {},
@@ -67,7 +108,7 @@ async function compilePackFile(packName) {
     }
     
     await db.close();
-    console.log(`Compiled ${packName} (${sourceFiles.length} entries)`);
+    console.log(`Compiled ${packName} (${sourceFiles.length} entries, ${folders.length} folders)`);
 }
 
 async function compileAll() {
