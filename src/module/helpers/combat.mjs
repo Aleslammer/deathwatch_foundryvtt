@@ -34,6 +34,10 @@ export class CombatHelper {
     const attackerToken = canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
     
+    if (!targetToken) {
+      ui.notifications.warn("No target selected. Please target a token before attacking.");
+    }
+    
     let autoRangeMod = 0;
     let rangeLabel = "Unknown";
     let distanceText = "";
@@ -51,7 +55,22 @@ export class CombatHelper {
       }
     }
 
+    // Parse weapon RoF (e.g., "S/2/4" or "S/-/-" or "-/3/-")
+    const rof = weapon.system.rof || "S/-/-";
+    const rofParts = rof.split('/');
+    const hasSingle = rofParts[0] && rofParts[0] !== '-';
+    const hasSemiAuto = rofParts[1] && rofParts[1] !== '-';
+    const hasFullAuto = rofParts[2] && rofParts[2] !== '-';
+
+    let rofOptions = '';
+    if (hasSingle) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SINGLE}">Single</option>`;
+    if (hasSemiAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}">Semi-Auto (+${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO})</option>`;
+    if (hasFullAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}">Full-Auto (+${RATE_OF_FIRE_MODIFIERS.FULL_AUTO})</option>`;
+
     const content = `
+      <div style="text-align: center; margin-bottom: 10px;">
+        <img src="${weapon.img}" alt="${weapon.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+      </div>
       ${distanceText}
       <div class="form-group">
         <label>Aim:</label>
@@ -64,9 +83,7 @@ export class CombatHelper {
       <div class="form-group">
         <label>Rate of Fire:</label>
         <select id="autoFire" name="autoFire">
-          <option value="${RATE_OF_FIRE_MODIFIERS.SINGLE}">Single</option>
-          <option value="${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}">Semi-Auto (+${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO})</option>
-          <option value="${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}">Full-Auto (+${RATE_OF_FIRE_MODIFIERS.FULL_AUTO})</option>
+          ${rofOptions}
         </select>
       </div>
       <div class="form-group" style="display: flex; gap: 20px;">
@@ -76,10 +93,6 @@ export class CombatHelper {
         <label><i class="far fa-square" id="runningTargetIcon"></i> Running Target (${COMBAT_PENALTIES.RUNNING_TARGET})
           <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
         </label>
-      </div>
-      <div class="form-group">
-        <label>Range Modifier:</label>
-        <input type="number" id="range" name="range" value="${autoRangeMod}" readonly />
       </div>
       <div class="form-group">
         <label>Misc Modifier:</label>
@@ -120,14 +133,22 @@ export class CombatHelper {
             const aim = parseInt(html.find('#aim').val()) || 0;
             const autoFire = parseInt(html.find('#autoFire').val()) || 0;
             const calledShot = html.find('#calledShot').is(':checked') ? COMBAT_PENALTIES.CALLED_SHOT : 0;
-            const range = parseInt(html.find('#range').val()) || 0;
             const runningTarget = html.find('#runningTarget').is(':checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
-            const fullModifier = bs + bsAdv + aim + autoFire + calledShot + range + runningTarget + miscModifier;
+            // Determine max hits based on RoF
+            let maxHits = 1;
+            if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
+              maxHits = parseInt(rofParts[1]) || 1;
+            } else if (autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
+              maxHits = parseInt(rofParts[2]) || 1;
+            }
+
+            const fullModifier = bs + bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier;
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const hitsTotal = fullModifier - hitValue >= 0 ? 1 + Math.floor((fullModifier - hitValue) / 10) : 0;
+            const calculatedHits = fullModifier - hitValue >= 0 ? 1 + Math.floor((fullModifier - hitValue) / 10) : 0;
+            const hitsTotal = Math.min(calculatedHits, maxHits);
 
             let chatContent = `<div class="deathwatch weapon-attack">
               <h3>${weapon.name} Attack</h3>
@@ -137,7 +158,7 @@ export class CombatHelper {
             if (aim !== 0) chatContent += `<div><strong>Aim:</strong> ${aim}</div>`;
             if (autoFire !== 0) chatContent += `<div><strong>Rate of Fire:</strong> +${autoFire}</div>`;
             if (calledShot !== 0) chatContent += `<div><strong>Called Shot:</strong> ${calledShot}</div>`;
-            if (range !== 0) chatContent += `<div><strong>Range:</strong> ${range}</div>`;
+            if (autoRangeMod !== 0) chatContent += `<div><strong>Range:</strong> ${autoRangeMod}</div>`;
             if (runningTarget !== 0) chatContent += `<div><strong>Running Target:</strong> ${runningTarget}</div>`;
             if (miscModifier !== 0) chatContent += `<div><strong>Misc:</strong> ${miscModifier}</div>`;
             
