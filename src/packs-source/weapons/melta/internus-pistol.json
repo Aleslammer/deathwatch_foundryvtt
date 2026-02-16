@@ -1,8 +1,8 @@
 {
   "_id": "infernuspistol0001",
-  "name": "Astartes Internus Pistol",
+  "name": "Astartes Infernus Pistol",
   "type": "weapon",
-  "img": "systems/deathwatch/icons/weapons/internus-pistol.webp",
+  "img": "systems/deathwatch/icons/weapons/infernus-pistol.webp",
   "system": {
     "description": "<p>The Infernus pistol represents specialised and ancient technology, almost impossible for even the Adeptus Astartes to recreate. Mere handfuls exist in any sector, and they are found only in the hands of Battle-Brothers who have proven themselves worthy of such a profoundly rare weapon. This is a favoured weapon of the Blood Angels Chapter.</p>",
     "class": "Pistol",

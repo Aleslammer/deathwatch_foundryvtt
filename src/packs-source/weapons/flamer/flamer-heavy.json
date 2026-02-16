@@ -30,7 +30,7 @@
     "isScatter": false,
     "isSnare": false,
     "isStorm": false,
-    "isTearing": true,
+    "isTearing": false,
     "isTocixal": false,
     "isTwinLinked": false,
     "isUnbalanced": false,
