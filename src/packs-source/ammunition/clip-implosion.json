@@ -1,0 +1,16 @@
+{
+  "_id": "clip00000000005",
+  "name": "Implosion Rounds",
+  "type": "ammunition",
+  "img": "systems/deathwatch/icons/ammo/ammo-implosion.webp",
+  "system": {
+    "description": "<p>The result of early experiments with alternative krak technology, an implosion shell replaces its explosive core with an infinitesimal amount of antimatter; this creates a violently decompressing vacuum when exposed to matter. Like the standard bolt shell, these rounds activate via their mass-reactive core, meaning they embed partially in their target before the implosion takes effect. The round’s force is therefore not directed at cracking open armour, but to collapsing the unfortunate victim’s body from the inside out—enough to debilitate even a Space Marine.<p></p><b>Effects</b>: In addition to taking normal damage, a target who takes one or more points of Damage (after Armour and Toughness) from an implosion shell suffers 1d5 points of Agility Damage.<p></p><b>Used With</b>: All bolt weapons</p>",
+    "capacity": {
+      "value": 12,
+      "max": 12
+    },
+    "quantity": 1,
+    "req": 27,
+    "renown": "Respected"
+  }
+}

@@ -21,6 +21,13 @@
     ],
     "packs": [
         {
+            "name": "ammunition",
+            "label": "Ammunition",
+            "path": "packs/ammunition",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
             "name": "gear",
             "label": "Gear",
             "path": "packs/gear",

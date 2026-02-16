@@ -120,6 +120,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const weapons = [];
     const armor = [];
     const gear = [];
+    const ammunition = [];
     const characteristics = [];
     const spells = {
       0: [],
@@ -145,6 +146,9 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (i.type === 'gear') {
         gear.push(i);
       }
+      else if (i.type === 'ammunition') {
+        ammunition.push(i);
+      }
       else if (i.type === 'characteristic') {
         characteristics.push(i);
       }
@@ -158,6 +162,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     context.weapons = weapons;
     context.armor = armor;
     context.gear = gear;
+    context.ammunition = ammunition;
     context.characteristics = characteristics;
     context.spells = spells;
   }
@@ -247,6 +252,111 @@ export class DeathwatchActorSheet extends ActorSheet {
       const itemId = $(ev.currentTarget).data('itemId');
       const weapon = this.actor.items.get(itemId);
       if (weapon) CombatHelper.weaponDamageRoll(this.actor, weapon);
+    });
+
+    // Weapon load ammunition
+    html.find('.weapon-load').click(async ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (!weapon) return;
+
+      const ammoItems = this.actor.items.filter(i => 
+        i.type === 'ammunition' && 
+        i.system.quantity > 0 &&
+        (!weapon.system.capacity.max || i.system.capacity.max <= weapon.system.capacity.max)
+      );
+      
+      if (ammoItems.length === 0) {
+        ui.notifications.warn("No compatible ammunition available.");
+        return;
+      }
+
+      let content = '<div class="form-group"><label>Select Ammunition:</label><select id="ammo-select">';
+      ammoItems.forEach(ammo => {
+        content += `<option value="${ammo.id}">${ammo.name} (Qty: ${ammo.system.quantity}, ${ammo.system.capacity.value}/${ammo.system.capacity.max} rounds)</option>`;
+      });
+      content += '</select></div>';
+
+      new Dialog({
+        title: `Load ${weapon.name}`,
+        content: content,
+        buttons: {
+          load: {
+            label: "Load",
+            callback: async (html) => {
+              const ammoId = html.find('#ammo-select').val();
+              const ammo = this.actor.items.get(ammoId);
+              if (!ammo) return;
+
+              // Check if ammo fits in weapon
+              if (weapon.system.capacity.max && ammo.system.capacity.max > weapon.system.capacity.max) {
+                ui.notifications.error(`${ammo.name} (${ammo.system.capacity.max} rounds) is too large for ${weapon.name} (max ${weapon.system.capacity.max} rounds).`);
+                return;
+              }
+
+              await weapon.update({ 
+                "system.loadedAmmo": ammoId,
+                "system.capacity.value": ammo.system.capacity.value,
+                "system.capacity.max": weapon.system.capacity.max || ammo.system.capacity.max
+              });
+              
+              await ammo.update({ "system.quantity": ammo.system.quantity - 1 });
+              
+              ui.notifications.info(`${weapon.name} loaded with ${ammo.name}.`);
+            }
+          },
+          cancel: { label: "Cancel" }
+        },
+        default: "load"
+      }).render(true);
+    });
+
+    // Weapon unload ammunition
+    html.find('.weapon-unload').click(async ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (!weapon || !weapon.system.loadedAmmo) return;
+
+      const loadedAmmo = this.actor.items.get(weapon.system.loadedAmmo);
+      const currentRounds = weapon.system.capacity.value;
+      const maxCapacity = weapon.system.capacity.max;
+      const ammoName = loadedAmmo?.name || `Ammunition Clip (${maxCapacity} rounds)`;
+      const ammoImg = loadedAmmo?.img || "systems/deathwatch/icons/gear/ammo-clip.webp";
+      
+      // Find existing ammo with same name and capacity to stack (only if full)
+      const existingAmmo = this.actor.items.find(i => 
+        i.type === 'ammunition' && 
+        i.name === ammoName &&
+        i.system.capacity.max === maxCapacity &&
+        i.system.capacity.value === maxCapacity &&
+        currentRounds === maxCapacity
+      );
+
+      if (existingAmmo && currentRounds === maxCapacity) {
+        // Stack with existing full clips
+        await existingAmmo.update({ "system.quantity": existingAmmo.system.quantity + 1 });
+      } else {
+        // Create new ammunition item with current rounds
+        await Item.create({
+          name: ammoName,
+          type: "ammunition",
+          img: ammoImg,
+          system: {
+            capacity: {
+              value: currentRounds,
+              max: maxCapacity
+            },
+            quantity: 1
+          }
+        }, { parent: this.actor });
+      }
+
+      await weapon.update({ 
+        "system.loadedAmmo": null,
+        "system.capacity.value": 0
+      });
+      
+      ui.notifications.info(`${weapon.name} unloaded.`);
     });
 
     // Drag events for macros.

@@ -30,6 +30,18 @@ export class CombatHelper {
     const bs = actor.system.characteristics.bs.value;
     const bsAdv = actor.system.characteristics.bs.advances || 0;
 
+    // Check if weapon uses ammo and has ammo loaded
+    if (weapon.system.capacity && weapon.system.capacity.max > 0) {
+      if (!weapon.system.loadedAmmo) {
+        ui.notifications.warn(`${weapon.name} has no ammunition loaded!`);
+        return;
+      }
+      if (weapon.system.capacity.value <= 0) {
+        ui.notifications.warn(`${weapon.name} is out of ammunition!`);
+        return;
+      }
+    }
+
     // Get selected tokens for range calculation
     const attackerToken = canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
@@ -58,14 +70,17 @@ export class CombatHelper {
     // Parse weapon RoF (e.g., "S/2/4" or "S/-/-" or "-/3/-")
     const rof = weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
+    const currentAmmo = weapon.system.capacity?.value || 0;
     const hasSingle = rofParts[0] && rofParts[0] !== '-';
-    const hasSemiAuto = rofParts[1] && rofParts[1] !== '-';
-    const hasFullAuto = rofParts[2] && rofParts[2] !== '-';
+    const semiAutoRounds = parseInt(rofParts[1]) || 0;
+    const fullAutoRounds = parseInt(rofParts[2]) || 0;
+    const hasSemiAuto = rofParts[1] && rofParts[1] !== '-' && currentAmmo >= semiAutoRounds;
+    const hasFullAuto = rofParts[2] && rofParts[2] !== '-' && currentAmmo >= fullAutoRounds;
 
     let rofOptions = '';
-    if (hasSingle) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SINGLE}">Single</option>`;
-    if (hasSemiAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}">Semi-Auto (+${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO})</option>`;
-    if (hasFullAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}">Full-Auto (+${RATE_OF_FIRE_MODIFIERS.FULL_AUTO})</option>`;
+    if (hasSingle) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SINGLE}" data-rounds="1">Single (1 round)</option>`;
+    if (hasSemiAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}" data-rounds="${semiAutoRounds}">Semi-Auto (+${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}, ${semiAutoRounds} rounds)</option>`;
+    if (hasFullAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}" data-rounds="${fullAutoRounds}">Full-Auto (+${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}, ${fullAutoRounds} rounds)</option>`;
 
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
@@ -178,6 +193,12 @@ export class CombatHelper {
               speaker: ChatMessage.getSpeaker({ actor }),
               content: chatContent
             });
+
+            // Deduct ammunition if weapon uses ammo
+            if (weapon.system.capacity && weapon.system.capacity.max > 0) {
+              const newAmmo = Math.max(0, weapon.system.capacity.value - maxHits);
+              await weapon.update({ "system.capacity.value": newAmmo });
+            }
           }
         },
         cancel: {

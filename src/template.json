@@ -1145,6 +1145,7 @@
             "weapon",
             "armor",
             "gear",
+            "ammunition",
             "characteristic"
         ],
         "templates": {
@@ -1160,6 +1161,11 @@
             "damageType": "",
             "weaponType": "",
             "equipped": false,
+            "capacity": {
+                "value": 0,
+                "max": 0
+            },
+            "loadedAmmo": null,
             "modifiers": []
         },
         "armor": {
@@ -1185,6 +1191,16 @@
             "renown": "",
             "equipped": false,
             "modifiers": []
+        },
+        "ammunition": {
+            "templates": [
+                "base"
+            ],
+            "capacity": {
+                "value": 0,
+                "max": 0
+            },
+            "quantity": 1
         },
         "characteristic": {
             "templates": [
