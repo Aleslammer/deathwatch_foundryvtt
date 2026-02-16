@@ -1,5 +1,7 @@
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { DWConfig } from "../helpers/config.mjs";
+import { CombatHelper } from "../helpers/combat.mjs";
+import { ModifierHelper } from "../helpers/modifiers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -199,10 +201,19 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
     // Modifier management
-    html.find('.modifier-create').click(this._onModifierCreate.bind(this));
-    html.find('.modifier-edit').click(this._onModifierEdit.bind(this));
-    html.find('.modifier-delete').click(this._onModifierDelete.bind(this));
-    html.find('.modifier-toggle').click(this._onToggleModifierEnabled.bind(this));
+    html.find('.modifier-create').click(ev => ModifierHelper.createModifier(this.actor));
+    html.find('.modifier-edit').click(ev => {
+      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
+      ModifierHelper.editModifierDialog(this.actor, modifierId);
+    });
+    html.find('.modifier-delete').click(ev => {
+      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
+      ModifierHelper.deleteModifier(this.actor, modifierId);
+    });
+    html.find('.modifier-toggle').click(ev => {
+      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
+      ModifierHelper.toggleModifierEnabled(this.actor, modifierId);
+    });
 
     // Skill checkbox cascade logic
     html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
@@ -227,8 +238,16 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find('.item-image.rollable').click(this._onWeaponAttack.bind(this));
 
     // Weapon attack and damage buttons
-    html.find('.weapon-attack-btn').click(this._onWeaponAttackBtn.bind(this));
-    html.find('.weapon-damage-btn').click(this._onWeaponDamageBtn.bind(this));
+    html.find('.weapon-attack-btn').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (weapon) CombatHelper.weaponAttackDialog(this.actor, weapon);
+    });
+    html.find('.weapon-damage-btn').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (weapon) CombatHelper.weaponDamageRoll(this.actor, weapon);
+    });
 
     // Drag events for macros.
     if (this.actor.isOwner) {
@@ -663,325 +682,6 @@ export class DeathwatchActorSheet extends ActorSheet {
       },
       default: "attack"
     }).render(true);
-  }
-
-  /**
-   * Add a modifier to this actor.
-   * @param {Event} event The originating click event
-   */
-  async _onModifierCreate(event) {
-    event.preventDefault();
-    const modifiers = Array.isArray(this.actor.system.modifiers) ? [...this.actor.system.modifiers] : [];
-    modifiers.push({
-      _id: foundry.utils.randomID(),
-      name: "New Modifier",
-      modifier: "0",
-      type: "untyped",
-      modifierType: "constant",
-      effectType: "characteristic",
-      valueAffected: "",
-      enabled: true,
-      source: "Actor"
-    });
-    await this.actor.update({ "system.modifiers": modifiers });
-  }
-
-  /**
-   * Delete a modifier from the actor.
-   * @param {Event} event The originating click event
-   */
-  async _onModifierDelete(event) {
-    event.preventDefault();
-    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-    const modifiers = Array.isArray(this.actor.system.modifiers) ? this.actor.system.modifiers.filter(m => m._id !== modifierId) : [];
-    await this.actor.update({ "system.modifiers": modifiers });
-  }
-
-  /**
-   * Edit a modifier for an actor.
-   * @param {Event} event The originating click event
-   */
-  async _onModifierEdit(event) {
-    event.preventDefault();
-    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-    const modifier = this.actor.system.modifiers?.find(m => m._id === modifierId);
-    if (!modifier) return;
-
-    let valueAffectedField = '';
-    if (modifier.effectType === 'characteristic') {
-      valueAffectedField = `
-        <select name="valueAffected">
-          <option value="">Select Characteristic</option>
-          <option value="ws" ${modifier.valueAffected === 'ws' ? 'selected' : ''}>Weapon Skill</option>
-          <option value="bs" ${modifier.valueAffected === 'bs' ? 'selected' : ''}>Ballistic Skill</option>
-          <option value="str" ${modifier.valueAffected === 'str' ? 'selected' : ''}>Strength</option>
-          <option value="tg" ${modifier.valueAffected === 'tg' ? 'selected' : ''}>Toughness</option>
-          <option value="ag" ${modifier.valueAffected === 'ag' ? 'selected' : ''}>Agility</option>
-          <option value="int" ${modifier.valueAffected === 'int' ? 'selected' : ''}>Intelligence</option>
-          <option value="per" ${modifier.valueAffected === 'per' ? 'selected' : ''}>Perception</option>
-          <option value="wil" ${modifier.valueAffected === 'wil' ? 'selected' : ''}>Willpower</option>
-          <option value="fs" ${modifier.valueAffected === 'fs' ? 'selected' : ''}>Fellowship</option>
-        </select>
-      `;
-    } else if (modifier.effectType === 'skill') {
-      valueAffectedField = '<select name="valueAffected"><option value="">Select Skill</option>';
-      for (const [key, label] of Object.entries(DWConfig.Skills)) {
-        const selected = modifier.valueAffected === key ? 'selected' : '';
-        valueAffectedField += `<option value="${key}" ${selected}>${label}</option>`;
-      }
-      valueAffectedField += '</select>';
-    } else {
-      valueAffectedField = `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
-    }
-
-    const content = `
-      <div class="form-group">
-        <label>Name:</label>
-        <input type="text" name="name" value="${modifier.name}" />
-      </div>
-      <div class="form-group">
-        <label>Modifier:</label>
-        <input type="text" name="modifier" value="${modifier.modifier}" />
-      </div>
-      <div class="form-group">
-        <label>Type:</label>
-        <select name="type">
-          <option value="untyped" ${modifier.type === 'untyped' ? 'selected' : ''}>Untyped</option>
-          <option value="circumstance" ${modifier.type === 'circumstance' ? 'selected' : ''}>Circumstance</option>
-          <option value="equipment" ${modifier.type === 'equipment' ? 'selected' : ''}>Equipment</option>
-          <option value="trait" ${modifier.type === 'trait' ? 'selected' : ''}>Trait</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Effect Type:</label>
-        <select name="effectType" id="effectType">
-          <option value="characteristic" ${modifier.effectType === 'characteristic' ? 'selected' : ''}>Characteristic</option>
-          <option value="skill" ${modifier.effectType === 'skill' ? 'selected' : ''}>Skill</option>
-          <option value="characteristic-bonus" ${modifier.effectType === 'characteristic-bonus' ? 'selected' : ''}>Characteristic Bonus</option>
-        </select>
-      </div>
-      <div class="form-group" id="valueAffectedGroup">
-        <label>Value Affected:</label>
-        ${valueAffectedField}
-      </div>
-    `;
-
-    new Dialog({
-      title: "Edit Modifier",
-      content: content,
-      render: (html) => {
-        html.find('#effectType').change((ev) => {
-          const effectType = ev.target.value;
-          const group = html.find('#valueAffectedGroup');
-          if (effectType === 'characteristic') {
-            group.find('input, select').remove();
-            group.append(`
-              <select name="valueAffected">
-                <option value="">Select Characteristic</option>
-                <option value="ws">Weapon Skill</option>
-                <option value="bs">Ballistic Skill</option>
-                <option value="str">Strength</option>
-                <option value="tg">Toughness</option>
-                <option value="ag">Agility</option>
-                <option value="int">Intelligence</option>
-                <option value="per">Perception</option>
-                <option value="wil">Willpower</option>
-                <option value="fs">Fellowship</option>
-              </select>
-            `);
-          } else if (effectType === 'skill') {
-            group.find('input, select').remove();
-            let skillOptions = '<select name="valueAffected"><option value="">Select Skill</option>';
-            for (const [key, label] of Object.entries(DWConfig.Skills)) {
-              skillOptions += `<option value="${key}">${label}</option>`;
-            }
-            skillOptions += '</select>';
-            group.append(skillOptions);
-          } else {
-            group.find('input, select').remove();
-            group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
-          }
-        });
-      },
-      buttons: {
-        save: {
-          label: "Save",
-          callback: async (html) => {
-            const modifiers = [...this.actor.system.modifiers];
-            const index = modifiers.findIndex(m => m._id === modifierId);
-            if (index >= 0) {
-              modifiers[index] = {
-                ...modifiers[index],
-                name: html.find('[name="name"]').val(),
-                modifier: html.find('[name="modifier"]').val(),
-                type: html.find('[name="type"]').val(),
-                effectType: html.find('[name="effectType"]').val(),
-                valueAffected: html.find('[name="valueAffected"]').val()
-              };
-              await this.actor.update({ "system.modifiers": modifiers });
-            }
-          }
-        },
-        cancel: { label: "Cancel" }
-      },
-      default: "save"
-    }).render(true);
-  }
-
-  /**
-   * Toggle a modifier to be enabled or disabled.
-   * @param {Event} event The originating click event
-   */
-  async _onToggleModifierEnabled(event) {
-    event.preventDefault();
-    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-    const modifiers = [...this.actor.system.modifiers];
-    const index = modifiers.findIndex(m => m._id === modifierId);
-    if (index >= 0) {
-      modifiers[index].enabled = !modifiers[index].enabled;
-      await this.actor.update({ "system.modifiers": modifiers });
-    }
-  }
-
-  async _onWeaponAttackBtn(event) {
-    event.preventDefault();
-    const itemId = $(event.currentTarget).data('itemId');
-    const weapon = this.actor.items.get(itemId);
-    if (!weapon) return;
-
-    const bs = this.actor.system.characteristics.bs.value;
-    const bsAdv = this.actor.system.characteristics.bs.advances || 0;
-
-    const content = `
-      <div class="form-group">
-        <label>Aim:</label>
-        <select id="aim" name="aim">
-          <option value="0">None</option>
-          <option value="10">Half (+10)</option>
-          <option value="20">Full (+20)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Rate of Fire:</label>
-        <select id="autoFire" name="autoFire">
-          <option value="0">Single</option>
-          <option value="10">Semi-Auto (+10)</option>
-          <option value="20">Full-Auto (+20)</option>
-        </select>
-      </div>
-      <div class="form-group" style="display: flex; gap: 20px;">
-        <label><i class="far fa-square" id="calledShotIcon"></i> Called Shot (-20)
-          <input type="checkbox" id="calledShot" name="calledShot" style="display:none;" />
-        </label>
-        <label><i class="far fa-square" id="runningTargetIcon"></i> Running Target (-20)
-          <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
-        </label>
-      </div>
-      <div class="form-group">
-        <label>Range Modifier:</label>
-        <input type="number" id="range" name="range" value="0" />
-      </div>
-      <div class="form-group">
-        <label>Misc Modifier:</label>
-        <input type="text" id="miscModifier" name="miscModifier" value="0" pattern="[+-]?[0-9]+" />
-      </div>
-    `;
-
-    new Dialog({
-      title: `Attack with ${weapon.name}`,
-      content: content,
-      render: (html) => {
-        html.find('#miscModifier').on('input', function() {
-          this.value = this.value.replace(/[^0-9+\-]/g, '');
-        });
-        
-        html.find('label:has(#calledShot)').click(function(e) {
-          if (e.target.tagName !== 'INPUT') {
-            const checkbox = $(this).find('#calledShot');
-            const icon = $(this).find('#calledShotIcon');
-            checkbox.prop('checked', !checkbox.prop('checked'));
-            icon.toggleClass('fa-square fa-check');
-          }
-        });
-        
-        html.find('label:has(#runningTarget)').click(function(e) {
-          if (e.target.tagName !== 'INPUT') {
-            const checkbox = $(this).find('#runningTarget');
-            const icon = $(this).find('#runningTargetIcon');
-            checkbox.prop('checked', !checkbox.prop('checked'));
-            icon.toggleClass('fa-square fa-check');
-          }
-        });
-      },
-      buttons: {
-        attack: {
-          label: "Attack",
-          callback: async (html) => {
-            const aim = parseInt(html.find('#aim').val()) || 0;
-            const autoFire = parseInt(html.find('#autoFire').val()) || 0;
-            const calledShot = html.find('#calledShot').is(':checked') ? -20 : 0;
-            const range = parseInt(html.find('#range').val()) || 0;
-            const runningTarget = html.find('#runningTarget').is(':checked') ? -20 : 0;
-            const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
-
-            const fullModifier = bs + bsAdv + aim + autoFire + calledShot + range + runningTarget + miscModifier;
-            const hitRoll = await new Roll('1d100').evaluate();
-            const hitValue = hitRoll.total;
-            const hitsTotal = fullModifier - hitValue >= 0 ? 1 + Math.floor((fullModifier - hitValue) / 10) : 0;
-
-            let chatContent = `<div class="deathwatch weapon-attack">
-              <h3>${weapon.name} Attack</h3>
-              <div><strong>Ballistic Skill:</strong> ${bs}</div>
-              <div><strong>BS Advances:</strong> ${bsAdv}</div>`;
-            
-            if (aim !== 0) chatContent += `<div><strong>Aim:</strong> ${aim}</div>`;
-            if (autoFire !== 0) chatContent += `<div><strong>Rate of Fire:</strong> +${autoFire}</div>`;
-            if (calledShot !== 0) chatContent += `<div><strong>Called Shot:</strong> ${calledShot}</div>`;
-            if (range !== 0) chatContent += `<div><strong>Range:</strong> ${range}</div>`;
-            if (runningTarget !== 0) chatContent += `<div><strong>Running Target:</strong> ${runningTarget}</div>`;
-            if (miscModifier !== 0) chatContent += `<div><strong>Misc:</strong> ${miscModifier}</div>`;
-            
-            chatContent += `<div><strong>Total Modifier:</strong> ${fullModifier}</div>
-              <div><strong>Roll:</strong> ${hitValue}</div>
-              <div><strong>Hits:</strong> ${hitsTotal}</div>`;
-
-            if (hitsTotal > 0) {
-              chatContent += `<div style="color: green;"><strong>HIT!</strong></div>`;
-            } else {
-              chatContent += `<div style="color: red;"><strong>MISS!</strong></div>`;
-            }
-
-            chatContent += `</div>`;
-
-            ChatMessage.create({
-              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              content: chatContent
-            });
-          }
-        },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "attack"
-    }).render(true);
-  }
-
-  async _onWeaponDamageBtn(event) {
-    event.preventDefault();
-    const itemId = $(event.currentTarget).data('itemId');
-    const weapon = this.actor.items.get(itemId);
-    if (!weapon) return;
-
-    const dmg = weapon.system.dmg;
-    if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
-
-    const roll = await new Roll(dmg).evaluate();
-    const flavor = `<h2>${weapon.name} - Damage Roll</h2><p>Penetration: ${weapon.system.penetration}</p>`;
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: flavor
-    });
   }
 
 }
