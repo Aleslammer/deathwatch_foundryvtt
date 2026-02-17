@@ -141,6 +141,10 @@ export class DeathwatchActorSheet extends ActorSheet {
         weapons.push(i);
       }
       else if (i.type === 'armor') {
+        // Populate attached histories
+        i.attachedHistories = (i.system.attachedHistories || []).map(histId => {
+          return context.items.find(item => item._id === histId);
+        }).filter(h => h);
         armor.push(i);
       }
       else if (i.type === 'gear') {
@@ -173,11 +177,47 @@ export class DeathwatchActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Select all text on focus for input fields
+    html.find('input[type="text"], input[type="number"]').focus(function() {
+      $(this).select();
+    });
+
     // Render the item sheet for viewing/editing prior to the editable check.
     html.find('.item-edit').click(ev => {
       const li = $(ev.currentTarget).parents(".item");
       const item = this.actor.items.get(li.data("itemId"));
       item.sheet.render(true);
+    });
+
+    // Show armor history in chat
+    html.find('.history-show').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const history = this.actor.items.get(itemId);
+      if (!history) return;
+      
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="armor-history-card">
+          <h3>${history.name}</h3>
+          ${history.system.description}
+          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${history.system.book}, p${history.system.page}</em></p>
+        </div>`
+      });
+    });
+
+    // Remove armor history from armor
+    html.find('.history-remove').click(async ev => {
+      const historyId = $(ev.currentTarget).data('historyId');
+      const armorId = $(ev.currentTarget).data('armorId');
+      const armor = this.actor.items.get(armorId);
+      
+      if (!armor) return;
+      
+      const currentHistories = armor.system.attachedHistories || [];
+      const updatedHistories = currentHistories.filter(id => id !== historyId);
+      
+      await armor.update({ "system.attachedHistories": updatedHistories });
+      ui.notifications.info('Armor history removed.');
     });
 
     // -------------------------------------------------------------
@@ -368,6 +408,12 @@ export class DeathwatchActorSheet extends ActorSheet {
         li.addEventListener("dragstart", handler, false);
       });
     }
+
+    // Drop handler for armor histories on armor
+    html.find('.inventory .items-list li.item').each((i, li) => {
+      li.addEventListener('drop', this._onDropItemOnItem.bind(this), false);
+      li.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
   }
 
   /**
@@ -792,6 +838,80 @@ export class DeathwatchActorSheet extends ActorSheet {
       },
       default: "attack"
     }).render(true);
+  }
+
+  /**
+   * Handle dropping an item on another item (e.g., armor history on armor)
+   * @param {Event} event The drop event
+   * @private
+   */
+  async _onDropItemOnItem(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== 'armor-history') return;
+
+    // Import the history to the actor if it's from a compendium
+    let historyItem = droppedItem;
+    if (!droppedItem.parent) {
+      const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
+      historyItem = imported;
+    }
+
+    // Find the armor item
+    let targetItemId = $(event.currentTarget).data('itemId');
+    let targetItem = this.actor.items.get(targetItemId);
+    
+    if (!targetItem || targetItem.type !== 'armor') {
+      const armorItems = this.actor.items.filter(i => i.type === 'armor');
+      
+      if (armorItems.length === 1) {
+        targetItem = armorItems[0];
+      } else if (armorItems.length > 1) {
+        ui.notifications.warn('Multiple armor items found. Please drop directly on the armor item.');
+        return;
+      } else {
+        ui.notifications.warn('No armor items found.');
+        return;
+      }
+    }
+
+    const currentHistories = targetItem.system.attachedHistories || [];
+    
+    // Check if this history (by source ID or name) is already attached
+    const existingHistory = currentHistories.find(histId => {
+      const existing = this.actor.items.get(histId);
+      if (!existing) return false;
+      const sourceId = historyItem.flags?.core?.sourceId || historyItem.name;
+      const existingSourceId = existing.flags?.core?.sourceId || existing.name;
+      return sourceId === existingSourceId;
+    });
+    
+    if (existingHistory) {
+      ui.notifications.warn(`${historyItem.name} is already attached to ${targetItem.name}.`);
+      return;
+    }
+    
+    // Check history limit based on armor type
+    let maxHistories = 1;
+    if (targetItem.name.toLowerCase().includes('artificer')) {
+      maxHistories = 2;
+    }
+    
+    if (currentHistories.length >= maxHistories) {
+      ui.notifications.warn(`${targetItem.name} can only have ${maxHistories} armor ${maxHistories === 1 ? 'history' : 'histories'}.`);
+      return;
+    }
+    
+    await targetItem.update({ 
+      "system.attachedHistories": [...currentHistories, historyItem.id]
+    });
+    
+    ui.notifications.info(`${historyItem.name} attached to ${targetItem.name}.`);
   }
 
 }

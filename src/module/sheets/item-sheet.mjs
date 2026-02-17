@@ -56,6 +56,17 @@ export class DeathwatchItemSheet extends ItemSheet {
             }
         }
 
+        // Populate attached histories for armor
+        if (itemData.type === 'armor' && actor) {
+            const historyIds = Array.isArray(itemData.system.attachedHistories) ? itemData.system.attachedHistories : [];
+            context.system.attachedHistories = historyIds.map(histId => {
+                const hist = actor.items.get(histId);
+                return hist ? { _id: hist.id, name: hist.name, img: hist.img } : null;
+            }).filter(h => h);
+        } else if (itemData.type === 'armor') {
+            context.system.attachedHistories = [];
+        }
+
         return context;
     }
 
@@ -77,6 +88,9 @@ export class DeathwatchItemSheet extends ItemSheet {
         // Weapon attack/damage rolls
         html.find('.weapon-attack').click(this._onWeaponAttack.bind(this));
         html.find('.weapon-damage').click(this._onWeaponDamage.bind(this));
+
+        // Armor history management
+        html.find('.history-remove').click(this._onHistoryRemove.bind(this));
     }
 
     async _onModifierCreate(event) {
@@ -272,5 +286,43 @@ export class DeathwatchItemSheet extends ItemSheet {
             speaker: ChatMessage.getSpeaker({ actor }),
             flavor: flavor
         });
+    }
+
+    async _onDrop(event) {
+        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+        if (data.type !== 'Item') return super._onDrop?.(event);
+        
+        const droppedItem = await Item.implementation.fromDropData(data);
+        if (!droppedItem) return super._onDrop?.(event);
+
+        // Handle armor history drop on armor
+        if (this.item.type === 'armor' && droppedItem.type === 'armor-history') {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const currentHistories = this.item.system.attachedHistories || [];
+            
+            if (!currentHistories.includes(droppedItem.id)) {
+                const newHistories = [...currentHistories, droppedItem.id];
+                
+                await this.item.update({ 
+                    "system.attachedHistories": newHistories
+                });
+                ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
+            } else {
+                ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
+            }
+            return false;
+        }
+
+        return super._onDrop?.(event);
+    }
+
+    async _onHistoryRemove(event) {
+        event.preventDefault();
+        const historyId = $(event.currentTarget).data('historyId');
+        const attachedHistories = (this.item.system.attachedHistories || []).filter(id => id !== historyId);
+        await this.item.update({ "system.attachedHistories": attachedHistories });
+        this.render(false);
     }
 }

@@ -1,0 +1,20 @@
+{
+  "_id": "armor00000000003",
+  "name": "Terminator Armour",
+  "type": "armor",
+  "img": "systems/deathwatch/icons/armor/terminator.webp",
+  "system": {
+    "description": "<p>Tactical Dreadnought Armour, commonly known as Terminator Armour, is the most powerful personal armor available to the Adeptus Astartes. These massive suits are relics from the Dark Age of Technology, combining thick ceramite plates with an exoskeleton that allows the wearer to move despite the immense weight. Each suit is a priceless artifact, maintained and revered by the Chapter.</p><p>Terminator Armour provides unparalleled protection and is equipped with a teleport homer, allowing for precision deep strikes into the heart of battle. Only the most veteran warriors of the 1st Company are honored to wear these legendary suits.</p>",
+    "head": 14,
+    "body": 14,
+    "left_arm": 14,
+    "right_arm": 14,
+    "left_leg": 14,
+    "right_leg": 14,
+    "req": 100,
+    "renown": "Famed",
+    "book": "Deathwatch Core Rulebook",
+    "page": "164",
+    "attachedHistories": []
+  }
+}

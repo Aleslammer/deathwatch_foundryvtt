@@ -1,0 +1,20 @@
+{
+  "_id": "armor00000000002",
+  "name": "Artificer Armour",
+  "type": "armor",
+  "img": "systems/deathwatch/icons/armor/artificer.webp",
+  "system": {
+    "description": "<p>Artificer Armour is a masterwork of the Adeptus Mechanicus, individually crafted by skilled Techmarines and Artificers. Each suit is unique, incorporating advanced materials and arcane technologies that provide superior protection compared to standard Power Armour. These suits are often adorned with intricate designs, purity seals, and personal heraldry.</p><p>Artificer Armour is highly prized and typically reserved for veteran warriors, officers, and heroes of the Chapter who have earned such a prestigious honor through countless battles.</p>",
+    "head": 10,
+    "body": 12,
+    "left_arm": 10,
+    "right_arm": 10,
+    "left_leg": 10,
+    "right_leg": 10,
+    "req": 60,
+    "renown": "Hero",
+    "book": "Deathwatch Core Rulebook",
+    "page": "163",
+    "attachedHistories": []
+  }
+}

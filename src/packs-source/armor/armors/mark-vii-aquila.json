@@ -1,0 +1,20 @@
+{
+  "_id": "armor00000000001",
+  "name": "Mark VII Aquila Power Armour",
+  "type": "armor",
+  "img": "systems/deathwatch/icons/armor/armor.webp",
+  "system": {
+    "description": "<p>The Mark VII 'Aquila' pattern is the most common type of Power Armour worn by the Adeptus Astartes. It is a marvel of technology, providing comprehensive protection while enhancing the wearer's strength and speed. The armour's machine spirit is linked to the wearer's Black Carapace, making it an extension of the Space Marine's body.</p><p>The Mark VII features the distinctive high collar and studded left shoulder pad that have become iconic symbols of the Space Marines.</p>",
+    "head": 8,
+    "body": 10,
+    "left_arm": 8,
+    "right_arm": 8,
+    "left_leg": 8,
+    "right_leg": 8,
+    "req": 0,
+    "renown": "",
+    "book": "Deathwatch Core Rulebook",
+    "page": "161",
+    "attachedHistories": []
+  }
+}

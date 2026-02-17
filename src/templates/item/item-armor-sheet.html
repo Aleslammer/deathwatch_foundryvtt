@@ -25,7 +25,65 @@
 
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
-            {{!-- As you add new fields, add them in here! --}}
+            <div class="grid grid-3col">
+                <div class="resource">
+                    <label class="resource-label">Head</label>
+                    <input type="number" name="system.head" value="{{system.head}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Body</label>
+                    <input type="number" name="system.body" value="{{system.body}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Left Arm</label>
+                    <input type="number" name="system.left_arm" value="{{system.left_arm}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Right Arm</label>
+                    <input type="number" name="system.right_arm" value="{{system.right_arm}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Left Leg</label>
+                    <input type="number" name="system.left_leg" value="{{system.left_leg}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Right Leg</label>
+                    <input type="number" name="system.right_leg" value="{{system.right_leg}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Requisition</label>
+                    <input type="number" name="system.req" value="{{system.req}}" data-dtype="Number" min="0" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Renown</label>
+                    <input type="text" name="system.renown" value="{{system.renown}}" />
+                </div>
+            </div>
+            <div class="grid grid-2col">
+                <div class="resource">
+                    <label class="resource-label">Book</label>
+                    <input type="text" name="system.book" value="{{system.book}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Page</label>
+                    <input type="text" name="system.page" value="{{system.page}}" />
+                </div>
+            </div>
+            <h3>Effects</h3>
+            <div class="resource">
+                <label class="resource-label">Special Effects</label>
+                <textarea name="system.effects" rows="3" style="width: 100%;">{{system.effects}}</textarea>
+            </div>
+            <h3>Histories</h3>
+            <div class="histories-list">
+                {{#each system.attachedHistories}}
+                <div class="history-item" style="display: flex; align-items: center; margin-bottom: 5px; padding: 5px; border: 1px solid #999;">
+                    <img src="{{this.img}}" style="width: 30px; height: 30px; margin-right: 10px;" />
+                    <span style="flex: 1;">{{this.name}}</span>
+                    <a class="history-remove" data-history-id="{{this._id}}" title="Remove History"><i class="fas fa-times"></i></a>
+                </div>
+                {{/each}}
+            </div>
         </div>
     </section>
 </form>

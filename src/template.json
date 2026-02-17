@@ -1144,6 +1144,7 @@
         "types": [
             "weapon",
             "armor",
+            "armor-history",
             "gear",
             "ammunition",
             "characteristic"
@@ -1176,8 +1177,23 @@
             "head": 0,
             "left_arm": 0,
             "right_arm": 0,
+            "left_leg": 0,
+            "right_leg": 0,
+            "req": 0,
+            "renown": "",
+            "book": "",
+            "page": "",
+            "effects": "",
+            "attachedHistories": [],
             "equipped": false,
             "modifiers": []
+        },
+        "armor-history": {
+            "templates": [
+                "base"
+            ],
+            "book": "",
+            "page": ""
         },
         "gear": {
             "templates": [
