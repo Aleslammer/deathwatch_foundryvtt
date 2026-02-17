@@ -46,6 +46,16 @@ export class DeathwatchItemSheet extends ItemSheet {
         context.system = itemData.system;
         context.flags = itemData.flags;
 
+        // Initialize capacity.max from clip field for weapons if not set
+        if (itemData.type === 'weapon' && itemData.system.clip && !itemData.system.capacity?.max) {
+            const clipValue = parseInt(itemData.system.clip);
+            if (!isNaN(clipValue)) {
+                this.item.update({ "system.capacity.max": clipValue }, { render: false });
+                context.system.capacity = context.system.capacity || {};
+                context.system.capacity.max = clipValue;
+            }
+        }
+
         return context;
     }
 
