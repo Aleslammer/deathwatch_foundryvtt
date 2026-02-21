@@ -1,5 +1,5 @@
 export const DEBUG_FLAGS = {
-  COMBAT: false,
+  COMBAT: true,
   MODIFIERS: false,
   SHEETS: false
 };

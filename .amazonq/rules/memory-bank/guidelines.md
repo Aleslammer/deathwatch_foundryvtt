@@ -321,13 +321,17 @@ export function debug(context, ...args) {
 }
 
 // Usage
+import { debug } from "../helpers/debug.mjs";
 debug('MODIFIERS', `Checking item: ${item.name}`);
+debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
 ```
 
 ### Conditional Logging
 - Use debug flags to control verbose logging
 - Prefix all logs with system identifier: `[Deathwatch:CONTEXT]`
 - Include relevant context in log messages
+- Enable/disable flags in `debug.mjs` for development
+- **Always use debug() instead of console.log()** for system logging
 
 ## Data Schema Patterns
 

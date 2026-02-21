@@ -135,9 +135,19 @@ export class DeathwatchActorSheet extends ActorSheet {
       9: []
     };
 
+    // Track which ammo is loaded in weapons
+    const loadedAmmoIds = new Set();
+
     for (let i of context.items) {
       i.img = i.img || DEFAULT_TOKEN;
       if (i.type === 'weapon') {
+        // Populate loaded ammo
+        if (i.system.loadedAmmo) {
+          i.loadedAmmoItem = context.items.find(item => item._id === i.system.loadedAmmo);
+          if (i.loadedAmmoItem) {
+            loadedAmmoIds.add(i.system.loadedAmmo);
+          }
+        }
         weapons.push(i);
       }
       else if (i.type === 'armor') {
@@ -150,15 +160,21 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (i.type === 'gear') {
         gear.push(i);
       }
-      else if (i.type === 'ammunition') {
-        ammunition.push(i);
-      }
       else if (i.type === 'characteristic') {
         characteristics.push(i);
       }
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
+        }
+      }
+    }
+
+    // Add ammunition that is NOT loaded in weapons
+    for (let i of context.items) {
+      if (i.type === 'ammunition') {
+        if (!loadedAmmoIds.has(i._id)) {
+          ammunition.push(i);
         }
       }
     }
@@ -294,109 +310,17 @@ export class DeathwatchActorSheet extends ActorSheet {
       if (weapon) CombatHelper.weaponDamageRoll(this.actor, weapon);
     });
 
-    // Weapon load ammunition
-    html.find('.weapon-load').click(async ev => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const weapon = this.actor.items.get(itemId);
-      if (!weapon) return;
-
-      const ammoItems = this.actor.items.filter(i => 
-        i.type === 'ammunition' && 
-        i.system.quantity > 0 &&
-        (!weapon.system.capacity.max || i.system.capacity.max <= weapon.system.capacity.max)
-      );
+    // Remove ammunition from weapon
+    html.find('.ammo-remove').click(async ev => {
+      const ammoId = $(ev.currentTarget).data('ammoId');
+      const weaponId = $(ev.currentTarget).data('weaponId');
+      const weapon = this.actor.items.get(weaponId);
+      const ammo = this.actor.items.get(ammoId);
       
-      if (ammoItems.length === 0) {
-        ui.notifications.warn("No compatible ammunition available.");
-        return;
-      }
-
-      let content = '<div class="form-group"><label>Select Ammunition:</label><select id="ammo-select">';
-      ammoItems.forEach(ammo => {
-        content += `<option value="${ammo.id}">${ammo.name} (Qty: ${ammo.system.quantity}, ${ammo.system.capacity.value}/${ammo.system.capacity.max} rounds)</option>`;
-      });
-      content += '</select></div>';
-
-      new Dialog({
-        title: `Load ${weapon.name}`,
-        content: content,
-        buttons: {
-          load: {
-            label: "Load",
-            callback: async (html) => {
-              const ammoId = html.find('#ammo-select').val();
-              const ammo = this.actor.items.get(ammoId);
-              if (!ammo) return;
-
-              // Check if ammo fits in weapon
-              if (weapon.system.capacity.max && ammo.system.capacity.max > weapon.system.capacity.max) {
-                ui.notifications.error(`${ammo.name} (${ammo.system.capacity.max} rounds) is too large for ${weapon.name} (max ${weapon.system.capacity.max} rounds).`);
-                return;
-              }
-
-              await weapon.update({ 
-                "system.loadedAmmo": ammoId,
-                "system.capacity.value": ammo.system.capacity.value,
-                "system.capacity.max": weapon.system.capacity.max || ammo.system.capacity.max
-              });
-              
-              await ammo.update({ "system.quantity": ammo.system.quantity - 1 });
-              
-              ui.notifications.info(`${weapon.name} loaded with ${ammo.name}.`);
-            }
-          },
-          cancel: { label: "Cancel" }
-        },
-        default: "load"
-      }).render(true);
-    });
-
-    // Weapon unload ammunition
-    html.find('.weapon-unload').click(async ev => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const weapon = this.actor.items.get(itemId);
-      if (!weapon || !weapon.system.loadedAmmo) return;
-
-      const loadedAmmo = this.actor.items.get(weapon.system.loadedAmmo);
-      const currentRounds = weapon.system.capacity.value;
-      const maxCapacity = weapon.system.capacity.max;
-      const ammoName = loadedAmmo?.name || `Ammunition Clip (${maxCapacity} rounds)`;
-      const ammoImg = loadedAmmo?.img || "systems/deathwatch/icons/gear/ammo-clip.webp";
+      if (!weapon || !ammo) return;
       
-      // Find existing ammo with same name and capacity to stack (only if full)
-      const existingAmmo = this.actor.items.find(i => 
-        i.type === 'ammunition' && 
-        i.name === ammoName &&
-        i.system.capacity.max === maxCapacity &&
-        i.system.capacity.value === maxCapacity &&
-        currentRounds === maxCapacity
-      );
-
-      if (existingAmmo && currentRounds === maxCapacity) {
-        // Stack with existing full clips
-        await existingAmmo.update({ "system.quantity": existingAmmo.system.quantity + 1 });
-      } else {
-        // Create new ammunition item with current rounds
-        await Item.create({
-          name: ammoName,
-          type: "ammunition",
-          img: ammoImg,
-          system: {
-            capacity: {
-              value: currentRounds,
-              max: maxCapacity
-            },
-            quantity: 1
-          }
-        }, { parent: this.actor });
-      }
-
-      await weapon.update({ 
-        "system.loadedAmmo": null,
-        "system.capacity.value": 0
-      });
-      
-      ui.notifications.info(`${weapon.name} unloaded.`);
+      await weapon.update({ "system.loadedAmmo": null });
+      ui.notifications.info('Ammunition removed.');
     });
 
     // Drag events for macros.
@@ -841,7 +765,7 @@ export class DeathwatchActorSheet extends ActorSheet {
   }
 
   /**
-   * Handle dropping an item on another item (e.g., armor history on armor)
+   * Handle dropping an item on another item (e.g., armor history on armor, ammo on weapon)
    * @param {Event} event The drop event
    * @private
    */
@@ -853,65 +777,76 @@ export class DeathwatchActorSheet extends ActorSheet {
     if (data.type !== 'Item') return;
 
     const droppedItem = await Item.implementation.fromDropData(data);
-    if (!droppedItem || droppedItem.type !== 'armor-history') return;
+    if (!droppedItem) return;
 
-    // Import the history to the actor if it's from a compendium
-    let historyItem = droppedItem;
-    if (!droppedItem.parent) {
-      const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
-      historyItem = imported;
-    }
+    // Handle armor history drops
+    if (droppedItem.type === 'armor-history') {
+      let historyItem = droppedItem;
+      if (!droppedItem.parent) {
+        const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
+        historyItem = imported;
+      }
 
-    // Find the armor item
-    let targetItemId = $(event.currentTarget).data('itemId');
-    let targetItem = this.actor.items.get(targetItemId);
-    
-    if (!targetItem || targetItem.type !== 'armor') {
-      const armorItems = this.actor.items.filter(i => i.type === 'armor');
+      let targetItemId = $(event.currentTarget).data('itemId');
+      let targetItem = this.actor.items.get(targetItemId);
       
-      if (armorItems.length === 1) {
-        targetItem = armorItems[0];
-      } else if (armorItems.length > 1) {
-        ui.notifications.warn('Multiple armor items found. Please drop directly on the armor item.');
-        return;
-      } else {
-        ui.notifications.warn('No armor items found.');
+      if (!targetItem || targetItem.type !== 'armor') {
+        const armorItems = this.actor.items.filter(i => i.type === 'armor');
+        if (armorItems.length === 1) targetItem = armorItems[0];
+        else {
+          ui.notifications.warn(armorItems.length > 1 ? 'Multiple armor items found. Please drop directly on the armor item.' : 'No armor items found.');
+          return;
+        }
+      }
+
+      const currentHistories = targetItem.system.attachedHistories || [];
+      const existingHistory = currentHistories.find(histId => {
+        const existing = this.actor.items.get(histId);
+        if (!existing) return false;
+        const sourceId = historyItem.flags?.core?.sourceId || historyItem.name;
+        const existingSourceId = existing.flags?.core?.sourceId || existing.name;
+        return sourceId === existingSourceId;
+      });
+      
+      if (existingHistory) {
+        ui.notifications.warn(`${historyItem.name} is already attached to ${targetItem.name}.`);
         return;
       }
+      
+      let maxHistories = targetItem.name.toLowerCase().includes('artificer') ? 2 : 1;
+      if (currentHistories.length >= maxHistories) {
+        ui.notifications.warn(`${targetItem.name} can only have ${maxHistories} armor ${maxHistories === 1 ? 'history' : 'histories'}.`);
+        return;
+      }
+      
+      await targetItem.update({ "system.attachedHistories": [...currentHistories, historyItem.id] });
+      ui.notifications.info(`${historyItem.name} attached to ${targetItem.name}.`);
     }
+    // Handle ammunition drops
+    else if (droppedItem.type === 'ammunition') {
+      let targetItemId = $(event.currentTarget).data('itemId');
+      let targetItem = this.actor.items.get(targetItemId);
+      
+      if (!targetItem || targetItem.type !== 'weapon') {
+        ui.notifications.warn('Ammunition can only be attached to weapons.');
+        return;
+      }
 
-    const currentHistories = targetItem.system.attachedHistories || [];
-    
-    // Check if this history (by source ID or name) is already attached
-    const existingHistory = currentHistories.find(histId => {
-      const existing = this.actor.items.get(histId);
-      if (!existing) return false;
-      const sourceId = historyItem.flags?.core?.sourceId || historyItem.name;
-      const existingSourceId = existing.flags?.core?.sourceId || existing.name;
-      return sourceId === existingSourceId;
-    });
-    
-    if (existingHistory) {
-      ui.notifications.warn(`${historyItem.name} is already attached to ${targetItem.name}.`);
-      return;
+      if (targetItem.system.loadedAmmo) {
+        ui.notifications.warn(`${targetItem.name} already has ammunition loaded.`);
+        return;
+      }
+
+      // Ensure the ammo is owned by this actor
+      let ammoItem = droppedItem;
+      if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
+        ui.notifications.warn('Ammunition must be in your inventory to load it.');
+        return;
+      }
+
+      await targetItem.update({ "system.loadedAmmo": ammoItem.id });
+      ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
     }
-    
-    // Check history limit based on armor type
-    let maxHistories = 1;
-    if (targetItem.name.toLowerCase().includes('artificer')) {
-      maxHistories = 2;
-    }
-    
-    if (currentHistories.length >= maxHistories) {
-      ui.notifications.warn(`${targetItem.name} can only have ${maxHistories} armor ${maxHistories === 1 ? 'history' : 'histories'}.`);
-      return;
-    }
-    
-    await targetItem.update({ 
-      "system.attachedHistories": [...currentHistories, historyItem.id]
-    });
-    
-    ui.notifications.info(`${historyItem.name} attached to ${targetItem.name}.`);
   }
 
 }

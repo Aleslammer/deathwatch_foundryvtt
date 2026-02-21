@@ -1216,8 +1216,7 @@
             "capacity": {
                 "value": 0,
                 "max": 0
-            },
-            "quantity": 1
+            }
         },
         "characteristic": {
             "templates": [

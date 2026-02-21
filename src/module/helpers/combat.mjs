@@ -36,7 +36,8 @@ export class CombatHelper {
         ui.notifications.warn(`${weapon.name} has no ammunition loaded!`);
         return;
       }
-      if (weapon.system.capacity.value <= 0) {
+      const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
+      if (!loadedAmmo || loadedAmmo.system.capacity.value <= 0) {
         ui.notifications.warn(`${weapon.name} is out of ammunition!`);
         return;
       }
@@ -70,7 +71,8 @@ export class CombatHelper {
     // Parse weapon RoF (e.g., "S/2/4" or "S/-/-" or "-/3/-")
     const rof = weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
-    const currentAmmo = weapon.system.capacity?.value || 0;
+    const loadedAmmo = weapon.system.loadedAmmo ? actor.items.get(weapon.system.loadedAmmo) : null;
+    const currentAmmo = loadedAmmo?.system.capacity.value || 0;
     const hasSingle = rofParts[0] && rofParts[0] !== '-';
     const semiAutoRounds = parseInt(rofParts[1]) || 0;
     const fullAutoRounds = parseInt(rofParts[2]) || 0;
@@ -111,7 +113,7 @@ export class CombatHelper {
       </div>
       <div class="form-group">
         <label>Misc Modifier:</label>
-        <input type="text" id="miscModifier" name="miscModifier" value="0" pattern="[\+\-]?[0-9]+" />
+        <input type="text" id="miscModifier" name="miscModifier" value="0" />
       </div>
     `;
 
@@ -151,13 +153,16 @@ export class CombatHelper {
             const runningTarget = html.find('#runningTarget').is(':checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
-            // Determine max hits based on RoF
-            let maxHits = 1;
+            // Determine rounds fired based on RoF
+            let roundsFired = 1;
             if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
-              maxHits = parseInt(rofParts[1]) || 1;
+              roundsFired = parseInt(rofParts[1]) || 1;
             } else if (autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
-              maxHits = parseInt(rofParts[2]) || 1;
+              roundsFired = parseInt(rofParts[2]) || 1;
             }
+
+            // Determine max hits based on RoF
+            let maxHits = roundsFired;
 
             const fullModifier = bs + bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier;
             const hitRoll = await new Roll('1d100').evaluate();
@@ -194,10 +199,18 @@ export class CombatHelper {
               content: chatContent
             });
 
-            // Deduct ammunition if weapon uses ammo
-            if (weapon.system.capacity && weapon.system.capacity.max > 0) {
-              const newAmmo = Math.max(0, weapon.system.capacity.value - maxHits);
-              await weapon.update({ "system.capacity.value": newAmmo });
+            // Deduct ammunition if weapon has loaded ammo
+            if (weapon.system.loadedAmmo) {
+              const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
+              if (loadedAmmo) {
+                const currentValue = loadedAmmo.system.capacity.value;
+                const newAmmoValue = Math.max(0, currentValue - roundsFired);
+                await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
+                if (newAmmoValue === 0) {
+                  ui.notifications.warn(`${weapon.name} is out of ammunition!`);
+                }
+                actor.sheet.render(false);
+              }
             }
           }
         },
