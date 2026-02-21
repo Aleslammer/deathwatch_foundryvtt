@@ -16,6 +16,18 @@ export class DeathwatchActor extends Actor {
   }
 
   /** @override */
+  async _preCreate(data, options, user) {
+    await super._preCreate(data, options, user);
+    
+    // Set default token settings based on actor type
+    if (data.type === 'character') {
+      this.updateSource({
+        'prototypeToken.actorLink': true
+      });
+    }
+  }
+
+  /** @override */
   prepareBaseData() {
     // Data modifications in this step occur before processing embedded
     // documents or derived data.

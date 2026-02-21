@@ -414,14 +414,13 @@ export class DeathwatchActorSheet extends ActorSheet {
    */
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
-    const baseFormula = dataset.roll;
     const characteristicKey = dataset.characteristic;
     const label = dataset.label ? `[Characteristic] ${dataset.label}` : '';
+    const characteristic = this.actor.system.characteristics[characteristicKey];
+    const characteristicMod = characteristic?.mod || 0;
 
-    // Get the characteristic modifier
-    const characteristicMod = this.actor.system.characteristics[characteristicKey]?.mod || 0;
+    const activeModifiers = characteristic?.modifiers || [];
 
-    // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `
       <div class="modifier-dialog">
         <div class="form-group">
@@ -429,12 +428,9 @@ export class DeathwatchActorSheet extends ActorSheet {
           <select id="difficulty-select" name="difficulty">
     `;
 
-    // Add options for each difficulty level
     for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
       const selected = key === 'challenging' ? 'selected' : '';
-      content += `
-            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
-      `;
+      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
     }
 
     content += `
@@ -442,90 +438,66 @@ export class DeathwatchActorSheet extends ActorSheet {
         </div>
         <div class="form-group modifier-row">
           <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
         </div>
       </div>
     `;
 
-    // Show the dialog
     return new Dialog({
       title: `Roll ${dataset.label}`,
       content: content,
       render: (html) => {
-        // Add input validation to restrict misc field to numbers only
         const miscInput = html.find('#modifier');
         miscInput.on('input', function() {
-          // Allow only numbers, +, -, and spaces
           const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) {
-            this.value = value;
-          }
+          if (this.value !== value) this.value = value;
         });
       },
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
-          callback: (html) => {
+          callback: async (html) => {
             const selectedDifficulty = html.find('#difficulty-select').val();
             const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            
             const additionalModifierInput = html.find('#modifier').val().trim();
             let additionalModifier = 0;
             
-            // Parse the additional modifier (allow free-form input)
-            if (additionalModifierInput) {
-              // Try to evaluate simple expressions like "+5", "-10", "2d6", etc.
-              try {
-                // If it starts with + or -, treat as modifier
-                if (additionalModifierInput.match(/^[-+]\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else if (additionalModifierInput.match(/^\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else {
-                  // For more complex expressions, we'll add them as-is to the formula
-                  additionalModifier = additionalModifierInput;
-                }
-              } catch (e) {
-                // If parsing fails, treat as string to add to formula
-                additionalModifier = additionalModifierInput;
-              }
+            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
+              additionalModifier = parseInt(additionalModifierInput);
             }
             
-            // Build roll formula and modifier breakdown
-            let rollFormula = 'd100';
-            let modifierBreakdown = [];
+            let rollFormula = '1d100';
+            let modifierParts = [];
             
             if (characteristicMod !== 0) {
               rollFormula += ` ${characteristicMod >= 0 ? '+' : ''}${characteristicMod}`;
-              modifierBreakdown.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} (${dataset.label})`);
+              modifierParts.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} ${dataset.label} Bonus`);
+            }
+            
+            for (const mod of activeModifiers) {
+              rollFormula += ` ${mod.value >= 0 ? '+' : ''}${mod.value}`;
+              const desc = mod.source ? `${mod.name} (${mod.source})` : mod.name;
+              modifierParts.push(`${mod.value >= 0 ? '+' : ''}${mod.value} ${desc}`);
             }
             
             if (difficultyModifier !== 0) {
               rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
-              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
             }
             
-            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
+            if (additionalModifier !== 0) {
               rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
-              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
-            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
-              rollFormula += ` + ${additionalModifier}`;
-              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
+              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
             }
             
             let roll = new Roll(rollFormula, rollData);
-            
-            // Create detailed flavor text with modifier breakdown
-            let flavorText = `${label}`;
-            if (modifierBreakdown.length > 0) {
-              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
-            }
+            await roll.evaluate();
             
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: flavorText,
-              rollMode: game.settings.get('core', 'rollMode'),
+              flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,
+              rollMode: game.settings.get('core', 'rollMode')
             });
           }
         },
@@ -553,18 +525,38 @@ export class DeathwatchActorSheet extends ActorSheet {
       return;
     }
 
-    // Check if advanced skill is trained
     if (!skill.isBasic && !skill.trained) {
       ui.notifications.warn(`${dataset.label || skillKey} is an advanced skill and must be trained to use.`);
       return;
     }
 
-    // Get skill total with modifiers applied
-    const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+    const characteristic = this.actor.system.characteristics[skill.characteristic];
+    const baseCharValue = characteristic ? characteristic.value : 0;
+    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     const skillModTotal = skill.modifierTotal || 0;
-    const skillTotal = baseSkillTotal + skillModTotal;
 
-    // Create the dialog content with difficulty dropdown and free-form modifier
+    const systemData = this.actor.system;
+    const allModifiers = [...(systemData.modifiers || [])];
+    for (const item of this.actor.items) {
+      if (item.system.equipped && item.system.modifiers) {
+        for (const mod of item.system.modifiers) {
+          if (mod.enabled !== false) allModifiers.push({ ...mod, source: item.name });
+        }
+      }
+      if (item.type === 'armor' && item.system.equipped && Array.isArray(item.system.attachedHistories)) {
+        for (const historyId of item.system.attachedHistories) {
+          const history = this.actor.items.get(historyId);
+          if (history && Array.isArray(history.system.modifiers)) {
+            for (const mod of history.system.modifiers) {
+              if (mod.enabled !== false) allModifiers.push({ ...mod, source: `${history.name} (${item.name})` });
+            }
+          }
+        }
+      }
+    }
+    const skillModifiers = allModifiers.filter(m => m.effectType === 'skill' && m.valueAffected === skillKey);
+
     let content = `
       <div class="modifier-dialog">
         <div class="form-group">
@@ -572,12 +564,9 @@ export class DeathwatchActorSheet extends ActorSheet {
           <select id="difficulty-select" name="difficulty">
     `;
 
-    // Add options for each difficulty level
     for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
       const selected = key === 'challenging' ? 'selected' : '';
-      content += `
-            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
-      `;
+      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
     }
 
     content += `
@@ -585,87 +574,79 @@ export class DeathwatchActorSheet extends ActorSheet {
         </div>
         <div class="form-group modifier-row">
           <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
         </div>
       </div>
     `;
 
-    // Show the dialog
     return new Dialog({
       title: `Roll ${dataset.label}`,
       content: content,
       render: (html) => {
-        // Add input validation to restrict misc field to numbers only
         const miscInput = html.find('#modifier');
         miscInput.on('input', function() {
-          // Allow only numbers, +, -, and spaces
           const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) {
-            this.value = value;
-          }
+          if (this.value !== value) this.value = value;
         });
       },
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
-          callback: (html) => {
+          callback: async (html) => {
             const selectedDifficulty = html.find('#difficulty-select').val();
             const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            
             const additionalModifierInput = html.find('#modifier').val().trim();
             let additionalModifier = 0;
             
-            // Parse the additional modifier
-            if (additionalModifierInput) {
-              try {
-                if (additionalModifierInput.match(/^[-+]\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else if (additionalModifierInput.match(/^\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else {
-                  additionalModifier = additionalModifierInput;
-                }
-              } catch (e) {
-                additionalModifier = additionalModifierInput;
-              }
+            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
+              additionalModifier = parseInt(additionalModifierInput);
             }
             
-            // Build roll formula and modifier breakdown
-            let rollFormula = 'd100';
-            let modifierBreakdown = [];
+            let rollFormula = '1d100';
+            let modifierParts = [];
             
-            // Add skill total
-            if (skillTotal !== 0) {
-              rollFormula += ` ${skillTotal >= 0 ? '+' : ''}${skillTotal}`;
-              modifierBreakdown.push(`${skillTotal >= 0 ? '+' : ''}${skillTotal} (${dataset.label})`);
+            if (charMod !== 0) {
+              rollFormula += ` ${charMod >= 0 ? '+' : ''}${charMod}`;
+              const charLabel = `${characteristic.label || skill.characteristic.toUpperCase()} Bonus${skill.trained ? '' : ' (Untrained ÷2)'}`;
+              modifierParts.push(`${charMod >= 0 ? '+' : ''}${charMod} ${charLabel}`);
+            }
+            
+            if (skillBonus !== 0) {
+              rollFormula += ` ${skillBonus >= 0 ? '+' : ''}${skillBonus}`;
+              const bonusType = skill.advanced ? 'Advanced' : 'Mastered';
+              modifierParts.push(`+${skillBonus} ${bonusType}`);
+            }
+            
+            if (skill.modifier !== 0) {
+              rollFormula += ` ${skill.modifier >= 0 ? '+' : ''}${skill.modifier}`;
+              modifierParts.push(`${skill.modifier >= 0 ? '+' : ''}${skill.modifier} Base Skill Modifier`);
+            }
+            
+            for (const mod of skillModifiers) {
+              const modValue = parseInt(mod.modifier);
+              rollFormula += ` ${modValue >= 0 ? '+' : ''}${modValue}`;
+              const desc = mod.source ? `${mod.name} (${mod.source})` : mod.name;
+              modifierParts.push(`${modValue >= 0 ? '+' : ''}${modValue} ${desc}`);
             }
             
             if (difficultyModifier !== 0) {
               rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
-              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
             }
             
-            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
+            if (additionalModifier !== 0) {
               rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
-              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
-            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
-              rollFormula += ` + ${additionalModifier}`;
-              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
+              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
             }
             
             let roll = new Roll(rollFormula, rollData);
-            
-            // Create detailed flavor text with modifier breakdown
-            let flavorText = `${label}`;
-            if (modifierBreakdown.length > 0) {
-              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
-            }
+            await roll.evaluate();
             
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: flavorText,
-              rollMode: game.settings.get('core', 'rollMode'),
+              flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,
+              rollMode: game.settings.get('core', 'rollMode')
             });
           }
         },
@@ -721,38 +702,37 @@ export class DeathwatchActorSheet extends ActorSheet {
             const rangeMod = parseInt(html.find('#range-mod').val()) || 0;
             
             let attackMod = 0;
-            if (attackType === 'aimed') attackMod = 10;
-            if (attackType === 'called') attackMod = -20;
+            let modifierParts = [];
             
-            const totalMod = attackMod + rangeMod;
-            const targetNumber = bsValue + totalMod;
+            modifierParts.push(`${bsValue} Base BS`);
             
-            // Roll to hit
-            const hitRoll = new Roll('1d100');
-            await hitRoll.evaluate();
-            const hitResult = hitRoll.total;
-            const success = hitResult <= targetNumber;
-            
-            let chatContent = `<div class="deathwatch weapon-attack">
-              <h3>${weapon.name} Attack</h3>
-              <div><strong>Target:</strong> ${targetNumber} (BS ${bsValue} ${totalMod >= 0 ? '+' : ''}${totalMod})</div>
-              <div><strong>Roll:</strong> ${hitResult}</div>
-              <div><strong>Result:</strong> ${success ? '<span style="color: green;">HIT</span>' : '<span style="color: red;">MISS</span>'}</div>`;
-            
-            if (success) {
-              // Roll damage
-              const damageRoll = new Roll(weaponData.dmg);
-              await damageRoll.evaluate();
-              chatContent += `<div><strong>Damage:</strong> ${damageRoll.total} (${weaponData.dmgType})</div>`;
-              chatContent += `<div><strong>Penetration:</strong> ${weaponData.penetration}</div>`;
-              if (weaponData.isTearing) chatContent += `<div><em>Tearing: Reroll damage dice, take highest</em></div>`;
+            if (attackType === 'aimed') {
+              attackMod = 10;
+              modifierParts.push('+10 Aimed Shot');
+            }
+            if (attackType === 'called') {
+              attackMod = -20;
+              modifierParts.push('-20 Called Shot');
             }
             
-            chatContent += `</div>`;
+            if (rangeMod !== 0) {
+              modifierParts.push(`${rangeMod >= 0 ? '+' : ''}${rangeMod} Range`);
+            }
             
-            ChatMessage.create({
+            const totalMod = attackMod + rangeMod;
+            let rollFormula = '1d100';
+            if (totalMod !== 0) {
+              rollFormula += ` ${totalMod >= 0 ? '+' : ''}${totalMod}`;
+            }
+            
+            const roll = new Roll(rollFormula);
+            await roll.evaluate();
+            
+            const label = `[Attack] ${weapon.name}`;
+            roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              content: chatContent
+              flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,
+              rollMode: game.settings.get('core', 'rollMode')
             });
           }
         },

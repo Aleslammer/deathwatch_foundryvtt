@@ -126,21 +126,19 @@ export class CombatHelper {
         });
         
         html.find('label:has(#calledShot)').click(function(e) {
-          if (e.target.tagName !== 'INPUT') {
-            const checkbox = $(this).find('#calledShot');
-            const icon = $(this).find('#calledShotIcon');
-            checkbox.prop('checked', !checkbox.prop('checked'));
-            icon.toggleClass('fa-square fa-check');
-          }
+          e.preventDefault();
+          const checkbox = $(this).find('#calledShot');
+          const icon = $(this).find('#calledShotIcon');
+          checkbox.prop('checked', !checkbox.prop('checked'));
+          icon.toggleClass('fa-square').toggleClass('fa-check-square');
         });
         
         html.find('label:has(#runningTarget)').click(function(e) {
-          if (e.target.tagName !== 'INPUT') {
-            const checkbox = $(this).find('#runningTarget');
-            const icon = $(this).find('#runningTargetIcon');
-            checkbox.prop('checked', !checkbox.prop('checked'));
-            icon.toggleClass('fa-square fa-check');
-          }
+          e.preventDefault();
+          const checkbox = $(this).find('#runningTarget');
+          const icon = $(this).find('#runningTargetIcon');
+          checkbox.prop('checked', !checkbox.prop('checked'));
+          icon.toggleClass('fa-square').toggleClass('fa-check-square');
         });
       },
       buttons: {
@@ -149,8 +147,8 @@ export class CombatHelper {
           callback: async (html) => {
             const aim = parseInt(html.find('#aim').val()) || 0;
             const autoFire = parseInt(html.find('#autoFire').val()) || 0;
-            const calledShot = html.find('#calledShot').is(':checked') ? COMBAT_PENALTIES.CALLED_SHOT : 0;
-            const runningTarget = html.find('#runningTarget').is(':checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
+            const calledShot = html.find('#calledShot').prop('checked') ? COMBAT_PENALTIES.CALLED_SHOT : 0;
+            const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
             // Determine rounds fired based on RoF
@@ -164,39 +162,32 @@ export class CombatHelper {
             // Determine max hits based on RoF
             let maxHits = roundsFired;
 
-            const fullModifier = bs + bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier;
+            const modifiers = bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier;
+            const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
+            const targetNumber = bs + clampedModifiers;
+            
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const calculatedHits = fullModifier - hitValue >= 0 ? 1 + Math.floor((fullModifier - hitValue) / 10) : 0;
+            const calculatedHits = hitValue <= targetNumber ? 1 + Math.floor((targetNumber - hitValue) / 10) : 0;
             const hitsTotal = Math.min(calculatedHits, maxHits);
 
-            let chatContent = `<div class="deathwatch weapon-attack">
-              <h3>${weapon.name} Attack</h3>
-              <div><strong>Ballistic Skill:</strong> ${bs}</div>
-              <div><strong>BS Advances:</strong> ${bsAdv}</div>`;
-            
-            if (aim !== 0) chatContent += `<div><strong>Aim:</strong> ${aim}</div>`;
-            if (autoFire !== 0) chatContent += `<div><strong>Rate of Fire:</strong> +${autoFire}</div>`;
-            if (calledShot !== 0) chatContent += `<div><strong>Called Shot:</strong> ${calledShot}</div>`;
-            if (autoRangeMod !== 0) chatContent += `<div><strong>Range:</strong> ${autoRangeMod}</div>`;
-            if (runningTarget !== 0) chatContent += `<div><strong>Running Target:</strong> ${runningTarget}</div>`;
-            if (miscModifier !== 0) chatContent += `<div><strong>Misc:</strong> ${miscModifier}</div>`;
-            
-            chatContent += `<div><strong>Total Modifier:</strong> ${fullModifier}</div>
-              <div><strong>Roll:</strong> ${hitValue}</div>
-              <div><strong>Hits:</strong> ${hitsTotal}</div>`;
+            let modifierParts = [];
+            modifierParts.push(`${bs} Base BS`);
+            if (bsAdv !== 0) modifierParts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
+            if (aim !== 0) modifierParts.push(`+${aim} Aim`);
+            if (autoFire !== 0) modifierParts.push(`+${autoFire} Rate of Fire`);
+            if (calledShot !== 0) modifierParts.push(`${calledShot} Called Shot`);
+            if (autoRangeMod !== 0) modifierParts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
+            if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
+            if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
 
-            if (hitsTotal > 0) {
-              chatContent += `<div style="color: green;"><strong>HIT!</strong></div>`;
-            } else {
-              chatContent += `<div style="color: red;"><strong>MISS!</strong></div>`;
-            }
+            const label = `[Attack] ${weapon.name} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>`;
+            const flavor = modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label;
 
-            chatContent += `</div>`;
-
-            ChatMessage.create({
+            hitRoll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
-              content: chatContent
+              flavor: flavor,
+              rollMode: game.settings.get('core', 'rollMode')
             });
 
             // Deduct ammunition if weapon has loaded ammo
