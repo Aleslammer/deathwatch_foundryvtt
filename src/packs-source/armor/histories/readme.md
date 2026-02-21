@@ -1,3 +1,0 @@
-I need an icon for foundry vtt for a PowerArmor history by the name of "A Fury like lightning" no text on image. This is for a Warhammer 40k Deathwatch module
-I need an icon for foundry vtt for a PowerArmor history by the name of "Thy strength be legend" no text on image. This is for a Warhammer 40k Deathwatch module
-I need an icon for foundry vtt for a PowerArmor history by the name of "Terror be thy friend" no text on image. This is for a Warhammer 40k Deathwatch module
