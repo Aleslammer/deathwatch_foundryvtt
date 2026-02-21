@@ -173,6 +173,7 @@ export class DeathwatchItemSheet extends ItemSheet {
                 <select name="effectType" id="effectType">
                     <option value="characteristic" ${modifier.effectType === 'characteristic' ? 'selected' : ''}>Characteristic</option>
                     <option value="skill" ${modifier.effectType === 'skill' ? 'selected' : ''}>Skill</option>
+                    <option value="initiative" ${modifier.effectType === 'initiative' ? 'selected' : ''}>Initiative</option>
                 </select>
             </div>
             <div class="form-group" id="valueAffectedGroup">
@@ -212,6 +213,9 @@ export class DeathwatchItemSheet extends ItemSheet {
                         }
                         skillOptions += '</select>';
                         group.append(skillOptions);
+                    } else if (effectType === 'initiative') {
+                        group.find('input, select').remove();
+                        group.append(`<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`);
                     } else {
                         group.find('input, select').remove();
                         group.append(`<input type="text" name="valueAffected" value="" />`);

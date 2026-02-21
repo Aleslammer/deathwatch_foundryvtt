@@ -16,6 +16,15 @@
         "effectType": "characteristic",
         "valueAffected": "ag",
         "enabled": true
+      },
+      {
+        "_id": "armhistmod0011",
+        "name": "Initiative Bonus",
+        "modifier": "1",
+        "type": "equipment",
+        "effectType": "initiative",
+        "valueAffected": "",
+        "enabled": true
       }
     ]
   }

@@ -63,6 +63,7 @@ export class ModifierHelper {
           <option value="${EFFECT_TYPES.CHARACTERISTIC}" ${modifier.effectType === EFFECT_TYPES.CHARACTERISTIC ? 'selected' : ''}>Characteristic</option>
           <option value="${EFFECT_TYPES.SKILL}" ${modifier.effectType === EFFECT_TYPES.SKILL ? 'selected' : ''}>Skill</option>
           <option value="${EFFECT_TYPES.CHARACTERISTIC_BONUS}" ${modifier.effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS ? 'selected' : ''}>Characteristic Bonus</option>
+          <option value="${EFFECT_TYPES.INITIATIVE}" ${modifier.effectType === EFFECT_TYPES.INITIATIVE ? 'selected' : ''}>Initiative</option>
         </select>
       </div>
       <div class="form-group" id="valueAffectedGroup">
@@ -84,6 +85,8 @@ export class ModifierHelper {
             group.append(this._getCharacteristicSelect());
           } else if (effectType === EFFECT_TYPES.SKILL) {
             group.append(this._getSkillSelect());
+          } else if (effectType === EFFECT_TYPES.INITIATIVE) {
+            group.append(`<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`);
           } else {
             group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
           }
@@ -119,6 +122,8 @@ export class ModifierHelper {
       return this._getCharacteristicSelect(modifier.valueAffected);
     } else if (modifier.effectType === EFFECT_TYPES.SKILL) {
       return this._getSkillSelect(modifier.valueAffected);
+    } else if (modifier.effectType === EFFECT_TYPES.INITIATIVE) {
+      return `<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`;
     } else {
       return `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
     }

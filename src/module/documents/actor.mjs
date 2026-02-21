@@ -128,6 +128,15 @@ export class DeathwatchActor extends Actor {
         skill.modifierTotal = skillModTotal;
       }
     }
+
+    // Apply initiative modifiers
+    let initiativeModTotal = 0;
+    for (const mod of allModifiers) {
+      if (mod.enabled !== false && mod.effectType === 'initiative') {
+        initiativeModTotal += parseInt(mod.modifier) || 0;
+      }
+    }
+    systemData.initiativeBonus = initiativeModTotal;
   }
 
   /**
@@ -167,6 +176,12 @@ export class DeathwatchActor extends Actor {
         data[k] = foundry.utils.deepClone(v);
       }
     }
+
+    // Add agility bonus for initiative
+    data.agBonus = data.characteristics?.ag?.bonus || Math.floor((data.characteristics?.ag?.value || 0) / 10);
+    
+    // Add initiative bonus from modifiers
+    data.initiativeBonus = data.initiativeBonus || 0;
 
     // TODO: Figure out level stuff
     // Add level for easier access, or fall back to 0.
