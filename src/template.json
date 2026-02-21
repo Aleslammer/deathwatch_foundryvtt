@@ -1193,7 +1193,8 @@
                 "base"
             ],
             "book": "",
-            "page": ""
+            "page": "",
+            "modifiers": []
         },
         "gear": {
             "templates": [

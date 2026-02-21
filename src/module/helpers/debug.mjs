@@ -1,6 +1,6 @@
 export const DEBUG_FLAGS = {
   COMBAT: false,
-  MODIFIERS: false,
+  MODIFIERS: true,
   SHEETS: false
 };
 

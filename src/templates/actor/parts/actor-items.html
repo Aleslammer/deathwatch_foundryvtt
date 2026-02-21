@@ -64,6 +64,7 @@
   <h3 class="inventory-header">Armor</h3>
   <ol class="items-list">
     <li class="item flexrow items-header">
+      <div class="item-equipped"></div>
       <div class="item-name">Name</div>
       <div class="item-armor">Body</div>
       <div class="item-armor">Head</div>
@@ -75,6 +76,13 @@
     </li>
     {{#each armor as |item id|}}
       <li class="item flexrow" data-item-id="{{item._id}}">
+        <div class="item-equipped">
+          {{#if item.system.equipped}}
+            <a class="item-control item-equip" title="Unequip"><i class="fas fa-check"></i></a>
+          {{else}}
+            <a class="item-control item-equip" title="Equip"><i class="far fa-square"></i></a>
+          {{/if}}
+        </div>
         <div class="item-name">
           <div class="item-image">
             <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>

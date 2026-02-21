@@ -10,6 +10,7 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
+        <a class="item" data-tab="modifiers">Modifiers</a>
     </nav>
 
     {{!-- Sheet Body --}}
@@ -32,6 +33,30 @@
                     <label class="resource-label">Page</label>
                     <input type="text" name="system.page" value="{{system.page}}" />
                 </div>
+            </div>
+        </div>
+
+        {{!-- Modifiers Tab --}}
+        <div class="tab modifiers" data-group="primary" data-tab="modifiers">
+            <div class="modifiers-list">
+                <div class="items-header">
+                    <div class="item-name">Modifier</div>
+                    <div class="item-controls">
+                        <a class="item-control modifier-create" title="Create Modifier"><i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+                {{#each system.modifiers as |modifier id|}}
+                <div class="item modifier" data-modifier-id="{{modifier._id}}">
+                    <div class="item-name">{{modifier.name}} ({{modifier.modifier}})</div>
+                    <div class="item-controls">
+                        <a class="item-control modifier-toggle" title="{{#if modifier.enabled}}Disable{{else}}Enable{{/if}}">
+                            <i class="fas {{#if modifier.enabled}}fa-check-circle{{else}}fa-times-circle{{/if}}"></i>
+                        </a>
+                        <a class="item-control modifier-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                        <a class="item-control modifier-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                {{/each}}
             </div>
         </div>
     </section>

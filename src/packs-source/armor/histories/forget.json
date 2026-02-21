@@ -6,6 +6,7 @@
   "system": {
     "description": "<p>Each bearer of this armour has inscribed it with an oath of vengeance against those who have offended the Emperor in some way. Some inscriptions revile a single name, while some condemn entire races of Xenos or planetary populations. Each successive bearer considers it a matter of honour to exact the Emperor's Vengeance upon the offender and considers it his solemn duty to put right as many of the wrongs as possible. Once the offender has been punished, his name is left as an example to others. Gain the Hatred (choose one) Talent.</p>",
     "book": "Deathwatch Core Rulebook",
-    "page": "162"
+    "page": "162",
+    "modifiers": []
   }
 }
