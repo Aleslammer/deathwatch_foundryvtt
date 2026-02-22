@@ -2,6 +2,9 @@ import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, RANGE_MODIFIER
 import { debug } from "./debug.mjs";
 
 export class CombatHelper {
+  static lastAttackRoll = null;
+  static lastAttackTarget = null;
+  static lastAttackHits = 1;
 
   static calculateRangeModifier(distance, weaponRange) {
     debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
@@ -27,7 +30,7 @@ export class CombatHelper {
   }
   
   static async weaponAttackDialog(actor, weapon) {
-    const bs = actor.system.characteristics.bs.value;
+    const bs = actor.system.characteristics.bs.base || actor.system.characteristics.bs.value;
     const bsAdv = actor.system.characteristics.bs.advances || 0;
 
     // Check if weapon uses ammo and has ammo loaded
@@ -171,6 +174,10 @@ export class CombatHelper {
             const calculatedHits = hitValue <= targetNumber ? 1 + Math.floor((targetNumber - hitValue) / 10) : 0;
             const hitsTotal = Math.min(calculatedHits, maxHits);
 
+            CombatHelper.lastAttackRoll = hitValue;
+            CombatHelper.lastAttackTarget = targetNumber;
+            CombatHelper.lastAttackHits = hitsTotal;
+
             let modifierParts = [];
             modifierParts.push(`${bs} Base BS`);
             if (bsAdv !== 0) modifierParts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
@@ -213,15 +220,138 @@ export class CombatHelper {
     }).render(true);
   }
 
+  static determineHitLocation(attackRoll) {
+    const reversed = parseInt(attackRoll.toString().split('').reverse().join(''));
+    if (reversed <= 10) return "Head";
+    if (reversed <= 20) return "Right Arm";
+    if (reversed <= 30) return "Left Arm";
+    if (reversed <= 70) return "Body";
+    if (reversed <= 85) return "Right Leg";
+    return "Left Leg";
+  }
+
+  static determineMultipleHitLocations(firstLocation, totalHits) {
+    if (totalHits <= 1) return [firstLocation];
+
+    const hitPattern = {
+      "Head": ["Head", "Head", "Arm", "Body", "Arm", "Body"],
+      "Right Arm": ["Right Arm", "Left Arm", "Body", "Head", "Body", "Arm"],
+      "Left Arm": ["Left Arm", "Right Arm", "Body", "Head", "Body", "Arm"],
+      "Body": ["Body", "Body", "Arm", "Head", "Arm", "Body"],
+      "Right Leg": ["Right Leg", "Left Leg", "Body", "Arm", "Head", "Body"],
+      "Left Leg": ["Left Leg", "Right Leg", "Body", "Arm", "Head", "Body"]
+    };
+
+    const basePattern = hitPattern[firstLocation] || hitPattern["Body"];
+    const locations = [];
+    let armToggle = firstLocation.includes("Right");
+    let legToggle = firstLocation.includes("Right");
+
+    for (let i = 0; i < totalHits; i++) {
+      let location = basePattern[Math.min(i, 5)];
+      
+      if (location === "Arm") {
+        location = armToggle ? "Right Arm" : "Left Arm";
+        armToggle = !armToggle;
+      } else if (location === "Leg") {
+        location = legToggle ? "Right Leg" : "Left Leg";
+        legToggle = !legToggle;
+      }
+      
+      locations.push(location);
+    }
+
+    return locations;
+  }
+
   static async weaponDamageRoll(actor, weapon) {
     const dmg = weapon.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
 
-    const roll = await new Roll(dmg).evaluate();
-    const flavor = `<h2>${weapon.name} - Damage Roll</h2><p>Penetration: ${weapon.system.penetration}</p>`;
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: flavor
-    });
+    const defaultRoll = this.lastAttackRoll || '';
+    const defaultTarget = this.lastAttackTarget || '';
+    const defaultHits = this.lastAttackHits || 1;
+    const isMelee = weapon.system.class?.toLowerCase().includes('melee');
+    const strBonus = actor.system.characteristics.str?.mod || 0;
+
+    const content = `
+      <div style="display: flex; gap: 10px;">
+        <div class="form-group" style="flex: 1;">
+          <label>Attack Roll:</label>
+          <input type="number" id="attackRoll" name="attackRoll" value="${defaultRoll}" placeholder="e.g., 32" min="1" max="100" readonly />
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>Target Number:</label>
+          <input type="number" id="targetNumber" name="targetNumber" value="${defaultTarget}" placeholder="e.g., 50" min="1" max="200" readonly />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Number of Hits:</label>
+        <input type="number" id="numHits" name="numHits" value="${defaultHits}" min="1" max="10" />
+      </div>
+    `;
+
+    new Dialog({
+      title: `Damage: ${weapon.name}`,
+      content: content,
+      buttons: {
+        roll: {
+          label: "Roll Damage",
+          callback: async (html) => {
+            const attackRollInput = html.find('#attackRoll').val();
+            const targetNumberInput = html.find('#targetNumber').val();
+            const numHits = parseInt(html.find('#numHits').val()) || 1;
+            let firstHitLocation = "Unknown";
+            let degreesOfSuccess = 0;
+            
+            if (attackRollInput && targetNumberInput) {
+              const attackRoll = parseInt(attackRollInput);
+              const targetNumber = parseInt(targetNumberInput);
+              if (attackRoll >= 1 && attackRoll <= 100) {
+                firstHitLocation = this.determineHitLocation(attackRoll);
+                if (attackRoll <= targetNumber) {
+                  degreesOfSuccess = Math.floor((targetNumber - attackRoll) / 10);
+                }
+              }
+            }
+
+            const hitLocations = this.determineMultipleHitLocations(firstHitLocation, numHits);
+            
+            for (let i = 0; i < numHits; i++) {
+              let damageFormula = dmg;
+              
+              if (i === 0 && degreesOfSuccess > 0) {
+                damageFormula = damageFormula.replace(/(\d+)(d\d+)/, (match, count, die) => {
+                  const diceCount = parseInt(count);
+                  if (diceCount > 1) {
+                    return `(${diceCount - 1}${die} + 1${die}min${degreesOfSuccess})`;
+                  }
+                  return `1${die}min${degreesOfSuccess}`;
+                });
+              }
+              
+              if (isMelee && strBonus !== 0) {
+                damageFormula += ` + ${strBonus}`;
+              }
+
+              const roll = await new Roll(damageFormula).evaluate();
+              let flavorParts = [`<strong>Hit ${i + 1}:</strong> ${hitLocations[i]}`];
+              if (i === 0 && degreesOfSuccess > 0) flavorParts.push(`<strong>DoS:</strong> ${degreesOfSuccess}`);
+              flavorParts.push(`<strong>Penetration:</strong> ${weapon.system.penetration || 0}`);
+              if (isMelee && strBonus !== 0 && i === 0) flavorParts.push(`<em>Includes STR Bonus: ${strBonus}</em>`);
+
+              roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `<strong style="font-size: 1.1em;">${weapon.name}${numHits > 1 ? ` (${i + 1}/${numHits})` : ''}</strong><br>${flavorParts.join('<br>')}`
+              });
+            }
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "roll"
+    }).render(true);
   }
 }
