@@ -47,6 +47,13 @@
             "path": "packs/armor",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "tables",
+            "label": "Tables",
+            "path": "packs/tables",
+            "type": "RollTable",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

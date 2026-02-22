@@ -82,29 +82,84 @@ async function compilePackFile(packName) {
             folderId = folderMap[firstDir];
         }
         
-        const entry = {
-            _id: id,
-            name: doc.name,
-            type: doc.type,
-            img: doc.img || '',
-            system: doc.system || {},
-            effects: doc.effects || [],
-            folder: folderId,
-            sort: doc.sort || 0,
-            ownership: doc.ownership || { default: 0 },
-            flags: doc.flags || {},
-            _stats: {
-                systemId: 'deathwatch',
-                systemVersion: '0.0.2',
-                coreVersion: '13.351',
-                lastModifiedBy: null,
-                compendiumSource: null,
-                duplicateSource: null,
-                exportSource: null
-            }
-        };
+        // Check if this is a RollTable
+        const isRollTable = packName === 'tables' || doc.formula !== undefined;
         
-        await db.put(`!items!${id}`, entry);
+        let entry;
+        if (isRollTable) {
+            entry = {
+                _id: id,
+                name: doc.name,
+                formula: doc.formula || '1d6',
+                replacement: doc.replacement ?? true,
+                displayRoll: doc.displayRoll ?? true,
+                folder: folderId,
+                sort: doc.sort || 0,
+                ownership: doc.ownership || { default: 0 },
+                flags: doc.flags || {},
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351',
+                    lastModifiedBy: null,
+                    compendiumSource: null,
+                    duplicateSource: null,
+                    exportSource: null
+                }
+            };
+            
+            // Store table entry
+            await db.put(`!tables!${id}`, entry);
+            
+            // Store each result as a separate embedded document
+            if (doc.results && Array.isArray(doc.results)) {
+                for (const result of doc.results) {
+                    const resultEntry = {
+                        _id: result._id || randomID(),
+                        type: result.type ?? 0,
+                        text: result.text || '',
+                        img: result.img || 'icons/svg/d20-grey.svg',
+                        weight: result.weight ?? 1,
+                        range: result.range || [1, 1],
+                        drawn: result.drawn ?? false,
+                        flags: result.flags || {},
+                        _stats: {
+                            compendiumSource: null,
+                            duplicateSource: null
+                        }
+                    };
+                    await db.put(`!tables.results!${id}.${resultEntry._id}`, resultEntry);
+                }
+            }
+            continue;
+        } else {
+            entry = {
+                _id: id,
+                name: doc.name,
+                type: doc.type,
+                img: doc.img || '',
+                system: doc.system || {},
+                effects: doc.effects || [],
+                folder: folderId,
+                sort: doc.sort || 0,
+                ownership: doc.ownership || { default: 0 },
+                flags: doc.flags || {},
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351',
+                    lastModifiedBy: null,
+                    compendiumSource: null,
+                    duplicateSource: null,
+                    exportSource: null
+                }
+            };
+        }
+        
+        const key = isRollTable ? `!tables!${id}` : `!items!${id}`;
+        if (!isRollTable) {
+            await db.put(key, entry);
+        }
     }
     
     await db.close();
