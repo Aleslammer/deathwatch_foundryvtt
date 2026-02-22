@@ -264,6 +264,22 @@ export class CombatHelper {
     return locations;
   }
 
+  static hasNaturalTen(roll) {
+    return roll.dice.some(d => d.results.some(r => r.result === 10 || (d.faces === 5 && r.result === 5)));
+  }
+
+  static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
+    const confirmRoll = await new Roll('1d100').evaluate();
+    const confirmed = confirmRoll.total <= targetNumber;
+    
+    await confirmRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br>Target: ${targetNumber} - ${confirmed ? '<strong style="color: green;">CONFIRMED!</strong>' : '<strong style="color: red;">Failed</strong>'}`
+    });
+    
+    return confirmed;
+  }
+
   static async weaponDamageRoll(actor, weapon) {
     const dmg = weapon.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
@@ -303,10 +319,11 @@ export class CombatHelper {
             const numHits = parseInt(html.find('#numHits').val()) || 1;
             let firstHitLocation = "Unknown";
             let degreesOfSuccess = 0;
+            let targetNumber = 0;
             
             if (attackRollInput && targetNumberInput) {
               const attackRoll = parseInt(attackRollInput);
-              const targetNumber = parseInt(targetNumberInput);
+              targetNumber = parseInt(targetNumberInput);
               if (attackRoll >= 1 && attackRoll <= 100) {
                 firstHitLocation = this.determineHitLocation(attackRoll);
                 if (attackRoll <= targetNumber) {
@@ -318,8 +335,11 @@ export class CombatHelper {
             const hitLocations = this.determineMultipleHitLocations(firstHitLocation, numHits);
             
             for (let i = 0; i < numHits; i++) {
-              let damageFormula = dmg;
+              let totalDamage = 0;
+              let allRolls = [];
+              let furyCount = 0;
               
+              let damageFormula = dmg;
               if (i === 0 && degreesOfSuccess > 0) {
                 damageFormula = damageFormula.replace(/(\d+)(d\d+)/, (match, count, die) => {
                   const diceCount = parseInt(count);
@@ -329,21 +349,41 @@ export class CombatHelper {
                   return `1${die}min${degreesOfSuccess}`;
                 });
               }
-              
               if (isMelee && strBonus !== 0) {
                 damageFormula += ` + ${strBonus}`;
               }
 
               const roll = await new Roll(damageFormula).evaluate();
-              let flavorParts = [`<strong>Hit ${i + 1}:</strong> ${hitLocations[i]}`];
-              if (i === 0 && degreesOfSuccess > 0) flavorParts.push(`<strong>DoS:</strong> ${degreesOfSuccess}`);
-              flavorParts.push(`<strong>Penetration:</strong> ${weapon.system.penetration || 0}`);
-              if (isMelee && strBonus !== 0 && i === 0) flavorParts.push(`<em>Includes STR Bonus: ${strBonus}</em>`);
-
-              roll.toMessage({
+              totalDamage += roll.total;
+              allRolls.push(roll);
+              
+              await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
-                flavor: `<strong style="font-size: 1.1em;">${weapon.name}${numHits > 1 ? ` (${i + 1}/${numHits})` : ''}</strong><br>${flavorParts.join('<br>')}`
+                flavor: `<strong style="font-size: 1.1em;">${weapon.name}${numHits > 1 ? ` (${i + 1}/${numHits})` : ''}</strong><br><strong>Hit ${i + 1}:</strong> ${hitLocations[i]}${i === 0 && degreesOfSuccess > 0 ? `<br><strong>DoS:</strong> ${degreesOfSuccess}` : ''}<br><strong>Penetration:</strong> ${weapon.system.penetration || 0}${isMelee && strBonus !== 0 && i === 0 ? `<br><em>Includes STR Bonus: ${strBonus}</em>` : ''}`
               });
+              
+              if (this.hasNaturalTen(roll) && targetNumber > 0) {
+                let keepChecking = await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
+                
+                while (keepChecking) {
+                  furyCount++;
+                  const furyRoll = await new Roll(dmg).evaluate();
+                  totalDamage += furyRoll.total;
+                  allRolls.push(furyRoll);
+                  
+                  await furyRoll.toMessage({
+                    speaker: ChatMessage.getSpeaker({ actor }),
+                    flavor: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY DAMAGE ${furyCount} ⚡</strong>`
+                  });
+                  
+                  keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
+                }
+                
+                await ChatMessage.create({
+                  speaker: ChatMessage.getSpeaker({ actor }),
+                  content: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ Righteous Fury x${furyCount} ⚡</strong><br><strong>Location:</strong> ${hitLocations[i]}<br><strong>Total Damage: ${totalDamage}</strong>`
+                });
+              }
             }
           }
         },
