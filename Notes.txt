@@ -9,3 +9,5 @@ to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/data-slate.png" -o "./src/icons/gear/data-slate.webp"
 
+
+ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1

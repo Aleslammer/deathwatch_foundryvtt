@@ -65,20 +65,21 @@ Hooks.once('ready', async function () {
             
             table = await RollTable.create({
                 name: "Scatter",
+                img: "systems/deathwatch/icons/tables/table.webp",
                 formula: "1d10",
                 replacement: true,
                 displayRoll: false
             });
             
             await table.createEmbeddedDocuments("TableResult", [
-                { type: 0, text: "Upper Left", weight: 1, range: [1, 1] },
-                { type: 0, text: "Up", weight: 1, range: [2, 2] },
-                { type: 0, text: "Upper Right", weight: 1, range: [3, 3] },
-                { type: 0, text: "Left", weight: 1, range: [4, 4] },
-                { type: 0, text: "Right", weight: 1, range: [5, 5] },
-                { type: 0, text: "Lower Left", weight: 2, range: [6, 7] },
-                { type: 0, text: "Down", weight: 1, range: [8, 8] },
-                { type: 0, text: "Lower Right", weight: 2, range: [9, 10] }
+                { type: 0, text: "Upper Left", img: "systems/deathwatch/icons/tables/upleft.webp", weight: 1, range: [1, 1] },
+                { type: 0, text: "Up", img: "systems/deathwatch/icons/tables/up.webp", weight: 1, range: [2, 2] },
+                { type: 0, text: "Upper Right", img: "systems/deathwatch/icons/tables/upright.webp", weight: 1, range: [3, 3] },
+                { type: 0, text: "Left", img: "systems/deathwatch/icons/tables/left.webp", weight: 1, range: [4, 4] },
+                { type: 0, text: "Right", img: "systems/deathwatch/icons/tables/right.webp", weight: 1, range: [5, 5] },
+                { type: 0, text: "Lower Left", img: "systems/deathwatch/icons/tables/downleft.webp", weight: 2, range: [6, 7] },
+                { type: 0, text: "Down", img: "systems/deathwatch/icons/tables/down.webp", weight: 1, range: [8, 8] },
+                { type: 0, text: "Lower Right", img: "systems/deathwatch/icons/tables/downright.webp", weight: 2, range: [9, 10] }
             ]);
         }
     }
