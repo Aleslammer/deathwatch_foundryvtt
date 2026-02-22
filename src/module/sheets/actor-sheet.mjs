@@ -474,7 +474,7 @@ export class DeathwatchActorSheet extends ActorSheet {
             
             const success = roll.total <= target;
             const degrees = Math.floor(Math.abs(target - roll.total) / 10);
-            const resultText = success ? `SUCCESS! (${degrees} DoS)` : `FAILED! (${degrees} DoF)`;
+            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
             
             let modifierParts = [];
             modifierParts.push(`${characteristic.value} ${dataset.label}`);
@@ -583,7 +583,7 @@ export class DeathwatchActorSheet extends ActorSheet {
             
             const success = roll.total <= target;
             const degrees = Math.floor(Math.abs(target - roll.total) / 10);
-            const resultText = success ? `SUCCESS! (${degrees} DoS)` : `FAILED! (${degrees} DoF)`;
+            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
             
             let modifierParts = [];
             modifierParts.push(`${skillTotal} ${dataset.label}`);
