@@ -190,6 +190,15 @@ export class CombatHelper {
               rollMode: game.settings.get('core', 'rollMode')
             });
 
+            let finalHits = hitsTotal;
+            if (hitsTotal > 0 && targetToken?.actor) {
+              const dodgeResult = await this.dodgeParryDialog(targetToken.actor, hitsTotal);
+              finalHits = hitsTotal - dodgeResult.hitsNegated;
+              if (finalHits > 0) {
+                ui.notifications.info(`${finalHits} hit${finalHits !== 1 ? 's' : ''} confirmed!`);
+              }
+            }
+
             // Deduct ammunition if weapon has loaded ammo
             if (weapon.system.loadedAmmo) {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
@@ -222,6 +231,58 @@ export class CombatHelper {
     roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: flavor
+    });
+  }
+
+  static async dodgeParryDialog(targetActor, hitsTotal) {
+    if (!targetActor) return { dodged: false, hitsNegated: 0 };
+
+    const dodge = targetActor.system.skills?.dodge;
+    if (!dodge || (!dodge.isBasic && !dodge.trained)) {
+      return { dodged: false, hitsNegated: 0 };
+    }
+
+    const ag = targetActor.system.characteristics.ag;
+    const agValue = ag?.value || 0;
+    const effectiveChar = dodge.trained ? agValue : Math.floor(agValue / 2);
+    const charBonus = Math.floor(agValue / 10);
+    const skillBonus = dodge.advanced ? 20 : (dodge.mastered ? 10 : 0);
+    const skillModTotal = dodge.modifierTotal || 0;
+    const dodgeTarget = effectiveChar + charBonus + skillBonus + (dodge.modifier || 0) + skillModTotal;
+
+    return new Promise((resolve) => {
+      new Dialog({
+        title: `Dodge Reaction - ${targetActor.name}`,
+        content: `
+          <p><strong>${hitsTotal} hit${hitsTotal > 1 ? 's' : ''} incoming!</strong></p>
+          <p>Dodge Target: ${dodgeTarget}</p>
+          <p>Each degree of success negates ${hitsTotal > 1 ? 'one hit' : 'the hit'}.</p>
+        `,
+        buttons: {
+          dodge: {
+            label: "Attempt Dodge",
+            callback: async () => {
+              const roll = await new Roll('1d100').evaluate();
+              const success = roll.total <= dodgeTarget;
+              const degrees = Math.floor(Math.abs(dodgeTarget - roll.total) / 10);
+              const hitsNegated = success ? Math.min(degrees, hitsTotal) : 0;
+
+              roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+                flavor: `<strong>Dodge Test</strong><br>Target: ${dodgeTarget}<br>${success ? `SUCCESS! (${degrees} DoS) - ${hitsNegated} hit${hitsNegated !== 1 ? 's' : ''} negated` : `FAILED! (${degrees} DoF)`}`
+              });
+
+              resolve({ dodged: success, hitsNegated });
+            }
+          },
+          skip: {
+            label: "No Reaction",
+            callback: () => resolve({ dodged: false, hitsNegated: 0 })
+          }
+        },
+        default: "dodge",
+        close: () => resolve({ dodged: false, hitsNegated: 0 })
+      }).render(true);
     });
   }
 }

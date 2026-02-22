@@ -30,10 +30,11 @@ export class DeathwatchActorSheet extends ActorSheet {
   static calculateSkillTotal(skill, characteristics) {
     const characteristic = characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
-    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
+    const charBonus = Math.floor(baseCharValue / 10);
     const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     
-    return charMod + skillBonus + skill.modifier;
+    return effectiveChar + charBonus + skillBonus + skill.modifier;
   }
 
   /** @override */
@@ -467,36 +468,29 @@ export class DeathwatchActorSheet extends ActorSheet {
               additionalModifier = parseInt(additionalModifierInput);
             }
             
-            let rollFormula = '1d100';
+            const target = characteristic.value + difficultyModifier + additionalModifier;
+            
+            let roll = new Roll('1d100', rollData);
+            await roll.evaluate();
+            
+            const success = roll.total <= target;
+            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
+            const resultText = success ? `SUCCESS! (${degrees} DoS)` : `FAILED! (${degrees} DoF)`;
+            
             let modifierParts = [];
-            
-            if (characteristicMod !== 0) {
-              rollFormula += ` ${characteristicMod >= 0 ? '+' : ''}${characteristicMod}`;
-              modifierParts.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} ${dataset.label} Bonus`);
-            }
-            
-            for (const mod of activeModifiers) {
-              rollFormula += ` ${mod.value >= 0 ? '+' : ''}${mod.value}`;
-              const desc = mod.source ? `${mod.name} (${mod.source})` : mod.name;
-              modifierParts.push(`${mod.value >= 0 ? '+' : ''}${mod.value} ${desc}`);
-            }
+            modifierParts.push(`${characteristic.value} ${dataset.label}`);
             
             if (difficultyModifier !== 0) {
-              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
               modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
             }
             
             if (additionalModifier !== 0) {
-              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
               modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
             }
             
-            let roll = new Roll(rollFormula, rollData);
-            await roll.evaluate();
-            
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,
+              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
               rollMode: game.settings.get('core', 'rollMode')
             });
           }
@@ -532,30 +526,11 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     const characteristic = this.actor.system.characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
-    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
+    const charBonus = Math.floor(baseCharValue / 10);
     const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     const skillModTotal = skill.modifierTotal || 0;
-
-    const systemData = this.actor.system;
-    const allModifiers = [...(systemData.modifiers || [])];
-    for (const item of this.actor.items) {
-      if (item.system.equipped && item.system.modifiers) {
-        for (const mod of item.system.modifiers) {
-          if (mod.enabled !== false) allModifiers.push({ ...mod, source: item.name });
-        }
-      }
-      if (item.type === 'armor' && item.system.equipped && Array.isArray(item.system.attachedHistories)) {
-        for (const historyId of item.system.attachedHistories) {
-          const history = this.actor.items.get(historyId);
-          if (history && Array.isArray(history.system.modifiers)) {
-            for (const mod of history.system.modifiers) {
-              if (mod.enabled !== false) allModifiers.push({ ...mod, source: `${history.name} (${item.name})` });
-            }
-          }
-        }
-      }
-    }
-    const skillModifiers = allModifiers.filter(m => m.effectType === 'skill' && m.valueAffected === skillKey);
+    const skillTotal = effectiveChar + charBonus + skillBonus + (skill.modifier || 0) + skillModTotal;
 
     let content = `
       <div class="modifier-dialog">
@@ -603,49 +578,29 @@ export class DeathwatchActorSheet extends ActorSheet {
               additionalModifier = parseInt(additionalModifierInput);
             }
             
-            let rollFormula = '1d100';
+            const target = skillTotal + difficultyModifier + additionalModifier;
+            
+            let roll = new Roll('1d100', rollData);
+            await roll.evaluate();
+            
+            const success = roll.total <= target;
+            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
+            const resultText = success ? `SUCCESS! (${degrees} DoS)` : `FAILED! (${degrees} DoF)`;
+            
             let modifierParts = [];
-            
-            if (charMod !== 0) {
-              rollFormula += ` ${charMod >= 0 ? '+' : ''}${charMod}`;
-              const charLabel = `${characteristic.label || skill.characteristic.toUpperCase()} Bonus${skill.trained ? '' : ' (Untrained ÷2)'}`;
-              modifierParts.push(`${charMod >= 0 ? '+' : ''}${charMod} ${charLabel}`);
-            }
-            
-            if (skillBonus !== 0) {
-              rollFormula += ` ${skillBonus >= 0 ? '+' : ''}${skillBonus}`;
-              const bonusType = skill.advanced ? 'Advanced' : 'Mastered';
-              modifierParts.push(`+${skillBonus} ${bonusType}`);
-            }
-            
-            if (skill.modifier !== 0) {
-              rollFormula += ` ${skill.modifier >= 0 ? '+' : ''}${skill.modifier}`;
-              modifierParts.push(`${skill.modifier >= 0 ? '+' : ''}${skill.modifier} Base Skill Modifier`);
-            }
-            
-            for (const mod of skillModifiers) {
-              const modValue = parseInt(mod.modifier);
-              rollFormula += ` ${modValue >= 0 ? '+' : ''}${modValue}`;
-              const desc = mod.source ? `${mod.name} (${mod.source})` : mod.name;
-              modifierParts.push(`${modValue >= 0 ? '+' : ''}${modValue} ${desc}`);
-            }
+            modifierParts.push(`${skillTotal} ${dataset.label}`);
             
             if (difficultyModifier !== 0) {
-              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
               modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
             }
             
             if (additionalModifier !== 0) {
-              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
               modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
             }
             
-            let roll = new Roll(rollFormula, rollData);
-            await roll.evaluate();
-            
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,
+              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
               rollMode: game.settings.get('core', 'rollMode')
             });
           }
