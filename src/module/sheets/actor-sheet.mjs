@@ -31,10 +31,9 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristic = characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const charBonus = Math.floor(baseCharValue / 10);
     const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     
-    return effectiveChar + charBonus + skillBonus + skill.modifier;
+    return effectiveChar + skillBonus + skill.modifier;
   }
 
   /** @override */
@@ -527,10 +526,9 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristic = this.actor.system.characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const charBonus = Math.floor(baseCharValue / 10);
     const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     const skillModTotal = skill.modifierTotal || 0;
-    const skillTotal = effectiveChar + charBonus + skillBonus + (skill.modifier || 0) + skillModTotal;
+    const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + skillModTotal;
 
     let content = `
       <div class="modifier-dialog">
