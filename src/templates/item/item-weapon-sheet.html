@@ -5,12 +5,12 @@
             <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
             <div class="grid grid-2col">
                 <div class="resource">
-                    <label class="resource-label">Quantity</label>
-                    <input type="text" name="system.quantity" value="{{system.quantity}}" data-dtype="Number" />
+                    <label class="resource-label">Damage</label>
+                    <input type="text" value="{{system.dmg}}" readonly />
                 </div>
                 <div class="resource">
-                    <label class="resource-label">Weight</label>
-                    <input type="text" name="system.weight" value="{{system.weight}}" data-dtype="Number" />
+                    <label class="resource-label">Damage Type</label>
+                    <input type="text" value="{{system.dmgType}}" readonly />
                 </div>
             </div>
         </div>
@@ -34,16 +34,103 @@
 
         {{!-- Attributes Tab --}}
         <div class="tab attributes" data-group="primary" data-tab="attributes">
-            {{!-- As you add new fields, add them in here! --}}
-            <div class="resource">
-                <label class="resource-label">Damage Type</label>
-                <select name="system.damageType">
-                    {{#select system.damageType}}
-                    {{#each (config "WeaponDamageType") as |name type|}}
-                    <option value="{{type}}">{{name}}</option>
-                    {{/each}}
-                    {{/select}}
-                </select>
+            <div class="grid grid-3col">
+                <div class="resource">
+                    <label class="resource-label">Class</label>
+                    <input type="text" name="system.class" value="{{system.class}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Range</label>
+                    <input type="text" name="system.range" value="{{system.range}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">RoF</label>
+                    <input type="text" name="system.rof" value="{{system.rof}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Damage</label>
+                    <input type="text" value="{{system.dmg}}" readonly />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Damage Type</label>
+                    <input type="text" value="{{system.dmgType}}" readonly />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Penetration</label>
+                    <input type="text" name="system.penetration" value="{{system.penetration}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Clip Size</label>
+                    <input type="number" name="system.capacity.max" value="{{system.capacity.max}}" data-dtype="Number" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Current Ammo</label>
+                    <input type="number" name="system.capacity.value" value="{{system.capacity.value}}" data-dtype="Number" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Reload</label>
+                    <input type="text" name="system.reload" value="{{system.reload}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Weight</label>
+                    <input type="text" name="system.wt" value="{{system.wt}}" data-dtype="Number" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Blast</label>
+                    <input type="text" name="system.blast" value="{{system.blast}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Haywire</label>
+                    <input type="text" name="system.haywire" value="{{system.haywire}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Felling</label>
+                    <input type="text" name="system.felling" value="{{system.felling}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Devastating</label>
+                    <input type="text" name="system.devestating" value="{{system.devestating}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Requisition</label>
+                    <input type="text" name="system.req" value="{{system.req}}" data-dtype="Number" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Renown</label>
+                    <input type="text" name="system.renown" value="{{system.renown}}" />
+                </div>
+            </div>
+            <h3>Qualities</h3>
+            <div class="grid grid-3col">
+                <label>{{#if system.canOverheat}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.canOverheat" {{checked system.canOverheat}} style="display:none;" /> Overheat</label>
+                <label>{{#if system.isAccurate}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isAccurate" {{checked system.isAccurate}} style="display:none;" /> Accurate</label>
+                <label>{{#if system.isBalanced}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isBalanced" {{checked system.isBalanced}} style="display:none;" /> Balanced</label>
+                <label>{{#if system.isConcussive}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isConcussive" {{checked system.isConcussive}} style="display:none;" /> Concussive</label>
+                <label>{{#if system.isDefensive}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isDefensive" {{checked system.isDefensive}} style="display:none;" /> Defensive</label>
+                <label>{{#if system.isFlame}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isFlame" {{checked system.isFlame}} style="display:none;" /> Flame</label>
+                <label>{{#if system.isGyroStabilized}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isGyroStabilized" {{checked system.isGyroStabilized}} style="display:none;" /> Gyro-Stabilized</label>
+                <label>{{#if system.isPrimitive}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isPrimitive" {{checked system.isPrimitive}} style="display:none;" /> Primitive</label>
+                <label>{{#if system.isRazorSharp}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isRazorSharp" {{checked system.isRazorSharp}} style="display:none;" /> Razor Sharp</label>
+                <label>{{#if system.isReliable}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isReliable" {{checked system.isReliable}} style="display:none;" /> Reliable</label>
+                <label>{{#if system.isScatter}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isScatter" {{checked system.isScatter}} style="display:none;" /> Scatter</label>
+                <label>{{#if system.isSnare}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isSnare" {{checked system.isSnare}} style="display:none;" /> Snare</label>
+                <label>{{#if system.isStorm}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isStorm" {{checked system.isStorm}} style="display:none;" /> Storm</label>
+                <label>{{#if system.isTearing}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isTearing" {{checked system.isTearing}} style="display:none;" /> Tearing</label>
+                <label>{{#if system.isTocixal}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isTocixal" {{checked system.isTocixal}} style="display:none;" /> Toxic</label>
+                <label>{{#if system.isTwinLinked}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isTwinLinked" {{checked system.isTwinLinked}} style="display:none;" /> Twin-Linked</label>
+                <label>{{#if system.isUnbalanced}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isUnbalanced" {{checked system.isUnbalanced}} style="display:none;" /> Unbalanced</label>
+                <label>{{#if system.isUnwieldy}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isUnwieldy" {{checked system.isUnwieldy}} style="display:none;" /> Unwieldy</label>
+                <label>{{#if system.isVolile}}<i class="fas fa-check"></i>{{else}}<i class="far fa-square"></i>{{/if}} <input type="checkbox" name="system.isVolile" {{checked system.isVolile}} style="display:none;" /> Volatile</label>
+            </div>
+            <div class="grid grid-2col">
+                <div class="resource">
+                    <label class="resource-label">Book</label>
+                    <input type="text" name="system.book" value="{{system.book}}" />
+                </div>
+                <div class="resource">
+                    <label class="resource-label">Page</label>
+                    <input type="text" name="system.page" value="{{system.page}}" />
+                </div>
             </div>
         </div>
     </section>

@@ -2,6 +2,8 @@
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
  * @extends {Actor}
  */
+import { debug } from "../helpers/debug.mjs";
+
 export class DeathwatchActor extends Actor {
 
   /** @override */
@@ -11,6 +13,18 @@ export class DeathwatchActor extends Actor {
     // prepareBaseData(), prepareEmbeddedDocuments() (including active effects),
     // prepareDerivedData().
     super.prepareData();
+  }
+
+  /** @override */
+  async _preCreate(data, options, user) {
+    await super._preCreate(data, options, user);
+    
+    // Set default token settings based on actor type
+    if (data.type === 'character') {
+      this.updateSource({
+        'prototypeToken.actorLink': true
+      });
+    }
   }
 
   /** @override */
@@ -51,15 +65,40 @@ export class DeathwatchActor extends Actor {
 
     // Collect modifiers from equipped items
     const itemModifiers = [];
-    for (const item of actorData.items) {
+    for (const item of this.items) {
+      debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
+      
       if (item.system.equipped && item.system.modifiers) {
+        debug('MODIFIERS', `  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
         for (const mod of item.system.modifiers) {
           if (mod.enabled !== false) {
             itemModifiers.push({ ...mod, source: item.name });
           }
         }
       }
+      
+      // Collect modifiers from armor histories attached to equipped armor
+      if (item.type === 'armor' && item.system.equipped && Array.isArray(item.system.attachedHistories)) {
+        debug('MODIFIERS', `  Armor ${item.name} has ${item.system.attachedHistories.length} attached histories`);
+        for (const historyId of item.system.attachedHistories) {
+          const history = this.items.get(historyId);
+          debug('MODIFIERS', `    History ID: ${historyId}, found: ${!!history}`);
+          if (history) {
+            debug('MODIFIERS', `    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
+          }
+          if (history && Array.isArray(history.system.modifiers)) {
+            for (const mod of history.system.modifiers) {
+              debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
+              if (mod.enabled !== false) {
+                itemModifiers.push({ ...mod, source: `${history.name} (${item.name})` });
+              }
+            }
+          }
+        }
+      }
     }
+
+    debug('MODIFIERS', `Total item modifiers collected: ${itemModifiers.length}`);
 
     // Combine actor and item modifiers
     const allModifiers = [...modifiers, ...itemModifiers];
@@ -80,7 +119,7 @@ export class DeathwatchActor extends Actor {
         if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
           const modValue = parseInt(mod.modifier) || 0;
           total += modValue;
-          appliedMods.push({ name: mod.name, value: modValue });
+          appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
         }
       }
       
@@ -101,6 +140,15 @@ export class DeathwatchActor extends Actor {
         skill.modifierTotal = skillModTotal;
       }
     }
+
+    // Apply initiative modifiers
+    let initiativeModTotal = 0;
+    for (const mod of allModifiers) {
+      if (mod.enabled !== false && mod.effectType === 'initiative') {
+        initiativeModTotal += parseInt(mod.modifier) || 0;
+      }
+    }
+    systemData.initiativeBonus = initiativeModTotal;
   }
 
   /**
@@ -140,6 +188,12 @@ export class DeathwatchActor extends Actor {
         data[k] = foundry.utils.deepClone(v);
       }
     }
+
+    // Add agility bonus for initiative
+    data.agBonus = data.characteristics?.ag?.bonus || Math.floor((data.characteristics?.ag?.value || 0) / 10);
+    
+    // Add initiative bonus from modifiers
+    data.initiativeBonus = data.initiativeBonus || 0;
 
     // TODO: Figure out level stuff
     // Add level for easier access, or fall back to 0.

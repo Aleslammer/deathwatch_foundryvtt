@@ -46,6 +46,27 @@ export class DeathwatchItemSheet extends ItemSheet {
         context.system = itemData.system;
         context.flags = itemData.flags;
 
+        // Initialize capacity.max from clip field for weapons if not set
+        if (itemData.type === 'weapon' && itemData.system.clip && !itemData.system.capacity?.max) {
+            const clipValue = parseInt(itemData.system.clip);
+            if (!isNaN(clipValue)) {
+                this.item.update({ "system.capacity.max": clipValue }, { render: false });
+                context.system.capacity = context.system.capacity || {};
+                context.system.capacity.max = clipValue;
+            }
+        }
+
+        // Populate attached histories for armor
+        if (itemData.type === 'armor' && actor) {
+            const historyIds = Array.isArray(itemData.system.attachedHistories) ? itemData.system.attachedHistories : [];
+            context.system.attachedHistories = historyIds.map(histId => {
+                const hist = actor.items.get(histId);
+                return hist ? { _id: hist.id, name: hist.name, img: hist.img } : null;
+            }).filter(h => h);
+        } else if (itemData.type === 'armor') {
+            context.system.attachedHistories = [];
+        }
+
         return context;
     }
 
@@ -63,6 +84,13 @@ export class DeathwatchItemSheet extends ItemSheet {
         html.find('.modifier-edit').click(this._onModifierEdit.bind(this));
         html.find('.modifier-delete').click(this._onModifierDelete.bind(this));
         html.find('.modifier-toggle').click(this._onToggleModifierEnabled.bind(this));
+
+        // Weapon attack/damage rolls
+        html.find('.weapon-attack').click(this._onWeaponAttack.bind(this));
+        html.find('.weapon-damage').click(this._onWeaponDamage.bind(this));
+
+        // Armor history management
+        html.find('.history-remove').click(this._onHistoryRemove.bind(this));
     }
 
     async _onModifierCreate(event) {
@@ -145,6 +173,7 @@ export class DeathwatchItemSheet extends ItemSheet {
                 <select name="effectType" id="effectType">
                     <option value="characteristic" ${modifier.effectType === 'characteristic' ? 'selected' : ''}>Characteristic</option>
                     <option value="skill" ${modifier.effectType === 'skill' ? 'selected' : ''}>Skill</option>
+                    <option value="initiative" ${modifier.effectType === 'initiative' ? 'selected' : ''}>Initiative</option>
                 </select>
             </div>
             <div class="form-group" id="valueAffectedGroup">
@@ -184,6 +213,9 @@ export class DeathwatchItemSheet extends ItemSheet {
                         }
                         skillOptions += '</select>';
                         group.append(skillOptions);
+                    } else if (effectType === 'initiative') {
+                        group.find('input, select').remove();
+                        group.append(`<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`);
                     } else {
                         group.find('input, select').remove();
                         group.append(`<input type="text" name="valueAffected" value="" />`);
@@ -224,5 +256,77 @@ export class DeathwatchItemSheet extends ItemSheet {
             modifiers[index].enabled = !modifiers[index].enabled;
             await this.item.update({ "system.modifiers": modifiers });
         }
+    }
+
+    async _onWeaponAttack(event) {
+        event.preventDefault();
+        const actor = this.item.actor;
+        if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll attacks.");
+
+        const bs = actor.system.characteristics.bs.value;
+        const roll = await new Roll("1d100").evaluate();
+        const total = roll.total;
+        const target = bs;
+        const isHit = total <= target;
+
+        const flavor = `<h2>${this.item.name} - Attack Roll</h2><p>Target: ${target}</p>`;
+        roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: flavor + `<p><strong>${isHit ? 'HIT!' : 'MISS!'}</strong></p>`
+        });
+    }
+
+    async _onWeaponDamage(event) {
+        event.preventDefault();
+        const actor = this.item.actor;
+        if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll damage.");
+
+        const dmg = this.item.system.dmg;
+        if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
+
+        const roll = await new Roll(dmg).evaluate();
+        const flavor = `<h2>${this.item.name} - Damage Roll</h2><p>Penetration: ${this.item.system.penetration}</p>`;
+        roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: flavor
+        });
+    }
+
+    async _onDrop(event) {
+        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+        if (data.type !== 'Item') return super._onDrop?.(event);
+        
+        const droppedItem = await Item.implementation.fromDropData(data);
+        if (!droppedItem) return super._onDrop?.(event);
+
+        // Handle armor history drop on armor
+        if (this.item.type === 'armor' && droppedItem.type === 'armor-history') {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const currentHistories = this.item.system.attachedHistories || [];
+            
+            if (!currentHistories.includes(droppedItem.id)) {
+                const newHistories = [...currentHistories, droppedItem.id];
+                
+                await this.item.update({ 
+                    "system.attachedHistories": newHistories
+                });
+                ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
+            } else {
+                ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
+            }
+            return false;
+        }
+
+        return super._onDrop?.(event);
+    }
+
+    async _onHistoryRemove(event) {
+        event.preventDefault();
+        const historyId = $(event.currentTarget).data('historyId');
+        const attachedHistories = (this.item.system.attachedHistories || []).filter(id => id !== historyId);
+        await this.item.update({ "system.attachedHistories": attachedHistories });
+        this.render(false);
     }
 }

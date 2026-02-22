@@ -21,6 +21,13 @@
     ],
     "packs": [
         {
+            "name": "ammunition",
+            "label": "Ammunition",
+            "path": "packs/ammunition",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
             "name": "gear",
             "label": "Gear",
             "path": "packs/gear",
@@ -42,7 +49,7 @@
             "system": "deathwatch"
         }
     ],
-    "initiative": "1d10 + @agBonus",
+    "initiative": "1d10 + @agBonus + @initiativeBonus",
     "grid":{
         "distance": 3,
         "units": "m"

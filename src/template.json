@@ -1144,7 +1144,9 @@
         "types": [
             "weapon",
             "armor",
+            "armor-history",
             "gear",
+            "ammunition",
             "characteristic"
         ],
         "templates": {
@@ -1160,6 +1162,11 @@
             "damageType": "",
             "weaponType": "",
             "equipped": false,
+            "capacity": {
+                "value": 0,
+                "max": 0
+            },
+            "loadedAmmo": null,
             "modifiers": []
         },
         "armor": {
@@ -1170,7 +1177,23 @@
             "head": 0,
             "left_arm": 0,
             "right_arm": 0,
+            "left_leg": 0,
+            "right_leg": 0,
+            "req": 0,
+            "renown": "",
+            "book": "",
+            "page": "",
+            "effects": "",
+            "attachedHistories": [],
             "equipped": false,
+            "modifiers": []
+        },
+        "armor-history": {
+            "templates": [
+                "base"
+            ],
+            "book": "",
+            "page": "",
             "modifiers": []
         },
         "gear": {
@@ -1185,6 +1208,15 @@
             "renown": "",
             "equipped": false,
             "modifiers": []
+        },
+        "ammunition": {
+            "templates": [
+                "base"
+            ],
+            "capacity": {
+                "value": 0,
+                "max": 0
+            }
         },
         "characteristic": {
             "templates": [

@@ -8,3 +8,6 @@ file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/data-slate.png" -o "./src/icons/gear/data-slate.webp"
+
+
+TODO: Work on a hit dialog Should include armor, and potential for dodge/parry

@@ -1,5 +1,7 @@
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { DWConfig } from "../helpers/config.mjs";
+import { CombatHelper } from "../helpers/combat.mjs";
+import { ModifierHelper } from "../helpers/modifiers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -28,10 +30,10 @@ export class DeathwatchActorSheet extends ActorSheet {
   static calculateSkillTotal(skill, characteristics) {
     const characteristic = characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
-    const charMod = skill.trained ? Math.floor(baseCharValue / 10) : Math.floor((baseCharValue / 2) / 10);
+    const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
     const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     
-    return charMod + skillBonus + skill.modifier;
+    return effectiveChar + skillBonus + skill.modifier;
   }
 
   /** @override */
@@ -118,6 +120,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const weapons = [];
     const armor = [];
     const gear = [];
+    const ammunition = [];
     const characteristics = [];
     const spells = {
       0: [],
@@ -132,12 +135,26 @@ export class DeathwatchActorSheet extends ActorSheet {
       9: []
     };
 
+    // Track which ammo is loaded in weapons
+    const loadedAmmoIds = new Set();
+
     for (let i of context.items) {
       i.img = i.img || DEFAULT_TOKEN;
       if (i.type === 'weapon') {
+        // Populate loaded ammo
+        if (i.system.loadedAmmo) {
+          i.loadedAmmoItem = context.items.find(item => item._id === i.system.loadedAmmo);
+          if (i.loadedAmmoItem) {
+            loadedAmmoIds.add(i.system.loadedAmmo);
+          }
+        }
         weapons.push(i);
       }
       else if (i.type === 'armor') {
+        // Populate attached histories
+        i.attachedHistories = (i.system.attachedHistories || []).map(histId => {
+          return context.items.find(item => item._id === histId);
+        }).filter(h => h);
         armor.push(i);
       }
       else if (i.type === 'gear') {
@@ -153,9 +170,19 @@ export class DeathwatchActorSheet extends ActorSheet {
       }
     }
 
+    // Add ammunition that is NOT loaded in weapons
+    for (let i of context.items) {
+      if (i.type === 'ammunition') {
+        if (!loadedAmmoIds.has(i._id)) {
+          ammunition.push(i);
+        }
+      }
+    }
+
     context.weapons = weapons;
     context.armor = armor;
     context.gear = gear;
+    context.ammunition = ammunition;
     context.characteristics = characteristics;
     context.spells = spells;
   }
@@ -166,11 +193,47 @@ export class DeathwatchActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Select all text on focus for input fields
+    html.find('input[type="text"], input[type="number"]').focus(function() {
+      $(this).select();
+    });
+
     // Render the item sheet for viewing/editing prior to the editable check.
     html.find('.item-edit').click(ev => {
       const li = $(ev.currentTarget).parents(".item");
       const item = this.actor.items.get(li.data("itemId"));
       item.sheet.render(true);
+    });
+
+    // Show armor history in chat
+    html.find('.history-show').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const history = this.actor.items.get(itemId);
+      if (!history) return;
+      
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="armor-history-card">
+          <h3>${history.name}</h3>
+          ${history.system.description}
+          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${history.system.book}, p${history.system.page}</em></p>
+        </div>`
+      });
+    });
+
+    // Remove armor history from armor
+    html.find('.history-remove').click(async ev => {
+      const historyId = $(ev.currentTarget).data('historyId');
+      const armorId = $(ev.currentTarget).data('armorId');
+      const armor = this.actor.items.get(armorId);
+      
+      if (!armor) return;
+      
+      const currentHistories = armor.system.attachedHistories || [];
+      const updatedHistories = currentHistories.filter(id => id !== historyId);
+      
+      await armor.update({ "system.attachedHistories": updatedHistories });
+      ui.notifications.info('Armor history removed.');
     });
 
     // -------------------------------------------------------------
@@ -199,10 +262,19 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
 
     // Modifier management
-    html.find('.modifier-create').click(this._onModifierCreate.bind(this));
-    html.find('.modifier-edit').click(this._onModifierEdit.bind(this));
-    html.find('.modifier-delete').click(this._onModifierDelete.bind(this));
-    html.find('.modifier-toggle').click(this._onToggleModifierEnabled.bind(this));
+    html.find('.modifier-create').click(ev => ModifierHelper.createModifier(this.actor));
+    html.find('.modifier-edit').click(ev => {
+      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
+      ModifierHelper.editModifierDialog(this.actor, modifierId);
+    });
+    html.find('.modifier-delete').click(ev => {
+      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
+      ModifierHelper.deleteModifier(this.actor, modifierId);
+    });
+    html.find('.modifier-toggle').click(ev => {
+      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
+      ModifierHelper.toggleModifierEnabled(this.actor, modifierId);
+    });
 
     // Skill checkbox cascade logic
     html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
@@ -223,6 +295,34 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Rollable abilities.
     html.find('.rollable').click(this._onRoll.bind(this));
 
+    // Rollable weapon images for attacks
+    html.find('.item-image.rollable').click(this._onWeaponAttack.bind(this));
+
+    // Weapon attack and damage buttons
+    html.find('.weapon-attack-btn').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (weapon) CombatHelper.weaponAttackDialog(this.actor, weapon);
+    });
+    html.find('.weapon-damage-btn').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (weapon) CombatHelper.weaponDamageRoll(this.actor, weapon);
+    });
+
+    // Remove ammunition from weapon
+    html.find('.ammo-remove').click(async ev => {
+      const ammoId = $(ev.currentTarget).data('ammoId');
+      const weaponId = $(ev.currentTarget).data('weaponId');
+      const weapon = this.actor.items.get(weaponId);
+      const ammo = this.actor.items.get(ammoId);
+      
+      if (!weapon || !ammo) return;
+      
+      await weapon.update({ "system.loadedAmmo": null });
+      ui.notifications.info('Ammunition removed.');
+    });
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -232,6 +332,12 @@ export class DeathwatchActorSheet extends ActorSheet {
         li.addEventListener("dragstart", handler, false);
       });
     }
+
+    // Drop handler for armor histories on armor
+    html.find('.inventory .items-list li.item').each((i, li) => {
+      li.addEventListener('drop', this._onDropItemOnItem.bind(this), false);
+      li.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
   }
 
   /**
@@ -308,14 +414,13 @@ export class DeathwatchActorSheet extends ActorSheet {
    */
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
-    const baseFormula = dataset.roll;
     const characteristicKey = dataset.characteristic;
     const label = dataset.label ? `[Characteristic] ${dataset.label}` : '';
+    const characteristic = this.actor.system.characteristics[characteristicKey];
+    const characteristicMod = characteristic?.mod || 0;
 
-    // Get the characteristic modifier
-    const characteristicMod = this.actor.system.characteristics[characteristicKey]?.mod || 0;
+    const activeModifiers = characteristic?.modifiers || [];
 
-    // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `
       <div class="modifier-dialog">
         <div class="form-group">
@@ -323,12 +428,9 @@ export class DeathwatchActorSheet extends ActorSheet {
           <select id="difficulty-select" name="difficulty">
     `;
 
-    // Add options for each difficulty level
     for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
       const selected = key === 'challenging' ? 'selected' : '';
-      content += `
-            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
-      `;
+      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
     }
 
     content += `
@@ -336,90 +438,59 @@ export class DeathwatchActorSheet extends ActorSheet {
         </div>
         <div class="form-group modifier-row">
           <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
         </div>
       </div>
     `;
 
-    // Show the dialog
     return new Dialog({
       title: `Roll ${dataset.label}`,
       content: content,
       render: (html) => {
-        // Add input validation to restrict misc field to numbers only
         const miscInput = html.find('#modifier');
         miscInput.on('input', function() {
-          // Allow only numbers, +, -, and spaces
           const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) {
-            this.value = value;
-          }
+          if (this.value !== value) this.value = value;
         });
       },
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
-          callback: (html) => {
+          callback: async (html) => {
             const selectedDifficulty = html.find('#difficulty-select').val();
             const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            
             const additionalModifierInput = html.find('#modifier').val().trim();
             let additionalModifier = 0;
             
-            // Parse the additional modifier (allow free-form input)
-            if (additionalModifierInput) {
-              // Try to evaluate simple expressions like "+5", "-10", "2d6", etc.
-              try {
-                // If it starts with + or -, treat as modifier
-                if (additionalModifierInput.match(/^[-+]\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else if (additionalModifierInput.match(/^\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else {
-                  // For more complex expressions, we'll add them as-is to the formula
-                  additionalModifier = additionalModifierInput;
-                }
-              } catch (e) {
-                // If parsing fails, treat as string to add to formula
-                additionalModifier = additionalModifierInput;
-              }
+            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
+              additionalModifier = parseInt(additionalModifierInput);
             }
             
-            // Build roll formula and modifier breakdown
-            let rollFormula = 'd100';
-            let modifierBreakdown = [];
+            const target = characteristic.value + difficultyModifier + additionalModifier;
             
-            if (characteristicMod !== 0) {
-              rollFormula += ` ${characteristicMod >= 0 ? '+' : ''}${characteristicMod}`;
-              modifierBreakdown.push(`${characteristicMod >= 0 ? '+' : ''}${characteristicMod} (${dataset.label})`);
-            }
+            let roll = new Roll('1d100', rollData);
+            await roll.evaluate();
+            
+            const success = roll.total <= target;
+            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
+            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
+            
+            let modifierParts = [];
+            modifierParts.push(`${characteristic.value} ${dataset.label}`);
             
             if (difficultyModifier !== 0) {
-              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
-              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
             }
             
-            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
-              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
-              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
-            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
-              rollFormula += ` + ${additionalModifier}`;
-              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
-            }
-            
-            let roll = new Roll(rollFormula, rollData);
-            
-            // Create detailed flavor text with modifier breakdown
-            let flavorText = `${label}`;
-            if (modifierBreakdown.length > 0) {
-              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
+            if (additionalModifier !== 0) {
+              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
             }
             
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: flavorText,
-              rollMode: game.settings.get('core', 'rollMode'),
+              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
+              rollMode: game.settings.get('core', 'rollMode')
             });
           }
         },
@@ -447,18 +518,18 @@ export class DeathwatchActorSheet extends ActorSheet {
       return;
     }
 
-    // Check if advanced skill is trained
     if (!skill.isBasic && !skill.trained) {
       ui.notifications.warn(`${dataset.label || skillKey} is an advanced skill and must be trained to use.`);
       return;
     }
 
-    // Get skill total with modifiers applied
-    const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, this.actor.system.characteristics);
+    const characteristic = this.actor.system.characteristics[skill.characteristic];
+    const baseCharValue = characteristic ? characteristic.value : 0;
+    const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
+    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
     const skillModTotal = skill.modifierTotal || 0;
-    const skillTotal = baseSkillTotal + skillModTotal;
+    const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + skillModTotal;
 
-    // Create the dialog content with difficulty dropdown and free-form modifier
     let content = `
       <div class="modifier-dialog">
         <div class="form-group">
@@ -466,12 +537,9 @@ export class DeathwatchActorSheet extends ActorSheet {
           <select id="difficulty-select" name="difficulty">
     `;
 
-    // Add options for each difficulty level
     for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
       const selected = key === 'challenging' ? 'selected' : '';
-      content += `
-            <option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>
-      `;
+      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
     }
 
     content += `
@@ -479,87 +547,59 @@ export class DeathwatchActorSheet extends ActorSheet {
         </div>
         <div class="form-group modifier-row">
           <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10, or leave blank" />
+          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
         </div>
       </div>
     `;
 
-    // Show the dialog
     return new Dialog({
       title: `Roll ${dataset.label}`,
       content: content,
       render: (html) => {
-        // Add input validation to restrict misc field to numbers only
         const miscInput = html.find('#modifier');
         miscInput.on('input', function() {
-          // Allow only numbers, +, -, and spaces
           const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) {
-            this.value = value;
-          }
+          if (this.value !== value) this.value = value;
         });
       },
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
-          callback: (html) => {
+          callback: async (html) => {
             const selectedDifficulty = html.find('#difficulty-select').val();
             const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            
             const additionalModifierInput = html.find('#modifier').val().trim();
             let additionalModifier = 0;
             
-            // Parse the additional modifier
-            if (additionalModifierInput) {
-              try {
-                if (additionalModifierInput.match(/^[-+]\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else if (additionalModifierInput.match(/^\d+$/)) {
-                  additionalModifier = parseInt(additionalModifierInput);
-                } else {
-                  additionalModifier = additionalModifierInput;
-                }
-              } catch (e) {
-                additionalModifier = additionalModifierInput;
-              }
+            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
+              additionalModifier = parseInt(additionalModifierInput);
             }
             
-            // Build roll formula and modifier breakdown
-            let rollFormula = 'd100';
-            let modifierBreakdown = [];
+            const target = skillTotal + difficultyModifier + additionalModifier;
             
-            // Add skill total
-            if (skillTotal !== 0) {
-              rollFormula += ` ${skillTotal >= 0 ? '+' : ''}${skillTotal}`;
-              modifierBreakdown.push(`${skillTotal >= 0 ? '+' : ''}${skillTotal} (${dataset.label})`);
-            }
+            let roll = new Roll('1d100', rollData);
+            await roll.evaluate();
+            
+            const success = roll.total <= target;
+            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
+            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
+            
+            let modifierParts = [];
+            modifierParts.push(`${skillTotal} ${dataset.label}`);
             
             if (difficultyModifier !== 0) {
-              rollFormula += ` ${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier}`;
-              modifierBreakdown.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} (${DWConfig.TestDifficulties[selectedDifficulty].label})`);
+              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
             }
             
-            if (typeof additionalModifier === 'number' && additionalModifier !== 0) {
-              rollFormula += ` ${additionalModifier >= 0 ? '+' : ''}${additionalModifier}`;
-              modifierBreakdown.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} (Misc)`);
-            } else if (additionalModifierInput && typeof additionalModifier === 'string') {
-              rollFormula += ` + ${additionalModifier}`;
-              modifierBreakdown.push(`+ ${additionalModifier} (Misc)`);
-            }
-            
-            let roll = new Roll(rollFormula, rollData);
-            
-            // Create detailed flavor text with modifier breakdown
-            let flavorText = `${label}`;
-            if (modifierBreakdown.length > 0) {
-              flavorText += `<br><span style="font-size: 0.9em; color: #666;">${modifierBreakdown.join('<br>')}</span>`;
+            if (additionalModifier !== 0) {
+              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
             }
             
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: flavorText,
-              rollMode: game.settings.get('core', 'rollMode'),
+              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
+              rollMode: game.settings.get('core', 'rollMode')
             });
           }
         },
@@ -573,180 +613,172 @@ export class DeathwatchActorSheet extends ActorSheet {
   }
 
   /**
-   * Add a modifier to this actor.
+   * Handle weapon attack rolls.
    * @param {Event} event The originating click event
+   * @private
    */
-  async _onModifierCreate(event) {
+  async _onWeaponAttack(event) {
     event.preventDefault();
-    const modifiers = Array.isArray(this.actor.system.modifiers) ? [...this.actor.system.modifiers] : [];
-    modifiers.push({
-      _id: foundry.utils.randomID(),
-      name: "New Modifier",
-      modifier: "0",
-      type: "untyped",
-      modifierType: "constant",
-      effectType: "characteristic",
-      valueAffected: "",
-      enabled: true,
-      source: "Actor"
-    });
-    await this.actor.update({ "system.modifiers": modifiers });
-  }
+    const itemId = $(event.currentTarget).data('itemId');
+    const weapon = this.actor.items.get(itemId);
+    
+    if (!weapon) return;
 
-  /**
-   * Delete a modifier from the actor.
-   * @param {Event} event The originating click event
-   */
-  async _onModifierDelete(event) {
-    event.preventDefault();
-    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-    const modifiers = Array.isArray(this.actor.system.modifiers) ? this.actor.system.modifiers.filter(m => m._id !== modifierId) : [];
-    await this.actor.update({ "system.modifiers": modifiers });
-  }
+    const weaponData = weapon.system;
+    const bsChar = this.actor.system.characteristics.bs;
+    const bsValue = bsChar?.value || 0;
 
-  /**
-   * Edit a modifier for an actor.
-   * @param {Event} event The originating click event
-   */
-  async _onModifierEdit(event) {
-    event.preventDefault();
-    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-    const modifier = this.actor.system.modifiers?.find(m => m._id === modifierId);
-    if (!modifier) return;
-
-    let valueAffectedField = '';
-    if (modifier.effectType === 'characteristic') {
-      valueAffectedField = `
-        <select name="valueAffected">
-          <option value="">Select Characteristic</option>
-          <option value="ws" ${modifier.valueAffected === 'ws' ? 'selected' : ''}>Weapon Skill</option>
-          <option value="bs" ${modifier.valueAffected === 'bs' ? 'selected' : ''}>Ballistic Skill</option>
-          <option value="str" ${modifier.valueAffected === 'str' ? 'selected' : ''}>Strength</option>
-          <option value="tg" ${modifier.valueAffected === 'tg' ? 'selected' : ''}>Toughness</option>
-          <option value="ag" ${modifier.valueAffected === 'ag' ? 'selected' : ''}>Agility</option>
-          <option value="int" ${modifier.valueAffected === 'int' ? 'selected' : ''}>Intelligence</option>
-          <option value="per" ${modifier.valueAffected === 'per' ? 'selected' : ''}>Perception</option>
-          <option value="wil" ${modifier.valueAffected === 'wil' ? 'selected' : ''}>Willpower</option>
-          <option value="fs" ${modifier.valueAffected === 'fs' ? 'selected' : ''}>Fellowship</option>
-        </select>
-      `;
-    } else if (modifier.effectType === 'skill') {
-      valueAffectedField = '<select name="valueAffected"><option value="">Select Skill</option>';
-      for (const [key, label] of Object.entries(DWConfig.Skills)) {
-        const selected = modifier.valueAffected === key ? 'selected' : '';
-        valueAffectedField += `<option value="${key}" ${selected}>${label}</option>`;
-      }
-      valueAffectedField += '</select>';
-    } else {
-      valueAffectedField = `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
-    }
-
+    // Create attack dialog
     const content = `
       <div class="form-group">
-        <label>Name:</label>
-        <input type="text" name="name" value="${modifier.name}" />
-      </div>
-      <div class="form-group">
-        <label>Modifier:</label>
-        <input type="text" name="modifier" value="${modifier.modifier}" />
-      </div>
-      <div class="form-group">
-        <label>Type:</label>
-        <select name="type">
-          <option value="untyped" ${modifier.type === 'untyped' ? 'selected' : ''}>Untyped</option>
-          <option value="circumstance" ${modifier.type === 'circumstance' ? 'selected' : ''}>Circumstance</option>
-          <option value="equipment" ${modifier.type === 'equipment' ? 'selected' : ''}>Equipment</option>
-          <option value="trait" ${modifier.type === 'trait' ? 'selected' : ''}>Trait</option>
+        <label>Attack Type:</label>
+        <select id="attack-type" name="attackType">
+          <option value="standard">Standard Attack (BS: ${bsValue})</option>
+          <option value="aimed">Aimed Shot (+10)</option>
+          <option value="called">Called Shot (-20)</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Effect Type:</label>
-        <select name="effectType" id="effectType">
-          <option value="characteristic" ${modifier.effectType === 'characteristic' ? 'selected' : ''}>Characteristic</option>
-          <option value="skill" ${modifier.effectType === 'skill' ? 'selected' : ''}>Skill</option>
-          <option value="characteristic-bonus" ${modifier.effectType === 'characteristic-bonus' ? 'selected' : ''}>Characteristic Bonus</option>
-        </select>
-      </div>
-      <div class="form-group" id="valueAffectedGroup">
-        <label>Value Affected:</label>
-        ${valueAffectedField}
+        <label>Range Modifier:</label>
+        <input type="number" id="range-mod" name="rangeMod" value="0" />
       </div>
     `;
 
     new Dialog({
-      title: "Edit Modifier",
+      title: `Attack with ${weapon.name}`,
       content: content,
-      render: (html) => {
-        html.find('#effectType').change((ev) => {
-          const effectType = ev.target.value;
-          const group = html.find('#valueAffectedGroup');
-          if (effectType === 'characteristic') {
-            group.find('input, select').remove();
-            group.append(`
-              <select name="valueAffected">
-                <option value="">Select Characteristic</option>
-                <option value="ws">Weapon Skill</option>
-                <option value="bs">Ballistic Skill</option>
-                <option value="str">Strength</option>
-                <option value="tg">Toughness</option>
-                <option value="ag">Agility</option>
-                <option value="int">Intelligence</option>
-                <option value="per">Perception</option>
-                <option value="wil">Willpower</option>
-                <option value="fs">Fellowship</option>
-              </select>
-            `);
-          } else if (effectType === 'skill') {
-            group.find('input, select').remove();
-            let skillOptions = '<select name="valueAffected"><option value="">Select Skill</option>';
-            for (const [key, label] of Object.entries(DWConfig.Skills)) {
-              skillOptions += `<option value="${key}">${label}</option>`;
-            }
-            skillOptions += '</select>';
-            group.append(skillOptions);
-          } else {
-            group.find('input, select').remove();
-            group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
-          }
-        });
-      },
       buttons: {
-        save: {
-          label: "Save",
+        attack: {
+          label: "Attack",
           callback: async (html) => {
-            const modifiers = [...this.actor.system.modifiers];
-            const index = modifiers.findIndex(m => m._id === modifierId);
-            if (index >= 0) {
-              modifiers[index] = {
-                ...modifiers[index],
-                name: html.find('[name="name"]').val(),
-                modifier: html.find('[name="modifier"]').val(),
-                type: html.find('[name="type"]').val(),
-                effectType: html.find('[name="effectType"]').val(),
-                valueAffected: html.find('[name="valueAffected"]').val()
-              };
-              await this.actor.update({ "system.modifiers": modifiers });
+            const attackType = html.find('#attack-type').val();
+            const rangeMod = parseInt(html.find('#range-mod').val()) || 0;
+            
+            let attackMod = 0;
+            let modifierParts = [];
+            
+            modifierParts.push(`${bsValue} Base BS`);
+            
+            if (attackType === 'aimed') {
+              attackMod = 10;
+              modifierParts.push('+10 Aimed Shot');
             }
+            if (attackType === 'called') {
+              attackMod = -20;
+              modifierParts.push('-20 Called Shot');
+            }
+            
+            if (rangeMod !== 0) {
+              modifierParts.push(`${rangeMod >= 0 ? '+' : ''}${rangeMod} Range`);
+            }
+            
+            const totalMod = attackMod + rangeMod;
+            let rollFormula = '1d100';
+            if (totalMod !== 0) {
+              rollFormula += ` ${totalMod >= 0 ? '+' : ''}${totalMod}`;
+            }
+            
+            const roll = new Roll(rollFormula);
+            await roll.evaluate();
+            
+            const label = `[Attack] ${weapon.name}`;
+            roll.toMessage({
+              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+              flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,
+              rollMode: game.settings.get('core', 'rollMode')
+            });
           }
         },
-        cancel: { label: "Cancel" }
+        cancel: {
+          label: "Cancel"
+        }
       },
-      default: "save"
+      default: "attack"
     }).render(true);
   }
 
   /**
-   * Toggle a modifier to be enabled or disabled.
-   * @param {Event} event The originating click event
+   * Handle dropping an item on another item (e.g., armor history on armor, ammo on weapon)
+   * @param {Event} event The drop event
+   * @private
    */
-  async _onToggleModifierEnabled(event) {
+  async _onDropItemOnItem(event) {
     event.preventDefault();
-    const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-    const modifiers = [...this.actor.system.modifiers];
-    const index = modifiers.findIndex(m => m._id === modifierId);
-    if (index >= 0) {
-      modifiers[index].enabled = !modifiers[index].enabled;
-      await this.actor.update({ "system.modifiers": modifiers });
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem) return;
+
+    // Handle armor history drops
+    if (droppedItem.type === 'armor-history') {
+      let historyItem = droppedItem;
+      if (!droppedItem.parent) {
+        const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
+        historyItem = imported;
+      }
+
+      let targetItemId = $(event.currentTarget).data('itemId');
+      let targetItem = this.actor.items.get(targetItemId);
+      
+      if (!targetItem || targetItem.type !== 'armor') {
+        const armorItems = this.actor.items.filter(i => i.type === 'armor');
+        if (armorItems.length === 1) targetItem = armorItems[0];
+        else {
+          ui.notifications.warn(armorItems.length > 1 ? 'Multiple armor items found. Please drop directly on the armor item.' : 'No armor items found.');
+          return;
+        }
+      }
+
+      const currentHistories = targetItem.system.attachedHistories || [];
+      const existingHistory = currentHistories.find(histId => {
+        const existing = this.actor.items.get(histId);
+        if (!existing) return false;
+        const sourceId = historyItem.flags?.core?.sourceId || historyItem.name;
+        const existingSourceId = existing.flags?.core?.sourceId || existing.name;
+        return sourceId === existingSourceId;
+      });
+      
+      if (existingHistory) {
+        ui.notifications.warn(`${historyItem.name} is already attached to ${targetItem.name}.`);
+        return;
+      }
+      
+      let maxHistories = targetItem.name.toLowerCase().includes('artificer') ? 2 : 1;
+      if (currentHistories.length >= maxHistories) {
+        ui.notifications.warn(`${targetItem.name} can only have ${maxHistories} armor ${maxHistories === 1 ? 'history' : 'histories'}.`);
+        return;
+      }
+      
+      await targetItem.update({ "system.attachedHistories": [...currentHistories, historyItem.id] });
+      ui.notifications.info(`${historyItem.name} attached to ${targetItem.name}.`);
+    }
+    // Handle ammunition drops
+    else if (droppedItem.type === 'ammunition') {
+      let targetItemId = $(event.currentTarget).data('itemId');
+      let targetItem = this.actor.items.get(targetItemId);
+      
+      if (!targetItem || targetItem.type !== 'weapon') {
+        ui.notifications.warn('Ammunition can only be attached to weapons.');
+        return;
+      }
+
+      if (targetItem.system.loadedAmmo) {
+        ui.notifications.warn(`${targetItem.name} already has ammunition loaded.`);
+        return;
+      }
+
+      // Ensure the ammo is owned by this actor
+      let ammoItem = droppedItem;
+      if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
+        ui.notifications.warn('Ammunition must be in your inventory to load it.');
+        return;
+      }
+
+      await targetItem.update({ "system.loadedAmmo": ammoItem.id });
+      ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
     }
   }
 
