@@ -1,6 +1,3 @@
-Need to work on character sheet.   WE got the basics of an item created
-Need a functional char sheet
-
 
 file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 
