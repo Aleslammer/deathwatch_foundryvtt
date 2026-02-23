@@ -29,7 +29,45 @@ export class CombatHelper {
     return distance;
   }
   
+  static async clearJam(actor, weapon) {
+    if (!weapon.system.jammed) {
+      ui.notifications.info(`${weapon.name} is not jammed.`);
+      return;
+    }
+
+    const bs = actor.system.characteristics.bs.value || 0;
+    const bsAdv = actor.system.characteristics.bs.advances || 0;
+    const targetNumber = bs + bsAdv;
+
+    const roll = await new Roll('1d100').evaluate();
+    const success = roll.total <= targetNumber;
+
+    if (success) {
+      await weapon.update({ "system.jammed": false });
+      if (weapon.system.loadedAmmo) {
+        const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
+        if (loadedAmmo) {
+          await loadedAmmo.update({ "system.capacity.value": 0 });
+        }
+        await weapon.update({ "system.loadedAmmo": null });
+      }
+      ui.notifications.info(`${weapon.name} jam cleared! Weapon needs reloading.`);
+    } else {
+      ui.notifications.warn(`Failed to clear jam on ${weapon.name}.`);
+    }
+
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong>Clear Jam: ${weapon.name}</strong><br>Target: ${targetNumber}<br><strong style="color: ${success ? 'green' : 'red'};">${success ? 'SUCCESS - Jam Cleared!' : 'FAILED - Still Jammed'}</strong>${success ? '<br><em>Ammo lost, weapon needs reloading</em>' : ''}`
+    });
+  }
+
   static async weaponAttackDialog(actor, weapon) {
+    if (weapon.system.jammed) {
+      ui.notifications.warn(`${weapon.name} is jammed! Clear the jam before firing.`);
+      return;
+    }
+
     const bs = actor.system.characteristics.bs.base || actor.system.characteristics.bs.value;
     const bsAdv = actor.system.characteristics.bs.advances || 0;
 
@@ -174,6 +212,16 @@ export class CombatHelper {
             const calculatedHits = hitValue <= targetNumber ? 1 + Math.floor((targetNumber - hitValue) / 10) : 0;
             const hitsTotal = Math.min(calculatedHits, maxHits);
 
+            let jamThreshold = 96;
+            if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO || autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
+              jamThreshold = 94;
+            }
+            const isJammed = hitValue >= jamThreshold;
+
+            if (isJammed) {
+              await weapon.update({ "system.jammed": true });
+            }
+
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
@@ -188,7 +236,7 @@ export class CombatHelper {
             if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
             if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
 
-            const label = `[Attack] ${weapon.name} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>`;
+            const label = `[Attack] ${weapon.name} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${isJammed ? '<br><strong style="color: red;">WEAPON JAMMED!</strong>' : ''}`;
             const flavor = modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label;
 
             hitRoll.toMessage({

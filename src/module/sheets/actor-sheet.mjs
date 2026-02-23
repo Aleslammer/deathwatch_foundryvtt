@@ -309,6 +309,11 @@ export class DeathwatchActorSheet extends ActorSheet {
       const weapon = this.actor.items.get(itemId);
       if (weapon) CombatHelper.weaponDamageRoll(this.actor, weapon);
     });
+    html.find('.weapon-unjam-btn').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const weapon = this.actor.items.get(itemId);
+      if (weapon) CombatHelper.clearJam(this.actor, weapon);
+    });
 
     // Remove ammunition from weapon
     html.find('.ammo-remove').click(async ev => {

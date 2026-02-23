@@ -1162,6 +1162,7 @@
             "damageType": "",
             "weaponType": "",
             "equipped": false,
+            "jammed": false,
             "capacity": {
                 "value": 0,
                 "max": 0
