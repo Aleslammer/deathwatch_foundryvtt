@@ -1,0 +1,12 @@
+{
+  "_id": "energy-body0001",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Energy) Level 01",
+  "system": {
+    "damageType": "Energy",
+    "description": "A blow to the target's body steals a breath from his lungs. The target can take only a Half Action on his next Turn.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

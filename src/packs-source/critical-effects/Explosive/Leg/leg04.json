@@ -1,0 +1,12 @@
+{
+  "_id": "explosive-leg0004",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Explosive) Level 04",
+  "system": {
+    "damageType": "Explosive",
+    "description": "The explosion sends the target spinning through the air. The target travels 1d5 metres away from the explosion and takes 1 level of Fatigue per metre travelled. It takes the target a Full Action to regain his feet and he halves all movement for 1d10 Rounds.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

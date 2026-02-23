@@ -1,0 +1,12 @@
+{
+  "_id": "energy-leg0008",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Energy) Level 08",
+  "system": {
+    "damageType": "Energy",
+    "description": "Energy sears through the bone, causing the leg to be severed. The target must take a Toughness Test or become Stunned for 1 Round. In addition the target gains 1d10 levels of Fatigue and is suffering from Blood Loss. The target now only has one leg.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

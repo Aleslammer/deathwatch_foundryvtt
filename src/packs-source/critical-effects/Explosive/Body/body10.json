@@ -1,0 +1,12 @@
+{
+  "_id": "explosive-body0010",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Explosive) Level 10",
+  "system": {
+    "damageType": "Explosive",
+    "description": "As above, except anyone within 1d10 metres of the target is drenched in gore and must make a Challenging (+0) Agility Test or suffer a –10 penalty to Weapon Skill and Ballistic Skill Tests for 1 Round as blood fouls their sight.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

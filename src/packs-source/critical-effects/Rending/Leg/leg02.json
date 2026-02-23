@@ -1,0 +1,12 @@
+{
+  "_id": "rending-leg0002",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Rending) Level 02",
+  "system": {
+    "damageType": "Rending",
+    "description": "The target's kneecap splits open. He must make a Challenging (+0) Agility Test or fall prone. Regardless, he takes 1 level of Fatigue.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

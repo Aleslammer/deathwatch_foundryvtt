@@ -1,0 +1,12 @@
+{
+  "_id": "impact-body0001",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Impact) Level 01",
+  "system": {
+    "damageType": "Impact",
+    "description": "A blow to the target's body steals the breath from his lungs. The target can take only a Half Action on his next Turn.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

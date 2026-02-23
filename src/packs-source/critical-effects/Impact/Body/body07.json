@@ -1,0 +1,12 @@
+{
+  "_id": "impact-body0007",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Impact) Level 07",
+  "system": {
+    "damageType": "Impact",
+    "description": "With an audible crack, 1d5 of the target's ribs break. The target can either lay down and stay still awaiting medical attention (a successful Medicae Test sets the ribs) or continue to take Actions, though each Round there is a 20% chance that a jagged rib pierces a vital organ and kills the character instantly. The target takes 1d5 levels of Fatigue.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

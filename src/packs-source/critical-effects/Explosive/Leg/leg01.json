@@ -1,0 +1,12 @@
+{
+  "_id": "explosive-leg0001",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Explosive) Level 01",
+  "system": {
+    "damageType": "Explosive",
+    "description": "A glancing blast sends the character backwards one metre.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

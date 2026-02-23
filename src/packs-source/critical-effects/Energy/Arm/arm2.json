@@ -1,0 +1,12 @@
+{
+  "_id": "energy-arm0002",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Arm (Energy) Level 02",
+  "system": {
+    "damageType": "Energy",
+    "description": "The attack smashes the arm, sending currents of energy crackling down to the fingers and up to the shoulder. The arm is useless for 1d5 Rounds and the character takes 1 level of Fatigue.",
+    "effects": [],
+    "location": "Arm"
+  },
+  "type": "critical-effect"
+}

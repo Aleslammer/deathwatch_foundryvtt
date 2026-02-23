@@ -1,0 +1,12 @@
+{
+  "_id": "energy-leg0005",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Energy) Level 05",
+  "system": {
+    "damageType": "Energy",
+    "description": "The target's leg endures horrific burn Damage, fusing clothing and armour with flesh and bone. The target takes 1 level of Fatigue and moves at half speed for 2d10 Rounds.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

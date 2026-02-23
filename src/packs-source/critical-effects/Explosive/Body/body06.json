@@ -1,0 +1,12 @@
+{
+  "_id": "explosive-body0006",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Explosive) Level 06",
+  "system": {
+    "damageType": "Explosive",
+    "description": "Chunks of the target's flesh are ripped free by the force of the attack leaving large, weeping wounds. The target is Stunned for 1 Round, takes 1d10 levels of Fatigue and is now suffering Blood Loss.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

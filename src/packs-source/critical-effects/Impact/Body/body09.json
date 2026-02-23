@@ -1,0 +1,12 @@
+{
+  "_id": "impact-body0009",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Impact) Level 09",
+  "system": {
+    "damageType": "Impact",
+    "description": "The target jerks back from the force of the attack, throwing back his head and spewing out a jet of blood before crumpling to the ground dead.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

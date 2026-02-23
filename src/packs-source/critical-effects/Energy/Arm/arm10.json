@@ -1,0 +1,12 @@
+{
+  "_id": "energy-arm0010",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Arm (Energy) Level 10",
+  "system": {
+    "damageType": "Energy",
+    "description": "The attack reduces the arm to a cloud of ash and sends the target crumbling to the ground where he immediately dies from shock, clutching his smoking stump.",
+    "effects": [],
+    "location": "Arm"
+  },
+  "type": "critical-effect"
+}

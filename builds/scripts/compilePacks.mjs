@@ -26,6 +26,39 @@ function getAllJsonFiles(dir) {
     return results;
 }
 
+function getAllFolders(dir, basePath = dir, parentId = null) {
+    const folders = [];
+    const folderMap = {};
+    const list = fs.readdirSync(dir);
+    
+    for (const item of list) {
+        const fullPath = path.join(dir, item);
+        const stat = fs.statSync(fullPath);
+        if (stat.isDirectory() && !item.startsWith('_')) {
+            const folderId = randomID();
+            const folderName = item.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const relativePath = path.relative(basePath, fullPath);
+            folderMap[relativePath] = folderId;
+            folders.push({
+                _id: folderId,
+                name: folderName,
+                sorting: 'a',
+                folder: parentId,
+                type: 'Item',
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351'
+                }
+            });
+            const subResult = getAllFolders(fullPath, basePath, folderId);
+            folders.push(...subResult.folders);
+            Object.assign(folderMap, subResult.folderMap);
+        }
+    }
+    return { folders, folderMap };
+}
+
 async function compilePackFile(packName) {
     const srcPath = path.join(PACKS_SOURCE, packName);
     const destPath = path.join(PACKS_DEST, packName);
@@ -37,35 +70,8 @@ async function compilePackFile(packName) {
     const sourceFiles = getAllJsonFiles(srcPath);
     const db = new ClassicLevel(destPath, { keyEncoding: 'utf8', valueEncoding: 'json' });
     
-    // Create folder map based on directory structure
-    const folderMap = {};
-    const folders = [];
+    const { folders, folderMap } = getAllFolders(srcPath);
     
-    // Scan for subdirectories and create folder entries
-    const subdirs = fs.readdirSync(srcPath).filter(f => {
-        const fullPath = path.join(srcPath, f);
-        return fs.statSync(fullPath).isDirectory() && !f.startsWith('_');
-    });
-    
-    for (const subdir of subdirs) {
-        const folderId = randomID();
-        const folderName = subdir.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        folderMap[subdir] = folderId;
-        folders.push({
-            _id: folderId,
-            name: folderName,
-            sorting: 'a',
-            folder: null,
-            type: 'Item',
-            _stats: {
-                systemId: 'deathwatch',
-                systemVersion: '0.0.2',
-                coreVersion: '13.351'
-            }
-        });
-    }
-    
-    // Write folders to database
     for (const folder of folders) {
         await db.put(`!folders!${folder._id}`, folder);
     }
@@ -74,12 +80,10 @@ async function compilePackFile(packName) {
         const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const id = doc._id || randomID();
         
-        // Determine folder based on file path
         let folderId = null;
-        const relativePath = path.relative(srcPath, filePath);
-        const firstDir = relativePath.split(path.sep)[0];
-        if (folderMap[firstDir]) {
-            folderId = folderMap[firstDir];
+        const relativePath = path.relative(srcPath, path.dirname(filePath));
+        if (relativePath && folderMap[relativePath]) {
+            folderId = folderMap[relativePath];
         }
         
         // Check if this is a RollTable

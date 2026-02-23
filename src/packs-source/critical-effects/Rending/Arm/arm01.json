@@ -1,0 +1,12 @@
+{
+  "_id": "rending-arm0001",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Arm (Rending) Level 01",
+  "system": {
+    "damageType": "Rending",
+    "description": "The slashing attack tears anything free that was held in this arm.",
+    "effects": [],
+    "location": "Arm"
+  },
+  "type": "critical-effect"
+}

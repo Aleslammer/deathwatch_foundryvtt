@@ -1,0 +1,12 @@
+{
+  "_id": "impact-head0004",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Impact) Level 04",
+  "system": {
+    "damageType": "Impact",
+    "description": "The concussive strike staggers the target, dealing 1d5 levels of Fatigue.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

@@ -1,27 +1,27 @@
 {
   "_id": "cartograph00001",
-  "name": "Cartograph",
-  "type": "gear",
   "img": "systems/deathwatch/icons/gear/data-slate.webp",
+  "name": "Cartograph",
   "system": {
-    "description": "<p>This specialised data-slate accepts geographical and navigational information on a planet, either from existing data-banks or gathered by a ship’s Augur Arrays in orbit. Its geo-locator tracks the user’s planetary coordinates, enabling it to provide distance and bearing to any known location. This provides a <b>+10 to all Navigation (Surface) Tests</b>. It is alo capable of storing detailed maps and schematics, which can be useful for objective approach planning. Many cartographs are also equipped with a small holo-projector that displays three-dimensional maps of its contents</p>",
-    "shortDescription": "Tool",
     "book": "Core Rulebook",
-    "page": "174",
-    "wt": 0.5,
-    "req": 5,
-    "renown": "",
+    "description": "<p>This specialised data-slate accepts geographical and navigational information on a planet, either from existing data-banks or gathered by a ship’s Augur Arrays in orbit. Its geo-locator tracks the user’s planetary coordinates, enabling it to provide distance and bearing to any known location. This provides a <b>+10 to all Navigation (Surface) Tests</b>. It is alo capable of storing detailed maps and schematics, which can be useful for objective approach planning. Many cartographs are also equipped with a small holo-projector that displays three-dimensional maps of its contents</p>",
     "equipped": false,
     "modifiers": [
       {
         "_id": "cartographmod0000001",
-        "name": "Navigation Bonus",
-        "modifier": "10",
-        "type": "equipment",
         "effectType": "skill",
-        "valueAffected": "navigation_surface",
-        "enabled": true
+        "enabled": true,
+        "modifier": "10",
+        "name": "Navigation Bonus",
+        "type": "equipment",
+        "valueAffected": "navigation_surface"
       }
-    ]
-  }
+    ],
+    "page": "174",
+    "renown": "",
+    "req": 5,
+    "shortDescription": "Tool",
+    "wt": 0.5
+  },
+  "type": "gear"
 }

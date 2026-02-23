@@ -1,0 +1,12 @@
+{
+  "_id": "impact-head0003",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Impact) Level 03",
+  "system": {
+    "damageType": "Impact",
+    "description": "The target's nose explodes in a torrent of blood, blinding him for 1 Round and dealing 2 levels of Fatigue.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

@@ -1,0 +1,12 @@
+{
+  "_id": "energy-leg0003",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Energy) Level 03",
+  "system": {
+    "damageType": "Energy",
+    "description": "The blast breaks the target's leg leaving him Stunned for 1 Round and halving all movement for 1d5 Rounds.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

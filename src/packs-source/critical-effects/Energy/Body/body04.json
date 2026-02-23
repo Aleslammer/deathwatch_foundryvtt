@@ -1,0 +1,12 @@
+{
+  "_id": "energy-body0004",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Energy) Level 04",
+  "system": {
+    "damageType": "Energy",
+    "description": "The energy ripples all over the character, scorching his body and inflicting 1d10 levels of Fatigue.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

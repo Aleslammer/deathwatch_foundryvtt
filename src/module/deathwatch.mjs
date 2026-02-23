@@ -83,6 +83,8 @@ Hooks.once('ready', async function () {
                 { type: 0, text: "Lower Right", img: "systems/deathwatch/icons/tables/downright.webp", weight: 2, range: [9, 10] }
             ]);
         }
+        
+        // No longer creating critical effect tables - using compendium instead
     }
 });
 
@@ -93,6 +95,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const penetration = parseInt(button.data('penetration'));
         const location = button.data('location');
         const targetId = button.data('targetId');
+        const damageType = button.data('damageType') || 'Impact';
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -100,7 +103,56 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location);
+        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType);
+    });
+    
+    html.find('.roll-critical-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actorId = button.data('actorId');
+        const location = button.data('location');
+        const damageType = button.data('damageType');
+        const criticalDamage = parseInt(button.data('criticalDamage'));
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+        
+        const locationMap = {
+            "Head": "Head",
+            "Body": "Body",
+            "Right Arm": "Arm",
+            "Left Arm": "Arm",
+            "Right Leg": "Leg",
+            "Left Leg": "Leg"
+        };
+        
+        const critLocation = locationMap[location] || 'Body';
+        const pack = game.packs.get('deathwatch.critical-effects');
+        if (!pack) {
+            ui.notifications.warn('Critical effects compendium not found!');
+            return;
+        }
+        
+        const index = await pack.getIndex();
+        const effectLevel = Math.min(criticalDamage, 10);
+        let effectsHtml = [];
+        
+        for (let i = 1; i <= effectLevel; i++) {
+            const levelStr = i.toString().padStart(2, '0');
+            const effectName = `Critical - ${critLocation} (${damageType}) Level ${levelStr}`;
+            const entry = index.find(e => e.name === effectName);
+            if (entry) {
+                const criticalEffect = await pack.getDocument(entry._id);
+                effectsHtml.push(`<strong>${i}:</strong> ${criticalEffect.system.description}`);
+            }
+        }
+        
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker(),
+            content: `<strong>${actor.name}</strong> suffers <strong style="color: darkred;">${criticalDamage} Critical Damage</strong> to ${location}<br><strong>Critical - ${critLocation} (${damageType})</strong><br><div style="margin-top: 8px;">${effectsHtml.join('<br><br>')}</div>`
+        });
     });
 });
 

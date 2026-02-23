@@ -1,0 +1,12 @@
+{
+  "_id": "impact-arm0001",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Arm (Impact) Level 01",
+  "system": {
+    "damageType": "Impact",
+    "description": "The attack numbs the target's limb causing him to drop anything held in that hand.",
+    "effects": [],
+    "location": "Arm"
+  },
+  "type": "critical-effect"
+}

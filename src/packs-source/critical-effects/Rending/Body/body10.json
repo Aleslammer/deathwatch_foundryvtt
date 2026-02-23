@@ -1,0 +1,12 @@
+{
+  "_id": "rending-body0010",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Rending) Level 10",
+  "system": {
+    "damageType": "Rending",
+    "description": "As above, except that the area and the target are awash with gore. For the rest of the fight, anyone moving within four metres of the target's corpse must make make a Challenging (+0) Agility Test or fall prone.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

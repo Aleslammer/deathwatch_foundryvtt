@@ -1,0 +1,12 @@
+{
+  "_id": "impact-leg0009",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Impact) Level 09",
+  "system": {
+    "damageType": "Impact",
+    "description": "The hit rips apart the flesh of the leg, causing blood to spray out in all directions. Even as the target tries futilely to stop the sudden flood of vital fluid, he falls to the ground and dies in a spreading pool of gore.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

@@ -1,0 +1,12 @@
+{
+  "_id": "explosive-arm0008",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Arm (Explosive) Level 08",
+  "system": {
+    "damageType": "Explosive",
+    "description": "The arm disintegrates under the force of the explosion taking a good portion of the shoulder and chest with it. The target is sent screaming to the ground, where he dies in a pool of his own blood and organs.",
+    "effects": [],
+    "location": "Arm"
+  },
+  "type": "critical-effect"
+}

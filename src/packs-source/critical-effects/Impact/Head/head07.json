@@ -1,0 +1,12 @@
+{
+  "_id": "impact-head0007",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Impact) Level 07",
+  "system": {
+    "damageType": "Impact",
+    "description": "The attack slams into the target's head, fracturing his skull and opening a long tear in his scalp. The target is Stunned for 1d10 Rounds and halves all movement for 1d10 hours.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

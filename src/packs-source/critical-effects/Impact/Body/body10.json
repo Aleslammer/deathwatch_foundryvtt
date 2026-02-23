@@ -1,0 +1,12 @@
+{
+  "_id": "impact-body0010",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Body (Impact) Level 10",
+  "system": {
+    "damageType": "Impact",
+    "description": "As above, except the target is thrown 1d10 metres away from the attack. Anyone in the target's path must make a Challenging (+0) Agility Test or be Knocked Down.",
+    "effects": [],
+    "location": "Body"
+  },
+  "type": "critical-effect"
+}

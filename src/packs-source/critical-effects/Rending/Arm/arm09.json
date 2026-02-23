@@ -1,0 +1,12 @@
+{
+  "_id": "rending-arm0009",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Arm (Rending) Level 09",
+  "system": {
+    "damageType": "Rending",
+    "description": "The attack slices clean through the arm and into the torso, drenching the ground in blood and gore and killing the target instantly.",
+    "effects": [],
+    "location": "Arm"
+  },
+  "type": "critical-effect"
+}

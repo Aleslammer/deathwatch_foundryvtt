@@ -1,0 +1,12 @@
+{
+  "_id": "energy-head0002",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Energy) Level 02",
+  "system": {
+    "damageType": "Energy",
+    "description": "The blast of energy dazzles the target, leaving him blinded for 1 Round.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

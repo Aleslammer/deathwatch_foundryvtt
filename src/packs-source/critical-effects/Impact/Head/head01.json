@@ -1,0 +1,12 @@
+{
+  "_id": "impact-head0001",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Impact) Level 01",
+  "system": {
+    "damageType": "Impact",
+    "description": "The impact fills the target's head with a terrible ringing noise. The target must make a Challenging (+0) Toughness Test or suffer 1 level of Fatigue.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

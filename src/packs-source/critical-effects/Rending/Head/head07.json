@@ -1,0 +1,12 @@
+{
+  "_id": "rending-head0007",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Rending) Level 07",
+  "system": {
+    "damageType": "Rending",
+    "description": "In a splatter of skin and teeth, the attack removes most of the target's face. He is permanently blinded and has his Fellowship permanently reduced to 1d10, and also now has trouble speaking without slurring his words. In addition, the target is suffering from Blood Loss and takes 1d10 levels of Fatigue.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

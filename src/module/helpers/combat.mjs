@@ -329,7 +329,7 @@ export class CombatHelper {
     return armorField ? (equippedArmor.system[armorField] || 0) : 0;
   }
 
-  static async applyDamage(targetActor, damage, penetration, location) {
+  static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact') {
     const armorValue = this.getArmorValue(targetActor, location);
     const effectiveArmor = Math.max(0, armorValue - penetration);
     const woundsTaken = Math.max(0, damage - effectiveArmor);
@@ -337,13 +337,23 @@ export class CombatHelper {
     if (woundsTaken > 0) {
       const currentDamage = targetActor.system.wounds.value || 0;
       const newDamage = currentDamage + woundsTaken;
+      const maxWounds = targetActor.system.wounds.max || 0;
+      const isCritical = newDamage > maxWounds;
+      
       await targetActor.update({ "system.wounds.value": newDamage });
       
-      ui.notifications.info(`${targetActor.name} takes ${woundsTaken} wounds!`);
+      let message = `<strong>${targetActor.name}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`;
       
-      await ChatMessage.create({
-        content: `<strong>${targetActor.name}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`
-      });
+      if (isCritical) {
+        const criticalDamage = newDamage - maxWounds;
+        message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
+        message += `<br><button class="roll-critical-btn" data-actor-id="${targetActor.id}" data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Roll Critical Effect</button>`;
+        ui.notifications.warn(`${targetActor.name} is taking CRITICAL DAMAGE!`);
+      } else {
+        ui.notifications.info(`${targetActor.name} takes ${woundsTaken} wounds!`);
+      }
+      
+      await ChatMessage.create({ content: message });
     } else {
       ui.notifications.info(`${targetActor.name}'s armor absorbs all damage!`);
       await ChatMessage.create({
@@ -448,7 +458,7 @@ export class CombatHelper {
               totalDamage += roll.total;
               allRolls.push(roll);
               
-              const applyButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}">Apply Damage</button>` : '';
+              const applyButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.damageType || 'Impact'}">Apply Damage</button>` : '';
               
               await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
@@ -472,7 +482,7 @@ export class CombatHelper {
                   keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
                 }
                 
-                const applyFuryButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}">Apply Total Damage</button>` : '';
+                const applyFuryButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.damageType || 'Impact'}">Apply Total Damage</button>` : '';
                 
                 await ChatMessage.create({
                   speaker: ChatMessage.getSpeaker({ actor }),

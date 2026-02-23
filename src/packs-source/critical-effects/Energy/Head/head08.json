@@ -1,0 +1,12 @@
+{
+  "_id": "energy-head0008",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Head (Energy) Level 08",
+  "system": {
+    "damageType": "Energy",
+    "description": "The target's head is destroyed in a convocation of fiery death. He does not survive.",
+    "effects": [],
+    "location": "Head"
+  },
+  "type": "critical-effect"
+}

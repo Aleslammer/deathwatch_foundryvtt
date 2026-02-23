@@ -1,0 +1,12 @@
+{
+  "_id": "energy-leg0009",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Energy) Level 09",
+  "system": {
+    "damageType": "Energy",
+    "description": "The force of the attack reduces the leg to little more than a chunk of sizzling gristle. The target make a Challenging (+0) Toughness Test or die from shock. The leg is utterly lost.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

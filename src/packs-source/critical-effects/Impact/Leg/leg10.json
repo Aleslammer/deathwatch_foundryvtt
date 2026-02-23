@@ -1,0 +1,12 @@
+{
+  "_id": "impact-leg0010",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "name": "Critical - Leg (Impact) Level 10",
+  "system": {
+    "damageType": "Impact",
+    "description": "As above, but such is the agony of the target's death that his piteous screams drowns out all conversation within 2d10 metres for the rest of the Round.",
+    "effects": [],
+    "location": "Leg"
+  },
+  "type": "critical-effect"
+}

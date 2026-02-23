@@ -1,88 +1,112 @@
 {
-  "name": "Scatter",
-  "formula": "1d10",
-  "replacement": false,
   "displayRoll": false,
+  "formula": "1d10",
+  "name": "Scatter",
+  "replacement": false,
   "results": [
     {
       "_id": "result00000000001",
-      "type": 0,
-      "text": "Upper Left",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 1,
-      "range": [1, 1],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        1,
+        1
+      ],
+      "text": "Upper Left",
+      "type": 0,
+      "weight": 1
     },
     {
       "_id": "result00000000002",
-      "type": 0,
-      "text": "Up",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 1,
-      "range": [2, 2],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        2,
+        2
+      ],
+      "text": "Up",
+      "type": 0,
+      "weight": 1
     },
     {
       "_id": "result00000000003",
-      "type": 0,
-      "text": "Upper Right",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 1,
-      "range": [3, 3],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        3,
+        3
+      ],
+      "text": "Upper Right",
+      "type": 0,
+      "weight": 1
     },
     {
       "_id": "result00000000004",
-      "type": 0,
-      "text": "Left",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 1,
-      "range": [4, 4],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        4,
+        4
+      ],
+      "text": "Left",
+      "type": 0,
+      "weight": 1
     },
     {
       "_id": "result00000000005",
-      "type": 0,
-      "text": "Right",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 1,
-      "range": [5, 5],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        5,
+        5
+      ],
+      "text": "Right",
+      "type": 0,
+      "weight": 1
     },
     {
       "_id": "result00000000006",
-      "type": 0,
-      "text": "Lower Left",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 2,
-      "range": [6, 7],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        6,
+        7
+      ],
+      "text": "Lower Left",
+      "type": 0,
+      "weight": 2
     },
     {
       "_id": "result00000000007",
-      "type": 0,
-      "text": "Down",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 1,
-      "range": [8, 8],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        8,
+        8
+      ],
+      "text": "Down",
+      "type": 0,
+      "weight": 1
     },
     {
       "_id": "result00000000008",
-      "type": 0,
-      "text": "Lower Right",
-      "img": "icons/svg/d10-grey.svg",
-      "weight": 2,
-      "range": [9, 10],
       "drawn": false,
-      "flags": {}
+      "flags": {},
+      "img": "icons/svg/d10-grey.svg",
+      "range": [
+        9,
+        10
+      ],
+      "text": "Lower Right",
+      "type": 0,
+      "weight": 2
     }
   ]
 }
