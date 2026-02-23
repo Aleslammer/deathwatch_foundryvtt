@@ -312,6 +312,46 @@ export class CombatHelper {
     return locations;
   }
 
+  static getArmorValue(actor, location) {
+    const equippedArmor = actor.items.find(i => i.type === 'armor' && i.system.equipped);
+    if (!equippedArmor) return 0;
+
+    const locationMap = {
+      "Head": "head",
+      "Body": "body",
+      "Right Arm": "right_arm",
+      "Left Arm": "left_arm",
+      "Right Leg": "right_leg",
+      "Left Leg": "left_leg"
+    };
+
+    const armorField = locationMap[location];
+    return armorField ? (equippedArmor.system[armorField] || 0) : 0;
+  }
+
+  static async applyDamage(targetActor, damage, penetration, location) {
+    const armorValue = this.getArmorValue(targetActor, location);
+    const effectiveArmor = Math.max(0, armorValue - penetration);
+    const woundsTaken = Math.max(0, damage - effectiveArmor);
+
+    if (woundsTaken > 0) {
+      const currentDamage = targetActor.system.wounds.value || 0;
+      const newDamage = currentDamage + woundsTaken;
+      await targetActor.update({ "system.wounds.value": newDamage });
+      
+      ui.notifications.info(`${targetActor.name} takes ${woundsTaken} wounds!`);
+      
+      await ChatMessage.create({
+        content: `<strong>${targetActor.name}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`
+      });
+    } else {
+      ui.notifications.info(`${targetActor.name}'s armor absorbs all damage!`);
+      await ChatMessage.create({
+        content: `<strong>${targetActor.name}</strong>'s armor absorbs all damage to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration}</em>`
+      });
+    }
+  }
+
   static hasNaturalTen(roll) {
     return roll.dice.some(d => d.results.some(r => r.result === 10 || (d.faces === 5 && r.result === 5)));
   }
@@ -337,6 +377,7 @@ export class CombatHelper {
     const defaultHits = this.lastAttackHits || 1;
     const isMelee = weapon.system.class?.toLowerCase().includes('melee');
     const strBonus = actor.system.characteristics.str?.mod || 0;
+    const targetToken = game.user.targets.first();
 
     const content = `
       <div style="display: flex; gap: 10px;">
@@ -353,6 +394,7 @@ export class CombatHelper {
         <label>Number of Hits:</label>
         <input type="number" id="numHits" name="numHits" value="${defaultHits}" min="1" max="10" />
       </div>
+      ${targetToken ? `<div class="form-group"><strong>Target:</strong> ${targetToken.actor.name}</div>` : ''}
     `;
 
     new Dialog({
@@ -381,6 +423,7 @@ export class CombatHelper {
             }
 
             const hitLocations = this.determineMultipleHitLocations(firstHitLocation, numHits);
+            const penetration = weapon.system.penetration || 0;
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
@@ -405,9 +448,11 @@ export class CombatHelper {
               totalDamage += roll.total;
               allRolls.push(roll);
               
+              const applyButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}">Apply Damage</button>` : '';
+              
               await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
-                flavor: `<strong style="font-size: 1.1em;">${weapon.name}${numHits > 1 ? ` (${i + 1}/${numHits})` : ''}</strong><br><strong>Hit ${i + 1}:</strong> ${hitLocations[i]}${i === 0 && degreesOfSuccess > 0 ? `<br><strong>DoS:</strong> ${degreesOfSuccess}` : ''}<br><strong>Penetration:</strong> ${weapon.system.penetration || 0}${isMelee && strBonus !== 0 && i === 0 ? `<br><em>Includes STR Bonus: ${strBonus}</em>` : ''}`
+                flavor: `<strong style="font-size: 1.1em;">${weapon.name}${numHits > 1 ? ` (${i + 1}/${numHits})` : ''}</strong><br><strong>Hit ${i + 1}:</strong> ${hitLocations[i]}${i === 0 && degreesOfSuccess > 0 ? `<br><strong>DoS:</strong> ${degreesOfSuccess}` : ''}<br><strong>Penetration:</strong> ${penetration}${isMelee && strBonus !== 0 && i === 0 ? `<br><em>Includes STR Bonus: ${strBonus}</em>` : ''}${applyButton ? `<br>${applyButton}` : ''}`
               });
               
               if (this.hasNaturalTen(roll) && targetNumber > 0) {
@@ -427,9 +472,11 @@ export class CombatHelper {
                   keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
                 }
                 
+                const applyFuryButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}">Apply Total Damage</button>` : '';
+                
                 await ChatMessage.create({
                   speaker: ChatMessage.getSpeaker({ actor }),
-                  content: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ Righteous Fury x${furyCount} ⚡</strong><br><strong>Location:</strong> ${hitLocations[i]}<br><strong>Total Damage: ${totalDamage}</strong>`
+                  content: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ Righteous Fury x${furyCount} ⚡</strong><br><strong>Location:</strong> ${hitLocations[i]}<br><strong>Total Damage: ${totalDamage}</strong>${applyFuryButton ? `<br>${applyFuryButton}` : ''}`
                 });
               }
             }

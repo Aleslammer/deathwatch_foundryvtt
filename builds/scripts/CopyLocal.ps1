@@ -9,3 +9,4 @@ if (Test-Path $localDir) {
 
 Write-Information "Copy Core Files to '$localDir'"
 Get-ChildItem .\src  | Copy-Item -Destination $localDir -Recurse 
+Write-Host "Complete at $(Get-Date -Format "HH:mm:ss")"

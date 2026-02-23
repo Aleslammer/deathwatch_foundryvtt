@@ -8,6 +8,7 @@ import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
 import { initializeHandlebars } from "./helpers/handlebars.js";
+import { CombatHelper } from "./helpers/combat.mjs";
 
 
 /* -------------------------------------------- */
@@ -83,6 +84,24 @@ Hooks.once('ready', async function () {
             ]);
         }
     }
+});
+
+Hooks.on('renderChatMessage', (message, html) => {
+    html.find('.apply-damage-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const damage = parseInt(button.data('damage'));
+        const penetration = parseInt(button.data('penetration'));
+        const location = button.data('location');
+        const targetId = button.data('targetId');
+        
+        const targetActor = game.actors.get(targetId);
+        if (!targetActor) {
+            ui.notifications.warn('Target actor not found!');
+            return;
+        }
+        
+        await CombatHelper.applyDamage(targetActor, damage, penetration, location);
+    });
 });
 
 
