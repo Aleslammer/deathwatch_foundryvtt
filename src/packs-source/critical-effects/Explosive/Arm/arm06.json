@@ -1,12 +1,14 @@
 {
-  "_id": "explosive-arm0006",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Arm (Explosive) Level 06",
-  "system": {
-    "damageType": "Explosive",
-    "description": "The explosive attack shatters the bone and mangles the flesh turning the target's arm into a red ruin, inflicting 1d5 levels of Fatigue. The target's arm is broken and, until repaired, the target counts as having only one arm. In addition, the horrendous nature of the wound means that he now suffers from Blood Loss.",
-    "effects": [],
-    "location": "Arm"
-  },
-  "type": "critical-effect"
+    "_id":  "explosive-arm0006",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 06",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The explosive attack shatters the bone and mangles the flesh turning the target\u0027s arm into a red ruin, inflicting 1d5 levels of Fatigue. The target\u0027s arm is broken and, until repaired, the target counts as having only one arm. In addition, the horrendous nature of the wound means that he now suffers from Blood Loss.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
 }

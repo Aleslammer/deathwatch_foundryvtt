@@ -1,12 +1,14 @@
 {
-  "_id": "explosive-body0008",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Body (Explosive) Level 08",
-  "system": {
-    "damageType": "Explosive",
-    "description": "The target's chest explodes outward, disgorging a river of partially cooked organs onto the ground, killing him instantly.",
-    "effects": [],
-    "location": "Body"
-  },
-  "type": "critical-effect"
+    "_id":  "explosive-body0008",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 08",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The target\u0027s chest explodes outward, disgorging a river of partially cooked organs onto the ground, killing him instantly.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
 }

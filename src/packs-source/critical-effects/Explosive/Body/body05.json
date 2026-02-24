@@ -1,12 +1,14 @@
 {
-  "_id": "explosive-body0005",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Body (Explosive) Level 05",
-  "system": {
-    "damageType": "Explosive",
-    "description": "Concussion from the explosion knocks the target to the ground and tenderises his innards. The target falls down Stunned for 1 Round and takes 1d10 levels of Fatigue.",
-    "effects": [],
-    "location": "Body"
-  },
-  "type": "critical-effect"
+    "_id":  "explosive-body0005",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 05",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "Concussion from the explosion knocks the target to the ground and tenderises his innards. The target falls down Stunned for 1 Round and takes 1d10 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
 }

@@ -11,7 +11,7 @@
     "description": "<p>The bolter, or boltgun, is the backbone of every Space Marine arsenal. Bolters vary in age and pattern across the Space Marine Chapters, though nearly all Astartes bolt weapons accept the same ammunition. The Deathwatch-pattern bolter incorporates a shot selector, while Battle-Brothers who bring weapons from their home Chapter add attachments for the same functionality.</p>",
     "devestating": "",
     "dmg": "2d10+5",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

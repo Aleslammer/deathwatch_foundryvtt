@@ -11,7 +11,7 @@
     "description": "<p>When a Space Marine’s enhanced strength is not adequate to propel his choice of grenades far enough, an auxiliary grenade launcher can be employed. These compact tubes hold a small row of pre-primed grenades. An auxiliary grenade launcher is most commonly mounted above or below the barrel of a basic weapon in a manner similar to a combi-weapon. However, models with standalone trigger mechanisms are also available. If attached to another weapon, the user must choose which one to fire; the launcher cannot be fired in the same Turn as the weapon it is attached to. This weapon may also be mounted on Terminator Armour. Doing so, however, doubles this weapon’s Requisition cost.</p>",
     "devestating": "",
     "dmg": "Varies",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

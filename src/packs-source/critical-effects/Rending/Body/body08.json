@@ -1,12 +1,14 @@
 {
-  "_id": "rending-body0008",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Body (Rending) Level 08",
-  "system": {
-    "damageType": "Rending",
-    "description": "With a vile tearing noise, the skin on the target's chest comes away revealing a red ruin of muscle. The target must make a Challenging (+0) Toughness Test or die. If he passes, he permanently loses 1d10 from his Toughness, takes 1d10 levels of Fatigue, and now suffers Blood Loss.",
-    "effects": [],
-    "location": "Body"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-body0008",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 08",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "With a vile tearing noise, the skin on the target\u0027s chest comes away revealing a red ruin of muscle. The target must make a Challenging (+0) Toughness Test or die. If he passes, he permanently loses 1d10 from his Toughness, takes 1d10 levels of Fatigue, and now suffers Blood Loss.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
 }

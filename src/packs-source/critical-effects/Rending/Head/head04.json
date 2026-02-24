@@ -1,12 +1,14 @@
 {
-  "_id": "rending-head0004",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Head (Rending) Level 04",
-  "system": {
-    "damageType": "Rending",
-    "description": "The attack scoops out one of the target's eyes, inflicting 1d5 levels of Fatigue and leaving the target Stunned for 1 Round.",
-    "effects": [],
-    "location": "Head"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-head0004",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 04",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "The attack scoops out one of the target\u0027s eyes, inflicting 1d5 levels of Fatigue and leaving the target Stunned for 1 Round.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
 }

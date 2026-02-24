@@ -11,7 +11,7 @@
     "description": "<p>The most common model of this uncommon technology, plasma guns are often deployed in situations where raw takedown power is required against highly resilient or armoured enemies</p>",
     "devestating": "",
     "dmg": "1d10+9",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",

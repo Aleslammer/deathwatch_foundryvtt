@@ -1,12 +1,14 @@
 {
-  "_id": "rending-arm0005",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Arm (Rending) Level 05",
-  "system": {
-    "damageType": "Rending",
-    "description": "A bloody and very painful looking furrow is opened up in the target's arm. The target takes 1d5 levels of Fatigue and vomits all over the place in agony. He drops whatever was held and the limb is useless until medical attention is received. The target also suffers Blood Loss.",
-    "effects": [],
-    "location": "Arm"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-arm0005",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 05",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "A bloody and very painful looking furrow is opened up in the target\u0027s arm. The target takes 1d5 levels of Fatigue and vomits all over the place in agony. He drops whatever was held and the limb is useless until medical attention is received. The target also suffers Blood Loss.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
 }

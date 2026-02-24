@@ -11,7 +11,7 @@
     "description": "<p>As destructive as its full-size counterpart, a bolt pistol’s primary drawbacks are its smaller clip and slower rate of fire. However, they are ideal for Devastator units needing to take down an enemy at close quarters and for Assault specialists needing a vehicle for the Deathwatch’s many special bolt types.</p>",
     "devestating": "",
     "dmg": "2d10+5",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

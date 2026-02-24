@@ -11,7 +11,7 @@
     "description": "<p>Produced in a multitude of different styles and patterns, the lasgun can be found on almost every world of the Imperium, where its robust design and dependability make it a favoured weapon of both the Emperor’s faithful and many of their foes.</p>",
     "devestating": "",
     "dmg": "1d10+3",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",

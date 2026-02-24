@@ -11,7 +11,7 @@
     "description": "<p>Heavy bolter variants have been widely adopted for Imperial forces beyond the Space Marines, although none can compare to the punishment doled out by the original design. These weapons are potent in a wide variety of roles, capable of turning entire infantry platoons into a carpet of gore as well as assailing vehicles in a hail of large, armour-penetrating explosions. Heavy bolters fire rounds of a much larger calibre than the standard bolt, contain more propellant and are capable of achieving longer ranges</p>",
     "devestating": "",
     "dmg": "2d10+10",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

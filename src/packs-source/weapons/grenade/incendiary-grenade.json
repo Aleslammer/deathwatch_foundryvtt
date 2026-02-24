@@ -11,7 +11,7 @@
     "description": "<p>Incendiary explosives are commonly employed to flush out enemies entrenched behind cover. These projectiles contain slow-burning promethium distillate that ignites when the grenade explodes. Any target within the Blast radius must succeed on an Agility Test or catch fire. Furthermore, the area remains on fire for another 1d5 Rounds as the promethium continues to burn. Anyone remaining within that area must continue to take Agility Tests or catch fire until the flames die.</p>",
     "devestating": "",
     "dmg": "1d10+4",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",

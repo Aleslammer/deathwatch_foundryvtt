@@ -1,12 +1,14 @@
 {
-  "_id": "rending-head0003",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Head (Rending) Level 03",
-  "system": {
-    "damageType": "Rending",
-    "description": "The attack tears the target's helmet from his head. If wearing no helmet, the target loses an ear instead and inflicts 2 levels of Fatigue.",
-    "effects": [],
-    "location": "Head"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-head0003",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 03",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "The attack tears the target\u0027s helmet from his head. If wearing no helmet, the target loses an ear instead and inflicts 2 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
 }

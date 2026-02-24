@@ -11,7 +11,7 @@
     "description": "<p>Astartes combat shotgun.</p>",
     "devestating": "",
     "dmg": "2d10+3",
-    "dmgType": "I",
+    "dmgType": "Impact",
     "equipped": false,
     "felling": "",
     "haywire": "",

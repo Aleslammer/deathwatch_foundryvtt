@@ -11,7 +11,7 @@
     "description": "<p>Krak grenades and missiles use concentrated explosives to punch holes in armoured targets such as vehicles or bunkers. The powerful detonations do not produce a blast effect however, making them impractical for use against most infantry or moving targets.</p>",
     "devestating": "",
     "dmg": "4d10+6",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

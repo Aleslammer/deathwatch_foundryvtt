@@ -1,12 +1,14 @@
 {
-  "_id": "impact-body0006",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Body (Impact) Level 06",
-  "system": {
-    "damageType": "Impact",
-    "description": "The attack knocks the target sprawling on the ground. The target flies 1d5 metres away from the attacker and falls prone (if the target strikes a wall or other solid object, he stops). The target takes 1d5 levels of Fatigue and is Stunned for 2 Rounds.",
-    "effects": [],
-    "location": "Body"
-  },
-  "type": "critical-effect"
+    "_id":  "impact-body0006",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 06",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "The attack knocks the target sprawling on the ground. The target flies 1d5 metres away from the attacker and falls prone (if the target strikes a wall or other solid object, he stops). The target takes 1d5 levels of Fatigue and is Stunned for 2 Rounds.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
 }

@@ -11,7 +11,7 @@
     "description": "<p>Small but effective, autopistols are a favourite among many military veterans as a supplement for their standard lasgun. They have a faster rate of fire than most pistols, and can put down un-armoured targets in a single burst of shells.</p>",
     "devestating": "",
     "dmg": "1d10+2",
-    "dmgType": "I",
+    "dmgType": "Impact",
     "equipped": false,
     "felling": "",
     "haywire": "",

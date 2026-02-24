@@ -122,6 +122,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const gear = [];
     const ammunition = [];
     const characteristics = [];
+    const criticalEffects = [];
     const spells = {
       0: [],
       1: [],
@@ -163,6 +164,9 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (i.type === 'characteristic') {
         characteristics.push(i);
       }
+      else if (i.type === 'critical-effect') {
+        criticalEffects.push(i);
+      }
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
@@ -184,6 +188,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     context.gear = gear;
     context.ammunition = ammunition;
     context.characteristics = characteristics;
+    context.criticalEffects = criticalEffects;
     context.spells = spells;
   }
 
@@ -217,6 +222,25 @@ export class DeathwatchActorSheet extends ActorSheet {
           <h3>${history.name}</h3>
           ${history.system.description}
           <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${history.system.book}, p${history.system.page}</em></p>
+        </div>`
+      });
+    });
+
+    // Show critical effect in chat
+    html.find('.critical-show').click(ev => {
+      const itemId = $(ev.currentTarget).data('itemId');
+      const critical = this.actor.items.get(itemId);
+      if (!critical) return;
+      
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="critical-effect-card" style="display: flex; align-items: start; gap: 10px;">
+          <img src="${critical.img}" style="width: 36px; height: 36px; flex-shrink: 0;" />
+          <div>
+            <h3 style="font-size: 1em; margin: 0 0 5px 0;">${critical.name}</h3>
+            <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${critical.system.location} | <strong>Type:</strong> ${critical.system.damageType}</p>
+            ${critical.system.description}
+          </div>
         </div>`
       });
     });

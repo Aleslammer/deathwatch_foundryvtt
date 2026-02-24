@@ -11,7 +11,7 @@
     "description": "<p>The Stalker-pattern boltgun is most impressive when used in conjunction with Stalker Rounds, but it is still an effective sniping weapon with any ammunition type. It significantly muffles the sound of any shell fired, and produces no muzzle flash.</p><p>Awareness Tests to hear shots made with a Stalker-pattern boltgun suffer an additional –30 penalty and can only be attempted at half the normal distance. See Stalker Rounds in the Ammunition section for more information on combining the two.</p>",
     "devestating": "",
     "dmg": "2d10+5",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

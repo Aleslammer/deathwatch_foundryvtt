@@ -1,12 +1,14 @@
 {
-  "_id": "impact-arm0009",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Arm (Impact) Level 09",
-  "system": {
-    "damageType": "Impact",
-    "description": "In a rain of blood, gore and meat, the target's arm is removed from his body. Screaming incoherently, he twists about in agony for a few seconds before collapsing to the ground and dying.",
-    "effects": [],
-    "location": "Arm"
-  },
-  "type": "critical-effect"
+    "_id":  "impact-arm0009",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 09",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "In a rain of blood, gore and meat, the target\u0027s arm is removed from his body. Screaming incoherently, he twists about in agony for a few seconds before collapsing to the ground and dying.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
 }

@@ -1,12 +1,14 @@
 {
-  "_id": "impact-arm0004",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Arm (Impact) Level 04",
-  "system": {
-    "damageType": "Impact",
-    "description": "The impact leaves the target reeling from pain. The target is Stunned for 1 Round. The limb is useless for 1d5 Rounds and the target takes 1 level of Fatigue.",
-    "effects": [],
-    "location": "Arm"
-  },
-  "type": "critical-effect"
+    "_id":  "impact-arm0004",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 04",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "The impact leaves the target reeling from pain. The target is Stunned for 1 Round. The limb is useless for 1d5 Rounds and the target takes 1 level of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
 }

@@ -1,12 +1,14 @@
 {
-  "_id": "explosive-head0006",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Head (Explosive) Level 06",
-  "system": {
-    "damageType": "Explosive",
-    "description": "The target's head explodes under the force of the attack, leaving his headless corpse to spurt blood from the neck for the next few minutes. Needless to say this is instantly fatal.",
-    "effects": [],
-    "location": "Head"
-  },
-  "type": "critical-effect"
+    "_id":  "explosive-head0006",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 06",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The target\u0027s head explodes under the force of the attack, leaving his headless corpse to spurt blood from the neck for the next few minutes. Needless to say this is instantly fatal.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
 }

@@ -1,12 +1,14 @@
 {
-  "_id": "rending-head0009",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Head (Rending) Level 09",
-  "system": {
-    "damageType": "Rending",
-    "description": "With a sound not unlike a wet sponge being torn in half, the target's head flies free of its body and sails through the air, landing harmlessly 2d10 metres away with a soggy thud. The target is instantly slain.",
-    "effects": [],
-    "location": "Head"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-head0009",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 09",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "With a sound not unlike a wet sponge being torn in half, the target\u0027s head flies free of its body and sails through the air, landing harmlessly 2d10 metres away with a soggy thud. The target is instantly slain.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
 }

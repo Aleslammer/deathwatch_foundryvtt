@@ -11,7 +11,7 @@
     "description": "<p>Las technology is generally of little interest to the Adeptus Astartes, who have access to more powerful weapons and do not answer to the Departmento Munitorum for their ammunition costs. The Lascannon is the exception. These guns use huge power packs that provide enough energy to punch holes in the thickest armour even at extreme ranges. Lascannons require separate power packs, which the Space Marines usually affix to their backpack generators.</p>",
     "devestating": "",
     "dmg": "6d10+10",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",

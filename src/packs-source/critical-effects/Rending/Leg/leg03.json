@@ -1,12 +1,14 @@
 {
-  "_id": "rending-leg0003",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Leg (Rending) Level 03",
-  "system": {
-    "damageType": "Rending",
-    "description": "The attack rips a length of flesh from the leg, causing blood to gush from the wound. The target takes 1 level of Fatigue and suffers Blood Loss.",
-    "effects": [],
-    "location": "Leg"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-leg0003",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 03",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "The attack rips a length of flesh from the leg, causing blood to gush from the wound. The target takes 1 level of Fatigue and suffers Blood Loss.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Leg"
+               },
+    "type":  "critical-effect"
 }

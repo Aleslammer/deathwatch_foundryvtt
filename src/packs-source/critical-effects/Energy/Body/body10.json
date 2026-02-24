@@ -1,12 +1,14 @@
 {
-  "_id": "energy-body0010",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Body (Energy) Level 10",
-  "system": {
-    "damageType": "Energy",
-    "description": "As above, except in addition, if the target is carrying any ammunition, there is a 50% chance it explodes. Unless they can make a successful Dodge Test, all creatures within 1d5 metres take 1d10+5 Explosive Damage. If the target carried any grenades or missiles, one round after the Damage was dealt they detonate where the target's body lies with the normal effects.",
-    "effects": [],
-    "location": "Body"
-  },
-  "type": "critical-effect"
+    "_id":  "energy-body0010",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 10",
+    "system":  {
+                   "damageType":  "Energy",
+                   "description":  "As above, except in addition, if the target is carrying any ammunition, there is a 50% chance it explodes. Unless they can make a successful Dodge Test, all creatures within 1d5 metres take 1d10+5 Explosive Damage. If the target carried any grenades or missiles, one round after the Damage was dealt they detonate where the target\u0027s body lies with the normal effects.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
 }

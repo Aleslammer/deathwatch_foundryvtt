@@ -11,7 +11,7 @@
     "description": "<p>Cheap and easy to produce, autoguns are a common weapon across the galaxy; even alien races acquire and use them or sometimes make their own equivalents. These rapid-firing automatic weapons use common solid low-calibre shells fed via standardized clips. Reliable, rugged, and easily stocked with ammunition, they are a mainstay on many a planet.</p>",
     "devestating": "",
     "dmg": "1d10+3",
-    "dmgType": "I",
+    "dmgType": "Impact",
     "equipped": false,
     "felling": "",
     "haywire": "",

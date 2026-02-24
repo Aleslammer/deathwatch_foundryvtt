@@ -11,7 +11,7 @@
     "description": "<p>Blind grenades explode with a burst of dense dark grey smoke including IR bafflers and broad-band EM spectrum chaff, all designed to block eyesight and even advanced visual detection. The effect is short-lived, but while it lasts provides excellent cover for advancing forces. The effects of this grenade last for 1d10 Rounds (shorter in conditions such as prevailing winds or industrial ventilation)..</p>",
     "devestating": "",
     "dmg": "-",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

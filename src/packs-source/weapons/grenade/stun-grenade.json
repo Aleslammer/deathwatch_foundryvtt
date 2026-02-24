@@ -11,7 +11,7 @@
     "description": "<p>Stun grenades use a combination of a loud explosive and a flash of light to momentarily incapacitate targets without causing lasting injury before an assault is launched, making them an excellent opener in non-lethal engagements. Anyone caught in a stun grenade’s blast must pass a <b>Challenging (+0) Toughness Test or become Stunned for 1d10 rounds</b>. Photo-visors and sealed armour provide a +20 bonus to this Test, while input filtering renders one completely immune.</p>",
     "devestating": "",
     "dmg": "-",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

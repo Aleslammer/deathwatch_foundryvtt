@@ -11,7 +11,7 @@
     "description": "<p>The Infernus pistol represents specialised and ancient technology, almost impossible for even the Adeptus Astartes to recreate. Mere handfuls exist in any sector, and they are found only in the hands of Battle-Brothers who have proven themselves worthy of such a profoundly rare weapon. This is a favoured weapon of the Blood Angels Chapter.</p>",
     "devestating": "",
     "dmg": "2d10+8",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",

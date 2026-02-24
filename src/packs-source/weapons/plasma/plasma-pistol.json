@@ -11,7 +11,7 @@
     "description": "<p>Few pistols are deadlier than the plasma pistol, and many ranking Adeptus Astartes find them worth the trouble of acquiring and the risk of using for their sheer efficiency in eliminating foes at close range.</p>",
     "devestating": "",
     "dmg": "1d10+8",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",

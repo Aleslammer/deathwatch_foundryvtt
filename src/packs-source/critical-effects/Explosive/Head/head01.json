@@ -1,12 +1,14 @@
 {
-  "_id": "explosive-head0001",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Head (Explosive) Level 01",
-  "system": {
-    "damageType": "Explosive",
-    "description": "The explosion leaves the target confused. He can take only a Half Action on his next Turn and takes 1 level of Fatigue.",
-    "effects": [],
-    "location": "Head"
-  },
-  "type": "critical-effect"
+    "_id":  "explosive-head0001",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 01",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The explosion leaves the target confused. He can take only a Half Action on his next Turn and takes 1 level of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
 }

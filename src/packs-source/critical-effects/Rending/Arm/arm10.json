@@ -1,12 +1,14 @@
 {
-  "_id": "rending-arm0010",
-  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
-  "name": "Critical - Arm (Rending) Level 10",
-  "system": {
-    "damageType": "Rending",
-    "description": "As above. However, as the arm falls to the ground its fingers spasm uncontrollably, pumping the trigger of any held weapon. If the target was carrying a ranged weapon there is a 5% chance that a single randomly determined target within 2d10 metres will be hit by these shots, in which case resolve a single hit from the target's weapon as normal.",
-    "effects": [],
-    "location": "Arm"
-  },
-  "type": "critical-effect"
+    "_id":  "rending-arm0010",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 10",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "As above. However, as the arm falls to the ground its fingers spasm uncontrollably, pumping the trigger of any held weapon. If the target was carrying a ranged weapon there is a 5% chance that a single randomly determined target within 2d10 metres will be hit by these shots, in which case resolve a single hit from the target\u0027s weapon as normal.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
 }

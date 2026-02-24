@@ -11,7 +11,7 @@
     "description": "<p>Storm bolters originated and still reside almost exclusively in the Adeptus Astartes. These weapons resemble two bolters with a single casing and a single trigger. They can lay down a barrage of fire rivalling heavy weapons, but with better portability. A storm bolter uses twin clips to feed its dual firing mechanisms.</p>",
     "devestating": "",
     "dmg": "2d10+5",
-    "dmgType": "X",
+    "dmgType": "Explosive",
     "equipped": false,
     "felling": "",
     "haywire": "",

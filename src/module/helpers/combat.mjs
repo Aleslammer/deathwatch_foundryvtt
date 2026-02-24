@@ -347,7 +347,7 @@ export class CombatHelper {
       if (isCritical) {
         const criticalDamage = newDamage - maxWounds;
         message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
-        message += `<br><button class="roll-critical-btn" data-actor-id="${targetActor.id}" data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Roll Critical Effect</button>`;
+        message += `<br><button class="roll-critical-btn" data-actor-id="${targetActor.id}" data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
         ui.notifications.warn(`${targetActor.name} is taking CRITICAL DAMAGE!`);
       } else {
         ui.notifications.info(`${targetActor.name} takes ${woundsTaken} wounds!`);
@@ -458,7 +458,7 @@ export class CombatHelper {
               totalDamage += roll.total;
               allRolls.push(roll);
               
-              const applyButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.damageType || 'Impact'}">Apply Damage</button>` : '';
+              const applyButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.dmgType || 'Impact'}">Apply Damage</button>` : '';
               
               await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
@@ -482,7 +482,7 @@ export class CombatHelper {
                   keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
                 }
                 
-                const applyFuryButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.damageType || 'Impact'}">Apply Total Damage</button>` : '';
+                const applyFuryButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.dmgType || 'Impact'}">Apply Total Damage</button>` : '';
                 
                 await ChatMessage.create({
                   speaker: ChatMessage.getSpeaker({ actor }),

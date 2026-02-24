@@ -11,7 +11,7 @@
     "description": "<p>This hand-held flamer is still capable of unleashing large blasts of flame, but is good for only a few shots before the fuel canister must be switched out.</p>",
     "devestating": "",
     "dmg": "2d10+2",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "felling": "",
     "haywire": "",
