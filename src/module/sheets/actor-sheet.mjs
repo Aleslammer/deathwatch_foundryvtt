@@ -122,6 +122,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const gear = [];
     const ammunition = [];
     const characteristics = [];
+    const demeanours = [];
     const criticalEffects = [];
     const spells = {
       0: [],
@@ -162,7 +163,16 @@ export class DeathwatchActorSheet extends ActorSheet {
         gear.push(i);
       }
       else if (i.type === 'characteristic') {
-        characteristics.push(i);
+        // Separate demeanours from other characteristics
+        if (i.name && (i.name.includes('Zeal') || i.name.includes('Thirst') || i.name.includes('Lion') || 
+            i.name.includes('Russ') || i.name.includes('Glory') || i.name.includes('Codex') ||
+            i.name === 'Calculating' || i.name === 'Gregarious' || i.name === 'Hot-Blooded' ||
+            i.name === 'Studious' || i.name === 'Taciturn' || i.name === 'Pious' ||
+            i.name === 'Stoic' || i.name === 'Scornful' || i.name === 'Ambitious' || i.name === 'Proud')) {
+          demeanours.push(i);
+        } else {
+          characteristics.push(i);
+        }
       }
       else if (i.type === 'critical-effect') {
         criticalEffects.push(i);
@@ -188,6 +198,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     context.gear = gear;
     context.ammunition = ammunition;
     context.characteristics = characteristics;
+    context.demeanours = demeanours;
     context.criticalEffects = criticalEffects;
     context.spells = spells;
   }
@@ -241,6 +252,24 @@ export class DeathwatchActorSheet extends ActorSheet {
             <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${critical.system.location} | <strong>Type:</strong> ${critical.system.damageType}</p>
             ${critical.system.description}
           </div>
+        </div>`
+      });
+    });
+
+    // Show demeanour in chat
+    html.find('.demeanour-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const demeanour = this.actor.items.get(itemId);
+      if (!demeanour) return;
+      
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="demeanour-card">
+          <h3>${demeanour.name}</h3>
+          <p style="margin: 5px 0;"><strong>Chapter:</strong> ${demeanour.system.chapter}</p>
+          ${demeanour.system.description}
+          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${demeanour.system.book}, p${demeanour.system.page}</em></p>
         </div>`
       });
     });

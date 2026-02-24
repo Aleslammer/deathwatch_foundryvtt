@@ -1,0 +1,11 @@
+{
+  "name": "Ambitious",
+  "type": "characteristic",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "chapter": "All",
+    "book": "Core Rulebook",
+    "page": "32",
+    "description": "<p>This Space Marine's gaze is ever-lifted towards his goal.</p>"
+  }
+}

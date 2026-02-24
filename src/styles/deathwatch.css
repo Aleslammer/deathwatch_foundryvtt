@@ -993,14 +993,13 @@
 
 /* Biography and Past Events sections */
 .deathwatch .biography-section,
+.deathwatch .demeanours-section,
 .deathwatch .past-events-section {
   margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  min-height: 300px;
 }
 
 .deathwatch .biography-section h3.section-header,
+.deathwatch .demeanours-section h3.section-header,
 .deathwatch .past-events-section h3.section-header {
   margin: 0 0 10px 0;
   padding: 8px 12px;
@@ -1009,11 +1008,21 @@
   font-size: 16px;
   font-weight: bold;
   color: #444;
-  flex: 0 0 auto;
 }
 
-.deathwatch .biography-section .editor,
-.deathwatch .past-events-section .editor {
-  flex: 1;
-  min-height: 250px;
+.deathwatch .demeanours-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.deathwatch .demeanours-list .item-chapter {
+  flex: 0 0 120px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.deathwatch .demeanours-list .item-source {
+  flex: 0 0 150px;
+  text-align: center;
+  font-size: 12px;
 }

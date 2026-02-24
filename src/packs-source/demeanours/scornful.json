@@ -1,0 +1,11 @@
+{
+  "name": "Scornful",
+  "type": "characteristic",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "chapter": "All",
+    "book": "Core Rulebook",
+    "page": "32",
+    "description": "<p>Pity has no place in this Space Marine's heart.</p>"
+  }
+}

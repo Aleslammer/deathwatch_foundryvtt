@@ -1224,7 +1224,10 @@
         "characteristic": {
             "templates": [
                 "base"
-            ]
+            ],
+            "chapter": "",
+            "book": "",
+            "page": ""
         },
         "critical-effect": {
             "templates": [
