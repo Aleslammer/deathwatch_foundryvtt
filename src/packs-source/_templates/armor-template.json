@@ -1,13 +1,13 @@
 {
   "_id": "CHANGEME0000001",
-  "name": "Armor Name",
-  "type": "armor",
   "img": "systems/deathwatch/icons/armor/default.webp",
+  "name": "Armor Name",
   "system": {
-    "description": "",
     "body": 0,
+    "description": "",
     "head": 0,
     "left_arm": 0,
     "right_arm": 0
-  }
+  },
+  "type": "armor"
 }

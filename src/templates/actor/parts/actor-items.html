@@ -33,8 +33,12 @@
           {{item.system.range}}
           {{#if item.system.equipped}}
           <div class="item-buttons">
+            {{#if item.system.jammed}}
+            <a class="item-control weapon-unjam-btn" data-item-id="{{item._id}}" title="Clear Jam" style="color: red;"><i class="fas fa-wrench"></i> Unjam</a>
+            {{else}}
             <a class="item-control weapon-attack-btn" data-item-id="{{item._id}}" title="Attack"><i class="fas fa-crosshairs"></i></a>
             <a class="item-control weapon-damage-btn" data-item-id="{{item._id}}" title="Damage"><i class="fas fa-dice-d20"></i></a>
+            {{/if}}
           </div>
           {{/if}}
         </div>

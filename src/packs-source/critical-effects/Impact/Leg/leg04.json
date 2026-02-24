@@ -1,0 +1,14 @@
+{
+    "_id":  "impact-leg0004",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 04",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "A solid blow to the leg sends lightning agony coursing through the target. The target takes 1d5 levels of Fatigue and halves all movement for 1d5 Rounds.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Leg"
+               },
+    "type":  "critical-effect"
+}

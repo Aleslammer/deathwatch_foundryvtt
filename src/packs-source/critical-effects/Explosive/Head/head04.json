@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-head0004",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 04",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The force of the burst knocks the target to the ground and Stuns him for 1 Round. The target takes 2 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

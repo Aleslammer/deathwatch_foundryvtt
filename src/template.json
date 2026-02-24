@@ -1147,7 +1147,8 @@
             "armor-history",
             "gear",
             "ammunition",
-            "characteristic"
+            "characteristic",
+            "critical-effect"
         ],
         "templates": {
             "base": {
@@ -1162,6 +1163,7 @@
             "damageType": "",
             "weaponType": "",
             "equipped": false,
+            "jammed": false,
             "capacity": {
                 "value": 0,
                 "max": 0
@@ -1222,6 +1224,14 @@
             "templates": [
                 "base"
             ]
+        },
+        "critical-effect": {
+            "templates": [
+                "base"
+            ],
+            "location": "",
+            "damageType": "",
+            "effects": []
         }
     }
 }

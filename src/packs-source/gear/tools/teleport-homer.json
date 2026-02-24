@@ -1,15 +1,15 @@
 {
   "_id": "telporthomer001",
-  "name": "Teleport Homer",
-  "type": "gear",
   "img": "systems/deathwatch/icons/gear/teleporthomer.webp",
+  "name": "Teleport Homer",
   "system": {
-    "description": "<p>These powerful signal transmitters allow ships equipped with a Teleportarium or similar technology to zero in on a person, object, or area. Teleport homers may be used to target points for squad deployment or to locate a moving individual who needs to be retrieved.</p>",
-    "shortDescription": "Tool",
     "book": "Core Rulebook",
+    "description": "<p>These powerful signal transmitters allow ships equipped with a Teleportarium or similar technology to zero in on a person, object, or area. Teleport homers may be used to target points for squad deployment or to locate a moving individual who needs to be retrieved.</p>",
     "page": "176",
-    "wt": 0,
+    "renown": "",
     "req": 10,
-    "renown": ""
-  }
+    "shortDescription": "Tool",
+    "wt": 0
+  },
+  "type": "gear"
 }

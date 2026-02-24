@@ -1,0 +1,14 @@
+{
+    "_id":  "rending-head0006",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 06",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "As the blow rips violently across the target\u0027s face—it takes with it an important feature. Roll 1d10 to see what the target has lost. 1–3: Eye (see Permanent Effects on page 201), 4–7: Nose (permanently halve Fellowship), 8–10: Ear (permanently reduce Fellowship by 1d10; the wound can always be hidden with hair.) In addition, the target is now suffering Blood Loss and takes 1d5 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

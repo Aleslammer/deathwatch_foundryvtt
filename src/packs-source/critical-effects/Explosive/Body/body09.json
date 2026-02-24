@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-body0009",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 09",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "Pieces of the target\u0027s body fly in all directions as he is torn into bloody gobbets by the attack. In addition, if the target is carrying any ammunition, it explodes dealing 1d10+5 Impact Damage to anyone within 1d10 metres. If the target is carrying any grenades or missiles, these too detonate on the target\u0027s person.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
+}

@@ -1,0 +1,14 @@
+{
+    "_id":  "energy-head0009",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 09",
+    "system":  {
+                   "damageType":  "Energy",
+                   "description":  "Superheated by the attack, the target\u0027s brain explodes, tearing apart his skull and sending flaming chunks of meat flying at those nearby. The target is no more.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

@@ -1,0 +1,15 @@
+{
+  "_id": "chrono000000001",
+  "img": "systems/deathwatch/icons/gear/chrono.webp",
+  "name": "Chrono",
+  "system": {
+    "book": "Core Rulebook",
+    "description": "Chronos are timepieces, which are dependable and simple to use. General models are usually hand-held or worn on the wrist, while Space Marines typically rely on the ones built into their armour.",
+    "page": "172",
+    "renown": "",
+    "req": 1,
+    "shortDescription": "General",
+    "wt": 0
+  },
+  "type": "gear"
+}

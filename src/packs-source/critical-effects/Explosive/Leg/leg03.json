@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-leg0003",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 03",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The concussion cracks the target\u0027s leg, leaving him Stunned for 1 Round and halving all movement for 1d5 Rounds. The target takes 1 level of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Leg"
+               },
+    "type":  "critical-effect"
+}

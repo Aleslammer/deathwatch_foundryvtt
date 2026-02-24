@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-arm0009",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 09",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "With a mighty bang the arm is blasted from the target\u0027s body, killing the target instantly in a rain of blood droplets. In addition, if the target was carrying a weapon with a power source in his hand (such as a power sword or chainsword) then it explodes, dealing 1d10+5 Impact Damage to anyone within two metres.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
+}

@@ -1,0 +1,14 @@
+{
+    "_id":  "rending-head0008",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 08",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "The blow slices into the side of the target\u0027s head causing his eyes to pop out and his brain to ooze down his cheek like spilled jelly. He\u0027s dead before he hits the ground.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

@@ -26,6 +26,39 @@ function getAllJsonFiles(dir) {
     return results;
 }
 
+function getAllFolders(dir, basePath = dir, parentId = null) {
+    const folders = [];
+    const folderMap = {};
+    const list = fs.readdirSync(dir);
+    
+    for (const item of list) {
+        const fullPath = path.join(dir, item);
+        const stat = fs.statSync(fullPath);
+        if (stat.isDirectory() && !item.startsWith('_')) {
+            const folderId = randomID();
+            const folderName = item.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const relativePath = path.relative(basePath, fullPath);
+            folderMap[relativePath] = folderId;
+            folders.push({
+                _id: folderId,
+                name: folderName,
+                sorting: 'a',
+                folder: parentId,
+                type: 'Item',
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351'
+                }
+            });
+            const subResult = getAllFolders(fullPath, basePath, folderId);
+            folders.push(...subResult.folders);
+            Object.assign(folderMap, subResult.folderMap);
+        }
+    }
+    return { folders, folderMap };
+}
+
 async function compilePackFile(packName) {
     const srcPath = path.join(PACKS_SOURCE, packName);
     const destPath = path.join(PACKS_DEST, packName);
@@ -37,35 +70,8 @@ async function compilePackFile(packName) {
     const sourceFiles = getAllJsonFiles(srcPath);
     const db = new ClassicLevel(destPath, { keyEncoding: 'utf8', valueEncoding: 'json' });
     
-    // Create folder map based on directory structure
-    const folderMap = {};
-    const folders = [];
+    const { folders, folderMap } = getAllFolders(srcPath);
     
-    // Scan for subdirectories and create folder entries
-    const subdirs = fs.readdirSync(srcPath).filter(f => {
-        const fullPath = path.join(srcPath, f);
-        return fs.statSync(fullPath).isDirectory() && !f.startsWith('_');
-    });
-    
-    for (const subdir of subdirs) {
-        const folderId = randomID();
-        const folderName = subdir.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        folderMap[subdir] = folderId;
-        folders.push({
-            _id: folderId,
-            name: folderName,
-            sorting: 'a',
-            folder: null,
-            type: 'Item',
-            _stats: {
-                systemId: 'deathwatch',
-                systemVersion: '0.0.2',
-                coreVersion: '13.351'
-            }
-        });
-    }
-    
-    // Write folders to database
     for (const folder of folders) {
         await db.put(`!folders!${folder._id}`, folder);
     }
@@ -74,37 +80,90 @@ async function compilePackFile(packName) {
         const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const id = doc._id || randomID();
         
-        // Determine folder based on file path
         let folderId = null;
-        const relativePath = path.relative(srcPath, filePath);
-        const firstDir = relativePath.split(path.sep)[0];
-        if (folderMap[firstDir]) {
-            folderId = folderMap[firstDir];
+        const relativePath = path.relative(srcPath, path.dirname(filePath));
+        if (relativePath && folderMap[relativePath]) {
+            folderId = folderMap[relativePath];
         }
         
-        const entry = {
-            _id: id,
-            name: doc.name,
-            type: doc.type,
-            img: doc.img || '',
-            system: doc.system || {},
-            effects: doc.effects || [],
-            folder: folderId,
-            sort: doc.sort || 0,
-            ownership: doc.ownership || { default: 0 },
-            flags: doc.flags || {},
-            _stats: {
-                systemId: 'deathwatch',
-                systemVersion: '0.0.2',
-                coreVersion: '13.351',
-                lastModifiedBy: null,
-                compendiumSource: null,
-                duplicateSource: null,
-                exportSource: null
-            }
-        };
+        // Check if this is a RollTable
+        const isRollTable = packName === 'tables' || doc.formula !== undefined;
         
-        await db.put(`!items!${id}`, entry);
+        let entry;
+        if (isRollTable) {
+            entry = {
+                _id: id,
+                name: doc.name,
+                formula: doc.formula || '1d6',
+                replacement: doc.replacement ?? true,
+                displayRoll: doc.displayRoll ?? true,
+                folder: folderId,
+                sort: doc.sort || 0,
+                ownership: doc.ownership || { default: 0 },
+                flags: doc.flags || {},
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351',
+                    lastModifiedBy: null,
+                    compendiumSource: null,
+                    duplicateSource: null,
+                    exportSource: null
+                }
+            };
+            
+            // Store table entry
+            await db.put(`!tables!${id}`, entry);
+            
+            // Store each result as a separate embedded document
+            if (doc.results && Array.isArray(doc.results)) {
+                for (const result of doc.results) {
+                    const resultEntry = {
+                        _id: result._id || randomID(),
+                        type: result.type ?? 0,
+                        text: result.text || '',
+                        img: result.img || 'icons/svg/d20-grey.svg',
+                        weight: result.weight ?? 1,
+                        range: result.range || [1, 1],
+                        drawn: result.drawn ?? false,
+                        flags: result.flags || {},
+                        _stats: {
+                            compendiumSource: null,
+                            duplicateSource: null
+                        }
+                    };
+                    await db.put(`!tables.results!${id}.${resultEntry._id}`, resultEntry);
+                }
+            }
+            continue;
+        } else {
+            entry = {
+                _id: id,
+                name: doc.name,
+                type: doc.type,
+                img: doc.img || '',
+                system: doc.system || {},
+                effects: doc.effects || [],
+                folder: folderId,
+                sort: doc.sort || 0,
+                ownership: doc.ownership || { default: 0 },
+                flags: doc.flags || {},
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351',
+                    lastModifiedBy: null,
+                    compendiumSource: null,
+                    duplicateSource: null,
+                    exportSource: null
+                }
+            };
+        }
+        
+        const key = isRollTable ? `!tables!${id}` : `!items!${id}`;
+        if (!isRollTable) {
+            await db.put(key, entry);
+        }
     }
     
     await db.close();

@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-body0001",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 01",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The target is blown backwards 1d5 metres and takes 1 level of Fatigue per metre travelled. He is Prone when he lands.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
+}

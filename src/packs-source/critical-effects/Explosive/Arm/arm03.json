@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-arm0003",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 03",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The explosion takes 1d5 fingers from the target\u0027s hand. The target takes 3 levels of Fatigue and anything carried in the hand is destroyed. If this is an explosive, it goes off. Messy.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
+}

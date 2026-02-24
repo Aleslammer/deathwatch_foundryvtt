@@ -1,0 +1,14 @@
+{
+    "_id":  "energy-head0004",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 04",
+    "system":  {
+                   "damageType":  "Energy",
+                   "description":  "The energy attack burns away all of the hairs on the target\u0027s head as well as leaving him reeling from the injury. The attack deals 2 levels of Fatigue and the target is blinded for 1d5 Rounds.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

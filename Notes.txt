@@ -1,6 +1,3 @@
-Need to work on character sheet.   WE got the basics of an item created
-Need a functional char sheet
-
 
 file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 
@@ -10,4 +7,7 @@ https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/data-slate.png" -o "./src/icons/gear/data-slate.webp"
 
 
-TODO: Work on a hit dialog Should include armor, and potential for dodge/parry
+ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
+
+ TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
+ 

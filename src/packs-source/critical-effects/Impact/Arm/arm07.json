@@ -1,0 +1,14 @@
+{
+    "_id":  "impact-arm0007",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 07",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "With a loud snap, the arm bone is shattered and left hanging limply at the target\u0027s side, dribbling blood onto the ground. The arm is broken and, until repaired, the target counts as having only one arm and takes 2 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
+}

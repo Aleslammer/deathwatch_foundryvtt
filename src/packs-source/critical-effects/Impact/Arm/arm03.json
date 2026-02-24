@@ -1,0 +1,14 @@
+{
+    "_id":  "impact-arm0003",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 03",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "The impact inflicts crushing pain and the target takes 1 level of Fatigue and drops whatever was held in that hand.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
+}

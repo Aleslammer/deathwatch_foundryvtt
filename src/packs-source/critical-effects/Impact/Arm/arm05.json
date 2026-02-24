@@ -1,0 +1,14 @@
+{
+    "_id":  "impact-arm0005",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 05",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "Muscle and bone take a pounding as the attack rips into the arm. The target\u0027s Weapon Skill and Ballistic Skill are both halved (round down) for 1d10 Rounds. In addition, the target takes 1 level of Fatigue and must make an Agility Test or drop anything held in that hand.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Arm"
+               },
+    "type":  "critical-effect"
+}

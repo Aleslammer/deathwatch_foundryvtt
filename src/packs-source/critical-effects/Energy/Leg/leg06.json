@@ -1,0 +1,14 @@
+{
+    "_id":  "energy-leg0006",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 06",
+    "system":  {
+                   "damageType":  "Energy",
+                   "description":  "The attack burns the target\u0027s foot, charring the flesh and emitting a foul aroma. The target must successfully Test Toughness or lose the foot. On a success, the target\u0027s movement rates are halved until he receives medical attention. In addition, the target takes 2 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Leg"
+               },
+    "type":  "critical-effect"
+}

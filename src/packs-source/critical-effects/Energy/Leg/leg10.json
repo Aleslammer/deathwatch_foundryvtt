@@ -1,0 +1,14 @@
+{
+    "_id":  "energy-leg0010",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 10",
+    "system":  {
+                   "damageType":  "Energy",
+                   "description":  "In a terrifying display of power, the leg immolates and fire consumes the target completely. The target dies in a matter of agonising seconds",
+                   "effects":  [
+
+                               ],
+                   "location":  "Leg"
+               },
+    "type":  "critical-effect"
+}

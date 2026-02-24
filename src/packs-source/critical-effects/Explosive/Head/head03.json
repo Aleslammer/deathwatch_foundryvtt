@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-head0003",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 03",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The detonation leaves the target\u0027s face a bloody ruin from scores of small cuts. The target takes 2 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

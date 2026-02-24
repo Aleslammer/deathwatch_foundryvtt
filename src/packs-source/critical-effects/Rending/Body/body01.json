@@ -1,0 +1,14 @@
+{
+    "_id":  "rending-body0001",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 01",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "If the target is not wearing armour on this location, he takes 1 level of Fatigue from a painful laceration. If he is wearing armour, there is no effect. Phew!",
+                   "effects":  [
+
+                               ],
+                   "location":  "Body"
+               },
+    "type":  "critical-effect"
+}

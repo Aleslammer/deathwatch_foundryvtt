@@ -1,0 +1,14 @@
+{
+    "_id":  "explosive-head0009",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 09",
+    "system":  {
+                   "damageType":  "Explosive",
+                   "description":  "The target ceases to exist in any tangible way, entirely turning into a kind of crimson mist. You don\u0027t get much deader than this, except…",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}

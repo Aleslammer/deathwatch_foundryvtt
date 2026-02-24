@@ -1,0 +1,14 @@
+{
+    "_id":  "rending-leg0005",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 05",
+    "system":  {
+                   "damageType":  "Rending",
+                   "description":  "In a spray of blood, the target\u0027s leg is opened up, exposing bone, sinew and muscle. The target takes 1d5 levels of Fatigue and halves his movement for 1d10 hours.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Leg"
+               },
+    "type":  "critical-effect"
+}

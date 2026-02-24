@@ -1,0 +1,14 @@
+{
+    "_id":  "impact-head0006",
+    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
+    "name":  "Level 06",
+    "system":  {
+                   "damageType":  "Impact",
+                   "description":  "The target\u0027s head is snapped back by the attack leaving him staggering around trying to control mind-numbing pain. The target is Stunned for 1d5 Rounds and takes 2 levels of Fatigue.",
+                   "effects":  [
+
+                               ],
+                   "location":  "Head"
+               },
+    "type":  "critical-effect"
+}
