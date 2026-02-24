@@ -9,6 +9,7 @@ import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
 import { initializeHandlebars } from "./helpers/handlebars.js";
 import { CombatHelper } from "./helpers/combat.mjs";
+import { CriticalEffectsHelper } from "./helpers/critical-effects.mjs";
 
 
 /* -------------------------------------------- */
@@ -111,7 +112,6 @@ Hooks.on('renderChatMessage', (message, html) => {
         const actorId = button.data('actorId');
         const location = button.data('location');
         const damageType = button.data('damageType');
-        const criticalDamage = parseInt(button.data('criticalDamage'));
         
         const actor = game.actors.get(actorId);
         if (!actor) {
@@ -119,59 +119,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        const locationMap = {
-            "Head": "head",
-            "Body": "body",
-            "Right Arm": "arm",
-            "Left Arm": "arm",
-            "Right Leg": "leg",
-            "Left Leg": "leg"
-        };
-        
-        const critLocation = locationMap[location] || 'body';
-        const pack = game.packs.get('deathwatch.critical-effects');
-        if (!pack) {
-            ui.notifications.warn('Critical effects compendium not found!');
-            return;
-        }
-        
-        const index = await pack.getIndex();
-        const totalCriticalDamage = Math.max(0, actor.system.wounds.value - actor.system.wounds.max);
-        const effectLevel = Math.min(totalCriticalDamage, 10);
-        
-        if (effectLevel < 1) {
-            ui.notifications.warn('No critical damage to apply!');
-            return;
-        }
-        
-        const existingCriticals = actor.items.filter(i => i.type === 'critical-effect');
-        const levelStr = effectLevel.toString().padStart(4, '0');
-        const effectId = `${damageType.toLowerCase()}-${critLocation}${levelStr}`;
-        
-        const alreadyHas = existingCriticals.some(i => {
-            const sourceId = i.flags?.core?.sourceId?.split('.').pop() || i._id;
-            return sourceId === effectId;
-        });
-        
-        if (alreadyHas) {
-            ui.notifications.warn(`${actor.name} already has this critical effect!`);
-            return;
-        }
-        
-        const entry = index.find(e => e._id === effectId);
-        if (!entry) {
-            ui.notifications.warn(`Critical effect not found for level ${effectLevel}!`);
-            return;
-        }
-        
-        const criticalEffect = await pack.getDocument(entry._id);
-        await Item.createDocuments([criticalEffect.toObject()], { parent: actor });
-        ui.notifications.info(`Critical effect Level ${effectLevel} added to ${actor.name}`);
-        
-        await ChatMessage.create({
-            speaker: ChatMessage.getSpeaker(),
-            content: `<strong>${actor.name}</strong> suffers <strong style="color: darkred;">Level ${effectLevel} Critical Damage</strong> to ${location}<br><strong>${critLocation} (${damageType})</strong><br><div style="margin-top: 8px;">${criticalEffect.system.description}</div>`
-        });
+        await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
     });
 });
 
