@@ -990,3 +990,30 @@
 .modifier-breakdown {
   display: none;
 }
+
+/* Biography and Past Events sections */
+.deathwatch .biography-section,
+.deathwatch .past-events-section {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.deathwatch .biography-section h3.section-header,
+.deathwatch .past-events-section h3.section-header {
+  margin: 0 0 10px 0;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px groove #eeede0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #444;
+  flex: 0 0 auto;
+}
+
+.deathwatch .biography-section .editor,
+.deathwatch .past-events-section .editor {
+  flex: 1;
+  min-height: 250px;
+}
