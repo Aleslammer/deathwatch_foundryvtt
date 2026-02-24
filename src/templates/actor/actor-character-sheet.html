@@ -5,10 +5,13 @@
     <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
     <div class="header-fields">
       <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+      <div class="chapter-field" style="margin-top: -5px; margin-bottom: 10px;">
+        <input name="system.chapter" type="text" value="{{system.chapter}}" placeholder="Chapter" style="font-size: 0.9em; color: #666; border: none; background: transparent; width: 100%;" />
+      </div>
       {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
       use both the "grid" and "grid-Ncol" class where "N" can be any number
       from 1 to 12 and will create that number of columns. --}}
-      <div class="resources grid grid-3col">
+      <div class="resources grid grid-2col">
 
         {{!-- "flex-group-center" is also defined in the _grid.scss file
         and it will add a small amount of padding, a border, and will
@@ -19,15 +22,6 @@
             <input type="text" name="system.wounds.value" value="{{system.wounds.value}}" data-dtype="Number" />
             <span> / </span>
             <input type="text" name="system.wounds.max" value="{{system.wounds.max}}" data-dtype="Number" />
-          </div>
-        </div>
-
-        <div class="resource flex-group-center">
-          <label for="system.power.value" class="resource-label">Power</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.power.value" value="{{system.power.value}}" data-dtype="Number" />
-            <span> / </span>
-            <input type="text" name="system.power.max" value="{{system.power.max}}" data-dtype="Number" />
           </div>
         </div>
 
