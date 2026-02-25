@@ -484,6 +484,19 @@
   display: flex;
 }
 
+/* Section headers */
+.deathwatch .section-header {
+  margin: 15px 0 10px 0;
+  padding: 0 0 8px 0;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(to right, #8b4513, #d2691e, #8b4513) 1;
+  font-size: 16px;
+  font-weight: bold;
+  color: #5a3a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .deathwatch .items-list {
   list-style: none;
   margin: 0;
@@ -998,18 +1011,6 @@
   margin-bottom: 20px;
 }
 
-.deathwatch .biography-section h3.section-header,
-.deathwatch .demeanours-section h3.section-header,
-.deathwatch .past-events-section h3.section-header {
-  margin: 0 0 10px 0;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 2px groove #eeede0;
-  font-size: 16px;
-  font-weight: bold;
-  color: #444;
-}
-
 .deathwatch .demeanours-list {
   max-height: 200px;
   overflow-y: auto;
@@ -1025,4 +1026,54 @@
   flex: 0 0 150px;
   text-align: center;
   font-size: 12px;
+}
+
+
+/* Talents and Traits sections */
+.deathwatch .talents-section,
+.deathwatch .traits-section {
+  margin-top: 20px;
+}
+
+.deathwatch .talents-list,
+.deathwatch .traits-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.deathwatch .talents-list .item-benefit {
+  flex: 3;
+  text-align: left;
+  font-size: 12px;
+  padding-left: 5px;
+}
+
+.deathwatch .talents-list .item-prerequisite {
+  flex: 0 0 150px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.deathwatch .talents-list .item-source,
+.deathwatch .traits-list .item-source {
+  flex: 0 0 150px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.deathwatch .talent-show,
+.deathwatch .trait-show {
+  cursor: pointer;
+}
+
+.deathwatch .talent-show:hover,
+.deathwatch .trait-show:hover {
+  color: #007bff;
+}
+
+/* Traits two-column layout */
+.deathwatch .traits-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
 }

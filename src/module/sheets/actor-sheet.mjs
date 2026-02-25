@@ -14,8 +14,8 @@ export class DeathwatchActorSheet extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["deathwatch", "sheet", "actor"],
       template: "systems/deathwatch/templates/actor/actor-sheet.html",
-      width: 600,
-      height: 600,
+      width: 1000,
+      height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "characteristics" }]
     });
   }
@@ -124,6 +124,8 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristics = [];
     const demeanours = [];
     const criticalEffects = [];
+    const talents = [];
+    const traits = [];
     const spells = {
       0: [],
       1: [],
@@ -177,6 +179,12 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (i.type === 'critical-effect') {
         criticalEffects.push(i);
       }
+      else if (i.type === 'talent') {
+        talents.push(i);
+      }
+      else if (i.type === 'trait') {
+        traits.push(i);
+      }
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
@@ -200,6 +208,8 @@ export class DeathwatchActorSheet extends ActorSheet {
     context.characteristics = characteristics;
     context.demeanours = demeanours;
     context.criticalEffects = criticalEffects;
+    context.talents = talents;
+    context.traits = traits;
     context.spells = spells;
   }
 
@@ -270,6 +280,42 @@ export class DeathwatchActorSheet extends ActorSheet {
           <p style="margin: 5px 0;"><strong>Chapter:</strong> ${demeanour.system.chapter}</p>
           ${demeanour.system.description}
           <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${demeanour.system.book}, p${demeanour.system.page}</em></p>
+        </div>`
+      });
+    });
+
+    // Show talent in chat
+    html.find('.talent-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const talent = this.actor.items.get(itemId);
+      if (!talent) return;
+      
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="talent-card">
+          <h3>${talent.name}</h3>
+          ${talent.system.prerequisite ? `<p style="margin: 5px 0;"><strong>Prerequisite:</strong> ${talent.system.prerequisite}</p>` : ''}
+          ${talent.system.benefit ? `<p style="margin: 5px 0;"><strong>Benefit:</strong> ${talent.system.benefit}</p>` : ''}
+          ${talent.system.description}
+          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${talent.system.book}, p${talent.system.page}</em></p>
+        </div>`
+      });
+    });
+
+    // Show trait in chat
+    html.find('.trait-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const trait = this.actor.items.get(itemId);
+      if (!trait) return;
+      
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="trait-card">
+          <h3>${trait.name}</h3>
+          ${trait.system.description}
+          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${trait.system.book}, p${trait.system.page}</em></p>
         </div>`
       });
     });
