@@ -1,5 +1,53 @@
 # Technology Stack
 
+## Testing Infrastructure
+
+### Jest Test Framework
+- **Version**: 29.7.0
+- **Configuration**: `jest.config.mjs`
+- **Test Environment**: Node.js with ES modules
+- **Test Pattern**: `**/tests/**/*.test.mjs`
+- **Coverage**: Collected from `src/module/**/*.mjs`
+
+### Test Commands
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+### Test Setup
+- **Setup File**: `tests/setup.mjs`
+- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, foundry.utils)
+- **Loaded**: Automatically before each test file
+
+### Coverage Reports
+- **HTML Report**: `coverage/lcov-report/index.html`
+- **JSON Data**: `coverage/coverage-final.json`
+- **LCOV Format**: `coverage/lcov.info`
+- **Clover XML**: `coverage/clover.xml`
+
+### Test Files Structure
+```
+tests/
+├── setup.mjs                    # Foundry VTT mocks
+├── combat.test.mjs              # Combat helper tests
+├── combat-dialog.test.mjs       # Combat dialog helper tests
+├── constants.test.mjs           # Constants tests
+├── critical-effects.test.mjs    # Critical effects tests
+├── debug.test.mjs               # Debug utility tests
+├── effects.test.mjs             # Active effects tests
+├── item.test.mjs                # Item document tests
+├── modifiers.test.mjs           # Modifier helper tests
+├── templates.test.mjs           # Template preload tests
+└── README.md                    # Testing documentation
+```
+
 ## Programming Languages
 
 ### JavaScript (ES Modules)

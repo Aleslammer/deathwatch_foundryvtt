@@ -269,12 +269,14 @@ export class CombatHelper {
   }
 
   static determineHitLocation(attackRoll) {
-    const reversed = parseInt(attackRoll.toString().split('').reverse().join(''));
-    if (reversed <= 10) return "Head";
-    if (reversed <= 20) return "Right Arm";
-    if (reversed <= 30) return "Left Arm";
-    if (reversed <= 70) return "Body";
-    if (reversed <= 85) return "Right Leg";
+    const normalizedRoll = attackRoll === 100 ? 0 : attackRoll;
+    const paddedRoll = normalizedRoll.toString().padStart(2, '0');
+    const reversed = parseInt(paddedRoll.split('').reverse().join(''));
+    if (reversed >= 1 && reversed <= 10) return "Head";
+    if (reversed >= 11 && reversed <= 20) return "Right Arm";
+    if (reversed >= 21 && reversed <= 30) return "Left Arm";
+    if (reversed >= 31 && reversed <= 70) return "Body";
+    if (reversed >= 71 && reversed <= 85) return "Right Leg";
     return "Left Leg";
   }
 
@@ -339,7 +341,7 @@ export class CombatHelper {
       const newDamage = currentDamage + woundsTaken;
       const maxWounds = targetActor.system.wounds.max || 0;
       const isCritical = newDamage > maxWounds;
-      
+
       await targetActor.update({ "system.wounds.value": newDamage });
       
       let message = `<strong>${targetActor.name}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`;
@@ -352,7 +354,7 @@ export class CombatHelper {
       } else {
         ui.notifications.info(`${targetActor.name} takes ${woundsTaken} wounds!`);
       }
-      
+
       await ChatMessage.create({ content: message });
     } else {
       ui.notifications.info(`${targetActor.name}'s armor absorbs all damage!`);

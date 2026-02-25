@@ -1,5 +1,82 @@
 # Development Guidelines
 
+## Testing Standards
+
+### Test Framework
+- Use Jest with ES modules for all unit tests
+- Test files located in `tests/` directory with `.test.mjs` extension
+- Run tests: `npm test`
+- Run with coverage: `npm run test:coverage`
+- Coverage reports generated in `coverage/lcov-report/index.html`
+
+### Test Requirements
+- **Always write tests** when adding new functionality
+- **Always update tests** when modifying existing code
+- Aim for high coverage on testable code (calculation logic, data manipulation)
+- Mock Foundry VTT globals in `tests/setup.mjs`
+- Use `jest.clearAllMocks()` in tests to avoid mock pollution between tests
+
+### Test Structure
+```javascript
+import { jest } from '@jest/globals';
+import './setup.mjs';
+import { YourClass } from '../src/module/path/to/file.mjs';
+
+describe('YourClass', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('methodName', () => {
+    it('describes expected behavior', () => {
+      expect(YourClass.method()).toBe(expected);
+    });
+  });
+});
+```
+
+### What to Test
+- **Calculation methods**: Range modifiers, hit calculations, damage calculations
+- **Data manipulation**: Modifier application, data preparation, roll data
+- **Conditional logic**: Branching paths, edge cases, boundary conditions
+- **Helper utilities**: Pure functions, data transformations
+
+### What Not to Test (or test minimally)
+- **Dialog/UI methods**: Complex jQuery and Foundry Dialog interactions
+- **Sheet rendering**: Handlebars template rendering
+- **Foundry lifecycle hooks**: init, ready hooks
+- Extract testable logic from UI methods into helper classes
+
+### Test Coverage Goals
+- Calculation/logic methods: 90%+ coverage
+- Helper utilities: 90%+ coverage
+- Document classes: 70%+ coverage (lifecycle methods are hard to test)
+- Overall project: 60%+ coverage
+
+### Mocking Patterns
+```javascript
+// Mock Foundry globals (in setup.mjs)
+global.game = { packs: new Map(), settings: { get: jest.fn() } };
+global.ui = { notifications: { warn: jest.fn(), info: jest.fn() } };
+global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
+global.Item = class Item { static createDocuments = jest.fn(); };
+
+// Mock actor in tests
+const mockActor = {
+  name: 'Test Actor',
+  system: { wounds: { value: 10, max: 20 } },
+  update: jest.fn(),
+  items: { get: jest.fn(), filter: jest.fn() }
+};
+```
+
+### Edge Cases to Test
+- Zero/null/undefined values
+- Boundary conditions (min/max values)
+- Empty arrays/objects
+- Missing optional parameters
+- Invalid input handling
+
 ## Code Quality Standards
 
 ### File Extensions and Module System
