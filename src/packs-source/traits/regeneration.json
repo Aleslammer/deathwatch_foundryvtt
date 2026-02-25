@@ -1,0 +1,11 @@
+{
+  "name": "Regeneration",
+  "type": "trait",
+  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "system": {
+    "description": "<p>Creatures with this trait heal very quickly. Each round, at the start of its turn, the creature tests Toughness to remove an amount of damage indicated in the parenthesis after the trait. It loses this trait when slain.</p>",
+    "book": "Core Rulebook",
+    "page": "134",
+    "modifiers": []
+  }
+}

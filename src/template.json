@@ -1151,7 +1151,8 @@
             "ammunition",
             "characteristic",
             "critical-effect",
-            "talent"
+            "talent",
+            "trait"
         ],
         "templates": {
             "base": {
@@ -1245,6 +1246,14 @@
             ],
             "prerequisite": "",
             "benefit": "",
+            "book": "",
+            "page": "",
+            "modifiers": []
+        },
+        "trait": {
+            "templates": [
+                "base"
+            ],
             "book": "",
             "page": "",
             "modifiers": []

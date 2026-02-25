@@ -1,0 +1,11 @@
+{
+  "name": "Improved Natural Weapons",
+  "type": "trait",
+  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "system": {
+    "description": "<p>This creature's attacks are powerful enough to crush plasteel or punch through armour. The creature gains all the benefits of the Natural Weapons Trait, except that its attacks do not count as Primitive.</p>",
+    "book": "Core Rulebook",
+    "page": "132",
+    "modifiers": []
+  }
+}
