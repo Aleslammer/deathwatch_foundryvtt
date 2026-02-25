@@ -68,6 +68,13 @@
             "path": "packs/demeanours",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "talents",
+            "label": "Talents",
+            "path": "packs/talents",
+            "type": "Item",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

@@ -1,0 +1,13 @@
+{
+  "name": "Sound Constitution",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "Gain +1 Wound (can be taken multiple times)",
+    "book": "DeathWatch Core Rulebook",
+    "page": "126",
+    "description": "<p>The character gains an additional Wound. <b>The character may purchase this Talent multiple times, the exact number of times is determined by his Career Path. When a character has gained this Talent multiple times, note the number of times it's been taken after the Talent, such as Sound Constitution 3.</b></p>",
+    "modifiers": []
+  }
+}

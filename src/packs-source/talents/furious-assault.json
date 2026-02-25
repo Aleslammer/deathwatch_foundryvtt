@@ -1,0 +1,13 @@
+{
+  "name": "Furious Assault",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "WS 35",
+    "benefit": "Extra attack on All Out Attack hit",
+    "book": "DeathWatch Core Rulebook",
+    "page": "119",
+    "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
+    "modifiers": []
+  }
+}

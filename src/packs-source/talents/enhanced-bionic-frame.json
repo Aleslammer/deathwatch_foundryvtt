@@ -1,0 +1,13 @@
+{
+  "name": "Enhanced Bionic Frame",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "Machinator Array",
+    "benefit": "Gain Auto-stabilised Trait",
+    "book": "DeathWatch Core Rulebook",
+    "page": "117",
+    "description": "<p>The character's already impressive bionic body structure is steadied by a gyro-array guided by a targeting system linked to the machine-spirit. <b>The character gains the Auto-stabilised Trait (see page 130).</b></p>",
+    "modifiers": []
+  }
+}

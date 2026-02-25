@@ -1,0 +1,13 @@
+{
+  "name": "Iron Jaw",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "Toughness 40",
+    "benefit": "Toughness Test to ignore Stunned effects",
+    "book": "DeathWatch Core Rulebook",
+    "page": "121",
+    "description": "<p>The character has taken blows from Orks and given back as good as he got. The character can bounce back from most strikes without ill effects. <b>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</b></p>",
+    "modifiers": []
+  }
+}

@@ -410,6 +410,67 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
 - Enable/disable flags in `debug.mjs` for development
 - **Always use debug() instead of console.log()** for system logging
 
+## Compendium Pack Management
+
+### Adding a New Compendium Pack
+
+1. **Add item type to template.json**:
+```json
+"Item": {
+  "types": ["weapon", "armor", "gear", "new-type"],
+  "new-type": {
+    "templates": ["base"],
+    "field1": "",
+    "field2": 0,
+    "modifiers": []
+  }
+}
+```
+
+2. **Register pack in system.json**:
+```json
+"packs": [
+  {
+    "name": "pack-name",
+    "label": "Pack Label",
+    "path": "packs/pack-name",
+    "type": "Item",
+    "system": "deathwatch"
+  }
+]
+```
+
+3. **Create source directory**: `src/packs-source/pack-name/`
+
+4. **Create compiled directory**: `src/packs/pack-name/`
+
+5. **Create template file**: `src/packs-source/_templates/type-template.json`
+
+6. **Add source JSON files** in `src/packs-source/pack-name/`:
+```json
+{
+  "name": "Item Name",
+  "type": "new-type",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "field1": "value",
+    "field2": 10,
+    "description": "<p>HTML description</p>",
+    "modifiers": []
+  }
+}
+```
+
+7. **Compile packs**: `npm run build:packs`
+
+### Compendium Build Process
+- Source files: `src/packs-source/` (JSON, version controlled)
+- Compiled packs: `src/packs/` (LevelDB, generated)
+- Build script: `builds/scripts/compilePacks.mjs`
+- Automatically processes all directories in packs-source
+- Creates folders from subdirectories
+- Supports both Item and RollTable types
+
 ## Data Schema Patterns
 
 ### Template Inheritance

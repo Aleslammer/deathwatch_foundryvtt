@@ -1,0 +1,13 @@
+{
+  "name": "Street Fighting",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "+2 Damage when dealing Critical Damage with unarmed or knife",
+    "book": "DeathWatch Core Rulebook",
+    "page": "127",
+    "description": "<p>The character is an experienced survivor of the kind of murderous fights that occur in the depths of an underhive or stinking alleys of a sink hab. <b>When dealing Critical Damage with an unarmed attack or knife, the character deals an additional +2 points of Damage.</b></p>",
+    "modifiers": []
+  }
+}

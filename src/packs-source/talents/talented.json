@@ -1,0 +1,13 @@
+{
+  "name": "Talented",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "+10 to tests with chosen Skill",
+    "book": "DeathWatch Core Rulebook",
+    "page": "127",
+    "description": "<p>The character has an affinity for a particular Skill. <b>Choose any one of the character's Skills, and gain a +10 bonus to tests made using the Skill.</b></p>",
+    "modifiers": []
+  }
+}

@@ -1150,7 +1150,8 @@
             "gear",
             "ammunition",
             "characteristic",
-            "critical-effect"
+            "critical-effect",
+            "talent"
         ],
         "templates": {
             "base": {
@@ -1237,6 +1238,16 @@
             "location": "",
             "damageType": "",
             "effects": []
+        },
+        "talent": {
+            "templates": [
+                "base"
+            ],
+            "prerequisite": "",
+            "benefit": "",
+            "book": "",
+            "page": "",
+            "modifiers": []
         }
     }
 }

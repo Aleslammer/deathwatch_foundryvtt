@@ -110,3 +110,26 @@ global.TextEditor = {
 global.loadTemplates = jest.fn(async () => {});
 
 global.Roll = jest.fn();
+
+global.Dialog = class Dialog {
+  constructor(config) {
+    this.config = config;
+  }
+  render() {}
+};
+
+global.Combatant = class Combatant {
+  constructor(data) {
+    Object.assign(this, data);
+  }
+  getInitiativeRoll() {}
+};
+
+global.Combat = class Combat {
+  constructor(data) {
+    Object.assign(this, data);
+    this.combatants = new Map();
+  }
+  rollInitiative() {}
+  updateEmbeddedDocuments() {}
+};
