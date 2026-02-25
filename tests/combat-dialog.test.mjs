@@ -168,3 +168,265 @@ describe('CombatDialogHelper', () => {
     });
   });
 });
+
+describe('validateWeaponForAttack', () => {
+  it('returns invalid if weapon is jammed', () => {
+    const weapon = { name: 'Bolter', system: { jammed: true } };
+    const actor = { items: { get: () => null } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe('Bolter is jammed! Clear the jam before firing.');
+  });
+
+  it('returns invalid if weapon has no ammo loaded', () => {
+    const weapon = { 
+      name: 'Bolter', 
+      system: { 
+        jammed: false, 
+        capacity: { max: 30 }, 
+        loadedAmmo: null 
+      } 
+    };
+    const actor = { items: { get: () => null } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe('Bolter has no ammunition loaded!');
+  });
+
+  it('returns invalid if loaded ammo is empty', () => {
+    const weapon = { 
+      name: 'Bolter', 
+      system: { 
+        jammed: false, 
+        capacity: { max: 30 }, 
+        loadedAmmo: 'ammo1' 
+      } 
+    };
+    const loadedAmmo = { system: { capacity: { value: 0 } } };
+    const actor = { items: { get: () => loadedAmmo } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(false);
+    expect(result.message).toBe('Bolter is out of ammunition!');
+  });
+
+  it('returns valid for weapon with ammo', () => {
+    const weapon = { 
+      name: 'Bolter', 
+      system: { 
+        jammed: false, 
+        capacity: { max: 30 }, 
+        loadedAmmo: 'ammo1' 
+      } 
+    };
+    const loadedAmmo = { system: { capacity: { value: 20 } } };
+    const actor = { items: { get: () => loadedAmmo } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(true);
+    expect(result.message).toBeUndefined();
+  });
+
+  it('returns valid for weapon without capacity', () => {
+    const weapon = { 
+      name: 'Power Sword', 
+      system: { jammed: false } 
+    };
+    const actor = { items: { get: () => null } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(true);
+  });
+});
+
+describe('buildDamageFormula', () => {
+  it('returns base damage for hit index > 0', () => {
+    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 1);
+    expect(result).toBe('2d10+5');
+  });
+
+  it('applies degrees of success to first hit', () => {
+    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 0);
+    expect(result).toBe('(1d10 + 1d10min3)+5');
+  });
+
+  it('applies degrees of success to single die', () => {
+    const result = CombatDialogHelper.buildDamageFormula('1d10+5', 2, false, 0, 0);
+    expect(result).toBe('1d10min2+5');
+  });
+
+  it('adds strength bonus for melee', () => {
+    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 0, true, 8, 0);
+    expect(result).toBe('2d10+5 + 8');
+  });
+
+  it('applies both DoS and strength bonus', () => {
+    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 2, true, 6, 0);
+    expect(result).toBe('(1d10 + 1d10min2)+5 + 6');
+  });
+
+  it('handles negative strength bonus', () => {
+    const result = CombatDialogHelper.buildDamageFormula('1d10', 0, true, -2, 0);
+    expect(result).toBe('1d10 + -2');
+  });
+});
+
+describe('calculateDegreesOfSuccess', () => {
+  it('returns 0 if attack missed', () => {
+    expect(CombatDialogHelper.calculateDegreesOfSuccess(55, 50)).toBe(0);
+  });
+
+  it('returns 0 for exact hit', () => {
+    expect(CombatDialogHelper.calculateDegreesOfSuccess(50, 50)).toBe(0);
+  });
+
+  it('returns 1 for 10-19 under target', () => {
+    expect(CombatDialogHelper.calculateDegreesOfSuccess(40, 50)).toBe(1);
+    expect(CombatDialogHelper.calculateDegreesOfSuccess(31, 50)).toBe(1);
+  });
+
+  it('returns 3 for 30-39 under target', () => {
+    expect(CombatDialogHelper.calculateDegreesOfSuccess(20, 50)).toBe(3);
+  });
+
+  it('returns 5 for 50 under target', () => {
+    expect(CombatDialogHelper.calculateDegreesOfSuccess(10, 60)).toBe(5);
+  });
+});
+
+describe('calculateDamageResult', () => {
+  it('calculates wounds taken with no armor', () => {
+    const result = CombatDialogHelper.calculateDamageResult(15, 0, 0);
+    expect(result.effectiveArmor).toBe(0);
+    expect(result.woundsTaken).toBe(15);
+  });
+
+  it('calculates wounds taken with armor', () => {
+    const result = CombatDialogHelper.calculateDamageResult(15, 8, 0);
+    expect(result.effectiveArmor).toBe(8);
+    expect(result.woundsTaken).toBe(7);
+  });
+
+  it('applies penetration to armor', () => {
+    const result = CombatDialogHelper.calculateDamageResult(15, 8, 4);
+    expect(result.effectiveArmor).toBe(4);
+    expect(result.woundsTaken).toBe(11);
+  });
+
+  it('prevents negative effective armor', () => {
+    const result = CombatDialogHelper.calculateDamageResult(15, 5, 10);
+    expect(result.effectiveArmor).toBe(0);
+    expect(result.woundsTaken).toBe(15);
+  });
+
+  it('prevents negative wounds taken', () => {
+    const result = CombatDialogHelper.calculateDamageResult(5, 10, 0);
+    expect(result.effectiveArmor).toBe(10);
+    expect(result.woundsTaken).toBe(0);
+  });
+});
+
+describe('calculateCriticalDamage', () => {
+  it('returns non-critical for wounds below max', () => {
+    const result = CombatDialogHelper.calculateCriticalDamage(10, 5, 20);
+    expect(result.newWounds).toBe(15);
+    expect(result.isCritical).toBe(false);
+    expect(result.criticalDamage).toBe(0);
+  });
+
+  it('returns non-critical for wounds at max', () => {
+    const result = CombatDialogHelper.calculateCriticalDamage(15, 5, 20);
+    expect(result.newWounds).toBe(20);
+    expect(result.isCritical).toBe(false);
+    expect(result.criticalDamage).toBe(0);
+  });
+
+  it('returns critical for wounds above max', () => {
+    const result = CombatDialogHelper.calculateCriticalDamage(18, 5, 20);
+    expect(result.newWounds).toBe(23);
+    expect(result.isCritical).toBe(true);
+    expect(result.criticalDamage).toBe(3);
+  });
+
+  it('calculates critical damage correctly', () => {
+    const result = CombatDialogHelper.calculateCriticalDamage(20, 10, 20);
+    expect(result.newWounds).toBe(30);
+    expect(result.isCritical).toBe(true);
+    expect(result.criticalDamage).toBe(10);
+  });
+});
+
+describe('buildDamageMessage', () => {
+  it('builds basic damage message', () => {
+    const msg = CombatDialogHelper.buildDamageMessage(
+      'Marine', 5, 'Body', 10, 5, 0, 5, false, 0, 'actor1', 'Impact'
+    );
+    expect(msg).toContain('Marine');
+    expect(msg).toContain('5 wounds');
+    expect(msg).toContain('Body');
+    expect(msg).toContain('Damage: 10');
+    expect(msg).toContain('Armor: 5');
+    expect(msg).not.toContain('CRITICAL');
+  });
+
+  it('includes critical damage section', () => {
+    const msg = CombatDialogHelper.buildDamageMessage(
+      'Marine', 8, 'Head', 15, 5, 2, 3, true, 3, 'actor1', 'Energy'
+    );
+    expect(msg).toContain('CRITICAL DAMAGE: 3');
+    expect(msg).toContain('roll-critical-btn');
+    expect(msg).toContain('data-actor-id="actor1"');
+    expect(msg).toContain('data-location="Head"');
+    expect(msg).toContain('data-damage-type="Energy"');
+  });
+});
+
+describe('buildArmorAbsorbMessage', () => {
+  it('builds armor absorb message', () => {
+    const msg = CombatDialogHelper.buildArmorAbsorbMessage('Marine', 'Body', 8, 10, 0);
+    expect(msg).toContain('Marine');
+    expect(msg).toContain('armor absorbs all damage');
+    expect(msg).toContain('Body');
+    expect(msg).toContain('Damage: 8');
+    expect(msg).toContain('Armor: 10');
+  });
+});
+
+describe('calculateClearJamTarget', () => {
+  it('calculates target number', () => {
+    expect(CombatDialogHelper.calculateClearJamTarget(40, 10)).toBe(50);
+  });
+
+  it('handles zero advances', () => {
+    expect(CombatDialogHelper.calculateClearJamTarget(35, 0)).toBe(35);
+  });
+
+  it('handles negative advances', () => {
+    expect(CombatDialogHelper.calculateClearJamTarget(40, -5)).toBe(35);
+  });
+});
+
+describe('buildClearJamFlavor', () => {
+  it('builds success message', () => {
+    const msg = CombatDialogHelper.buildClearJamFlavor('Bolter', 50, true);
+    expect(msg).toContain('Clear Jam: Bolter');
+    expect(msg).toContain('Target: 50');
+    expect(msg).toContain('SUCCESS - Jam Cleared!');
+    expect(msg).toContain('Ammo lost');
+  });
+
+  it('builds failure message', () => {
+    const msg = CombatDialogHelper.buildClearJamFlavor('Bolter', 50, false);
+    expect(msg).toContain('Clear Jam: Bolter');
+    expect(msg).toContain('Target: 50');
+    expect(msg).toContain('FAILED - Still Jammed');
+    expect(msg).not.toContain('Ammo lost');
+  });
+});

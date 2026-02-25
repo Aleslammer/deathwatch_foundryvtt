@@ -1,4 +1,6 @@
 import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, RANGE_MODIFIERS } from "./constants.mjs";
+import { CombatDialogHelper } from "./combat-dialog.mjs";
+import { CanvasHelper, FoundryAdapter } from "./foundry-adapter.mjs";
 import { debug } from "./debug.mjs";
 
 export class CombatHelper {
@@ -25,64 +27,52 @@ export class CombatHelper {
     if (!token1 || !token2) return null;
     if (token1.scene.id !== token2.scene.id) return null;
 
-    const distance = canvas.grid.measurePath([token1.center, token2.center]).distance;
+    const distance = CanvasHelper.measureDistance(token1, token2);
     return distance;
   }
   
   static async clearJam(actor, weapon) {
     if (!weapon.system.jammed) {
-      ui.notifications.info(`${weapon.name} is not jammed.`);
+      FoundryAdapter.showNotification('info', `${weapon.name} is not jammed.`);
       return;
     }
 
     const bs = actor.system.characteristics.bs.value || 0;
     const bsAdv = actor.system.characteristics.bs.advances || 0;
-    const targetNumber = bs + bsAdv;
+    const targetNumber = CombatDialogHelper.calculateClearJamTarget(bs, bsAdv);
 
-    const roll = await new Roll('1d100').evaluate();
+    const roll = await FoundryAdapter.evaluateRoll('1d100');
     const success = roll.total <= targetNumber;
 
     if (success) {
-      await weapon.update({ "system.jammed": false });
+      await FoundryAdapter.updateDocument(weapon, { "system.jammed": false });
       if (weapon.system.loadedAmmo) {
         const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
         if (loadedAmmo) {
-          await loadedAmmo.update({ "system.capacity.value": 0 });
+          await FoundryAdapter.updateDocument(loadedAmmo, { "system.capacity.value": 0 });
         }
-        await weapon.update({ "system.loadedAmmo": null });
+        await FoundryAdapter.updateDocument(weapon, { "system.loadedAmmo": null });
       }
-      ui.notifications.info(`${weapon.name} jam cleared! Weapon needs reloading.`);
+      FoundryAdapter.showNotification('info', `${weapon.name} jam cleared! Weapon needs reloading.`);
     } else {
-      ui.notifications.warn(`Failed to clear jam on ${weapon.name}.`);
+      FoundryAdapter.showNotification('warn', `Failed to clear jam on ${weapon.name}.`);
     }
 
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `<strong>Clear Jam: ${weapon.name}</strong><br>Target: ${targetNumber}<br><strong style="color: ${success ? 'green' : 'red'};">${success ? 'SUCCESS - Jam Cleared!' : 'FAILED - Still Jammed'}</strong>${success ? '<br><em>Ammo lost, weapon needs reloading</em>' : ''}`
-    });
+    const flavor = CombatDialogHelper.buildClearJamFlavor(weapon.name, targetNumber, success);
+    const speaker = FoundryAdapter.getChatSpeaker(actor);
+    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
   }
 
+  /* istanbul ignore next */
   static async weaponAttackDialog(actor, weapon) {
-    if (weapon.system.jammed) {
-      ui.notifications.warn(`${weapon.name} is jammed! Clear the jam before firing.`);
+    const validation = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    if (!validation.valid) {
+      ui.notifications.warn(validation.message);
       return;
     }
 
     const bs = actor.system.characteristics.bs.base || actor.system.characteristics.bs.value;
     const bsAdv = actor.system.characteristics.bs.advances || 0;
-
-    // Check if weapon uses ammo and has ammo loaded
-    if (weapon.system.capacity && weapon.system.capacity.max > 0) {
-      if (!weapon.system.loadedAmmo) {
-        ui.notifications.warn(`${weapon.name} has no ammunition loaded!`);
-        return;
-      }
-      const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
-      if (!loadedAmmo || loadedAmmo.system.capacity.value <= 0) {
-        ui.notifications.warn(`${weapon.name} is out of ammunition!`);
-        return;
-      }
-    }
 
     // Get selected tokens for range calculation
     const attackerToken = canvas.tokens.controlled[0];
@@ -192,30 +182,16 @@ export class CombatHelper {
             const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
-            // Determine rounds fired based on RoF
-            let roundsFired = 1;
-            if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
-              roundsFired = parseInt(rofParts[1]) || 1;
-            } else if (autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
-              roundsFired = parseInt(rofParts[2]) || 1;
-            }
+            const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
+            const maxHits = roundsFired;
 
-            // Determine max hits based on RoF
-            let maxHits = roundsFired;
-
-            const modifiers = bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier;
-            const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-            const targetNumber = bs + clampedModifiers;
+            const { targetNumber } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier);
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const calculatedHits = hitValue <= targetNumber ? 1 + Math.floor((targetNumber - hitValue) / 10) : 0;
-            const hitsTotal = Math.min(calculatedHits, maxHits);
+            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits);
 
-            let jamThreshold = 96;
-            if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO || autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
-              jamThreshold = 94;
-            }
+            const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
             const isJammed = hitValue >= jamThreshold;
 
             if (isJammed) {
@@ -226,18 +202,9 @@ export class CombatHelper {
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
 
-            let modifierParts = [];
-            modifierParts.push(`${bs} Base BS`);
-            if (bsAdv !== 0) modifierParts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
-            if (aim !== 0) modifierParts.push(`+${aim} Aim`);
-            if (autoFire !== 0) modifierParts.push(`+${autoFire} Rate of Fire`);
-            if (calledShot !== 0) modifierParts.push(`${calledShot} Called Shot`);
-            if (autoRangeMod !== 0) modifierParts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
-            if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
-            if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
-
-            const label = `[Attack] ${weapon.name} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${isJammed ? '<br><strong style="color: red;">WEAPON JAMMED!</strong>' : ''}`;
-            const flavor = modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label;
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier);
+            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed);
+            const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
             hitRoll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
@@ -333,34 +300,31 @@ export class CombatHelper {
 
   static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact') {
     const armorValue = this.getArmorValue(targetActor, location);
-    const effectiveArmor = Math.max(0, armorValue - penetration);
-    const woundsTaken = Math.max(0, damage - effectiveArmor);
+    const { effectiveArmor, woundsTaken } = CombatDialogHelper.calculateDamageResult(damage, armorValue, penetration);
 
     if (woundsTaken > 0) {
       const currentDamage = targetActor.system.wounds.value || 0;
-      const newDamage = currentDamage + woundsTaken;
       const maxWounds = targetActor.system.wounds.max || 0;
-      const isCritical = newDamage > maxWounds;
+      const { newWounds, isCritical, criticalDamage } = CombatDialogHelper.calculateCriticalDamage(currentDamage, woundsTaken, maxWounds);
 
-      await targetActor.update({ "system.wounds.value": newDamage });
+      await FoundryAdapter.updateDocument(targetActor, { "system.wounds.value": newWounds });
       
-      let message = `<strong>${targetActor.name}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`;
+      const message = CombatDialogHelper.buildDamageMessage(
+        targetActor.name, woundsTaken, location, damage, armorValue, penetration, 
+        effectiveArmor, isCritical, criticalDamage, targetActor.id, damageType
+      );
       
       if (isCritical) {
-        const criticalDamage = newDamage - maxWounds;
-        message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
-        message += `<br><button class="roll-critical-btn" data-actor-id="${targetActor.id}" data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
-        ui.notifications.warn(`${targetActor.name} is taking CRITICAL DAMAGE!`);
+        FoundryAdapter.showNotification('warn', `${targetActor.name} is taking CRITICAL DAMAGE!`);
       } else {
-        ui.notifications.info(`${targetActor.name} takes ${woundsTaken} wounds!`);
+        FoundryAdapter.showNotification('info', `${targetActor.name} takes ${woundsTaken} wounds!`);
       }
 
-      await ChatMessage.create({ content: message });
+      await FoundryAdapter.createChatMessage(message);
     } else {
-      ui.notifications.info(`${targetActor.name}'s armor absorbs all damage!`);
-      await ChatMessage.create({
-        content: `<strong>${targetActor.name}</strong>'s armor absorbs all damage to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration}</em>`
-      });
+      FoundryAdapter.showNotification('info', `${targetActor.name}'s armor absorbs all damage!`);
+      const message = CombatDialogHelper.buildArmorAbsorbMessage(targetActor.name, location, damage, armorValue, penetration);
+      await FoundryAdapter.createChatMessage(message);
     }
   }
 
@@ -369,17 +333,17 @@ export class CombatHelper {
   }
 
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
-    const confirmRoll = await new Roll('1d100').evaluate();
+    const confirmRoll = await FoundryAdapter.evaluateRoll('1d100');
     const confirmed = confirmRoll.total <= targetNumber;
     
-    await confirmRoll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br>Target: ${targetNumber} - ${confirmed ? '<strong style="color: green;">CONFIRMED!</strong>' : '<strong style="color: red;">Failed</strong>'}`
-    });
+    const speaker = FoundryAdapter.getChatSpeaker(actor);
+    const flavor = `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br>Target: ${targetNumber} - ${confirmed ? '<strong style="color: green;">CONFIRMED!</strong>' : '<strong style="color: red;">Failed</strong>'}`;
+    await FoundryAdapter.sendRollToChat(confirmRoll, speaker, flavor);
     
     return confirmed;
   }
 
+  /* istanbul ignore next */
   static async weaponDamageRoll(actor, weapon) {
     const dmg = weapon.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
@@ -428,9 +392,7 @@ export class CombatHelper {
               targetNumber = parseInt(targetNumberInput);
               if (attackRoll >= 1 && attackRoll <= 100) {
                 firstHitLocation = this.determineHitLocation(attackRoll);
-                if (attackRoll <= targetNumber) {
-                  degreesOfSuccess = Math.floor((targetNumber - attackRoll) / 10);
-                }
+                degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(attackRoll, targetNumber);
               }
             }
 
@@ -442,19 +404,7 @@ export class CombatHelper {
               let allRolls = [];
               let furyCount = 0;
               
-              let damageFormula = dmg;
-              if (i === 0 && degreesOfSuccess > 0) {
-                damageFormula = damageFormula.replace(/(\d+)(d\d+)/, (match, count, die) => {
-                  const diceCount = parseInt(count);
-                  if (diceCount > 1) {
-                    return `(${diceCount - 1}${die} + 1${die}min${degreesOfSuccess})`;
-                  }
-                  return `1${die}min${degreesOfSuccess}`;
-                });
-              }
-              if (isMelee && strBonus !== 0) {
-                damageFormula += ` + ${strBonus}`;
-              }
+              const damageFormula = CombatDialogHelper.buildDamageFormula(dmg, degreesOfSuccess, isMelee, strBonus, i);
 
               const roll = await new Roll(damageFormula).evaluate();
               totalDamage += roll.total;

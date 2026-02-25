@@ -69,10 +69,12 @@ src/
 
 ### 3. Helper Modules (`module/helpers/`)
 - **combat.mjs**: Combat system logic and calculations
+- **combat-dialog.mjs**: Testable combat dialog utilities and calculations
 - **config.mjs**: System configuration and constants
 - **constants.mjs**: Game-specific constant values
 - **debug.mjs**: Debug logging utilities with feature flags
 - **effects.mjs**: Active effects and modifier application
+- **foundry-adapter.mjs**: Wrapper for Foundry VTT API calls (canvas, rolls, notifications, chat)
 - **handlebars.js**: Custom Handlebars helpers for templates
 - **modifiers.mjs**: Modifier calculation and management
 - **templates.mjs**: Template preloading and registration
@@ -131,6 +133,17 @@ Handlebars templates for rendering:
 - Source-controlled item data
 - Build script for compilation
 - Separation of source and distribution formats
+
+### Foundry Adapter Pattern
+- **FoundryAdapter**: Wraps all Foundry VTT API calls for testability
+  - Roll evaluation and chat messages
+  - UI notifications
+  - Document updates
+  - Chat speaker management
+- **CanvasHelper**: Wraps canvas-specific operations
+  - Token distance measurement
+- Enables unit testing of business logic by mocking adapter
+- Keeps platform-specific code isolated and maintainable
 
 ## Component Relationships
 

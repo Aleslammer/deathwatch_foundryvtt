@@ -82,4 +82,83 @@ export class CombatDialogHelper {
     if (modifierParts.length === 0) return label;
     return `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`;
   }
+
+  static validateWeaponForAttack(weapon, actor) {
+    if (weapon.system.jammed) {
+      return { valid: false, message: `${weapon.name} is jammed! Clear the jam before firing.` };
+    }
+
+    if (weapon.system.capacity && weapon.system.capacity.max > 0) {
+      if (!weapon.system.loadedAmmo) {
+        return { valid: false, message: `${weapon.name} has no ammunition loaded!` };
+      }
+      const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
+      if (!loadedAmmo || loadedAmmo.system.capacity.value <= 0) {
+        return { valid: false, message: `${weapon.name} is out of ammunition!` };
+      }
+    }
+
+    return { valid: true };
+  }
+
+  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex) {
+    let formula = baseDmg;
+    
+    if (hitIndex === 0 && degreesOfSuccess > 0) {
+      formula = formula.replace(/(\d+)(d\d+)/, (match, count, die) => {
+        const diceCount = parseInt(count);
+        if (diceCount > 1) {
+          return `(${diceCount - 1}${die} + 1${die}min${degreesOfSuccess})`;
+        }
+        return `1${die}min${degreesOfSuccess}`;
+      });
+    }
+    
+    if (isMelee && strBonus !== 0) {
+      formula += ` + ${strBonus}`;
+    }
+    
+    return formula;
+  }
+
+  static calculateDegreesOfSuccess(attackRoll, targetNumber) {
+    if (attackRoll > targetNumber) return 0;
+    return Math.floor((targetNumber - attackRoll) / 10);
+  }
+
+  static calculateDamageResult(damage, armorValue, penetration) {
+    const effectiveArmor = Math.max(0, armorValue - penetration);
+    const woundsTaken = Math.max(0, damage - effectiveArmor);
+    return { effectiveArmor, woundsTaken };
+  }
+
+  static calculateCriticalDamage(currentWounds, woundsTaken, maxWounds) {
+    const newWounds = currentWounds + woundsTaken;
+    const isCritical = newWounds > maxWounds;
+    const criticalDamage = isCritical ? newWounds - maxWounds : 0;
+    return { newWounds, isCritical, criticalDamage };
+  }
+
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, isCritical, criticalDamage, targetId, damageType) {
+    let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`;
+    
+    if (isCritical) {
+      message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
+      message += `<br><button class="roll-critical-btn" data-actor-id="${targetId}" data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
+    }
+    
+    return message;
+  }
+
+  static buildArmorAbsorbMessage(targetName, location, damage, armorValue, penetration) {
+    return `<strong>${targetName}</strong>'s armor absorbs all damage to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration}</em>`;
+  }
+
+  static calculateClearJamTarget(bs, bsAdv) {
+    return bs + bsAdv;
+  }
+
+  static buildClearJamFlavor(weaponName, targetNumber, success) {
+    return `<strong>Clear Jam: ${weaponName}</strong><br>Target: ${targetNumber}<br><strong style="color: ${success ? 'green' : 'red'};">${success ? 'SUCCESS - Jam Cleared!' : 'FAILED - Still Jammed'}</strong>${success ? '<br><em>Ammo lost, weapon needs reloading</em>' : ''}`;
+  }
 }
