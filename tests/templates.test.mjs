@@ -24,11 +24,11 @@ describe('Templates', () => {
       );
     });
 
-    it('loads exactly 5 templates', async () => {
+    it('loads exactly 8 templates', async () => {
       await preloadHandlebarsTemplates();
 
       const templates = loadTemplatesMock.mock.calls[0][0];
-      expect(templates).toHaveLength(5);
+      expect(templates).toHaveLength(8);
     });
 
     it('returns promise from loadTemplates', async () => {
