@@ -19,6 +19,14 @@
       "tactics_defensive_doctrine": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
       "tactics_orbital_drop": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
       "tactics_recon_and_stealth": { "costTrain": 400, "costMaster": 400, "costExpert": 400 }
+    },
+    "talentCosts": {
+      "tal00000000055": 800,
+      "tal00000000080": 800,
+      "tal00000000092": 800,
+      "tal00000000119": 500,
+      "tal00000000172": 500,
+      "tal00000000254": 500
     }
   }
 }

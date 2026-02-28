@@ -1610,6 +1610,9 @@
             "prerequisite": "",
             "benefit": "",
             "cost": 0,
+            "stackable": false,
+            "subsequentCost": 0,
+            "compendiumId": "",
             "book": "",
             "page": "",
             "modifiers": []
@@ -1653,7 +1656,8 @@
             ],
             "book": "",
             "page": "",
-            "skillCosts": {}
+            "skillCosts": {},
+            "talentCosts": {}
         }
     }
 }

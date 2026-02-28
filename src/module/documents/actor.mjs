@@ -75,23 +75,66 @@ export class DeathwatchActor extends Actor {
     else if (xp < 45000) systemData.rank = 7;
     else systemData.rank = 8;
 
-    // Calculate spent XP from characteristic advances and skills
+    // Calculate spent XP from characteristic advances, skills, and talents
     let spentXP = 13000;
+    
+    // Get chapter skill and talent cost overrides
+    const chapterSkillCosts = {};
+    const chapterTalentCosts = {};
+    if (systemData.chapterId) {
+      const chapter = this.items.get(systemData.chapterId);
+      debug('MODIFIERS', `Chapter ID: ${systemData.chapterId}, Found: ${!!chapter}`);
+      if (chapter) {
+        debug('MODIFIERS', `Chapter: ${chapter.name}, Talent Costs: ${JSON.stringify(chapter.system.talentCosts)}`);
+      }
+      if (chapter && chapter.system.skillCosts) {
+        Object.assign(chapterSkillCosts, chapter.system.skillCosts);
+      }
+      if (chapter && chapter.system.talentCosts) {
+        Object.assign(chapterTalentCosts, chapter.system.talentCosts);
+      }
+    }
+    
+    // Track talent counts for stackable talents
+    const talentCounts = {};
+    
     for (const item of this.items) {
       if (item.type === 'characteristic-advance' && item.system.cost) {
         spentXP += item.system.cost;
       }
-      if (item.type === 'talent' && item.system.cost) {
-        spentXP += item.system.cost;
-      }
-    }
-    
-    // Get chapter skill cost overrides
-    const chapterSkillCosts = {};
-    if (systemData.chapterId) {
-      const chapter = this.items.get(systemData.chapterId);
-      if (chapter && chapter.system.skillCosts) {
-        Object.assign(chapterSkillCosts, chapter.system.skillCosts);
+      if (item.type === 'talent') {
+        // Try to get compendiumId from multiple sources
+        let sourceId = item.system.compendiumId || item._id;
+        
+        if (!item.system.compendiumId) {
+          if (item.flags?.core?.sourceId) {
+            const parts = item.flags.core.sourceId.split('.');
+            sourceId = parts[parts.length - 1];
+          } else if (item._stats?.compendiumSource) {
+            const parts = item._stats.compendiumSource.split('.');
+            sourceId = parts[parts.length - 1];
+          }
+        }
+        
+        const chapterCost = chapterTalentCosts[sourceId];
+        const talentCost = chapterCost ?? item.system.cost ?? 0;
+        
+        debug('MODIFIERS', `Talent: ${item.name}, ID: ${item._id}, CompendiumId: ${item.system.compendiumId}, Source ID: ${sourceId}, Chapter Cost: ${chapterCost}, Item Cost: ${item.system.cost}, Final: ${talentCost}`);
+        
+        const name = item.name || '';
+        
+        if (!talentCounts[name]) {
+          talentCounts[name] = { count: 0, firstCost: talentCost, subsequentCost: item.system.subsequentCost ?? 0, stackable: item.system.stackable };
+        }
+        talentCounts[name].count++;
+        
+        if (talentCounts[name].count === 1) {
+          spentXP += talentCost;
+        } else if (talentCounts[name].stackable && talentCounts[name].subsequentCost) {
+          spentXP += talentCounts[name].subsequentCost;
+        } else {
+          spentXP += talentCost;
+        }
       }
     }
     

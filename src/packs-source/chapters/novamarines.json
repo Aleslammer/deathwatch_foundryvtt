@@ -20,6 +20,10 @@
       "lore_common_jericho_reach": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
       "lore_common_tech": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
       "lore_common_war": { "costTrain": 100, "costMaster": 100, "costExpert": 100 }
+    },
+    "talentCosts": {
+      "tal00000000136": 600,
+      "tal00000000254": 600
     }
   }
 }

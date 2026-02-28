@@ -7,9 +7,33 @@ export class DeathwatchItem extends Item {
    * Augment the basic Item data model with additional dynamic data.
    */
   prepareData() {
-    // As with the actor class, items are documents that can have their data
-    // preparation methods overridden (such as prepareBaseData()).
     super.prepareData();
+    
+    // Auto-populate compendiumId for talents if not set
+    if (this.type === 'talent' && !this.system.compendiumId && this._id?.startsWith('tal')) {
+      this.system.compendiumId = this._id;
+    }
+    
+    // Calculate effective cost for talents with chapter overrides
+    if (this.type === 'talent' && this.actor) {
+      const chapterId = this.actor.system.chapterId;
+      if (chapterId) {
+        const chapter = this.actor.items.get(chapterId);
+        if (chapter?.system?.talentCosts) {
+          const sourceId = this.system.compendiumId || this._id;
+          const chapterCost = chapter.system.talentCosts[sourceId];
+          if (chapterCost !== undefined) {
+            this.system.effectiveCost = chapterCost;
+          } else {
+            this.system.effectiveCost = this.system.cost ?? 0;
+          }
+        } else {
+          this.system.effectiveCost = this.system.cost ?? 0;
+        }
+      } else {
+        this.system.effectiveCost = this.system.cost ?? 0;
+      }
+    }
   }
 
   /**

@@ -6,6 +6,9 @@
     "description": "<p>Chapter description and lore.</p>",
     "skillCosts": {
       "awareness": { "costTrain": 200, "costMaster": 300, "costExpert": 800 }
+    },
+    "talentCosts": {
+      "tal00000000001": 500
     }
   }
 }

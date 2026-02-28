@@ -9,6 +9,12 @@
     "skillCosts": {
       "lore_forbidden_adeptus_mechanicus": { "costTrain": 300, "costMaster": 400, "costExpert": 500 },
       "tech_use": { "costTrain": 300, "costMaster": 400, "costExpert": 500 }
+    },
+    "talentCosts": {
+      "tal00000000119": 200,
+      "tal00000000176": 500,
+      "tal00000000096": 500,
+      "tal00000000257": 500
     }
   }
 }

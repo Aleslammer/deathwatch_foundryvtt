@@ -11,6 +11,11 @@
       "concealment": { "costTrain": 100, "costMaster": 200, "costExpert": 300 },
       "silent_move": { "costTrain": 100, "costMaster": 200, "costExpert": 300 },
       "tactics_recon_and_stealth": { "costTrain": 100, "costMaster": 200, "costExpert": 300 }
+    },
+    "talentCosts": {
+      "tal00000000013": 400,
+      "tal00000000046": 400,
+      "tal00000000154": 600
     }
   }
 }

@@ -11,6 +11,12 @@
       "lore_forbidden_adeptus_astartes": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
       "lore_forbidden_inquisition": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
       "lore_forbidden_traitor_legions": { "costTrain": 400, "costMaster": 400, "costExpert": 400 }
+    },
+    "talentCosts": {
+      "tal00000000117": 500,
+      "tal00000000004": 500,
+      "tal00000000171": 500,
+      "tal00000000254": 500
     }
   }
 }

@@ -9,6 +9,13 @@
     "skillCosts": {
       "gamble": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
       "tracking": { "costTrain": 400, "costMaster": 400, "costExpert": 400 }
+    },
+    "talentCosts": {
+      "tal00000000055": 800,
+      "tal00000000114": 500,
+      "tal00000000246": 800,
+      "tal00000000254": 500,
+      "tal00000000259": 1000
     }
   }
 }
