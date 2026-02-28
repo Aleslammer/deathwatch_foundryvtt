@@ -3,6 +3,7 @@
  * @extends {Actor}
  */
 import { debug } from "../helpers/debug.mjs";
+import { XPCalculator } from "../helpers/xp-calculator.mjs";
 
 export class DeathwatchActor extends Actor {
 
@@ -63,98 +64,13 @@ export class DeathwatchActor extends Actor {
     const systemData = actorData.system;
     const modifiers = systemData.modifiers || [];
 
-    // Calculate rank from XP
-    const xp = systemData.xp?.total || systemData.xp || 0;
-    if (xp < 13000) systemData.rank = 1;
-    else if (xp < 17000) systemData.rank = 1;
-    else if (xp < 21000) systemData.rank = 2;
-    else if (xp < 25000) systemData.rank = 3;
-    else if (xp < 30000) systemData.rank = 4;
-    else if (xp < 35000) systemData.rank = 5;
-    else if (xp < 40000) systemData.rank = 6;
-    else if (xp < 45000) systemData.rank = 7;
-    else systemData.rank = 8;
-
-    // Calculate spent XP from characteristic advances, skills, and talents
-    let spentXP = 13000;
-    
-    // Get chapter skill and talent cost overrides
-    const chapterSkillCosts = {};
-    const chapterTalentCosts = {};
-    if (systemData.chapterId) {
-      const chapter = this.items.get(systemData.chapterId);
-      debug('MODIFIERS', `Chapter ID: ${systemData.chapterId}, Found: ${!!chapter}`);
-      if (chapter) {
-        debug('MODIFIERS', `Chapter: ${chapter.name}, Talent Costs: ${JSON.stringify(chapter.system.talentCosts)}`);
-      }
-      if (chapter && chapter.system.skillCosts) {
-        Object.assign(chapterSkillCosts, chapter.system.skillCosts);
-      }
-      if (chapter && chapter.system.talentCosts) {
-        Object.assign(chapterTalentCosts, chapter.system.talentCosts);
-      }
-    }
-    
-    // Track talent counts for stackable talents
-    const talentCounts = {};
-    
-    for (const item of this.items) {
-      if (item.type === 'characteristic-advance' && item.system.cost) {
-        spentXP += item.system.cost;
-      }
-      if (item.type === 'talent') {
-        // Try to get compendiumId from multiple sources
-        let sourceId = item.system.compendiumId || item._id;
-        
-        if (!item.system.compendiumId) {
-          if (item.flags?.core?.sourceId) {
-            const parts = item.flags.core.sourceId.split('.');
-            sourceId = parts[parts.length - 1];
-          } else if (item._stats?.compendiumSource) {
-            const parts = item._stats.compendiumSource.split('.');
-            sourceId = parts[parts.length - 1];
-          }
-        }
-        
-        const chapterCost = chapterTalentCosts[sourceId];
-        const talentCost = chapterCost ?? item.system.cost ?? 0;
-        
-        debug('MODIFIERS', `Talent: ${item.name}, ID: ${item._id}, CompendiumId: ${item.system.compendiumId}, Source ID: ${sourceId}, Chapter Cost: ${chapterCost}, Item Cost: ${item.system.cost}, Final: ${talentCost}`);
-        
-        const name = item.name || '';
-        
-        if (!talentCounts[name]) {
-          talentCounts[name] = { count: 0, firstCost: talentCost, subsequentCost: item.system.subsequentCost ?? 0, stackable: item.system.stackable };
-        }
-        talentCounts[name].count++;
-        
-        if (talentCounts[name].count === 1) {
-          spentXP += talentCost;
-        } else if (talentCounts[name].stackable && talentCounts[name].subsequentCost) {
-          spentXP += talentCounts[name].subsequentCost;
-        } else {
-          spentXP += talentCost;
-        }
-      }
-    }
-    
-    // Add skill costs
-    if (systemData.skills) {
-      for (const [key, skill] of Object.entries(systemData.skills)) {
-        const chapterCosts = chapterSkillCosts[key];
-        const trainCost = chapterCosts?.costTrain ?? skill.costTrain ?? 0;
-        const masterCost = chapterCosts?.costMaster ?? skill.costMaster ?? 0;
-        const expertCost = chapterCosts?.costExpert ?? skill.costExpert ?? 0;
-        
-        if (skill.trained) spentXP += trainCost;
-        if (skill.mastered) spentXP += masterCost;
-        if (skill.expert) spentXP += expertCost;
-      }
-    }
+    // Calculate rank and XP using XPCalculator
+    systemData.rank = XPCalculator.calculateRank(systemData.xp?.total || systemData.xp);
+    const spentXP = XPCalculator.calculateSpentXP(this);
     
     if (typeof systemData.xp === 'object') {
       systemData.xp.spent = spentXP;
-      systemData.xp.available = (systemData.xp.total || 13000) - spentXP;
+      systemData.xp.available = (systemData.xp.total || XPCalculator.STARTING_XP) - spentXP;
     }
 
     // Collect modifiers from equipped items

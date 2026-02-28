@@ -17,13 +17,14 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
           skills: {
             awareness: { trained: true, costTrain: 200, costMaster: 300, costExpert: 800 }
           },
-          characteristics: {}
+          characteristics: {},
+          modifiers: []
         },
         items: []
       };
 
       const actor = Object.create(DeathwatchActor.prototype);
-      actor.items = [];
+      Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(13200);
@@ -48,16 +49,17 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
           skills: {
             awareness: { trained: true, costTrain: 200, costMaster: 300, costExpert: 800 }
           },
-          characteristics: {}
+          characteristics: {},
+          modifiers: []
         },
-        items: [chapterItem]
+        items: {
+          get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
+          [Symbol.iterator]: function* () { yield chapterItem; }
+        }
       };
 
       const actor = Object.create(DeathwatchActor.prototype);
-      actor.items = {
-        get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
-        [Symbol.iterator]: function* () { yield chapterItem; }
-      };
+      Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(13100);
@@ -89,16 +91,17 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
               costExpert: 400 
             }
           },
-          characteristics: {}
+          characteristics: {},
+          modifiers: []
         },
-        items: [chapterItem]
+        items: {
+          get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
+          [Symbol.iterator]: function* () { yield chapterItem; }
+        }
       };
 
       const actor = Object.create(DeathwatchActor.prototype);
-      actor.items = {
-        get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
-        [Symbol.iterator]: function* () { yield chapterItem; }
-      };
+      Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(13600);
@@ -124,16 +127,17 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
             awareness: { trained: true, costTrain: 200, costMaster: 300, costExpert: 800 },
             command: { trained: true, costTrain: 300, costMaster: 500, costExpert: 800 }
           },
-          characteristics: {}
+          characteristics: {},
+          modifiers: []
         },
-        items: [chapterItem]
+        items: {
+          get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
+          [Symbol.iterator]: function* () { yield chapterItem; }
+        }
       };
 
       const actor = Object.create(DeathwatchActor.prototype);
-      actor.items = {
-        get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
-        [Symbol.iterator]: function* () { yield chapterItem; }
-      };
+      Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(13400);
@@ -165,16 +169,17 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
               costExpert: 0 
             }
           },
-          characteristics: {}
+          characteristics: {},
+          modifiers: []
         },
-        items: [chapterItem]
+        items: {
+          get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
+          [Symbol.iterator]: function* () { yield chapterItem; }
+        }
       };
 
       const actor = Object.create(DeathwatchActor.prototype);
-      actor.items = {
-        get: jest.fn((id) => id === 'chapter1' ? chapterItem : null),
-        [Symbol.iterator]: function* () { yield chapterItem; }
-      };
+      Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(13800);
