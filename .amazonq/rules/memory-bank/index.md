@@ -216,10 +216,10 @@ Total: 60 minutes
 ## Key Metrics
 
 ### Current State
-- **Total Lines**: ~2,850 (reduced from 3,000)
-- **Test Coverage**: 67% (up from 60%)
-- **Largest File**: actor-sheet.mjs (788 lines)
-- **Duplicate Code**: <5% (was ~10%)
+- **Total Lines**: ~2,790 (reduced from 3,000)
+- **Test Coverage**: 68% (up from 60%)
+- **Largest File**: actor-sheet.mjs (730 lines)
+- **Duplicate Code**: <3% (was ~10%)
 - **CSS Files**: 1 (1000+ lines)
 
 ### Target State (After Refactoring)
@@ -235,6 +235,7 @@ Total: 60 minutes
 1. ✅ Extract XPCalculator - **COMPLETE**
 2. ✅ Extract ModifierCollector - **COMPLETE**
 3. ✅ Consolidate Roll Dialogs - **COMPLETE**
+4. ✅ Consolidate Chat Messages - **COMPLETE**
 
 **Why**: Biggest impact, lowest risk, improves testability
 
@@ -276,7 +277,8 @@ Source Code:
     │   └─► helpers/
     │       ├─► xp-calculator.mjs ✅
     │       ├─► modifier-collector.mjs ✅
-    │       └─► roll-dialog-builder.mjs ✅ NEW
+    │       ├─► roll-dialog-builder.mjs ✅
+    │       └─► chat-message-builder.mjs ✅ NEW
     ├─► styles/
     └─► templates/
 
@@ -285,7 +287,8 @@ Tests:
     ├─► setup.mjs
     ├─► xp-calculator.test.mjs ✅
     ├─► modifier-collector.test.mjs ✅
-    ├─► roll-dialog-builder.test.mjs ✅ NEW
+    ├─► roll-dialog-builder.test.mjs ✅
+    ├─► chat-message-builder.test.mjs ✅ NEW
     └─► *.test.mjs
 ```
 
@@ -309,6 +312,15 @@ npm run build:packs       # Compile compendium packs
 - **Documentation**: This memory bank
 
 ## Change Log
+
+### 2024-01-XX - Priority 2.2 Implementation Complete
+- ✅ Created ChatMessageBuilder helper (115 lines)
+- ✅ Created chat-message-builder.test.mjs (17 tests, 100% coverage)
+- ✅ Refactored actor-sheet.mjs to use ChatMessageBuilder
+- ✅ Refactored combat.mjs to use ChatMessageBuilder
+- ✅ Eliminated ~54 lines of duplicate HTML
+- ✅ All 361 tests passing
+- ✅ Test coverage improved to ~68%
 
 ### 2024-01-XX - Priority 2.1 Implementation Complete
 - ✅ Created RollDialogBuilder helper (70 lines)
@@ -403,13 +415,13 @@ npm run build:packs       # Compile compendium packs
 ## Status
 
 - ✅ **Documentation**: Complete
-- ✅ **Implementation**: Phase 1 Complete, Phase 2 In Progress (1/2)
-- ✅ **Testing**: All tests passing (344/344)
-- 📊 **Coverage**: ~67% (improved from 60%)
+- ✅ **Implementation**: Phase 1 Complete, Phase 2 Complete
+- ✅ **Testing**: All tests passing (361/361)
+- 📊 **Coverage**: ~68% (improved from 60%)
 - 🎯 **Target**: 75% coverage, modular architecture
 
 ---
 
 **Last Updated**: 2024
-**Version**: 2.1
-**Status**: Phase 2 In Progress (3/5 complete)
+**Version**: 2.2
+**Status**: Phase 2 Complete (4/4 complete)

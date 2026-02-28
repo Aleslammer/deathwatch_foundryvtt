@@ -3,6 +3,7 @@ import { DWConfig } from "../helpers/config.mjs";
 import { CombatHelper } from "../helpers/combat.mjs";
 import { ModifierHelper } from "../helpers/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
+import { ChatMessageBuilder } from "../helpers/chat-message-builder.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -269,35 +270,14 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find('.history-show').click(ev => {
       const itemId = $(ev.currentTarget).data('itemId');
       const history = this.actor.items.get(itemId);
-      if (!history) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="armor-history-card">
-          <h3>${history.name}</h3>
-          ${history.system.description}
-          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${history.system.book}, p${history.system.page}</em></p>
-        </div>`
-      });
+      if (history) ChatMessageBuilder.createItemCard(history, this.actor);
     });
 
     // Show critical effect in chat
     html.find('.critical-show').click(ev => {
       const itemId = $(ev.currentTarget).data('itemId');
       const critical = this.actor.items.get(itemId);
-      if (!critical) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="critical-effect-card" style="display: flex; align-items: start; gap: 10px;">
-          <img src="${critical.img}" style="width: 36px; height: 36px; flex-shrink: 0;" />
-          <div>
-            <h3 style="font-size: 1em; margin: 0 0 5px 0;">${critical.name}</h3>
-            <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${critical.system.location} | <strong>Type:</strong> ${critical.system.damageType}</p>
-            ${critical.system.description}
-          </div>
-        </div>`
-      });
+      if (critical) ChatMessageBuilder.createItemCard(critical, this.actor);
     });
 
     // Show demeanour in chat
@@ -305,17 +285,7 @@ export class DeathwatchActorSheet extends ActorSheet {
       const li = $(ev.currentTarget).closest('.item');
       const itemId = li.data('itemId');
       const demeanour = this.actor.items.get(itemId);
-      if (!demeanour) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="demeanour-card">
-          <h3>${demeanour.name}</h3>
-          <p style="margin: 5px 0;"><strong>Chapter:</strong> ${demeanour.system.chapter}</p>
-          ${demeanour.system.description}
-          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${demeanour.system.book}, p${demeanour.system.page}</em></p>
-        </div>`
-      });
+      if (demeanour) ChatMessageBuilder.createItemCard(demeanour, this.actor);
     });
 
     // Show talent in chat
@@ -323,18 +293,7 @@ export class DeathwatchActorSheet extends ActorSheet {
       const li = $(ev.currentTarget).closest('.item');
       const itemId = li.data('itemId');
       const talent = this.actor.items.get(itemId);
-      if (!talent) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="talent-card">
-          <h3>${talent.name}</h3>
-          ${talent.system.prerequisite ? `<p style="margin: 5px 0;"><strong>Prerequisite:</strong> ${talent.system.prerequisite}</p>` : ''}
-          ${talent.system.benefit ? `<p style="margin: 5px 0;"><strong>Benefit:</strong> ${talent.system.benefit}</p>` : ''}
-          ${talent.system.description}
-          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${talent.system.book}, p${talent.system.page}</em></p>
-        </div>`
-      });
+      if (talent) ChatMessageBuilder.createItemCard(talent, this.actor);
     });
 
     // Show trait in chat
@@ -342,16 +301,7 @@ export class DeathwatchActorSheet extends ActorSheet {
       const li = $(ev.currentTarget).closest('.item');
       const itemId = li.data('itemId');
       const trait = this.actor.items.get(itemId);
-      if (!trait) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="trait-card">
-          <h3>${trait.name}</h3>
-          ${trait.system.description}
-          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${trait.system.book}, p${trait.system.page}</em></p>
-        </div>`
-      });
+      if (trait) ChatMessageBuilder.createItemCard(trait, this.actor);
     });
 
     // Remove armor history from armor
@@ -592,11 +542,7 @@ export class DeathwatchActorSheet extends ActorSheet {
             const modifierParts = RollDialogBuilder.buildModifierParts(characteristic.value, dataset.label, modifiers);
             const flavor = RollDialogBuilder.buildResultFlavor(label, target, roll, modifierParts);
             
-            roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: flavor,
-              rollMode: game.settings.get('core', 'rollMode')
-            });
+            ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
           }
         },
         cancel: {
@@ -650,11 +596,7 @@ export class DeathwatchActorSheet extends ActorSheet {
             const modifierParts = RollDialogBuilder.buildModifierParts(skillTotal, dataset.label, modifiers);
             const flavor = RollDialogBuilder.buildResultFlavor(label, target, roll, modifierParts);
             
-            roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: flavor,
-              rollMode: game.settings.get('core', 'rollMode')
-            });
+            ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
           }
         },
         cancel: {

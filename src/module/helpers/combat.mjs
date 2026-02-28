@@ -1,6 +1,7 @@
 import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, RANGE_MODIFIERS } from "./constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CanvasHelper, FoundryAdapter } from "./foundry-adapter.mjs";
+import { ChatMessageBuilder } from "./chat-message-builder.mjs";
 import { debug } from "./debug.mjs";
 
 export class CombatHelper {
@@ -337,7 +338,7 @@ export class CombatHelper {
     const confirmed = confirmRoll.total <= targetNumber;
     
     const speaker = FoundryAdapter.getChatSpeaker(actor);
-    const flavor = `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br>Target: ${targetNumber} - ${confirmed ? '<strong style="color: green;">CONFIRMED!</strong>' : '<strong style="color: red;">Failed</strong>'}`;
+    const flavor = ChatMessageBuilder.createRighteousFuryFlavor(targetNumber, confirmed);
     await FoundryAdapter.sendRollToChat(confirmRoll, speaker, flavor);
     
     return confirmed;
@@ -410,11 +411,12 @@ export class CombatHelper {
               totalDamage += roll.total;
               allRolls.push(roll);
               
-              const applyButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.dmgType || 'Impact'}">Apply Damage</button>` : '';
+              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact') : '';
+              const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
               await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
-                flavor: `<strong style="font-size: 1.1em;">${weapon.name}${numHits > 1 ? ` (${i + 1}/${numHits})` : ''}</strong><br><strong>Hit ${i + 1}:</strong> ${hitLocations[i]}${i === 0 && degreesOfSuccess > 0 ? `<br><strong>DoS:</strong> ${degreesOfSuccess}` : ''}<br><strong>Penetration:</strong> ${penetration}${isMelee && strBonus !== 0 && i === 0 ? `<br><em>Includes STR Bonus: ${strBonus}</em>` : ''}${applyButton ? `<br>${applyButton}` : ''}`
+                flavor
               });
               
               if (this.hasNaturalTen(roll) && targetNumber > 0) {
@@ -426,19 +428,21 @@ export class CombatHelper {
                   totalDamage += furyRoll.total;
                   allRolls.push(furyRoll);
                   
+                  const furyFlavor = ChatMessageBuilder.createRighteousFuryDamageFlavor(furyCount);
                   await furyRoll.toMessage({
                     speaker: ChatMessage.getSpeaker({ actor }),
-                    flavor: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY DAMAGE ${furyCount} ⚡</strong>`
+                    flavor: furyFlavor
                   });
                   
                   keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
                 }
                 
-                const applyFuryButton = targetToken ? `<button class="apply-damage-btn" data-damage="${totalDamage}" data-penetration="${penetration}" data-location="${hitLocations[i]}" data-target-id="${targetToken.actor.id}" data-damage-type="${weapon.system.dmgType || 'Impact'}">Apply Total Damage</button>` : '';
+                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact') : '';
+                const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 
                 await ChatMessage.create({
                   speaker: ChatMessage.getSpeaker({ actor }),
-                  content: `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ Righteous Fury x${furyCount} ⚡</strong><br><strong>Location:</strong> ${hitLocations[i]}<br><strong>Total Damage: ${totalDamage}</strong>${applyFuryButton ? `<br>${applyFuryButton}` : ''}`
+                  content: summaryContent
                 });
               }
             }

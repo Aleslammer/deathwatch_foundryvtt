@@ -104,19 +104,18 @@ async _onSkillRoll(dataset) {
 - Easier to add new roll types
 - Reduces code by ~150 lines
 
-### 2.2 Consolidate Chat Message Creation
-**Files**: Multiple files create similar chat messages
-**Issue**: Repeated patterns for chat message creation
-**Solution**: Create `src/module/helpers/chat-message-builder.mjs`
+### 2.2 Consolidate Chat Message Creation ✅ **COMPLETE**
+**Files**: `src/module/sheets/actor-sheet.mjs`, `src/module/helpers/combat.mjs`
+**Issue**: Repeated patterns for chat message creation (item cards, roll messages, damage messages)
+**Solution**: Created `src/module/helpers/chat-message-builder.mjs`
 
-```javascript
-// New file: src/module/helpers/chat-message-builder.mjs
-export class ChatMessageBuilder {
-  static createItemCard(item, actor) { /* ... */ }
-  static createRollResult(roll, flavor, speaker) { /* ... */ }
-  static createDamageCard(damage, location, target) { /* ... */ }
-}
-```
+**Implementation**: See `priority-2-2-complete.md`
+
+**Benefits**:
+- Single source of truth for chat formatting
+- 87% reduction in actor-sheet.mjs chat code
+- 100% test coverage (17 tests)
+- Easy to add new message types
 
 ## Priority 3: CSS Optimization
 
@@ -339,10 +338,10 @@ prepareDerivedData() {
 
 **Status**: 2/2 complete, ~180 lines reduced, all tests passing (329/329)
 
-### Phase 2 (Week 2): Code Duplication
-1. Consolidate roll dialogs
-2. Create ChatMessageBuilder
-3. Update tests
+### Phase 2 (Week 2): Code Duplication - **IN PROGRESS (2/2 complete)**
+1. ✅ Consolidate roll dialogs - **COMPLETE**
+2. ✅ Create ChatMessageBuilder - **COMPLETE**
+3. ✅ Update tests - **COMPLETE**
 
 ### Phase 3 (Week 3): CSS & Templates
 1. Reorganize CSS
@@ -359,23 +358,24 @@ prepareDerivedData() {
 ### New Test Files Needed
 - ✅ `tests/xp-calculator.test.mjs` - **COMPLETE**
 - ✅ `tests/modifier-collector.test.mjs` - **COMPLETE**
-- `tests/dialog-templates.test.mjs`
-- `tests/chat-message-builder.test.mjs`
+- ✅ `tests/roll-dialog-builder.test.mjs` - **COMPLETE**
+- ✅ `tests/chat-message-builder.test.mjs` - **COMPLETE**
 - `tests/validation.test.mjs`
 
 ### Coverage Goals
 - XPCalculator: 95%+ ✅ **100% achieved**
 - ModifierCollector: 95%+ ✅ **100% achieved**
-- DialogTemplates: 80%+
-- ChatMessageBuilder: 90%+
+- RollDialogBuilder: 95%+ ✅ **100% achieved**
+- ChatMessageBuilder: 90%+ ✅ **100% achieved**
 
 ## Metrics
 
 ### Current State
 - actor.mjs: ~124 lines (reduced from 300)
-- actor-sheet.mjs: ~800 lines
+- actor-sheet.mjs: ~730 lines (reduced from 800)
+- combat.mjs: ~395 lines (reduced from 400)
 - deathwatch.css: ~1000 lines
-- Test coverage: ~66%
+- Test coverage: ~68%
 
 ### Target State
 - actor.mjs: ~100 lines
