@@ -1609,6 +1609,7 @@
             ],
             "prerequisite": "",
             "benefit": "",
+            "cost": 0,
             "book": "",
             "page": "",
             "modifiers": []

@@ -81,6 +81,9 @@ export class DeathwatchActor extends Actor {
       if (item.type === 'characteristic-advance' && item.system.cost) {
         spentXP += item.system.cost;
       }
+      if (item.type === 'talent' && item.system.cost) {
+        spentXP += item.system.cost;
+      }
     }
     
     // Get chapter skill cost overrides
