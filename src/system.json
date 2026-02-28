@@ -82,6 +82,13 @@
             "path": "packs/traits",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "chapters",
+            "label": "Chapters",
+            "path": "packs/chapters",
+            "type": "Item",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

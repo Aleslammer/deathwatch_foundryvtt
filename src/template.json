@@ -31,7 +31,7 @@
                     "value": 1
                 }
             },
-            "chapter": "",
+            "chapterId": "",
             "biography": "",
             "pastEvents": "",
             "specialty": "",
@@ -1514,7 +1514,8 @@
             "talent",
             "trait",
             "specialty",
-            "characteristic-advance"
+            "characteristic-advance",
+            "chapter"
         ],
         "templates": {
             "base": {
@@ -1644,6 +1645,12 @@
             "characteristic": "",
             "level": "simple",
             "cost": 0
+        },
+        "chapter": {
+            "templates": [
+                "base"
+            ],
+            "skillCosts": {}
         }
     }
 }

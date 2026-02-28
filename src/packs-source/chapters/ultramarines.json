@@ -1,0 +1,22 @@
+{
+  "name": "Ultramarines",
+  "type": "chapter",
+  "img": "systems/deathwatch/icons/chapters/ultramarines.webp",
+  "system": {
+    "description": "<p>The Ultramarines are the most renowned and disciplined Space Marine Chapter. Descended from their Primarch, Roboute Guilliman, they are the exemplars of the Codex Astartes.</p><p>Hailing from the realm of Ultramar, they are known for their strategic flexibility, strict organization, and balanced approach to warfare—equally capable in ranged combat, close assault, and large-scale battlefield command.</p>",
+    "skillCosts": {
+      "charm": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "command": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "performer_dancer": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
+      "performer_musician": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
+      "performer_singer": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
+      "performer_storyteller": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
+      "tactics_air_combat": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "tactics_armoured": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "tactics_assault_doctrine": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "tactics_defensive_doctrine": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "tactics_orbital_drop": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "tactics_recon_and_stealth": { "costTrain": 400, "costMaster": 400, "costExpert": 400 }
+    }
+  }
+}

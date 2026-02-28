@@ -1,0 +1,23 @@
+{
+  "name": "Novamarines",
+  "type": "chapter",
+  "img": "systems/deathwatch/icons/chapters/novamarines.webp",
+  "system": {
+    "description": "<p>The Novamarines are a Second Founding successor of the Ultramarines, known for their strict adherence to the Codex Astartes and their methodical approach to warfare.</p><p>They are renowned for their discipline, tactical acumen, and unwavering loyalty to the Imperium, often serving alongside other Imperial forces with distinction.</p>",
+    "skillCosts": {
+      "lore_common_adeptus_arbites": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_adeptus_astartes": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_adeptus_mechanicus": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_administratum": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_deathwatch": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_ecclesiarchy": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_imperial_creed": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_imperial_guard": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_imperial_navy": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_imperium": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_jericho_reach": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_tech": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
+      "lore_common_war": { "costTrain": 100, "costMaster": 100, "costExpert": 100 }
+    }
+  }
+}

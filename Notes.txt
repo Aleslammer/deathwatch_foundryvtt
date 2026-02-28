@@ -18,3 +18,6 @@ TODO: Deadeye shot reduces the penalty for Called Shot
 TODO: Need to handle called shot mechanic
 TODO: Deathwatch Training Talent for confirm RF resutls
 TODO: True Grit
+
+
+TODO: need to support Iron Hands, Novamarines, Raptor 

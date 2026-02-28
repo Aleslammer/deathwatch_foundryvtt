@@ -94,6 +94,17 @@ export class DeathwatchActorSheet extends ActorSheet {
       v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
 
+    // Get chapter item if set
+    if (context.system.chapterId) {
+      context.chapterItem = this.actor.items.get(context.system.chapterId);
+    }
+
+    // Get chapter skill cost overrides
+    const chapterSkillCosts = {};
+    if (context.chapterItem && context.chapterItem.system.skillCosts) {
+      Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
+    }
+
     // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
       for (let [k, v] of Object.entries(context.system.skills)) {
@@ -102,6 +113,13 @@ export class DeathwatchActorSheet extends ActorSheet {
         const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
         const skillModTotal = liveSkill?.modifierTotal || 0;
         v.total = baseSkillTotal + skillModTotal;
+        
+        // Apply chapter skill cost overrides
+        if (chapterSkillCosts[k]) {
+          if (chapterSkillCosts[k].costTrain !== undefined) v.costTrain = chapterSkillCosts[k].costTrain;
+          if (chapterSkillCosts[k].costMaster !== undefined) v.costMaster = chapterSkillCosts[k].costMaster;
+          if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
+        }
       }
     }
 
@@ -128,6 +146,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const traits = [];
     const specialties = [];
     const characteristicAdvances = [];
+    const chapters = [];
     const spells = {
       0: [],
       1: [],
@@ -193,6 +212,9 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (i.type === 'characteristic-advance') {
         characteristicAdvances.push(i);
       }
+      else if (i.type === 'chapter') {
+        chapters.push(i);
+      }
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
@@ -220,6 +242,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     context.traits = traits;
     context.specialties = specialties;
     context.characteristicAdvances = characteristicAdvances;
+    context.chapters = chapters;
     context.spells = spells;
   }
 
@@ -451,6 +474,25 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find('.inventory .items-list li.item').each((i, li) => {
       li.addEventListener('drop', this._onDropItemOnItem.bind(this), false);
       li.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
+
+    // Drop handler for chapter
+    html.find('.chapter-drop-zone').each((i, el) => {
+      el.addEventListener('drop', this._onDropChapter.bind(this), false);
+      el.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
+
+    // Remove chapter
+    html.find('.chapter-remove').click(async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const chapterId = this.actor.system.chapterId;
+      if (chapterId) {
+        const chapter = this.actor.items.get(chapterId);
+        if (chapter) await chapter.delete();
+      }
+      await this.actor.update({ "system.chapterId": "" });
+      ui.notifications.info('Chapter removed.');
     });
   }
 
@@ -894,6 +936,36 @@ export class DeathwatchActorSheet extends ActorSheet {
       await targetItem.update({ "system.loadedAmmo": ammoItem.id });
       ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
     }
+  }
+
+  /**
+   * Handle dropping a chapter item
+   * @param {Event} event The drop event
+   * @private
+   */
+  async _onDropChapter(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== 'chapter') {
+      ui.notifications.warn('Only chapter items can be dropped here.');
+      return;
+    }
+
+    if (this.actor.system.chapterId) {
+      const existingChapter = this.actor.items.get(this.actor.system.chapterId);
+      if (existingChapter) {
+        await existingChapter.delete();
+      }
+    }
+
+    const chapterItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
+    await this.actor.update({ "system.chapterId": chapterItem.id });
+    ui.notifications.info(`Chapter set to ${chapterItem.name}.`);
   }
 
 }

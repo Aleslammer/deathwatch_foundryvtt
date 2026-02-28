@@ -83,12 +83,26 @@ export class DeathwatchActor extends Actor {
       }
     }
     
+    // Get chapter skill cost overrides
+    const chapterSkillCosts = {};
+    if (systemData.chapterId) {
+      const chapter = this.items.get(systemData.chapterId);
+      if (chapter && chapter.system.skillCosts) {
+        Object.assign(chapterSkillCosts, chapter.system.skillCosts);
+      }
+    }
+    
     // Add skill costs
     if (systemData.skills) {
       for (const [key, skill] of Object.entries(systemData.skills)) {
-        if (skill.trained) spentXP += skill.costTrain || 0;
-        if (skill.mastered) spentXP += skill.costMaster || 0;
-        if (skill.expert) spentXP += skill.costExpert || 0;
+        const chapterCosts = chapterSkillCosts[key];
+        const trainCost = chapterCosts?.costTrain ?? skill.costTrain ?? 0;
+        const masterCost = chapterCosts?.costMaster ?? skill.costMaster ?? 0;
+        const expertCost = chapterCosts?.costExpert ?? skill.costExpert ?? 0;
+        
+        if (skill.trained) spentXP += trainCost;
+        if (skill.mastered) spentXP += masterCost;
+        if (skill.expert) spentXP += expertCost;
       }
     }
     
