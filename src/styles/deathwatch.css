@@ -1,5 +1,69 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
+/* CSS Variables */
+:root {
+  /* Colors */
+  --dw-color-primary: #007bff;
+  --dw-color-primary-hover: #0056b3;
+  --dw-color-secondary: #6c757d;
+  --dw-color-secondary-hover: #545b62;
+  --dw-color-success: green;
+  --dw-color-danger: red;
+  --dw-color-warning: #ffc107;
+  
+  /* Borders */
+  --dw-color-border: #c9c7b8;
+  --dw-color-border-light: #e9e9e9;
+  --dw-color-border-dark: #eeede0;
+  --dw-color-border-groove: #dee2e6;
+  
+  /* Backgrounds */
+  --dw-color-bg-primary: #ffffff;
+  --dw-color-bg-secondary: #f8f9fa;
+  --dw-color-bg-tertiary: rgba(0, 0, 0, 0.05);
+  --dw-color-bg-hover: #f8f9fa;
+  --dw-color-bg-gradient-start: #f8f9fa;
+  --dw-color-bg-gradient-end: #e9ecef;
+  
+  /* Text */
+  --dw-color-text-primary: #191813;
+  --dw-color-text-secondary: #444;
+  --dw-color-text-muted: #666;
+  --dw-color-text-light: #495057;
+  --dw-color-text-dark: #212529;
+  --dw-color-text-beige: #b5b3a4;
+  
+  /* Spacing */
+  --dw-spacing-xs: 2px;
+  --dw-spacing-sm: 4px;
+  --dw-spacing-md: 8px;
+  --dw-spacing-lg: 10px;
+  --dw-spacing-xl: 15px;
+  --dw-spacing-xxl: 20px;
+  
+  /* Border widths */
+  --dw-border-width: 1px;
+  --dw-border-width-thick: 2px;
+  
+  /* Border radius */
+  --dw-border-radius: 4px;
+  --dw-border-radius-sm: 3px;
+  --dw-border-radius-lg: 8px;
+  
+  /* Shadows */
+  --dw-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --dw-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --dw-shadow-focus: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  
+  /* Font sizes */
+  --dw-font-size-xs: 11px;
+  --dw-font-size-sm: 12px;
+  --dw-font-size-md: 13px;
+  --dw-font-size-lg: 14px;
+  --dw-font-size-xl: 16px;
+  --dw-font-size-xxl: 20px;
+}
+
 /* Global styles */
 .window-app {
   font-family: "Roboto", sans-serif;
@@ -239,23 +303,23 @@
 
 /* Modifier Dialog Styling (Starfinder-inspired) */
 .deathwatch .modifier-dialog {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 20px;
+  background: linear-gradient(135deg, var(--dw-color-bg-gradient-start) 0%, var(--dw-color-bg-gradient-end) 100%);
+  border: var(--dw-border-width) solid var(--dw-color-border-groove);
+  border-radius: var(--dw-border-radius-lg);
+  box-shadow: var(--dw-shadow-md);
+  padding: var(--dw-spacing-xxl);
   font-family: "Roboto", sans-serif;
-  color: #212529;
+  color: var(--dw-color-text-dark);
 }
 
 .deathwatch .modifier-dialog .form-group {
-  margin-bottom: 15px;
+  margin-bottom: var(--dw-spacing-xl);
 }
 
 .deathwatch .modifier-dialog .form-group.modifier-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--dw-spacing-lg);
 }
 
 .deathwatch .modifier-dialog .form-group.modifier-row label {
@@ -267,63 +331,63 @@
 .deathwatch .modifier-dialog label {
   display: block;
   font-weight: 600;
-  color: #495057;
-  margin-bottom: 8px;
+  color: var(--dw-color-text-light);
+  margin-bottom: var(--dw-spacing-md);
   font-size: 0.9em;
 }
 
 .deathwatch .modifier-dialog .difficulty-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  margin-bottom: 15px;
+  gap: var(--dw-spacing-md);
+  margin-bottom: var(--dw-spacing-xl);
 }
 
 .deathwatch .modifier-dialog .difficulty-option {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  background: #ffffff;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  padding: var(--dw-spacing-md) 12px;
+  background: var(--dw-color-bg-primary);
+  border: var(--dw-border-width) solid #ced4da;
+  border-radius: var(--dw-border-radius);
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.85em;
 }
 
 .deathwatch .modifier-dialog .difficulty-option:hover {
-  background: #f8f9fa;
-  border-color: #007bff;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+  background: var(--dw-color-bg-hover);
+  border-color: var(--dw-color-primary);
+  box-shadow: var(--dw-shadow-sm);
 }
 
 .deathwatch .modifier-dialog .difficulty-option input[type="checkbox"] {
-  margin-right: 8px;
-  accent-color: #007bff;
+  margin-right: var(--dw-spacing-md);
+  accent-color: var(--dw-color-primary);
 }
 
 .deathwatch .modifier-dialog select {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  padding: var(--dw-spacing-md) 12px;
+  border: var(--dw-border-width) solid #ced4da;
+  border-radius: var(--dw-border-radius);
   font-size: 0.9em;
-  background: #ffffff;
-  color: #495057;
+  background: var(--dw-color-bg-primary);
+  color: var(--dw-color-text-light);
   transition: border-color 0.2s ease;
   cursor: pointer;
 }
 
 .deathwatch .modifier-dialog select:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: var(--dw-color-primary);
+  box-shadow: var(--dw-shadow-focus);
 }
 
 .deathwatch .modifier-dialog select option {
-  padding: 4px;
-  background: #ffffff;
-  color: #495057;
+  padding: var(--dw-spacing-sm);
+  background: var(--dw-color-bg-primary);
+  color: var(--dw-color-text-light);
 }
 
 .deathwatch .modifier-dialog .form-group.modifier-row input[type="text"] {
@@ -333,32 +397,32 @@
 
 .deathwatch .modifier-dialog input[type="text"] {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  padding: var(--dw-spacing-md) 12px;
+  border: var(--dw-border-width) solid #ced4da;
+  border-radius: var(--dw-border-radius);
   font-size: 0.9em;
-  background: #ffffff;
-  color: #495057;
+  background: var(--dw-color-bg-primary);
+  color: var(--dw-color-text-light);
   transition: border-color 0.2s ease;
 }
 
 .deathwatch .modifier-dialog input[type="text"]:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  border-color: var(--dw-color-primary);
+  box-shadow: var(--dw-shadow-focus);
 }
 
 .deathwatch .modifier-dialog .dialog-buttons {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: var(--dw-spacing-lg);
+  margin-top: var(--dw-spacing-xxl);
 }
 
 .deathwatch .modifier-dialog .dialog-button {
-  padding: 8px 16px;
+  padding: var(--dw-spacing-md) 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--dw-border-radius);
   font-size: 0.9em;
   font-weight: 500;
   cursor: pointer;
@@ -368,23 +432,23 @@
 }
 
 .deathwatch .modifier-dialog .dialog-button.roll {
-  background: #007bff;
+  background: var(--dw-color-primary);
   color: white;
 }
 
 .deathwatch .modifier-dialog .dialog-button.roll:hover {
-  background: #0056b3;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  background: var(--dw-color-primary-hover);
+  box-shadow: var(--dw-shadow-sm);
 }
 
 .deathwatch .modifier-dialog .dialog-button.cancel {
-  background: #6c757d;
+  background: var(--dw-color-secondary);
   color: white;
 }
 
 .deathwatch .modifier-dialog .dialog-button.cancel:hover {
-  background: #545b62;
-  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+  background: var(--dw-color-secondary-hover);
+  box-shadow: var(--dw-shadow-sm);
 }
 
 .deathwatch .sheet-header {
@@ -404,7 +468,7 @@
   -webkit-box-pack: start;
   -ms-flex-pack: start;
   justify-content: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: var(--dw-spacing-lg);
 }
 
 .deathwatch .sheet-header .profile-img {
@@ -412,7 +476,7 @@
   -ms-flex: 0 0 100px;
   flex: 0 0 100px;
   height: 100px;
-  margin-right: 10px;
+  margin-right: var(--dw-spacing-lg);
 }
 
 .deathwatch .sheet-header .header-fields {
@@ -460,18 +524,18 @@
 
 .deathwatch .items-header {
   height: 28px;
-  margin: 2px 0;
+  margin: var(--dw-spacing-xs) 0;
   padding: 0;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
-  border: 2px groove #eeede0;
+  background: var(--dw-color-bg-tertiary);
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   font-weight: bold;
 }
 
 .deathwatch .items-header>* {
-  font-size: 14px;
+  font-size: var(--dw-font-size-lg);
   text-align: center;
 }
 
@@ -503,7 +567,7 @@
   padding: 0;
   overflow-y: auto;
   scrollbar-width: thin;
-  color: #444;
+  color: var(--dw-color-text-secondary);
 }
 
 .deathwatch .items-list .item-list {
@@ -518,7 +582,7 @@
   flex: 2;
   margin: 0;
   overflow: hidden;
-  font-size: 13px;
+  font-size: var(--dw-font-size-md);
   text-align: left;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -548,7 +612,7 @@
 }
 
 .deathwatch .items-list .item-controls a {
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
   text-align: center;
   margin: 0 6px;
 }
@@ -557,8 +621,8 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  padding: 0 2px;
-  border-bottom: 1px solid #c9c7b8;
+  padding: 0 var(--dw-spacing-xs);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-border);
 }
 
 .deathwatch .items-list .item:last-child {
@@ -566,7 +630,7 @@
 }
 
 .deathwatch .items-list .item .item-name {
-  color: #191813;
+  color: var(--dw-color-text-primary);
 }
 
 .deathwatch .items-list .item .item-name .item-image {
@@ -581,25 +645,25 @@
 
 .deathwatch .items-list .item-prop {
   text-align: center;
-  border-left: 1px solid #c9c7b8;
-  border-right: 1px solid #c9c7b8;
-  font-size: 12px;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
+  border-right: var(--dw-border-width) solid var(--dw-color-border);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .items-list .items-header {
   height: 28px;
-  margin: 2px 0;
+  margin: var(--dw-spacing-xs) 0;
   padding: 0;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
-  border: 2px groove #eeede0;
+  background: var(--dw-color-bg-tertiary);
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   font-weight: bold;
 }
 
 .deathwatch .items-list .items-header>* {
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
   text-align: center;
 }
 
@@ -619,9 +683,9 @@
 .deathwatch .effects .item .effect-duration,
 .deathwatch .effects .item .effect-controls {
   text-align: center;
-  border-left: 1px solid #c9c7b8;
-  border-right: 1px solid #c9c7b8;
-  font-size: 12px;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
+  border-right: var(--dw-border-width) solid var(--dw-color-border);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .effects .item .effect-controls {
@@ -630,20 +694,20 @@
 
 /* Skills Tab Styles */
 .deathwatch .skills-section {
-  padding: 10px;
+  padding: var(--dw-spacing-lg);
 }
 
 .deathwatch .skills-header-row {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: var(--dw-spacing-md);
   background: rgba(0, 0, 0, 0.1);
-  border: 1px solid #c9c7b8;
-  border-radius: 3px;
+  border: var(--dw-border-width) solid var(--dw-color-border);
+  border-radius: var(--dw-border-radius-sm);
   font-weight: bold;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: var(--dw-spacing-lg);
 }
 
 .deathwatch .skills-header-row > div {
@@ -662,8 +726,8 @@
 .deathwatch .skill-descriptor {
   flex: 1;
   text-align: center;
-  font-size: 11px;
-  color: #666;
+  font-size: var(--dw-font-size-xs);
+  color: var(--dw-color-text-muted);
 }
 
 .deathwatch .skill-trained-header {
@@ -687,31 +751,31 @@
 }
 
 .deathwatch .skills-header {
-  margin: 15px 0 10px 0;
-  padding: 5px 10px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid #c9c7b8;
-  border-radius: 3px;
+  margin: var(--dw-spacing-xl) 0 var(--dw-spacing-lg) 0;
+  padding: 5px var(--dw-spacing-lg);
+  background: var(--dw-color-bg-tertiary);
+  border: var(--dw-border-width) solid var(--dw-color-border);
+  border-radius: var(--dw-border-radius-sm);
 }
 
 .deathwatch .skills-header h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--dw-font-size-lg);
   font-weight: bold;
-  color: #444;
+  color: var(--dw-color-text-secondary);
 }
 
 .deathwatch .skills-list {
-  border: 1px solid #c9c7b8;
-  border-radius: 3px;
+  border: var(--dw-border-width) solid var(--dw-color-border);
+  border-radius: var(--dw-border-radius-sm);
 }
 
 .deathwatch .skill-item {
   display: flex;
   align-items: center;
-  padding: 4px 8px;
-  border-bottom: 1px solid #e9e9e9;
-  font-size: 12px;
+  padding: var(--dw-spacing-sm) var(--dw-spacing-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-border-light);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .skill-item:last-child {
@@ -719,24 +783,24 @@
 }
 
 .deathwatch .skill-item:hover {
-  background: #f8f9fa;
+  background: var(--dw-color-bg-hover);
 }
 
 .deathwatch .skill-name {
   flex: 2;
   font-weight: 500;
   cursor: pointer;
-  color: #191813;
+  color: var(--dw-color-text-primary);
 }
 
 .deathwatch .skill-name:hover {
-  color: #007bff;
+  color: var(--dw-color-primary);
 }
 
 .deathwatch .skill-characteristic {
   flex: 1;
-  font-size: 11px;
-  color: #666;
+  font-size: var(--dw-font-size-xs);
+  color: var(--dw-color-text-muted);
   text-align: center;
 }
 
@@ -768,11 +832,11 @@
 
 .deathwatch .skill-modifier input {
   width: 50px;
-  padding: 2px 4px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
+  padding: var(--dw-spacing-xs) var(--dw-spacing-sm);
+  border: var(--dw-border-width) solid #ccc;
+  border-radius: var(--dw-spacing-xs);
   text-align: center;
-  font-size: 11px;
+  font-size: var(--dw-font-size-xs);
 }
 
 .deathwatch .skill-total {
@@ -829,7 +893,7 @@
 .deathwatch .items-header .item-stat {
   flex: 0 0 50px;
   text-align: center;
-  border-left: 1px solid #c9c7b8;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
 }
 
 .deathwatch .items-list .item-controls,
@@ -856,29 +920,29 @@
 .deathwatch .modifiers-list .modifier-mod {
   flex: 0 0 100px;
   text-align: center;
-  border-left: 1px solid #c9c7b8;
-  font-size: 12px;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .modifiers-list .modifier-type {
   flex: 0 0 100px;
   text-align: center;
-  border-left: 1px solid #c9c7b8;
-  font-size: 12px;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .modifiers-list .modifier-effect-type {
   flex: 0 0 100px;
   text-align: center;
-  border-left: 1px solid #c9c7b8;
-  font-size: 12px;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .modifiers-list .modifier-value-affected {
   flex: 0 0 120px;
   text-align: center;
-  border-left: 1px solid #c9c7b8;
-  font-size: 12px;
+  border-left: var(--dw-border-width) solid var(--dw-color-border);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .modifiers-list .item-controls {
@@ -888,11 +952,11 @@
 }
 
 .deathwatch .modifiers-list .modifier {
-  padding: 4px 8px;
+  padding: var(--dw-spacing-sm) var(--dw-spacing-md);
 }
 
 .deathwatch .modifiers-list .modifier:hover {
-  background: #f8f9fa;
+  background: var(--dw-color-bg-hover);
 }
 
 .deathwatch .modifiers-list .modifier-toggle {
@@ -904,7 +968,7 @@
   font-weight: bold;
   min-width: 30px;
   text-align: center;
-  color: #007bff;
+  color: var(--dw-color-primary);
 }
 
 
@@ -918,10 +982,10 @@
   height: 94px;
   width: 105px;
   flex: 0 0 105px;
-  margin: 0 2px 4px;
+  margin: 0 var(--dw-spacing-xs) var(--dw-spacing-sm);
   text-align: center;
-  border: 2px groove #eeede0;
-  border-radius: 3px;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
 }
 
 .deathwatch .characteristics .characteristic .characteristic-header {
@@ -932,23 +996,23 @@
 .deathwatch .characteristics .characteristic .characteristic-header input[type="text"].characteristic-damage {
   flex: 1;
   height: 24px;
-  border-bottom: 2px groove #eeede0;
-  border-right: 2px groove #eeede0;
+  border-bottom: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-right: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   border-radius: 0;
 }
 
 .deathwatch .characteristics .characteristic .characteristic-header input[type="text"].characteristic-penalty {
   flex: 1;
   height: 24px;
-  border-bottom: 2px groove #eeede0;
+  border-bottom: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   border-radius: 0;
 }
 
 .deathwatch .characteristics .characteristic h4.box-title {
-  line-height: 14px;
-  margin: 4px 4px 20px;
-  font-size: 13px;
-  border-bottom: 1px solid #b5b3a4;
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-xxl);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
 }
 
 .deathwatch .characteristics .characteristic .characteristic-modifiers {
@@ -960,23 +1024,23 @@
   flex: 0 0 32px;
   height: 30px;
   overflow: hidden;
-  border-top: 2px groove #eeede0;
-  font-size: 12px;
+  border-top: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .characteristics .characteristic .characteristic-modifiers span.characteristic-mod {
-  border-right: 2px groove #eeede0;
-  padding: 8px 0 0;
+  border-right: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  padding: var(--dw-spacing-md) 0 0;
 }
 
 .deathwatch .characteristics .characteristic .characteristic-modifiers div.characteristic-center {
-  margin: -10px 0 10px;
-  font-size: 20px;
+  margin: -10px 0 var(--dw-spacing-lg);
+  font-size: var(--dw-font-size-xxl);
   overflow: hidden;
 }
 
 .deathwatch .characteristics .characteristic .characteristic-modifiers input[type="text"].characteristic-base {
-  border-left: 2px groove #eeede0;
+  border-left: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   border-radius: 0;
 }
 
@@ -1019,13 +1083,13 @@
 .deathwatch .demeanours-list .item-chapter {
   flex: 0 0 120px;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .demeanours-list .item-source {
   flex: 0 0 150px;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
 }
 
 
@@ -1044,21 +1108,21 @@
 .deathwatch .talents-list .item-benefit {
   flex: 3;
   text-align: left;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
   padding-left: 5px;
 }
 
 .deathwatch .talents-list .item-prerequisite {
   flex: 0 0 150px;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .talents-list .item-source,
 .deathwatch .traits-list .item-source {
   flex: 0 0 150px;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
 }
 
 .deathwatch .talent-show,
@@ -1068,7 +1132,7 @@
 
 .deathwatch .talent-show:hover,
 .deathwatch .trait-show:hover {
-  color: #007bff;
+  color: var(--dw-color-primary);
 }
 
 /* Traits two-column layout */
@@ -1082,5 +1146,5 @@
 .deathwatch .talents-list .item-cost {
   flex: 0 0 80px;
   text-align: center;
-  font-size: 12px;
+  font-size: var(--dw-font-size-sm);
 }
