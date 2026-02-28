@@ -4,6 +4,7 @@ import { CombatHelper } from "../helpers/combat.mjs";
 import { ModifierHelper } from "../helpers/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/chat-message-builder.mjs";
+import { ItemHandlers } from "../helpers/item-handlers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -132,120 +133,13 @@ export class DeathwatchActorSheet extends ActorSheet {
   /**
    * Organize and classify Items for Character sheets.
    *
-   * @param {Object} actorData The actor to prepare.
+   * @param {Object} context The sheet context
    *
    * @return {undefined}
    */
   _prepareItems(context) {
-    const weapons = [];
-    const armor = [];
-    const gear = [];
-    const ammunition = [];
-    const characteristics = [];
-    const demeanours = [];
-    const criticalEffects = [];
-    const talents = [];
-    const traits = [];
-    const specialties = [];
-    const characteristicAdvances = [];
-    const chapters = [];
-    const spells = {
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: []
-    };
-
-    // Track which ammo is loaded in weapons
-    const loadedAmmoIds = new Set();
-
-    for (let i of context.items) {
-      i.img = i.img || DEFAULT_TOKEN;
-      if (i.type === 'weapon') {
-        // Populate loaded ammo
-        if (i.system.loadedAmmo) {
-          i.loadedAmmoItem = context.items.find(item => item._id === i.system.loadedAmmo);
-          if (i.loadedAmmoItem) {
-            loadedAmmoIds.add(i.system.loadedAmmo);
-          }
-        }
-        weapons.push(i);
-      }
-      else if (i.type === 'armor') {
-        // Populate attached histories
-        i.attachedHistories = (i.system.attachedHistories || []).map(histId => {
-          return context.items.find(item => item._id === histId);
-        }).filter(h => h);
-        armor.push(i);
-      }
-      else if (i.type === 'gear') {
-        gear.push(i);
-      }
-      else if (i.type === 'characteristic') {
-        // Separate demeanours from other characteristics
-        if (i.name && (i.name.includes('Zeal') || i.name.includes('Thirst') || i.name.includes('Lion') || 
-            i.name.includes('Russ') || i.name.includes('Glory') || i.name.includes('Codex') ||
-            i.name === 'Calculating' || i.name === 'Gregarious' || i.name === 'Hot-Blooded' ||
-            i.name === 'Studious' || i.name === 'Taciturn' || i.name === 'Pious' ||
-            i.name === 'Stoic' || i.name === 'Scornful' || i.name === 'Ambitious' || i.name === 'Proud')) {
-          demeanours.push(i);
-        } else {
-          characteristics.push(i);
-        }
-      }
-      else if (i.type === 'critical-effect') {
-        criticalEffects.push(i);
-      }
-      else if (i.type === 'talent') {
-        talents.push(i);
-      }
-      else if (i.type === 'trait') {
-        traits.push(i);
-      }
-      else if (i.type === 'specialty') {
-        specialties.push(i);
-      }
-      else if (i.type === 'characteristic-advance') {
-        characteristicAdvances.push(i);
-      }
-      else if (i.type === 'chapter') {
-        chapters.push(i);
-      }
-      else if (i.type === 'spell') {
-        if (i.system.spellLevel != undefined) {
-          spells[i.system.spellLevel].push(i);
-        }
-      }
-    }
-
-    // Add ammunition that is NOT loaded in weapons
-    for (let i of context.items) {
-      if (i.type === 'ammunition') {
-        if (!loadedAmmoIds.has(i._id)) {
-          ammunition.push(i);
-        }
-      }
-    }
-
-    context.weapons = weapons;
-    context.armor = armor;
-    context.gear = gear;
-    context.ammunition = ammunition;
-    context.characteristics = characteristics;
-    context.demeanours = demeanours;
-    context.criticalEffects = criticalEffects;
-    context.talents = talents;
-    context.traits = traits;
-    context.specialties = specialties;
-    context.characteristicAdvances = characteristicAdvances;
-    context.chapters = chapters;
-    context.spells = spells;
+    const categories = ItemHandlers.processItems(context.items);
+    Object.assign(context, categories);
   }
 
   /* -------------------------------------------- */
