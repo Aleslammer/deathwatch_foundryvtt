@@ -5,6 +5,7 @@
 import { debug } from "../helpers/debug.mjs";
 import { XPCalculator } from "../helpers/xp-calculator.mjs";
 import { ModifierCollector } from "../helpers/modifier-collector.mjs";
+import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
 
 export class DeathwatchActor extends Actor {
 
@@ -123,7 +124,7 @@ export class DeathwatchActor extends Actor {
     }
 
     // Add agility bonus for initiative
-    data.agBonus = data.characteristics?.ag?.bonus || Math.floor((data.characteristics?.ag?.value || 0) / 10);
+    data.agBonus = data.characteristics?.ag?.bonus || Math.floor((data.characteristics?.ag?.value || 0) / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     
     // Add initiative bonus from modifiers
     data.initiativeBonus = data.initiativeBonus || 0;

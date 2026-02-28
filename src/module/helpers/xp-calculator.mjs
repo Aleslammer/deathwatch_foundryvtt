@@ -1,9 +1,11 @@
+import { XP_CONSTANTS } from './constants.mjs';
+
 /**
  * XP calculation utilities for character progression
  */
 export class XPCalculator {
-  static STARTING_XP = 13000;
-  static RANK_THRESHOLDS = [13000, 17000, 21000, 25000, 30000, 35000, 40000, 45000];
+  static STARTING_XP = XP_CONSTANTS.STARTING_XP;
+  static RANK_THRESHOLDS = XP_CONSTANTS.RANK_THRESHOLDS;
 
   /**
    * Calculate character rank based on total XP

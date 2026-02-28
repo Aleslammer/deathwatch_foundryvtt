@@ -1,4 +1,5 @@
 import { debug } from "./debug.mjs";
+import { CHARACTERISTIC_CONSTANTS } from './constants.mjs';
 
 export class ModifierCollector {
   static collectAllModifiers(actor) {
@@ -81,7 +82,7 @@ export class ModifierCollector {
       
       characteristic.value = total;
       characteristic.modifiers = appliedMods;
-      characteristic.mod = Math.floor(total / 10);
+      characteristic.mod = Math.floor(total / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     }
   }
 
