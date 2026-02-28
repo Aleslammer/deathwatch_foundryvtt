@@ -18,3 +18,6 @@ TODO: Deadeye shot reduces the penalty for Called Shot
 TODO: Need to handle called shot mechanic
 TODO: Deathwatch Training Talent for confirm RF resutls
 TODO: True Grit
+
+
+TODO: Look to alternate text to add specialties.  (Need to look into creating icons for the specialties.)
