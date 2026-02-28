@@ -1,6 +1,98 @@
 # Development Guidelines
 
+## Testing Standards
+
+### Test Framework
+- Use Jest with ES modules for all unit tests
+- Test files located in `tests/` directory with `.test.mjs` extension
+- Run tests: `npm test`
+- Run with coverage: `npm run test:coverage`
+- Coverage reports generated in `coverage/lcov-report/index.html`
+
+### Test Requirements
+- **Always write tests** when adding new functionality
+- **Always update tests** when modifying existing code
+- Aim for high coverage on testable code (calculation logic, data manipulation)
+- Mock Foundry VTT globals in `tests/setup.mjs`
+- Use `jest.clearAllMocks()` in tests to avoid mock pollution between tests
+
+### Test Structure
+```javascript
+import { jest } from '@jest/globals';
+import './setup.mjs';
+import { YourClass } from '../src/module/path/to/file.mjs';
+
+describe('YourClass', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('methodName', () => {
+    it('describes expected behavior', () => {
+      expect(YourClass.method()).toBe(expected);
+    });
+  });
+});
+```
+
+### What to Test
+- **Calculation methods**: Range modifiers, hit calculations, damage calculations
+- **Data manipulation**: Modifier application, data preparation, roll data
+- **Conditional logic**: Branching paths, edge cases, boundary conditions
+- **Helper utilities**: Pure functions, data transformations
+
+### What Not to Test (or test minimally)
+- **Dialog/UI methods**: Complex jQuery and Foundry Dialog interactions
+- **Sheet rendering**: Handlebars template rendering
+- **Foundry lifecycle hooks**: init, ready hooks
+- Extract testable logic from UI methods into helper classes
+
+### Test Coverage Goals
+- Calculation/logic methods: 90%+ coverage
+- Helper utilities: 90%+ coverage
+- Document classes: 70%+ coverage (lifecycle methods are hard to test)
+- Overall project: 60%+ coverage
+
+### Mocking Patterns
+```javascript
+// Mock Foundry globals (in setup.mjs)
+global.game = { packs: new Map(), settings: { get: jest.fn() } };
+global.ui = { notifications: { warn: jest.fn(), info: jest.fn() } };
+global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
+global.Item = class Item { static createDocuments = jest.fn(); };
+
+// Mock actor in tests
+const mockActor = {
+  name: 'Test Actor',
+  system: { wounds: { value: 10, max: 20 } },
+  update: jest.fn(),
+  items: { get: jest.fn(), filter: jest.fn() }
+};
+```
+
+### Edge Cases to Test
+- Zero/null/undefined values
+- Boundary conditions (min/max values)
+- Empty arrays/objects
+- Missing optional parameters
+- Invalid input handling
+
 ## Code Quality Standards
+
+### Current State (Post-Refactoring)
+- **Total Lines**: ~2,618 lines across core modules
+- **Test Coverage**: 68%
+- **Key Files**:
+  - actor.mjs: 124 lines (uses XPCalculator, ModifierCollector)
+  - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
+  - combat.mjs: 395 lines (uses ChatMessageBuilder)
+  - CSS: 9 modular files (~1100 lines total)
+
+### Architecture Patterns Established
+1. **Helper Classes**: Extract business logic into focused static classes
+2. **CSS Modularity**: Component-based CSS with variables and low specificity
+3. **Template Partials**: Reusable Handlebars components
+4. **Constants**: Named constants instead of magic numbers
 
 ### File Extensions and Module System
 - Use `.mjs` extension for all ES module JavaScript files (100% of core modules)
@@ -98,9 +190,23 @@ export class DeathwatchActorSheet extends ActorSheet {
 
 ### Helper/Utility Pattern
 - Static helper classes for reusable logic
+- Pure functions preferred (no side effects)
 - No instantiation required
-- Example:
+- Examples:
   ```javascript
+  // Business logic helper
+  export class XPCalculator {
+    static calculateRank(totalXP) { /* ... */ }
+    static calculateSpentXP(actor) { /* ... */ }
+  }
+  
+  // UI helper
+  export class RollDialogBuilder {
+    static buildModifierDialog() { /* ... */ }
+    static parseModifiers(html) { /* ... */ }
+  }
+  
+  // CRUD helper
   export class ModifierHelper {
     static async createModifier(actor) { /* ... */ }
     static async deleteModifier(actor, modifierId) { /* ... */ }
@@ -116,6 +222,65 @@ export class DeathwatchActorSheet extends ActorSheet {
   DWConfig.CharacteristicWords = { /* ... */ };
   DWConfig.TestDifficulties = { /* ... */ };
   ```
+
+## Refactoring Patterns
+
+### When to Extract Helper Classes
+Extract when:
+- Method exceeds 50 lines
+- Logic is reused 2+ times
+- Complex calculations need testing
+- Business logic mixed with UI code
+
+### Helper Class Structure
+```javascript
+import { debug } from "./debug.mjs";
+import { CONSTANTS } from "./constants.mjs";
+
+export class HelperName {
+  // Pure functions preferred
+  static calculate(input) {
+    debug('CONTEXT', 'Calculating:', input);
+    return result;
+  }
+  
+  // Private helpers prefixed with _
+  static _privateHelper(data) {
+    return processed;
+  }
+}
+```
+
+### CSS Organization Pattern
+```css
+/* Use CSS variables */
+:root {
+  --dw-color-primary: #007bff;
+  --dw-spacing-md: 8px;
+}
+
+/* Low specificity, BEM-like naming */
+.dw-component { }
+.dw-component__element { }
+.dw-component__element--modifier { }
+
+/* Split into component files */
+/* styles/components/dialogs.css */
+/* styles/components/items.css */
+```
+
+### Template Partial Pattern
+```handlebars
+{{!-- Create partial for repeated HTML --}}
+{{!-- templates/actor/parts/item-controls.html --}}
+<div class="item-controls">
+  <a class="item-control item-edit"><i class="fas fa-edit"></i></a>
+  <a class="item-control item-delete"><i class="fas fa-trash"></i></a>
+</div>
+
+{{!-- Use in templates --}}
+{{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
+```
 
 ## Common Implementation Patterns
 
@@ -333,6 +498,67 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
 - Enable/disable flags in `debug.mjs` for development
 - **Always use debug() instead of console.log()** for system logging
 
+## Compendium Pack Management
+
+### Adding a New Compendium Pack
+
+1. **Add item type to template.json**:
+```json
+"Item": {
+  "types": ["weapon", "armor", "gear", "new-type"],
+  "new-type": {
+    "templates": ["base"],
+    "field1": "",
+    "field2": 0,
+    "modifiers": []
+  }
+}
+```
+
+2. **Register pack in system.json**:
+```json
+"packs": [
+  {
+    "name": "pack-name",
+    "label": "Pack Label",
+    "path": "packs/pack-name",
+    "type": "Item",
+    "system": "deathwatch"
+  }
+]
+```
+
+3. **Create source directory**: `src/packs-source/pack-name/`
+
+4. **Create compiled directory**: `src/packs/pack-name/`
+
+5. **Create template file**: `src/packs-source/_templates/type-template.json`
+
+6. **Add source JSON files** in `src/packs-source/pack-name/`:
+```json
+{
+  "name": "Item Name",
+  "type": "new-type",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "field1": "value",
+    "field2": 10,
+    "description": "<p>HTML description</p>",
+    "modifiers": []
+  }
+}
+```
+
+7. **Compile packs**: `npm run build:packs`
+
+### Compendium Build Process
+- Source files: `src/packs-source/` (JSON, version controlled)
+- Compiled packs: `src/packs/` (LevelDB, generated)
+- Build script: `builds/scripts/compilePacks.mjs`
+- Automatically processes all directories in packs-source
+- Creates folders from subdirectories
+- Supports both Item and RollTable types
+
 ## Data Schema Patterns
 
 ### Template Inheritance
@@ -430,6 +656,20 @@ if (modifier !== 0) {
 ```
 
 ## Best Practices
+
+### Code Organization Principles
+1. **Single Responsibility**: Each class/function should have one clear purpose
+2. **Separation of Concerns**: Keep business logic separate from UI code
+3. **DRY (Don't Repeat Yourself)**: Extract common patterns into reusable functions
+4. **Testability**: Write code that can be easily unit tested
+5. **Modularity**: Keep files focused and under 300 lines when possible
+
+### When to Extract Code
+- Method exceeds 50 lines → Extract helper functions
+- Class exceeds 300 lines → Split into multiple classes
+- Duplicate code appears 2+ times → Create shared utility
+- Complex logic in UI code → Move to helper class
+- HTML strings exceed 20 lines → Move to template or builder
 
 ### Always Check Existence
 ```javascript

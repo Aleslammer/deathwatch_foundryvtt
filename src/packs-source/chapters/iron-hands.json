@@ -1,0 +1,20 @@
+{
+  "name": "Iron Hands",
+  "type": "chapter",
+  "img": "systems/deathwatch/icons/chapters/iron_hands.webp",
+  "system": {
+    "description": "<p>The Iron Hands are a stoic and pragmatic Chapter, descended from their Primarch Ferrus Manus. They believe the flesh is weak and embrace cybernetic augmentation.</p><p>Known for their affinity with technology and mechanized warfare, they maintain close ties with the Adeptus Mechanicus and favor armored assaults and overwhelming firepower.</p>",
+    "book": "First Founding",
+    "page": "7",
+    "skillCosts": {
+      "lore_forbidden_adeptus_mechanicus": { "costTrain": 300, "costMaster": 400, "costExpert": 500 },
+      "tech_use": { "costTrain": 300, "costMaster": 400, "costExpert": 500 }
+    },
+    "talentCosts": {
+      "tal00000000119": 200,
+      "tal00000000176": 500,
+      "tal00000000096": 500,
+      "tal00000000257": 500
+    }
+  }
+}

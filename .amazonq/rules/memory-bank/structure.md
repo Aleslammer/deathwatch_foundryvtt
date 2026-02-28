@@ -68,14 +68,23 @@ src/
   - Item-specific methods
 
 ### 3. Helper Modules (`module/helpers/`)
-- **combat.mjs**: Combat system logic and calculations
-- **config.mjs**: System configuration and constants
-- **constants.mjs**: Game-specific constant values
-- **debug.mjs**: Debug logging utilities with feature flags
-- **effects.mjs**: Active effects and modifier application
-- **handlebars.js**: Custom Handlebars helpers for templates
-- **modifiers.mjs**: Modifier calculation and management
-- **templates.mjs**: Template preloading and registration
+- **xp-calculator.mjs**: XP and rank calculations (pure functions)
+- **modifier-collector.mjs**: Modifier collection and application
+- **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
+- **chat-message-builder.mjs**: Chat message formatting and creation
+- **item-handlers.mjs**: Item categorization and processing
+- **combat.mjs**: Combat system logic (weapon attacks, damage, hit locations)
+- **combat-dialog.mjs**: Combat dialog utilities (pure functions)
+- **config.mjs**: System configuration (DWConfig object)
+- **constants.mjs**: Game constants (XP, characteristics, rolls)
+- **critical-effects.mjs**: Critical damage effects
+- **debug.mjs**: Debug logging with feature flags
+- **effects.mjs**: Active effects and modifiers
+- **foundry-adapter.mjs**: Foundry API wrapper for testability
+- **handlebars.js**: Custom Handlebars helpers
+- **initiative.mjs**: Initiative rolling
+- **modifiers.mjs**: Modifier CRUD operations
+- **templates.mjs**: Template preloading
 
 ### 4. Sheet Classes (`module/sheets/`)
 - **actor-sheet.mjs**: Character and NPC sheet UI logic
@@ -131,6 +140,24 @@ Handlebars templates for rendering:
 - Source-controlled item data
 - Build script for compilation
 - Separation of source and distribution formats
+
+### Foundry Adapter Pattern
+- **FoundryAdapter**: Wraps all Foundry VTT API calls for testability
+  - Roll evaluation and chat messages
+  - UI notifications
+  - Document updates
+  - Chat speaker management
+- **CanvasHelper**: Wraps canvas-specific operations
+  - Token distance measurement
+- Enables unit testing of business logic by mocking adapter
+- Keeps platform-specific code isolated and maintainable
+
+### Current Architecture (Post-Refactoring)
+- Clean separation: documents, sheets, helpers
+- Helper classes for business logic (XPCalculator, ModifierCollector, etc.)
+- Modular CSS with variables and low specificity
+- Handlebars partials for reusable templates
+- Named constants instead of magic numbers
 
 ## Component Relationships
 

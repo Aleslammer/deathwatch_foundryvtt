@@ -1,0 +1,22 @@
+{
+  "name": "Dark Angels",
+  "type": "chapter",
+  "img": "systems/deathwatch/icons/chapters/dark_angels.webp",
+  "system": {
+    "description": "<p>The Dark Angels are the First Legion, the first Space Marine Chapter created by the Emperor. They are secretive and monastic, haunted by a dark past from the Horus Heresy.</p><p>Known for their stubborn determination and tactical flexibility, they maintain specialized wings: the Deathwing for close assault and the Ravenwing for rapid strike operations.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "44",
+    "skillCosts": {
+      "interrogation": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
+      "lore_forbidden_adeptus_astartes": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
+      "lore_forbidden_inquisition": { "costTrain": 400, "costMaster": 400, "costExpert": 400 },
+      "lore_forbidden_traitor_legions": { "costTrain": 400, "costMaster": 400, "costExpert": 400 }
+    },
+    "talentCosts": {
+      "tal00000000117": 500,
+      "tal00000000004": 500,
+      "tal00000000171": 500,
+      "tal00000000254": 500
+    }
+  }
+}

@@ -12,5 +12,8 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/deathwatch/templates/actor/parts/actor-spells.html",
     "systems/deathwatch/templates/actor/parts/actor-effects.html",
     "systems/deathwatch/templates/actor/parts/actor-armor.html",
+    "systems/deathwatch/templates/actor/parts/item-controls.html",
+    "systems/deathwatch/templates/actor/parts/item-equipped.html",
+    "systems/deathwatch/templates/actor/parts/item-image.html",
   ]);
 };

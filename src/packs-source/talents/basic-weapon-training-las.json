@@ -1,0 +1,14 @@
+{
+  "name": "Basic Weapon Training (Las)",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "Use Las weapons without penalty.",
+    "book": "DeathWatch Core Rulebook",
+    "page": "113",
+    "description": "<p>The character has received Basic Weapon Training in Las weapons, and can use them without penalty. <b>Weapon Skill or Ballistic Skill Tests used with a weapon that a character does not have training for suffer a –20 penalty.</b></p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000018"
+}

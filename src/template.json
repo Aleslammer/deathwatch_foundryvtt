@@ -31,7 +31,15 @@
                     "value": 1
                 }
             },
+            "chapterId": "",
             "biography": "",
+            "pastEvents": "",
+            "specialty": "",
+            "rank": 1,
+            "xp": {
+                "total": 13000,
+                "spent": 0
+            },
             "modifiers": [],
             "characteristics": {
                 "ws": {
@@ -77,8 +85,11 @@
                     "characteristic": "per",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 300,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "carouse": {
@@ -86,8 +97,11 @@
                     "characteristic": "tg",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "charm": {
@@ -95,8 +109,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Interaction"
                 },
                 "climb": {
@@ -104,8 +121,11 @@
                     "characteristic": "str",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Movement"
                 },
                 "command": {
@@ -113,8 +133,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 300,
+                    "costMaster": 500,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "concealment": {
@@ -122,8 +145,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "contortionist": {
@@ -131,8 +157,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Movement"
                 },
                 "deceive": {
@@ -140,8 +169,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Interaction"
                 },
                 "dodge": {
@@ -149,8 +181,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 300,
+                    "costMaster": 500,
+                    "costExpert": 600,
                     "descriptor": ""
                 },
                 "evaluate": {
@@ -158,8 +193,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "gamble": {
@@ -167,8 +205,11 @@
                     "characteristic": "per",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "inquiry": {
@@ -176,8 +217,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Investigation"
                 },
                 "intimidate": {
@@ -185,8 +229,11 @@
                     "characteristic": "str",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": "Interaction"
                 },
                 "logic": {
@@ -194,8 +241,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "scrutiny": {
@@ -203,8 +253,11 @@
                     "characteristic": "per",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "search": {
@@ -212,8 +265,11 @@
                     "characteristic": "per",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "silent_move": {
@@ -221,8 +277,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 300,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Movement"
                 },
                 "swim": {
@@ -230,8 +289,11 @@
                     "characteristic": "str",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": "Movement"
                 },
                 "acrobatics": {
@@ -239,8 +301,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Movement"
                 },
                 "chem_use": {
@@ -248,8 +313,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Crafting, Investigation"
                 },
                 "cipher_xenos_markings": {
@@ -257,8 +325,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "cipher_deathwatch": {
@@ -266,8 +337,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "cipher_chapter_runes": {
@@ -275,8 +349,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "cipher_imperial_codes": {
@@ -284,8 +361,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "cipher_mercenary_cant": {
@@ -293,8 +373,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "cipher_inquisition": {
@@ -302,8 +385,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "cipher_underworld": {
@@ -311,8 +397,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "demolitions": {
@@ -320,8 +409,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "drive_ground": {
@@ -329,8 +421,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Operator"
                 },
                 "drive_hover_skimmer": {
@@ -338,8 +433,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Operator"
                 },
                 "drive_walker": {
@@ -347,8 +445,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Operator"
                 },
                 "interrogation": {
@@ -356,8 +457,11 @@
                     "characteristic": "wil",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "invocation": {
@@ -365,8 +469,11 @@
                     "characteristic": "wil",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "lip_reading": {
@@ -374,8 +481,11 @@
                     "characteristic": "per",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "literacty": {
@@ -383,8 +493,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "lore_common_adeptus_arbites": {
@@ -392,8 +505,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_common_adeptus_astartes": {
@@ -401,8 +517,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_common_adeptus_mechanicus": {
@@ -410,8 +529,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_common_administratum": {
@@ -419,8 +541,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_common_deathwatch": {
@@ -428,8 +553,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": "Investigation"
                 },
                 "lore_common_ecclesiarchy": {
@@ -437,8 +565,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_common_imperial_creed": {
@@ -446,8 +577,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_common_imperial_guard": {
@@ -455,8 +589,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": "Investigation"
                 },
                 "lore_common_imperial_navy": {
@@ -464,8 +601,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": "Investigation"
                 },
                 "lore_common_imperium": {
@@ -473,8 +613,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_common_jericho_reach": {
@@ -482,8 +625,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_common_tech": {
@@ -491,8 +637,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": "Investigation"
                 },
                 "lore_common_war": {
@@ -500,8 +649,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_adeptus_astartes": {
@@ -509,8 +661,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_adeptus_mechanicus": {
@@ -518,8 +673,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_archeotech": {
@@ -527,8 +685,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_black_library": {
@@ -536,8 +697,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_daemonology": {
@@ -545,8 +709,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_heresy": {
@@ -554,8 +721,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_inquisition": {
@@ -563,8 +733,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_mutants": {
@@ -572,8 +745,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_psykers": {
@@ -581,8 +757,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_traitor_legions": {
@@ -590,8 +769,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_warp": {
@@ -599,8 +781,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_forbidden_xenos": {
@@ -608,8 +793,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_archaic": {
@@ -617,8 +805,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_astromancy": {
@@ -626,8 +817,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_beasts": {
@@ -635,8 +829,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_bureaucracy": {
@@ -644,8 +841,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_chymistry": {
@@ -653,8 +853,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_codex_astartes": {
@@ -662,8 +865,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_cryptology": {
@@ -671,8 +877,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_heraldry": {
@@ -680,8 +889,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_imperial_creed": {
@@ -689,8 +901,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_judgement": {
@@ -698,8 +913,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_legend": {
@@ -707,8 +925,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_numerology": {
@@ -716,8 +937,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_occult": {
@@ -725,8 +949,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_philosophy": {
@@ -734,8 +961,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "lore_scholastic_tactica_imperialis": {
@@ -743,8 +973,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": "Investigation"
                 },
                 "medicae": {
@@ -752,8 +985,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "navigation_surface": {
@@ -761,8 +997,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "navigation_stellar": {
@@ -770,8 +1009,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "performer_dancer": {
@@ -779,8 +1021,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "performer_musician": {
@@ -788,8 +1033,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "performer_singer": {
@@ -797,8 +1045,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "performer_storyteller": {
@@ -806,8 +1057,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "pilot_personal": {
@@ -815,8 +1069,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": "Operator"
                 },
                  "pilot_flyer": {
@@ -824,8 +1081,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": "Operator"
                 },
                 "pilot_space_craft": {
@@ -833,8 +1093,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": "Operator"
                 },
                "psyniscience": {
@@ -842,8 +1105,11 @@
                     "characteristic": "per",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 0,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "security": {
@@ -851,8 +1117,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "shadowing": {
@@ -860,8 +1129,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 0,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "slight_of_hand": {
@@ -869,8 +1141,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "speak_language_eldar": {
@@ -878,8 +1153,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "speak_language_high_gothic": {
@@ -887,8 +1165,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "speak_language_kroot": {
@@ -896,8 +1177,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "speak_language_low_gothic": {
@@ -905,8 +1189,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "speak_language_ork": {
@@ -914,8 +1201,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "speak_language_techna_lingua": {
@@ -923,8 +1213,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "speak_language_tau": {
@@ -932,8 +1225,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 },
                 "survival": {
@@ -941,8 +1237,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 300,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tactics_air_combat": {
@@ -950,8 +1249,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tactics_armoured": {
@@ -959,8 +1261,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tactics_assault_doctrine": {
@@ -968,8 +1273,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tactics_defensive_doctrine": {
@@ -977,8 +1285,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tactics_orbital_drop": {
@@ -986,8 +1297,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tactics_recon_and_stealth": {
@@ -995,8 +1309,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 800,
                     "descriptor": ""
                 },
                 "tech_use": {
@@ -1004,8 +1321,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 800,
+                    "costMaster": 800,
+                    "costExpert": 0,
                     "descriptor": ""
                 },
                 "tracking": {
@@ -1013,8 +1333,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 400,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": ""
                 },
                 "trade_archaeologist": {
@@ -1022,8 +1345,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_armorer": {
@@ -1031,8 +1357,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_astrographer": {
@@ -1040,8 +1369,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_chymist": {
@@ -1049,8 +1381,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_cryptographer": {
@@ -1058,8 +1393,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_explorer": {
@@ -1067,8 +1405,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_linguist": {
@@ -1076,8 +1417,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_remembrancer": {
@@ -1085,8 +1429,11 @@
                     "characteristic": "ag",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_shipwright": {
@@ -1094,8 +1441,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_soothsayer": {
@@ -1103,8 +1453,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_technomat": {
@@ -1112,8 +1465,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "trade_trader": {
@@ -1121,8 +1477,11 @@
                     "characteristic": "fs",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 600,
+                    "costMaster": 400,
+                    "costExpert": 400,
                     "descriptor": "Crafting"
                 },
                 "wrangling": {
@@ -1130,8 +1489,11 @@
                     "characteristic": "int",
                     "trained": false,
                     "mastered": false,
-                    "advanced": false,
+                    "expert": false,
                     "modifier": 0,
+                    "costTrain": 200,
+                    "costMaster": 200,
+                    "costExpert": 200,
                     "descriptor": ""
                 }
             }
@@ -1148,7 +1510,12 @@
             "gear",
             "ammunition",
             "characteristic",
-            "critical-effect"
+            "critical-effect",
+            "talent",
+            "trait",
+            "specialty",
+            "characteristic-advance",
+            "chapter"
         ],
         "templates": {
             "base": {
@@ -1223,7 +1590,10 @@
         "characteristic": {
             "templates": [
                 "base"
-            ]
+            ],
+            "chapter": "",
+            "book": "",
+            "page": ""
         },
         "critical-effect": {
             "templates": [
@@ -1232,6 +1602,64 @@
             "location": "",
             "damageType": "",
             "effects": []
+        },
+        "talent": {
+            "templates": [
+                "base"
+            ],
+            "prerequisite": "",
+            "benefit": "",
+            "cost": 0,
+            "stackable": false,
+            "subsequentCost": 0,
+            "compendiumId": "",
+            "book": "",
+            "page": "",
+            "modifiers": []
+        },
+        "trait": {
+            "templates": [
+                "base"
+            ],
+            "book": "",
+            "page": "",
+            "modifiers": []
+        },
+        "specialty": {
+            "templates": [
+                "base"
+            ],
+            "characteristicCosts": {
+                "ws": 0,
+                "bs": 0,
+                "str": 0,
+                "tg": 0,
+                "ag": 0,
+                "int": 0,
+                "per": 0,
+                "wil": 0,
+                "fs": 0
+            },
+            "ranks": []
+        },
+        "characteristic-advance": {
+            "templates": [
+                "base"
+            ],
+            "characteristic": "",
+            "level": "simple",
+            "cost": 0
+        },
+        "chapter": {
+            "templates": [
+                "base"
+            ],
+            "book": "",
+            "page": "",
+            "skillCosts": {},
+            "talentCosts": {}
         }
     }
 }
+
+

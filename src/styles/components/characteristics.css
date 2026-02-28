@@ -1,0 +1,85 @@
+/* Characteristics Styles */
+.deathwatch .characteristic-total {
+  font-weight: bold;
+  min-width: 30px;
+  text-align: center;
+  color: var(--dw-color-primary);
+}
+
+.deathwatch .characteristics {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.deathwatch .characteristics .characteristic {
+  height: 94px;
+  width: 105px;
+  flex: 0 0 105px;
+  margin: 0 var(--dw-spacing-xs) var(--dw-spacing-sm);
+  text-align: center;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
+}
+
+.deathwatch .characteristics .characteristic .characteristic-header {
+  height: 24px;
+  margin: 0;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-header input[type="text"].characteristic-damage {
+  flex: 1;
+  height: 24px;
+  border-bottom: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-right: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: 0;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-header input[type="text"].characteristic-penalty {
+  flex: 1;
+  height: 24px;
+  border-bottom: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: 0;
+}
+
+.deathwatch .characteristics .characteristic h4.box-title {
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-xxl);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers {
+  height: 32px;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers span.characteristic-mod,
+.deathwatch .characteristics .characteristic .characteristic-modifiers input[type="text"].characteristic-base {
+  flex: 0 0 32px;
+  height: 30px;
+  overflow: hidden;
+  border-top: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  font-size: var(--dw-font-size-sm);
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers span.characteristic-mod {
+  border-right: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  padding: var(--dw-spacing-md) 0 0;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers div.characteristic-center {
+  margin: -10px 0 var(--dw-spacing-lg);
+  font-size: var(--dw-font-size-xxl);
+  overflow: hidden;
+}
+
+.deathwatch .characteristics .characteristic .characteristic-modifiers input[type="text"].characteristic-base {
+  border-left: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: 0;
+}
+
+.deathwatch .tab.characteristics .characteristics {
+  flex: 0 0 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}

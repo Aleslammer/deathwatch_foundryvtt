@@ -10,6 +10,7 @@ import { DWConfig } from "./helpers/config.mjs";
 import { initializeHandlebars } from "./helpers/handlebars.js";
 import { CombatHelper } from "./helpers/combat.mjs";
 import { CriticalEffectsHelper } from "./helpers/critical-effects.mjs";
+import { InitiativeHelper } from "./helpers/initiative.mjs";
 
 
 /* -------------------------------------------- */
@@ -36,6 +37,32 @@ Hooks.once('init', async function () {
     CONFIG.Combat.initiative = {
         formula: "1d10 + @agBonus + @initiativeBonus",
         decimals: 2
+    };
+
+    // Override Combat.rollInitiative to show dialog
+    const originalRollInitiative = Combat.prototype.rollInitiative;
+    Combat.prototype.rollInitiative = async function(ids, options = {}) {
+        ids = typeof ids === "string" ? [ids] : ids;
+        
+        for (const id of ids) {
+            const combatant = this.combatants.get(id);
+            if (!combatant?.isOwner) continue;
+            
+            const customFormula = await InitiativeHelper.rollInitiativeDialog(combatant);
+            if (!customFormula) continue;
+            
+            const roll = new Roll(customFormula, combatant.actor.getRollData());
+            await roll.evaluate();
+            
+            await this.updateEmbeddedDocuments("Combatant", [{_id: id, initiative: roll.total}]);
+            
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: combatant.actor, token: combatant.token }),
+                flavor: `${combatant.name} rolls for Initiative!`
+            });
+        }
+        
+        return this;
     };
 
     // Define custom Document classes

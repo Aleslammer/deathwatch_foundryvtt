@@ -66,3 +66,22 @@ export const RANGE_MODIFIERS = {
   LONG: -10,         // 2x to 3x weapon range
   EXTREME: -20       // >= 3x weapon range
 };
+
+// XP Constants
+export const XP_CONSTANTS = {
+  STARTING_XP: 13000,
+  RANK_THRESHOLDS: [13000, 17000, 21000, 25000, 30000, 35000, 40000, 45000]
+};
+
+// Characteristic Constants
+export const CHARACTERISTIC_CONSTANTS = {
+  BONUS_DIVISOR: 10,
+  MAX_VALUE: 100
+};
+
+// Roll Constants
+export const ROLL_CONSTANTS = {
+  D100_MAX: 100,
+  D10_MAX: 10,
+  DEGREES_DIVISOR: 10
+};

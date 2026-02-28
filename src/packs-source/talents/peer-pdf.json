@@ -1,0 +1,14 @@
+{
+  "name": "Peer (PDF)",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "Fellowship 30",
+    "benefit": "+10 Fellowship Tests with PDF",
+    "book": "DeathWatch Core Rulebook",
+    "page": "124",
+    "description": "<p>The character knows how to deal with a particular social group or organisation. <b>He gains a +10 bonus to all Fellowship Tests when interacting with the chosen group.</b> The GM and player may agree to award this Talent when appropriate to the adventure or campaign.</p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000187"
+}

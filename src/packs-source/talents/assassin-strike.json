@@ -1,0 +1,14 @@
+{
+  "name": "Assassin Strike",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "Ag 40, Acrobatic",
+    "benefit": "On a successful Acrobatics Test after making a melee attack, character may move as a Free Action.",
+    "book": "DeathWatch Core Rulebook",
+    "page": "113",
+    "description": "<p>The character’s natural agility and graceful martial forms turn him into a dervish of death on the battlefield. After making a melee attack, a successful Acrobatics Test allows the character to move at half rate as a Free Action. Opponents do not receive free attacks resulting from this move. The character may only make this move once per Round.</p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000013"
+}

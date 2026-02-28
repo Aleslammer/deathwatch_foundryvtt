@@ -1,0 +1,63 @@
+/* CSS Variables */
+:root {
+  /* Colors */
+  --dw-color-primary: #007bff;
+  --dw-color-primary-hover: #0056b3;
+  --dw-color-secondary: #6c757d;
+  --dw-color-secondary-hover: #545b62;
+  --dw-color-success: green;
+  --dw-color-danger: red;
+  --dw-color-warning: #ffc107;
+  
+  /* Borders */
+  --dw-color-border: #c9c7b8;
+  --dw-color-border-light: #e9e9e9;
+  --dw-color-border-dark: #eeede0;
+  --dw-color-border-groove: #dee2e6;
+  
+  /* Backgrounds */
+  --dw-color-bg-primary: #ffffff;
+  --dw-color-bg-secondary: #f8f9fa;
+  --dw-color-bg-tertiary: rgba(0, 0, 0, 0.05);
+  --dw-color-bg-hover: #f8f9fa;
+  --dw-color-bg-gradient-start: #f8f9fa;
+  --dw-color-bg-gradient-end: #e9ecef;
+  
+  /* Text */
+  --dw-color-text-primary: #191813;
+  --dw-color-text-secondary: #444;
+  --dw-color-text-muted: #666;
+  --dw-color-text-light: #495057;
+  --dw-color-text-dark: #212529;
+  --dw-color-text-beige: #b5b3a4;
+  
+  /* Spacing */
+  --dw-spacing-xs: 2px;
+  --dw-spacing-sm: 4px;
+  --dw-spacing-md: 8px;
+  --dw-spacing-lg: 10px;
+  --dw-spacing-xl: 15px;
+  --dw-spacing-xxl: 20px;
+  
+  /* Border widths */
+  --dw-border-width: 1px;
+  --dw-border-width-thick: 2px;
+  
+  /* Border radius */
+  --dw-border-radius: 4px;
+  --dw-border-radius-sm: 3px;
+  --dw-border-radius-lg: 8px;
+  
+  /* Shadows */
+  --dw-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --dw-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --dw-shadow-focus: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  
+  /* Font sizes */
+  --dw-font-size-xs: 11px;
+  --dw-font-size-sm: 12px;
+  --dw-font-size-md: 13px;
+  --dw-font-size-lg: 14px;
+  --dw-font-size-xl: 16px;
+  --dw-font-size-xxl: 20px;
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Flame Weapon Training",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "Use flame weapons without penalty",
+    "book": "DeathWatch Core Rulebook",
+    "page": "118",
+    "description": "<p><b>Talent Groups:</b> Universal</p><p>The sight of flaming streams of promethium brings joy to the Explorer's heart and dread to his foes. He has mastered the art of a wide variety of flamer weapons. <b>The Universal Talent group encompasses all non-Exotic weapons with the Flame special quality.</b></p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000087"
+}

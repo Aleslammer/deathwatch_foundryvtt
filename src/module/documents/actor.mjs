@@ -3,6 +3,9 @@
  * @extends {Actor}
  */
 import { debug } from "../helpers/debug.mjs";
+import { XPCalculator } from "../helpers/xp-calculator.mjs";
+import { ModifierCollector } from "../helpers/modifier-collector.mjs";
+import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
 
 export class DeathwatchActor extends Actor {
 
@@ -61,94 +64,25 @@ export class DeathwatchActor extends Actor {
     if (actorData.type !== 'character') return;
 
     const systemData = actorData.system;
-    const modifiers = systemData.modifiers || [];
 
-    // Collect modifiers from equipped items
-    const itemModifiers = [];
-    for (const item of this.items) {
-      debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
-      
-      if (item.system.equipped && item.system.modifiers) {
-        debug('MODIFIERS', `  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
-        for (const mod of item.system.modifiers) {
-          if (mod.enabled !== false) {
-            itemModifiers.push({ ...mod, source: item.name });
-          }
-        }
-      }
-      
-      // Collect modifiers from armor histories attached to equipped armor
-      if (item.type === 'armor' && item.system.equipped && Array.isArray(item.system.attachedHistories)) {
-        debug('MODIFIERS', `  Armor ${item.name} has ${item.system.attachedHistories.length} attached histories`);
-        for (const historyId of item.system.attachedHistories) {
-          const history = this.items.get(historyId);
-          debug('MODIFIERS', `    History ID: ${historyId}, found: ${!!history}`);
-          if (history) {
-            debug('MODIFIERS', `    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
-          }
-          if (history && Array.isArray(history.system.modifiers)) {
-            for (const mod of history.system.modifiers) {
-              debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
-              if (mod.enabled !== false) {
-                itemModifiers.push({ ...mod, source: `${history.name} (${item.name})` });
-              }
-            }
-          }
-        }
-      }
+    // Calculate rank and XP using XPCalculator
+    systemData.rank = XPCalculator.calculateRank(systemData.xp?.total || systemData.xp);
+    const spentXP = XPCalculator.calculateSpentXP(this);
+    
+    if (typeof systemData.xp === 'object') {
+      systemData.xp.spent = spentXP;
+      systemData.xp.available = (systemData.xp.total || XPCalculator.STARTING_XP) - spentXP;
     }
 
-    debug('MODIFIERS', `Total item modifiers collected: ${itemModifiers.length}`);
-
-    // Combine actor and item modifiers
-    const allModifiers = [...modifiers, ...itemModifiers];
-
-    // Loop through characteristics and calculate totals with modifiers
-    for (let [key, characteristic] of Object.entries(systemData.characteristics)) {
-      // Store base value if not already stored
-      if (characteristic.base === undefined) {
-        characteristic.base = characteristic.value;
-      }
-      
-      // Start with base value
-      let total = characteristic.base || 0;
-      const appliedMods = [];
-      
-      // Apply modifiers
-      for (const mod of allModifiers) {
-        if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
-          const modValue = parseInt(mod.modifier) || 0;
-          total += modValue;
-          appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
-        }
-      }
-      
-      characteristic.value = total;
-      characteristic.modifiers = appliedMods;
-      characteristic.mod = Math.floor(total / 10);
-    }
-
-    // Apply skill modifiers
+    // Collect and apply modifiers using ModifierCollector
+    const allModifiers = ModifierCollector.collectAllModifiers(this);
+    ModifierCollector.applyCharacteristicModifiers(systemData.characteristics, allModifiers);
+    
     if (systemData.skills) {
-      for (let [key, skill] of Object.entries(systemData.skills)) {
-        let skillModTotal = 0;
-        for (const mod of allModifiers) {
-          if (mod.enabled !== false && mod.effectType === 'skill' && mod.valueAffected === key) {
-            skillModTotal += parseInt(mod.modifier) || 0;
-          }
-        }
-        skill.modifierTotal = skillModTotal;
-      }
+      ModifierCollector.applySkillModifiers(systemData.skills, allModifiers);
     }
-
-    // Apply initiative modifiers
-    let initiativeModTotal = 0;
-    for (const mod of allModifiers) {
-      if (mod.enabled !== false && mod.effectType === 'initiative') {
-        initiativeModTotal += parseInt(mod.modifier) || 0;
-      }
-    }
-    systemData.initiativeBonus = initiativeModTotal;
+    
+    systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
   }
 
   /**
@@ -190,7 +124,7 @@ export class DeathwatchActor extends Actor {
     }
 
     // Add agility bonus for initiative
-    data.agBonus = data.characteristics?.ag?.bonus || Math.floor((data.characteristics?.ag?.value || 0) / 10);
+    data.agBonus = data.characteristics?.ag?.bonus || Math.floor((data.characteristics?.ag?.value || 0) / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     
     // Add initiative bonus from modifiers
     data.initiativeBonus = data.initiativeBonus || 0;

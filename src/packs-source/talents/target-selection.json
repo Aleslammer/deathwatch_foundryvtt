@@ -1,0 +1,14 @@
+{
+  "name": "Target Selection",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "Ballistic Skill 50",
+    "benefit": "Shoot into melee with no penalty",
+    "book": "DeathWatch Core Rulebook",
+    "page": "127",
+    "description": "<p>The character's dread gaze marks out his chosen victim, and not even the riotous confusion of close combat interferes. <b>The character may shoot into melee with no penalty.</b></p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000255"
+}

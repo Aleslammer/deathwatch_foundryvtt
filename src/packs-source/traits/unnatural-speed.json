@@ -1,0 +1,11 @@
+{
+  "name": "Unnatural Speed",
+  "type": "trait",
+  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "system": {
+    "description": "<p>The creature moves with incredible speed. For the purposes of determining movement, the creature doubles its Agility Bonus (after modifying AB from other traits and factors, specifically size).</p>",
+    "book": "Core Rulebook",
+    "page": "136",
+    "modifiers": []
+  }
+}

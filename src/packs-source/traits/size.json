@@ -1,0 +1,11 @@
+{
+  "name": "Size",
+  "type": "trait",
+  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "system": {
+    "description": "<p>Creatures come in one of seven different size categories. Size affects movement and how easy or hard it is to strike that creature in combat. (When calculating movement, apply the size modifier first, and then other modifiers from other traits or talents.) For the purposes of comparison, a human is an average-sized creature.</p><table><thead><tr><th>Size</th><th>Modifier</th><th>Concealment</th><th>Base Movement</th></tr></thead><tbody><tr><td>Miniscule</td><td>+30</td><td>–30</td><td>Agility Bonus –3</td></tr><tr><td>Puny</td><td>+20</td><td>–20</td><td>Agility Bonus –2</td></tr><tr><td>Scrawny</td><td>+10</td><td>–10</td><td>Agility Bonus –1</td></tr><tr><td>Average</td><td>0</td><td>0</td><td>Agility Bonus</td></tr><tr><td>Hulking</td><td>–10</td><td>+10</td><td>Agility Bonus +1</td></tr><tr><td>Enormous</td><td>–20</td><td>+20</td><td>Agility Bonus +2</td></tr><tr><td>Massive</td><td>–30</td><td>+30</td><td>Agility Bonus +3</td></tr></tbody></table>",
+    "book": "Core Rulebook",
+    "page": "134",
+    "modifiers": []
+  }
+}

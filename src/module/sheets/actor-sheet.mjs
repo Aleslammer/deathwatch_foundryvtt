@@ -2,6 +2,9 @@ import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/
 import { DWConfig } from "../helpers/config.mjs";
 import { CombatHelper } from "../helpers/combat.mjs";
 import { ModifierHelper } from "../helpers/modifiers.mjs";
+import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
+import { ChatMessageBuilder } from "../helpers/chat-message-builder.mjs";
+import { ItemHandlers } from "../helpers/item-handlers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -14,8 +17,8 @@ export class DeathwatchActorSheet extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["deathwatch", "sheet", "actor"],
       template: "systems/deathwatch/templates/actor/actor-sheet.html",
-      width: 600,
-      height: 600,
+      width: 1000,
+      height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "characteristics" }]
     });
   }
@@ -31,7 +34,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristic = characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
+    const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
     
     return effectiveChar + skillBonus + skill.modifier;
   }
@@ -94,6 +97,17 @@ export class DeathwatchActorSheet extends ActorSheet {
       v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
     }
 
+    // Get chapter item if set
+    if (context.system.chapterId) {
+      context.chapterItem = this.actor.items.get(context.system.chapterId);
+    }
+
+    // Get chapter skill cost overrides
+    const chapterSkillCosts = {};
+    if (context.chapterItem && context.chapterItem.system.skillCosts) {
+      Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
+    }
+
     // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
       for (let [k, v] of Object.entries(context.system.skills)) {
@@ -102,6 +116,13 @@ export class DeathwatchActorSheet extends ActorSheet {
         const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
         const skillModTotal = liveSkill?.modifierTotal || 0;
         v.total = baseSkillTotal + skillModTotal;
+        
+        // Apply chapter skill cost overrides
+        if (chapterSkillCosts[k]) {
+          if (chapterSkillCosts[k].costTrain !== undefined) v.costTrain = chapterSkillCosts[k].costTrain;
+          if (chapterSkillCosts[k].costMaster !== undefined) v.costMaster = chapterSkillCosts[k].costMaster;
+          if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
+        }
       }
     }
 
@@ -112,84 +133,13 @@ export class DeathwatchActorSheet extends ActorSheet {
   /**
    * Organize and classify Items for Character sheets.
    *
-   * @param {Object} actorData The actor to prepare.
+   * @param {Object} context The sheet context
    *
    * @return {undefined}
    */
   _prepareItems(context) {
-    const weapons = [];
-    const armor = [];
-    const gear = [];
-    const ammunition = [];
-    const characteristics = [];
-    const criticalEffects = [];
-    const spells = {
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: []
-    };
-
-    // Track which ammo is loaded in weapons
-    const loadedAmmoIds = new Set();
-
-    for (let i of context.items) {
-      i.img = i.img || DEFAULT_TOKEN;
-      if (i.type === 'weapon') {
-        // Populate loaded ammo
-        if (i.system.loadedAmmo) {
-          i.loadedAmmoItem = context.items.find(item => item._id === i.system.loadedAmmo);
-          if (i.loadedAmmoItem) {
-            loadedAmmoIds.add(i.system.loadedAmmo);
-          }
-        }
-        weapons.push(i);
-      }
-      else if (i.type === 'armor') {
-        // Populate attached histories
-        i.attachedHistories = (i.system.attachedHistories || []).map(histId => {
-          return context.items.find(item => item._id === histId);
-        }).filter(h => h);
-        armor.push(i);
-      }
-      else if (i.type === 'gear') {
-        gear.push(i);
-      }
-      else if (i.type === 'characteristic') {
-        characteristics.push(i);
-      }
-      else if (i.type === 'critical-effect') {
-        criticalEffects.push(i);
-      }
-      else if (i.type === 'spell') {
-        if (i.system.spellLevel != undefined) {
-          spells[i.system.spellLevel].push(i);
-        }
-      }
-    }
-
-    // Add ammunition that is NOT loaded in weapons
-    for (let i of context.items) {
-      if (i.type === 'ammunition') {
-        if (!loadedAmmoIds.has(i._id)) {
-          ammunition.push(i);
-        }
-      }
-    }
-
-    context.weapons = weapons;
-    context.armor = armor;
-    context.gear = gear;
-    context.ammunition = ammunition;
-    context.characteristics = characteristics;
-    context.criticalEffects = criticalEffects;
-    context.spells = spells;
+    const categories = ItemHandlers.processItems(context.items);
+    Object.assign(context, categories);
   }
 
   /* -------------------------------------------- */
@@ -214,35 +164,38 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find('.history-show').click(ev => {
       const itemId = $(ev.currentTarget).data('itemId');
       const history = this.actor.items.get(itemId);
-      if (!history) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="armor-history-card">
-          <h3>${history.name}</h3>
-          ${history.system.description}
-          <p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${history.system.book}, p${history.system.page}</em></p>
-        </div>`
-      });
+      if (history) ChatMessageBuilder.createItemCard(history, this.actor);
     });
 
     // Show critical effect in chat
     html.find('.critical-show').click(ev => {
       const itemId = $(ev.currentTarget).data('itemId');
       const critical = this.actor.items.get(itemId);
-      if (!critical) return;
-      
-      ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="critical-effect-card" style="display: flex; align-items: start; gap: 10px;">
-          <img src="${critical.img}" style="width: 36px; height: 36px; flex-shrink: 0;" />
-          <div>
-            <h3 style="font-size: 1em; margin: 0 0 5px 0;">${critical.name}</h3>
-            <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${critical.system.location} | <strong>Type:</strong> ${critical.system.damageType}</p>
-            ${critical.system.description}
-          </div>
-        </div>`
-      });
+      if (critical) ChatMessageBuilder.createItemCard(critical, this.actor);
+    });
+
+    // Show demeanour in chat
+    html.find('.demeanour-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const demeanour = this.actor.items.get(itemId);
+      if (demeanour) ChatMessageBuilder.createItemCard(demeanour, this.actor);
+    });
+
+    // Show talent in chat
+    html.find('.talent-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const talent = this.actor.items.get(itemId);
+      if (talent) ChatMessageBuilder.createItemCard(talent, this.actor);
+    });
+
+    // Show trait in chat
+    html.find('.trait-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const trait = this.actor.items.get(itemId);
+      if (trait) ChatMessageBuilder.createItemCard(trait, this.actor);
     });
 
     // Remove armor history from armor
@@ -305,14 +258,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.trained/)[1];
       if (!ev.target.checked) {
         html.find(`input[name="system.skills.${skillKey}.mastered"]`).prop('checked', false);
-        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+        html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
     });
 
     html.find('input[type="checkbox"][name*=".mastered"]').change(ev => {
       const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.mastered/)[1];
       if (!ev.target.checked) {
-        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+        html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
     });
 
@@ -366,6 +319,25 @@ export class DeathwatchActorSheet extends ActorSheet {
     html.find('.inventory .items-list li.item').each((i, li) => {
       li.addEventListener('drop', this._onDropItemOnItem.bind(this), false);
       li.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
+
+    // Drop handler for chapter
+    html.find('.chapter-drop-zone').each((i, el) => {
+      el.addEventListener('drop', this._onDropChapter.bind(this), false);
+      el.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
+
+    // Remove chapter
+    html.find('.chapter-remove').click(async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const chapterId = this.actor.system.chapterId;
+      if (chapterId) {
+        const chapter = this.actor.items.get(chapterId);
+        if (chapter) await chapter.delete();
+      }
+      await this.actor.update({ "system.chapterId": "" });
+      ui.notifications.info('Chapter removed.');
     });
   }
 
@@ -443,84 +415,28 @@ export class DeathwatchActorSheet extends ActorSheet {
    */
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
-    const characteristicKey = dataset.characteristic;
-    const label = dataset.label ? `[Characteristic] ${dataset.label}` : '';
-    const characteristic = this.actor.system.characteristics[characteristicKey];
-    const characteristicMod = characteristic?.mod || 0;
-
-    const activeModifiers = characteristic?.modifiers || [];
-
-    let content = `
-      <div class="modifier-dialog">
-        <div class="form-group">
-          <label for="difficulty-select">Difficulty:</label>
-          <select id="difficulty-select" name="difficulty">
-    `;
-
-    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
-      const selected = key === 'challenging' ? 'selected' : '';
-      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
-    }
-
-    content += `
-          </select>
-        </div>
-        <div class="form-group modifier-row">
-          <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
-        </div>
-      </div>
-    `;
+    const characteristic = this.actor.system.characteristics[dataset.characteristic];
+    const label = `[Characteristic] ${dataset.label}`;
 
     return new Dialog({
       title: `Roll ${dataset.label}`,
-      content: content,
-      render: (html) => {
-        const miscInput = html.find('#modifier');
-        miscInput.on('input', function() {
-          const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) this.value = value;
-        });
-      },
+      content: RollDialogBuilder.buildModifierDialog(),
+      render: (html) => RollDialogBuilder.attachModifierInputHandler(html),
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
           callback: async (html) => {
-            const selectedDifficulty = html.find('#difficulty-select').val();
-            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            const additionalModifierInput = html.find('#modifier').val().trim();
-            let additionalModifier = 0;
+            const modifiers = RollDialogBuilder.parseModifiers(html);
+            const target = characteristic.value + modifiers.difficultyModifier + modifiers.additionalModifier;
             
-            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
-              additionalModifier = parseInt(additionalModifierInput);
-            }
-            
-            const target = characteristic.value + difficultyModifier + additionalModifier;
-            
-            let roll = new Roll('1d100', rollData);
+            const roll = new Roll('1d100', rollData);
             await roll.evaluate();
             
-            const success = roll.total <= target;
-            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
-            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
+            const modifierParts = RollDialogBuilder.buildModifierParts(characteristic.value, dataset.label, modifiers);
+            const flavor = RollDialogBuilder.buildResultFlavor(label, target, roll, modifierParts);
             
-            let modifierParts = [];
-            modifierParts.push(`${characteristic.value} ${dataset.label}`);
-            
-            if (difficultyModifier !== 0) {
-              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
-            }
-            
-            if (additionalModifier !== 0) {
-              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
-            }
-            
-            roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
-              rollMode: game.settings.get('core', 'rollMode')
-            });
+            ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
           }
         },
         cancel: {
@@ -537,99 +453,44 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @private
    */
   async _onSkillRoll(dataset) {
-    const rollData = this.actor.getRollData();
-    const skillKey = dataset.skill;
-    const skill = this.actor.system.skills[skillKey];
-    const label = dataset.label ? `[Skill] ${dataset.label}` : '';
+    const skill = this.actor.system.skills[dataset.skill];
+    const label = `[Skill] ${dataset.label}`;
 
     if (!skill) {
-      ui.notifications.warn(`Skill ${skillKey} not found`);
+      ui.notifications.warn(`Skill ${dataset.skill} not found`);
       return;
     }
 
     if (!skill.isBasic && !skill.trained) {
-      ui.notifications.warn(`${dataset.label || skillKey} is an advanced skill and must be trained to use.`);
+      ui.notifications.warn(`${dataset.label || dataset.skill} is an advanced skill and must be trained to use.`);
       return;
     }
 
     const characteristic = this.actor.system.characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
-    const skillModTotal = skill.modifierTotal || 0;
-    const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + skillModTotal;
-
-    let content = `
-      <div class="modifier-dialog">
-        <div class="form-group">
-          <label for="difficulty-select">Difficulty:</label>
-          <select id="difficulty-select" name="difficulty">
-    `;
-
-    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
-      const selected = key === 'challenging' ? 'selected' : '';
-      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
-    }
-
-    content += `
-          </select>
-        </div>
-        <div class="form-group modifier-row">
-          <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
-        </div>
-      </div>
-    `;
+    const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
+    const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + (skill.modifierTotal || 0);
 
     return new Dialog({
       title: `Roll ${dataset.label}`,
-      content: content,
-      render: (html) => {
-        const miscInput = html.find('#modifier');
-        miscInput.on('input', function() {
-          const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) this.value = value;
-        });
-      },
+      content: RollDialogBuilder.buildModifierDialog(),
+      render: (html) => RollDialogBuilder.attachModifierInputHandler(html),
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
           callback: async (html) => {
-            const selectedDifficulty = html.find('#difficulty-select').val();
-            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            const additionalModifierInput = html.find('#modifier').val().trim();
-            let additionalModifier = 0;
+            const modifiers = RollDialogBuilder.parseModifiers(html);
+            const target = skillTotal + modifiers.difficultyModifier + modifiers.additionalModifier;
             
-            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
-              additionalModifier = parseInt(additionalModifierInput);
-            }
-            
-            const target = skillTotal + difficultyModifier + additionalModifier;
-            
-            let roll = new Roll('1d100', rollData);
+            const roll = new Roll('1d100', this.actor.getRollData());
             await roll.evaluate();
             
-            const success = roll.total <= target;
-            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
-            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
+            const modifierParts = RollDialogBuilder.buildModifierParts(skillTotal, dataset.label, modifiers);
+            const flavor = RollDialogBuilder.buildResultFlavor(label, target, roll, modifierParts);
             
-            let modifierParts = [];
-            modifierParts.push(`${skillTotal} ${dataset.label}`);
-            
-            if (difficultyModifier !== 0) {
-              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
-            }
-            
-            if (additionalModifier !== 0) {
-              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
-            }
-            
-            roll.toMessage({
-              speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
-              rollMode: game.settings.get('core', 'rollMode')
-            });
+            ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
           }
         },
         cancel: {
@@ -809,6 +670,36 @@ export class DeathwatchActorSheet extends ActorSheet {
       await targetItem.update({ "system.loadedAmmo": ammoItem.id });
       ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
     }
+  }
+
+  /**
+   * Handle dropping a chapter item
+   * @param {Event} event The drop event
+   * @private
+   */
+  async _onDropChapter(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== 'chapter') {
+      ui.notifications.warn('Only chapter items can be dropped here.');
+      return;
+    }
+
+    if (this.actor.system.chapterId) {
+      const existingChapter = this.actor.items.get(this.actor.system.chapterId);
+      if (existingChapter) {
+        await existingChapter.delete();
+      }
+    }
+
+    const chapterItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
+    await this.actor.update({ "system.chapterId": chapterItem.id });
+    ui.notifications.info(`Chapter set to ${chapterItem.name}.`);
   }
 
 }

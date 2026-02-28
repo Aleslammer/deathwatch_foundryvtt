@@ -1,0 +1,14 @@
+{
+  "name": "Mighty Shot",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "Ballistic Skill 40",
+    "benefit": "+2 Damage with ranged weapons",
+    "book": "DeathWatch Core Rulebook",
+    "page": "123",
+    "description": "<p>The character knows the weak points in every armour and material, and has the skill to ensure that his shots land exactly where they do the most damage. <b>The character adds +2 to Damage inflicted with a ranged weapon.</b></p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000168"
+}

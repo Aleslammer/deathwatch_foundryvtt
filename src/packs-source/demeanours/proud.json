@@ -1,0 +1,11 @@
+{
+  "name": "Proud",
+  "type": "characteristic",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "chapter": "All",
+    "book": "Core Rulebook",
+    "page": "32",
+    "description": "<p>Dignity and honour are important to this Space Marine.</p>"
+  }
+}

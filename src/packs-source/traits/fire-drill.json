@@ -1,0 +1,11 @@
+{
+  "name": "Fire Drill (Horde)",
+  "type": "trait",
+  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "system": {
+    "description": "<p>The horde is made up of troops that are trained and drilled to fire in a deadly rhythm that soaks its enemy in fire. The horde with this trait may always make one additional ranged attack in addition to those it could normally make.</p>",
+    "book": "Core Rulebook",
+    "page": "132",
+    "modifiers": []
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Pious",
+  "type": "characteristic",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "chapter": "All",
+    "book": "Core Rulebook",
+    "page": "32",
+    "description": "<p>The Space Marine cherishes faith in his Primarch and the Emperor above all.</p>"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Nerves of Steel",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "Re-roll failed Willpower Tests to avoid or recover from Pinning",
+    "book": "DeathWatch Core Rulebook",
+    "page": "123",
+    "description": "<p>Long years on the battlefield enable the character to remain calm as fire impacts all around them. <b>The character may re-roll failed Willpower Tests to avoid or recover from Pinning.</b></p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000170"
+}

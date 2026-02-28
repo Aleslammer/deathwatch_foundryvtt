@@ -1,0 +1,14 @@
+{
+  "name": "Unshakeable Faith",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "Re-roll failed Willpower Tests to avoid Fear",
+    "book": "DeathWatch Core Rulebook",
+    "page": "129",
+    "description": "<p>The character's confidence in the Emperor is so strong that the character can face any danger. <b>The character may re-roll any failed Willpower Tests to avoid the effects of Fear (see page 276).</b></p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000267"
+}

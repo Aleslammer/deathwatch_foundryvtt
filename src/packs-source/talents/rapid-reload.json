@@ -1,0 +1,15 @@
+{
+  "name": "Rapid Reload",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "prerequisite": "",
+    "benefit": "Reload as Half Action",
+    "cost": 300,
+    "book": "Deathwatch Core Rulebook",
+    "page": "125",
+    "description": "<p>The firing ranges and weapon drill chambers are the character’s constant abode, and hours of reloading countless magazines or power cells means that he can replace them without looking and without thinking. The character <b>halves all reload times, rounding down</b>. Thus, Half Action reload become a Free Action, a Full Action reload becomes a Half Action and so on.</p>",
+    "modifiers": []
+  },
+  "_id": "tal00000000208"
+}
