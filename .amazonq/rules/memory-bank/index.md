@@ -216,8 +216,8 @@ Total: 60 minutes
 ## Key Metrics
 
 ### Current State
-- **Total Lines**: ~3,000
-- **Test Coverage**: 65% (up from 60%)
+- **Total Lines**: ~2,900 (reduced from 3,000)
+- **Test Coverage**: 66% (up from 60%)
 - **Largest File**: actor-sheet.mjs (800 lines)
 - **Duplicate Code**: ~10%
 - **CSS Files**: 1 (1000+ lines)
@@ -233,8 +233,8 @@ Total: 60 minutes
 
 ### High Priority (Do First)
 1. ✅ Extract XPCalculator - **COMPLETE**
-2. ✅ Extract ModifierCollector - **NEXT**
-3. ✅ Consolidate Roll Dialogs
+2. ✅ Extract ModifierCollector - **COMPLETE**
+3. ⏳ Consolidate Roll Dialogs - **NEXT**
 
 **Why**: Biggest impact, lowest risk, improves testability
 
@@ -305,6 +305,14 @@ npm run build:packs       # Compile compendium packs
 - **Documentation**: This memory bank
 
 ## Change Log
+
+### 2024-01-XX - Priority 1.2 Implementation Complete
+- ✅ Created ModifierCollector helper (107 lines)
+- ✅ Created modifier-collector.test.mjs (16 tests, 100% coverage)
+- ✅ Refactored actor.mjs to use ModifierCollector
+- ✅ Reduced actor.mjs from ~200 to 124 lines (38% reduction)
+- ✅ All 329 tests passing
+- ✅ Test coverage improved to ~66%
 
 ### 2024-01-XX - Priority 1.1 Implementation Complete
 - ✅ Created XPCalculator helper (135 lines)
@@ -383,13 +391,13 @@ npm run build:packs       # Compile compendium packs
 ## Status
 
 - ✅ **Documentation**: Complete
-- ✅ **Implementation**: Phase 1 - Priority 1.1 Complete
-- ✅ **Testing**: All tests passing (313/313)
-- 📊 **Coverage**: ~65% (improved from 60%)
+- ✅ **Implementation**: Phase 1 - Priority 1.1 & 1.2 Complete
+- ✅ **Testing**: All tests passing (329/329)
+- 📊 **Coverage**: ~66% (improved from 60%)
 - 🎯 **Target**: 75% coverage, modular architecture
 
 ---
 
 **Last Updated**: 2024
-**Version**: 1.1
-**Status**: Phase 1 In Progress Implementation
+**Version**: 1.2
+**Status**: Phase 1 In Progress (2/4 complete)

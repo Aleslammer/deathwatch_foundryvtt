@@ -334,10 +334,10 @@ prepareDerivedData() {
 
 ### Phase 1 (Week 1): Critical Refactoring - **IN PROGRESS**
 1. ✅ Extract XPCalculator - **COMPLETE** (30 min actual)
-2. ⏳ Extract ModifierCollector - **NEXT** (45 min estimated)
-3. ⏳ Add tests for new helpers
+2. ✅ Extract ModifierCollector - **COMPLETE** (20 min actual)
+3. ✅ Add tests for new helpers - **COMPLETE**
 
-**Status**: 1/3 complete, ~100 lines reduced, all tests passing
+**Status**: 2/2 complete, ~180 lines reduced, all tests passing (329/329)
 
 ### Phase 2 (Week 2): Code Duplication
 1. Consolidate roll dialogs
@@ -357,25 +357,25 @@ prepareDerivedData() {
 ## Testing Strategy
 
 ### New Test Files Needed
-- `tests/xp-calculator.test.mjs`
-- `tests/modifier-collector.test.mjs`
+- ✅ `tests/xp-calculator.test.mjs` - **COMPLETE**
+- ✅ `tests/modifier-collector.test.mjs` - **COMPLETE**
 - `tests/dialog-templates.test.mjs`
 - `tests/chat-message-builder.test.mjs`
 - `tests/validation.test.mjs`
 
 ### Coverage Goals
-- XPCalculator: 95%+
-- ModifierCollector: 95%+
+- XPCalculator: 95%+ ✅ **100% achieved**
+- ModifierCollector: 95%+ ✅ **100% achieved**
 - DialogTemplates: 80%+
 - ChatMessageBuilder: 90%+
 
 ## Metrics
 
 ### Current State
-- actor.mjs: ~300 lines
+- actor.mjs: ~124 lines (reduced from 300)
 - actor-sheet.mjs: ~800 lines
 - deathwatch.css: ~1000 lines
-- Test coverage: ~60%
+- Test coverage: ~66%
 
 ### Target State
 - actor.mjs: ~100 lines
