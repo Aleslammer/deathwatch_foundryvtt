@@ -79,20 +79,20 @@ const mockActor = {
 
 ## Code Quality Standards
 
-### Current State Analysis (as of recent review)
-- **Total Lines**: ~2,850 lines across core modules (reduced from 3,000+)
-- **Test Coverage**: ~67% (improved from 60%)
+### Current State (Post-Refactoring)
+- **Total Lines**: ~2,618 lines across core modules
+- **Test Coverage**: 68%
 - **Key Files**:
-  - actor.mjs: ~124 lines (reduced from 300) ✅
-  - actor-sheet.mjs: ~788 lines (reduced from 800) ✅
-  - combat.mjs: ~400 lines (well-structured)
-  - deathwatch.css: ~1000 lines (needs modularization)
+  - actor.mjs: 124 lines (uses XPCalculator, ModifierCollector)
+  - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
+  - combat.mjs: 395 lines (uses ChatMessageBuilder)
+  - CSS: 9 modular files (~1100 lines total)
 
-### Code Complexity Issues
-1. **actor.mjs _prepareCharacterData()**: ✅ Refactored - now uses XPCalculator and ModifierCollector
-2. **actor-sheet.mjs roll dialogs**: ✅ Refactored - now uses RollDialogBuilder
-3. **CSS**: High specificity selectors, no variables - needs refactoring
-4. **HTML in JS**: Large template strings embedded in methods - needs refactoring
+### Architecture Patterns Established
+1. **Helper Classes**: Extract business logic into focused static classes
+2. **CSS Modularity**: Component-based CSS with variables and low specificity
+3. **Template Partials**: Reusable Handlebars components
+4. **Constants**: Named constants instead of magic numbers
 
 ### File Extensions and Module System
 - Use `.mjs` extension for all ES module JavaScript files (100% of core modules)
@@ -190,9 +190,23 @@ export class DeathwatchActorSheet extends ActorSheet {
 
 ### Helper/Utility Pattern
 - Static helper classes for reusable logic
+- Pure functions preferred (no side effects)
 - No instantiation required
-- Example:
+- Examples:
   ```javascript
+  // Business logic helper
+  export class XPCalculator {
+    static calculateRank(totalXP) { /* ... */ }
+    static calculateSpentXP(actor) { /* ... */ }
+  }
+  
+  // UI helper
+  export class RollDialogBuilder {
+    static buildModifierDialog() { /* ... */ }
+    static parseModifiers(html) { /* ... */ }
+  }
+  
+  // CRUD helper
   export class ModifierHelper {
     static async createModifier(actor) { /* ... */ }
     static async deleteModifier(actor, modifierId) { /* ... */ }
@@ -208,6 +222,65 @@ export class DeathwatchActorSheet extends ActorSheet {
   DWConfig.CharacteristicWords = { /* ... */ };
   DWConfig.TestDifficulties = { /* ... */ };
   ```
+
+## Refactoring Patterns
+
+### When to Extract Helper Classes
+Extract when:
+- Method exceeds 50 lines
+- Logic is reused 2+ times
+- Complex calculations need testing
+- Business logic mixed with UI code
+
+### Helper Class Structure
+```javascript
+import { debug } from "./debug.mjs";
+import { CONSTANTS } from "./constants.mjs";
+
+export class HelperName {
+  // Pure functions preferred
+  static calculate(input) {
+    debug('CONTEXT', 'Calculating:', input);
+    return result;
+  }
+  
+  // Private helpers prefixed with _
+  static _privateHelper(data) {
+    return processed;
+  }
+}
+```
+
+### CSS Organization Pattern
+```css
+/* Use CSS variables */
+:root {
+  --dw-color-primary: #007bff;
+  --dw-spacing-md: 8px;
+}
+
+/* Low specificity, BEM-like naming */
+.dw-component { }
+.dw-component__element { }
+.dw-component__element--modifier { }
+
+/* Split into component files */
+/* styles/components/dialogs.css */
+/* styles/components/items.css */
+```
+
+### Template Partial Pattern
+```handlebars
+{{!-- Create partial for repeated HTML --}}
+{{!-- templates/actor/parts/item-controls.html --}}
+<div class="item-controls">
+  <a class="item-control item-edit"><i class="fas fa-edit"></i></a>
+  <a class="item-control item-delete"><i class="fas fa-trash"></i></a>
+</div>
+
+{{!-- Use in templates --}}
+{{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
+```
 
 ## Common Implementation Patterns
 

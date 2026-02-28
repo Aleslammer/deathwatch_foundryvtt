@@ -68,21 +68,23 @@ src/
   - Item-specific methods
 
 ### 3. Helper Modules (`module/helpers/`)
-- **xp-calculator.mjs**: XP calculation utilities (rank, spent XP, chapter costs) ✅
-- **modifier-collector.mjs**: Modifier collection and application utilities ✅
-- **roll-dialog-builder.mjs**: Roll dialog HTML and logic builder ✅
-- **combat.mjs**: Combat system logic and calculations (weapon attacks, damage, hit locations)
-- **combat-dialog.mjs**: Testable combat dialog utilities and calculations (pure functions)
-- **config.mjs**: System configuration and constants (DWConfig object)
-- **constants.mjs**: Game-specific constant values (characteristics, modifiers, effects)
-- **critical-effects.mjs**: Critical damage effects and application
-- **debug.mjs**: Debug logging utilities with feature flags
-- **effects.mjs**: Active effects and modifier application
-- **foundry-adapter.mjs**: Wrapper for Foundry VTT API calls (canvas, rolls, notifications, chat)
-- **handlebars.js**: Custom Handlebars helpers for templates
-- **initiative.mjs**: Initiative rolling with dialog
-- **modifiers.mjs**: Modifier CRUD operations and UI dialogs
-- **templates.mjs**: Template preloading and registration
+- **xp-calculator.mjs**: XP and rank calculations (pure functions)
+- **modifier-collector.mjs**: Modifier collection and application
+- **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
+- **chat-message-builder.mjs**: Chat message formatting and creation
+- **item-handlers.mjs**: Item categorization and processing
+- **combat.mjs**: Combat system logic (weapon attacks, damage, hit locations)
+- **combat-dialog.mjs**: Combat dialog utilities (pure functions)
+- **config.mjs**: System configuration (DWConfig object)
+- **constants.mjs**: Game constants (XP, characteristics, rolls)
+- **critical-effects.mjs**: Critical damage effects
+- **debug.mjs**: Debug logging with feature flags
+- **effects.mjs**: Active effects and modifiers
+- **foundry-adapter.mjs**: Foundry API wrapper for testability
+- **handlebars.js**: Custom Handlebars helpers
+- **initiative.mjs**: Initiative rolling
+- **modifiers.mjs**: Modifier CRUD operations
+- **templates.mjs**: Template preloading
 
 ### 4. Sheet Classes (`module/sheets/`)
 - **actor-sheet.mjs**: Character and NPC sheet UI logic
@@ -150,19 +152,12 @@ Handlebars templates for rendering:
 - Enables unit testing of business logic by mocking adapter
 - Keeps platform-specific code isolated and maintainable
 
-### Current Code Organization Issues
-- **actor.mjs**: ~124 lines (reduced from 300+) - XP and modifier logic extracted ✅
-- **actor-sheet.mjs**: ~788 lines (reduced from 800+) - roll dialog logic extracted ✅
-- **combat.mjs**: Mix of testable and UI code (marked with istanbul ignore)
-- **CSS**: Single large file with high specificity selectors
-
-### Recommended Improvements
-See `refactoring-recommendations.md` for detailed analysis:
-- ✅ Extract XPCalculator helper - **COMPLETE**
-- ✅ Extract ModifierCollector helper - **COMPLETE**
-- ✅ Extract RollDialogBuilder helper - **COMPLETE**
-- ⏳ Split CSS into component files - **NEXT**
-- Create event handler classes
+### Current Architecture (Post-Refactoring)
+- Clean separation: documents, sheets, helpers
+- Helper classes for business logic (XPCalculator, ModifierCollector, etc.)
+- Modular CSS with variables and low specificity
+- Handlebars partials for reusable templates
+- Named constants instead of magic numbers
 
 ## Component Relationships
 
