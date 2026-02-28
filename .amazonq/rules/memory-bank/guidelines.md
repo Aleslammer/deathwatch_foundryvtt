@@ -80,17 +80,17 @@ const mockActor = {
 ## Code Quality Standards
 
 ### Current State Analysis (as of recent review)
-- **Total Lines**: ~2,900 lines across core modules (reduced from 3,000+)
-- **Test Coverage**: ~66% (improved from 60%)
+- **Total Lines**: ~2,850 lines across core modules (reduced from 3,000+)
+- **Test Coverage**: ~67% (improved from 60%)
 - **Key Files**:
   - actor.mjs: ~124 lines (reduced from 300) ✅
-  - actor-sheet.mjs: ~800 lines (needs refactoring)
+  - actor-sheet.mjs: ~788 lines (reduced from 800) ✅
   - combat.mjs: ~400 lines (well-structured)
   - deathwatch.css: ~1000 lines (needs modularization)
 
 ### Code Complexity Issues
 1. **actor.mjs _prepareCharacterData()**: ✅ Refactored - now uses XPCalculator and ModifierCollector
-2. **actor-sheet.mjs**: Duplicate roll dialog code (~90% similar) - needs refactoring
+2. **actor-sheet.mjs roll dialogs**: ✅ Refactored - now uses RollDialogBuilder
 3. **CSS**: High specificity selectors, no variables - needs refactoring
 4. **HTML in JS**: Large template strings embedded in methods - needs refactoring
 

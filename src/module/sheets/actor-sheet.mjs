@@ -2,6 +2,7 @@ import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/
 import { DWConfig } from "../helpers/config.mjs";
 import { CombatHelper } from "../helpers/combat.mjs";
 import { ModifierHelper } from "../helpers/modifiers.mjs";
+import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -570,82 +571,30 @@ export class DeathwatchActorSheet extends ActorSheet {
    */
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
-    const characteristicKey = dataset.characteristic;
-    const label = dataset.label ? `[Characteristic] ${dataset.label}` : '';
-    const characteristic = this.actor.system.characteristics[characteristicKey];
-    const characteristicMod = characteristic?.mod || 0;
-
-    const activeModifiers = characteristic?.modifiers || [];
-
-    let content = `
-      <div class="modifier-dialog">
-        <div class="form-group">
-          <label for="difficulty-select">Difficulty:</label>
-          <select id="difficulty-select" name="difficulty">
-    `;
-
-    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
-      const selected = key === 'challenging' ? 'selected' : '';
-      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
-    }
-
-    content += `
-          </select>
-        </div>
-        <div class="form-group modifier-row">
-          <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
-        </div>
-      </div>
-    `;
+    const characteristic = this.actor.system.characteristics[dataset.characteristic];
+    const label = `[Characteristic] ${dataset.label}`;
 
     return new Dialog({
       title: `Roll ${dataset.label}`,
-      content: content,
-      render: (html) => {
-        const miscInput = html.find('#modifier');
-        miscInput.on('input', function() {
-          const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) this.value = value;
-        });
-      },
+      content: RollDialogBuilder.buildModifierDialog(),
+      render: (html) => RollDialogBuilder.attachModifierInputHandler(html),
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
           callback: async (html) => {
-            const selectedDifficulty = html.find('#difficulty-select').val();
-            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            const additionalModifierInput = html.find('#modifier').val().trim();
-            let additionalModifier = 0;
+            const modifiers = RollDialogBuilder.parseModifiers(html);
+            const target = characteristic.value + modifiers.difficultyModifier + modifiers.additionalModifier;
             
-            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
-              additionalModifier = parseInt(additionalModifierInput);
-            }
-            
-            const target = characteristic.value + difficultyModifier + additionalModifier;
-            
-            let roll = new Roll('1d100', rollData);
+            const roll = new Roll('1d100', rollData);
             await roll.evaluate();
             
-            const success = roll.total <= target;
-            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
-            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
-            
-            let modifierParts = [];
-            modifierParts.push(`${characteristic.value} ${dataset.label}`);
-            
-            if (difficultyModifier !== 0) {
-              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
-            }
-            
-            if (additionalModifier !== 0) {
-              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
-            }
+            const modifierParts = RollDialogBuilder.buildModifierParts(characteristic.value, dataset.label, modifiers);
+            const flavor = RollDialogBuilder.buildResultFlavor(label, target, roll, modifierParts);
             
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
+              flavor: flavor,
               rollMode: game.settings.get('core', 'rollMode')
             });
           }
@@ -664,18 +613,16 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @private
    */
   async _onSkillRoll(dataset) {
-    const rollData = this.actor.getRollData();
-    const skillKey = dataset.skill;
-    const skill = this.actor.system.skills[skillKey];
-    const label = dataset.label ? `[Skill] ${dataset.label}` : '';
+    const skill = this.actor.system.skills[dataset.skill];
+    const label = `[Skill] ${dataset.label}`;
 
     if (!skill) {
-      ui.notifications.warn(`Skill ${skillKey} not found`);
+      ui.notifications.warn(`Skill ${dataset.skill} not found`);
       return;
     }
 
     if (!skill.isBasic && !skill.trained) {
-      ui.notifications.warn(`${dataset.label || skillKey} is an advanced skill and must be trained to use.`);
+      ui.notifications.warn(`${dataset.label || dataset.skill} is an advanced skill and must be trained to use.`);
       return;
     }
 
@@ -683,78 +630,29 @@ export class DeathwatchActorSheet extends ActorSheet {
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
     const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
-    const skillModTotal = skill.modifierTotal || 0;
-    const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + skillModTotal;
-
-    let content = `
-      <div class="modifier-dialog">
-        <div class="form-group">
-          <label for="difficulty-select">Difficulty:</label>
-          <select id="difficulty-select" name="difficulty">
-    `;
-
-    for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
-      const selected = key === 'challenging' ? 'selected' : '';
-      content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
-    }
-
-    content += `
-          </select>
-        </div>
-        <div class="form-group modifier-row">
-          <label for="modifier">Misc:</label>
-          <input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" />
-        </div>
-      </div>
-    `;
+    const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + (skill.modifierTotal || 0);
 
     return new Dialog({
       title: `Roll ${dataset.label}`,
-      content: content,
-      render: (html) => {
-        const miscInput = html.find('#modifier');
-        miscInput.on('input', function() {
-          const value = this.value.replace(/[^0-9+\-\s]/g, '');
-          if (this.value !== value) this.value = value;
-        });
-      },
+      content: RollDialogBuilder.buildModifierDialog(),
+      render: (html) => RollDialogBuilder.attachModifierInputHandler(html),
       buttons: {
         roll: {
           label: "Roll",
           class: "dialog-button roll",
           callback: async (html) => {
-            const selectedDifficulty = html.find('#difficulty-select').val();
-            const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
-            const additionalModifierInput = html.find('#modifier').val().trim();
-            let additionalModifier = 0;
+            const modifiers = RollDialogBuilder.parseModifiers(html);
+            const target = skillTotal + modifiers.difficultyModifier + modifiers.additionalModifier;
             
-            if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
-              additionalModifier = parseInt(additionalModifierInput);
-            }
-            
-            const target = skillTotal + difficultyModifier + additionalModifier;
-            
-            let roll = new Roll('1d100', rollData);
+            const roll = new Roll('1d100', this.actor.getRollData());
             await roll.evaluate();
             
-            const success = roll.total <= target;
-            const degrees = Math.floor(Math.abs(target - roll.total) / 10);
-            const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
-            
-            let modifierParts = [];
-            modifierParts.push(`${skillTotal} ${dataset.label}`);
-            
-            if (difficultyModifier !== 0) {
-              modifierParts.push(`${difficultyModifier >= 0 ? '+' : ''}${difficultyModifier} ${DWConfig.TestDifficulties[selectedDifficulty].label}`);
-            }
-            
-            if (additionalModifier !== 0) {
-              modifierParts.push(`${additionalModifier >= 0 ? '+' : ''}${additionalModifier} Misc`);
-            }
+            const modifierParts = RollDialogBuilder.buildModifierParts(skillTotal, dataset.label, modifiers);
+            const flavor = RollDialogBuilder.buildResultFlavor(label, target, roll, modifierParts);
             
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-              flavor: `${label} - Target: ${target}<br><strong>${resultText}</strong>${modifierParts.length > 0 ? `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : ''}`,
+              flavor: flavor,
               rollMode: game.settings.get('core', 'rollMode')
             });
           }

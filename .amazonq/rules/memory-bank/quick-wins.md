@@ -543,8 +543,8 @@ async _onCharacteristicRoll(dataset) {
 | XP Calculator | 30 min | ~100 | Low | High | ✅ COMPLETE |
 | Modifier Collector | 20 min | ~80 | Low | High | ✅ COMPLETE |
 | CSS Variables | 15 min | 0 | Very Low | Medium | ⏳ Next |
-| Roll Dialog Builder | 60 min | ~150 | Medium | High | ⏳ Pending |
-| **Total** | **2 hours** | **~330 lines** | | | **50% Done** |
+| Roll Dialog Builder | 60 min | ~150 | Medium | High | ✅ COMPLETE |
+| **Total** | **2 hours** | **~330 lines** | | | **75% Done** |
 
 ## Testing Checklist
 
