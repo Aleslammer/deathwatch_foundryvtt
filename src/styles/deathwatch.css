@@ -301,7 +301,8 @@
   font-family: "Roboto", sans-serif;
 }
 
-/* Modifier Dialog Styling (Starfinder-inspired) */
+/* Modifier Dialog Styling - Reduced Specificity */
+.dw-dialog,
 .deathwatch .modifier-dialog {
   background: linear-gradient(135deg, var(--dw-color-bg-gradient-start) 0%, var(--dw-color-bg-gradient-end) 100%);
   border: var(--dw-border-width) solid var(--dw-color-border-groove);
@@ -312,22 +313,26 @@
   color: var(--dw-color-text-dark);
 }
 
+.dw-dialog__form-group,
 .deathwatch .modifier-dialog .form-group {
   margin-bottom: var(--dw-spacing-xl);
 }
 
+.dw-dialog__form-group--row,
 .deathwatch .modifier-dialog .form-group.modifier-row {
   display: flex;
   align-items: center;
   gap: var(--dw-spacing-lg);
 }
 
+.dw-dialog__form-group--row label,
 .deathwatch .modifier-dialog .form-group.modifier-row label {
   flex: 0 0 auto;
   margin-bottom: 0;
   min-width: 120px;
 }
 
+.dw-dialog__label,
 .deathwatch .modifier-dialog label {
   display: block;
   font-weight: 600;
@@ -336,6 +341,7 @@
   font-size: 0.9em;
 }
 
+.dw-dialog__difficulty-grid,
 .deathwatch .modifier-dialog .difficulty-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -343,6 +349,7 @@
   margin-bottom: var(--dw-spacing-xl);
 }
 
+.dw-dialog__difficulty-option,
 .deathwatch .modifier-dialog .difficulty-option {
   display: flex;
   align-items: center;
@@ -355,17 +362,20 @@
   font-size: 0.85em;
 }
 
+.dw-dialog__difficulty-option:hover,
 .deathwatch .modifier-dialog .difficulty-option:hover {
   background: var(--dw-color-bg-hover);
   border-color: var(--dw-color-primary);
   box-shadow: var(--dw-shadow-sm);
 }
 
+.dw-dialog__difficulty-option input[type="checkbox"],
 .deathwatch .modifier-dialog .difficulty-option input[type="checkbox"] {
   margin-right: var(--dw-spacing-md);
   accent-color: var(--dw-color-primary);
 }
 
+.dw-dialog__select,
 .deathwatch .modifier-dialog select {
   width: 100%;
   padding: var(--dw-spacing-md) 12px;
@@ -378,23 +388,21 @@
   cursor: pointer;
 }
 
+.dw-dialog__select:focus,
 .deathwatch .modifier-dialog select:focus {
   outline: none;
   border-color: var(--dw-color-primary);
   box-shadow: var(--dw-shadow-focus);
 }
 
+.dw-dialog__select option,
 .deathwatch .modifier-dialog select option {
   padding: var(--dw-spacing-sm);
   background: var(--dw-color-bg-primary);
   color: var(--dw-color-text-light);
 }
 
-.deathwatch .modifier-dialog .form-group.modifier-row input[type="text"] {
-  flex: 1;
-  width: auto;
-}
-
+.dw-dialog__input,
 .deathwatch .modifier-dialog input[type="text"] {
   width: 100%;
   padding: var(--dw-spacing-md) 12px;
@@ -406,12 +414,20 @@
   transition: border-color 0.2s ease;
 }
 
+.dw-dialog__form-group--row .dw-dialog__input,
+.deathwatch .modifier-dialog .form-group.modifier-row input[type="text"] {
+  flex: 1;
+  width: auto;
+}
+
+.dw-dialog__input:focus,
 .deathwatch .modifier-dialog input[type="text"]:focus {
   outline: none;
   border-color: var(--dw-color-primary);
   box-shadow: var(--dw-shadow-focus);
 }
 
+.dw-dialog__buttons,
 .deathwatch .modifier-dialog .dialog-buttons {
   display: flex;
   justify-content: flex-end;
@@ -419,6 +435,7 @@
   margin-top: var(--dw-spacing-xxl);
 }
 
+.dw-dialog__button,
 .deathwatch .modifier-dialog .dialog-button {
   padding: var(--dw-spacing-md) 16px;
   border: none;
@@ -431,21 +448,25 @@
   letter-spacing: 0.5px;
 }
 
+.dw-dialog__button--roll,
 .deathwatch .modifier-dialog .dialog-button.roll {
   background: var(--dw-color-primary);
   color: white;
 }
 
+.dw-dialog__button--roll:hover,
 .deathwatch .modifier-dialog .dialog-button.roll:hover {
   background: var(--dw-color-primary-hover);
   box-shadow: var(--dw-shadow-sm);
 }
 
+.dw-dialog__button--cancel,
 .deathwatch .modifier-dialog .dialog-button.cancel {
   background: var(--dw-color-secondary);
   color: white;
 }
 
+.dw-dialog__button--cancel:hover,
 .deathwatch .modifier-dialog .dialog-button.cancel:hover {
   background: var(--dw-color-secondary-hover);
   box-shadow: var(--dw-shadow-sm);
@@ -522,33 +543,34 @@
   font-weight: bold;
 }
 
+/* Items Lists - Reduced Specificity */
+.dw-items-header,
 .deathwatch .items-header {
   height: 28px;
   margin: var(--dw-spacing-xs) 0;
   padding: 0;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
   background: var(--dw-color-bg-tertiary);
   border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   font-weight: bold;
 }
 
-.deathwatch .items-header>* {
+.dw-items-header > *,
+.deathwatch .items-header > * {
   font-size: var(--dw-font-size-lg);
   text-align: center;
 }
 
+.dw-items-header__name,
 .deathwatch .items-header .item-name {
   font-weight: bold;
   padding-left: 5px;
   text-align: left;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
 
 /* Section headers */
+.dw-section-header,
 .deathwatch .section-header {
   margin: 15px 0 10px 0;
   padding: 0 0 8px 0;
@@ -561,6 +583,7 @@
   letter-spacing: 1px;
 }
 
+.dw-items-list,
 .deathwatch .items-list {
   list-style: none;
   margin: 0;
@@ -570,28 +593,26 @@
   color: var(--dw-color-text-secondary);
 }
 
+.dw-items-list__item-list,
 .deathwatch .items-list .item-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+.dw-item__name,
 .deathwatch .items-list .item-name {
-  -webkit-box-flex: 2;
-  -ms-flex: 2;
   flex: 2;
   margin: 0;
   overflow: hidden;
   font-size: var(--dw-font-size-md);
   text-align: left;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
 
+.dw-item__name h3,
+.dw-item__name h4,
 .deathwatch .items-list .item-name h3,
 .deathwatch .items-list .item-name h4 {
   margin: 0;
@@ -599,43 +620,39 @@
   overflow-x: hidden;
 }
 
+.dw-item__controls,
 .deathwatch .items-list .item-controls {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 100px;
   flex: 0 0 100px;
-  -webkit-box-pack: end;
-  -ms-flex-pack: end;
   justify-content: flex-end;
 }
 
+.dw-item__controls a,
 .deathwatch .items-list .item-controls a {
   font-size: var(--dw-font-size-sm);
   text-align: center;
   margin: 0 6px;
 }
 
+.dw-item,
 .deathwatch .items-list .item {
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
   padding: 0 var(--dw-spacing-xs);
   border-bottom: var(--dw-border-width) solid var(--dw-color-border);
 }
 
+.dw-item:last-child,
 .deathwatch .items-list .item:last-child {
   border-bottom: none;
 }
 
+.dw-item .dw-item__name,
 .deathwatch .items-list .item .item-name {
   color: var(--dw-color-text-primary);
 }
 
+.dw-item__image,
 .deathwatch .items-list .item .item-name .item-image {
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 30px;
   flex: 0 0 30px;
   height: 30px;
   background-size: 30px;
@@ -643,6 +660,7 @@
   margin-right: 5px;
 }
 
+.dw-item__prop,
 .deathwatch .items-list .item-prop {
   text-align: center;
   border-left: var(--dw-border-width) solid var(--dw-color-border);
@@ -692,11 +710,13 @@
   border: none;
 }
 
-/* Skills Tab Styles */
+/* Skills Tab Styles - Reduced Specificity */
+.dw-skills-section,
 .deathwatch .skills-section {
   padding: var(--dw-spacing-lg);
 }
 
+.dw-skills-header-row,
 .deathwatch .skills-header-row {
   display: flex;
   align-items: center;
@@ -710,19 +730,23 @@
   margin-bottom: var(--dw-spacing-lg);
 }
 
+.dw-skills-header-row > div,
 .deathwatch .skills-header-row > div {
   text-align: center;
 }
 
+.dw-skill-name-header,
 .deathwatch .skill-name-header {
   flex: 2;
   text-align: left !important;
 }
 
+.dw-skill-descriptor-header,
 .deathwatch .skill-descriptor-header {
   flex: 1;
 }
 
+.dw-skill-descriptor,
 .deathwatch .skill-descriptor {
   flex: 1;
   text-align: center;
@@ -730,26 +754,32 @@
   color: var(--dw-color-text-muted);
 }
 
+.dw-skill-trained-header,
 .deathwatch .skill-trained-header {
   flex: 0 0 20px;
 }
 
+.dw-skill-mastered-header,
 .deathwatch .skill-mastered-header {
   flex: 0 0 20px;
 }
 
+.dw-skill-expert-header,
 .deathwatch .skill-expert-header {
   flex: 0 0 20px;
 }
 
+.dw-skill-modifier-header,
 .deathwatch .skill-modifier-header {
   flex: 0 0 60px;
 }
 
+.dw-skill-total-header,
 .deathwatch .skill-total-header {
   flex: 0 0 50px;
 }
 
+.dw-skills-header,
 .deathwatch .skills-header {
   margin: var(--dw-spacing-xl) 0 var(--dw-spacing-lg) 0;
   padding: 5px var(--dw-spacing-lg);
@@ -758,6 +788,7 @@
   border-radius: var(--dw-border-radius-sm);
 }
 
+.dw-skills-header h3,
 .deathwatch .skills-header h3 {
   margin: 0;
   font-size: var(--dw-font-size-lg);
@@ -765,11 +796,13 @@
   color: var(--dw-color-text-secondary);
 }
 
+.dw-skills-list,
 .deathwatch .skills-list {
   border: var(--dw-border-width) solid var(--dw-color-border);
   border-radius: var(--dw-border-radius-sm);
 }
 
+.dw-skill-item,
 .deathwatch .skill-item {
   display: flex;
   align-items: center;
@@ -778,14 +811,17 @@
   font-size: var(--dw-font-size-sm);
 }
 
+.dw-skill-item:last-child,
 .deathwatch .skill-item:last-child {
   border-bottom: none;
 }
 
+.dw-skill-item:hover,
 .deathwatch .skill-item:hover {
   background: var(--dw-color-bg-hover);
 }
 
+.dw-skill-name,
 .deathwatch .skill-name {
   flex: 2;
   font-weight: 500;
@@ -793,10 +829,12 @@
   color: var(--dw-color-text-primary);
 }
 
+.dw-skill-name:hover,
 .deathwatch .skill-name:hover {
   color: var(--dw-color-primary);
 }
 
+.dw-skill-characteristic,
 .deathwatch .skill-characteristic {
   flex: 1;
   font-size: var(--dw-font-size-xs);
@@ -804,32 +842,40 @@
   text-align: center;
 }
 
+.dw-skill-trained,
 .deathwatch .skill-trained {
   flex: 0 0 20px;
   text-align: center;
 }
 
+.dw-skill-mastered,
 .deathwatch .skill-mastered {
   flex: 0 0 20px;
   text-align: center;
 }
 
+.dw-skill-expert,
 .deathwatch .skill-expert {
   flex: 0 0 20px;
   text-align: center;
 }
 
+.dw-skill-trained input[type="checkbox"],
+.dw-skill-mastered input[type="checkbox"],
+.dw-skill-expert input[type="checkbox"],
 .deathwatch .skill-trained input[type="checkbox"],
 .deathwatch .skill-mastered input[type="checkbox"],
 .deathwatch .skill-expert input[type="checkbox"] {
   margin: 0;
 }
 
+.dw-skill-modifier,
 .deathwatch .skill-modifier {
   flex: 0 0 60px;
   text-align: center;
 }
 
+.dw-skill-modifier input,
 .deathwatch .skill-modifier input {
   width: 50px;
   padding: var(--dw-spacing-xs) var(--dw-spacing-sm);
@@ -839,6 +885,7 @@
   font-size: var(--dw-font-size-xs);
 }
 
+.dw-skill-total,
 .deathwatch .skill-total {
   flex: 0 0 50px;
   text-align: center;
