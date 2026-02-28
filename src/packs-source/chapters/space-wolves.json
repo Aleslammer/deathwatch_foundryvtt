@@ -4,6 +4,8 @@
   "img": "systems/deathwatch/icons/chapters/space_wolves.webp",
   "system": {
     "description": "<p>The Space Wolves are a ferocious and fiercely independent Space Marine Chapter. Descended from their Primarch, Leman Russ, they originate from the brutal ice world of Fenris.</p><p>n combat, the Space Wolves specialize in aggressive assaults and close-quarters fighting, favoring axes, blades, and bolters. Their gene-seed, shaped by the Canis Helix, grants heightened senses and savage resilience, but carries the risk of bestial mutation.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "47",
     "skillCosts": {
       "carouse": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
       "performer_dancer": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },

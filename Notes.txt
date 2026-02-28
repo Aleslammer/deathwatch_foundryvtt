@@ -20,4 +20,4 @@ TODO: Deathwatch Training Talent for confirm RF resutls
 TODO: True Grit
 
 
-TODO: need to support Iron Hands, Novamarines, Raptor 
+TODO: need to support Talent costs.   This shold be easier as it is just one cost. with chapter override.

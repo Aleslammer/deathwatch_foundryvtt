@@ -4,6 +4,8 @@
   "img": "systems/deathwatch/icons/chapters/wtorm_wardens.webp",
   "system": {
     "description": "<p>The Storm Wardens are a mysterious Chapter with a closely guarded secret in their past. They are known for their fierce independence and warrior traditions.</p><p>Hailing from the world of Sacris, they maintain a culture of honor and secrecy, excelling in both ranged and melee combat with a particular affinity for storm-themed tactics.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "50",
     "skillCosts": {
       "gamble": { "costTrain": 200, "costMaster": 200, "costExpert": 200 },
       "tracking": { "costTrain": 400, "costMaster": 400, "costExpert": 400 }
