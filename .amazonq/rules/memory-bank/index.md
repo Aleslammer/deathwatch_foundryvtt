@@ -217,7 +217,7 @@ Total: 60 minutes
 
 ### Current State
 - **Total Lines**: ~3,000
-- **Test Coverage**: 60%
+- **Test Coverage**: 65% (up from 60%)
 - **Largest File**: actor-sheet.mjs (800 lines)
 - **Duplicate Code**: ~10%
 - **CSS Files**: 1 (1000+ lines)
@@ -232,8 +232,8 @@ Total: 60 minutes
 ## Priority Matrix
 
 ### High Priority (Do First)
-1. ✅ Extract XPCalculator
-2. ✅ Extract ModifierCollector
+1. ✅ Extract XPCalculator - **COMPLETE**
+2. ✅ Extract ModifierCollector - **NEXT**
 3. ✅ Consolidate Roll Dialogs
 
 **Why**: Biggest impact, lowest risk, improves testability
@@ -274,12 +274,14 @@ Source Code:
     │   ├─► documents/
     │   ├─► sheets/
     │   └─► helpers/
+    │       └─► xp-calculator.mjs ✅ NEW
     ├─► styles/
     └─► templates/
 
 Tests:
   tests/
     ├─► setup.mjs
+    ├─► xp-calculator.test.mjs ✅ NEW
     └─► *.test.mjs
 ```
 
@@ -303,6 +305,14 @@ npm run build:packs       # Compile compendium packs
 - **Documentation**: This memory bank
 
 ## Change Log
+
+### 2024-01-XX - Priority 1.1 Implementation Complete
+- ✅ Created XPCalculator helper (135 lines)
+- ✅ Created xp-calculator.test.mjs (16 tests)
+- ✅ Refactored actor.mjs to use XPCalculator
+- ✅ Reduced actor.mjs complexity by ~100 lines
+- ✅ All 313 tests passing
+- ✅ Test coverage improved to ~65%
 
 ### 2024-01-XX - Initial Code Review
 - Created comprehensive memory bank
@@ -373,12 +383,13 @@ npm run build:packs       # Compile compendium packs
 ## Status
 
 - ✅ **Documentation**: Complete
-- ⏳ **Implementation**: Not started
-- 📋 **Testing**: Ongoing (60% coverage)
+- ✅ **Implementation**: Phase 1 - Priority 1.1 Complete
+- ✅ **Testing**: All tests passing (313/313)
+- 📊 **Coverage**: ~65% (improved from 60%)
 - 🎯 **Target**: 75% coverage, modular architecture
 
 ---
 
 **Last Updated**: 2024
-**Version**: 1.0
-**Status**: Ready for Implementation
+**Version**: 1.1
+**Status**: Phase 1 In Progress Implementation

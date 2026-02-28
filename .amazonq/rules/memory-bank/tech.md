@@ -36,6 +36,7 @@ npm run test:coverage
 ```
 tests/
 ├── setup.mjs                    # Foundry VTT mocks
+├── xp-calculator.test.mjs       # XP calculator tests ✅ NEW
 ├── combat.test.mjs              # Combat helper tests
 ├── combat-dialog.test.mjs       # Combat dialog helper tests
 ├── constants.test.mjs           # Constants tests

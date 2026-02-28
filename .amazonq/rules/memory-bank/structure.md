@@ -68,6 +68,7 @@ src/
   - Item-specific methods
 
 ### 3. Helper Modules (`module/helpers/`)
+- **xp-calculator.mjs**: XP calculation utilities (rank, spent XP, chapter costs) ✅ NEW
 - **combat.mjs**: Combat system logic and calculations (weapon attacks, damage, hit locations)
 - **combat-dialog.mjs**: Testable combat dialog utilities and calculations (pure functions)
 - **config.mjs**: System configuration and constants (DWConfig object)
@@ -148,15 +149,15 @@ Handlebars templates for rendering:
 - Keeps platform-specific code isolated and maintainable
 
 ### Current Code Organization Issues
-- **actor.mjs**: 300+ lines with complex XP and modifier logic (needs extraction)
+- **actor.mjs**: ~250 lines (reduced from 300+) - XP logic extracted ✅
 - **actor-sheet.mjs**: 800+ lines with embedded HTML and duplicate roll logic
 - **combat.mjs**: Mix of testable and UI code (marked with istanbul ignore)
 - **CSS**: Single large file with high specificity selectors
 
 ### Recommended Improvements
 See `refactoring-recommendations.md` for detailed analysis:
-- Extract XPCalculator helper
-- Extract ModifierCollector helper
+- ✅ Extract XPCalculator helper - **COMPLETE**
+- ⏳ Extract ModifierCollector helper - **NEXT**
 - Extract DialogTemplates helper
 - Consolidate duplicate roll dialog code
 - Split CSS into component files

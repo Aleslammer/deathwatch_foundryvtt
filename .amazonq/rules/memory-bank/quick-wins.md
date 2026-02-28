@@ -538,13 +538,13 @@ async _onCharacteristicRoll(dataset) {
 
 ## Summary
 
-| Task | Time | Lines Saved | Risk | Priority |
-|------|------|-------------|------|----------|
-| XP Calculator | 30 min | ~100 | Low | High |
-| Modifier Collector | 45 min | ~150 | Low | High |
-| CSS Variables | 15 min | 0 | Very Low | Medium |
-| Roll Dialog Builder | 60 min | ~150 | Medium | High |
-| **Total** | **2.5 hours** | **~400 lines** | | |
+| Task | Time | Lines Saved | Risk | Priority | Status |
+|------|------|-------------|------|----------|--------|
+| XP Calculator | 30 min | ~100 | Low | High | ✅ COMPLETE |
+| Modifier Collector | 45 min | ~150 | Low | High | ⏳ Next |
+| CSS Variables | 15 min | 0 | Very Low | Medium | ⏳ Pending |
+| Roll Dialog Builder | 60 min | ~150 | Medium | High | ⏳ Pending |
+| **Total** | **2.5 hours** | **~400 lines** | | | **25% Done** |
 
 ## Testing Checklist
 

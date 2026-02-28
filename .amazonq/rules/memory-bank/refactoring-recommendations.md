@@ -332,10 +332,12 @@ prepareDerivedData() {
 
 ## Implementation Priority
 
-### Phase 1 (Week 1): Critical Refactoring
-1. Extract XPCalculator
-2. Extract ModifierCollector
-3. Add tests for new helpers
+### Phase 1 (Week 1): Critical Refactoring - **IN PROGRESS**
+1. ✅ Extract XPCalculator - **COMPLETE** (30 min actual)
+2. ⏳ Extract ModifierCollector - **NEXT** (45 min estimated)
+3. ⏳ Add tests for new helpers
+
+**Status**: 1/3 complete, ~100 lines reduced, all tests passing
 
 ### Phase 2 (Week 2): Code Duplication
 1. Consolidate roll dialogs
