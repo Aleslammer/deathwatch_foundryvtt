@@ -112,10 +112,7 @@
             <div class="item-benefit">{{item.system.benefit}}</div>
             <div class="item-prerequisite">{{item.system.prerequisite}}</div>
             <div class="item-cost">{{item.system.effectiveCost}}</div>
-            <div class="item-controls">
-              <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-              <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-            </div>
+            {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
           </li>
           {{/each}}
         </ol>
@@ -158,10 +155,7 @@
             </div>
             <div class="item-level">{{item.system.level}}</div>
             <div class="item-cost">{{item.system.cost}}</div>
-            <div class="item-controls">
-              <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-              <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-            </div>
+            {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
           </li>
           {{/each}}
         </ol>
