@@ -18,7 +18,18 @@
           </div>
           {{/if}}
         </div>
-        <input name="system.specialty" type="text" value="{{system.specialty}}" placeholder="Specialty" style="font-size: 0.9em; color: #666; border: none; background: transparent; flex: 1;" />
+        <div class="specialty-field" style="flex: 0 0 60px;">
+          {{#if specialtyItem}}
+          <div class="item" data-item-id="{{specialtyItem._id}}" style="position: relative; width: 60px; height: 60px;">
+            <img src="{{specialtyItem.img}}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 3px; border: 1px solid #999;" title="{{specialtyItem.name}}" />
+            <a class="specialty-remove" style="position: absolute; top: -5px; right: -5px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 8px; cursor: pointer;" title="Remove Specialty"><i class="fas fa-times"></i></a>
+          </div>
+          {{else}}
+          <div class="specialty-drop-zone" style="width: 60px; height: 60px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; text-align: center; cursor: pointer;" title="Drop Specialty Here">
+            <i class="fas fa-user-shield" style="font-size: 24px; opacity: 0.3;"></i>
+          </div>
+          {{/if}}
+        </div>
         <div style="display: flex; align-items: center; gap: 5px;">
           <label style="font-size: 0.9em; color: #666;">Rank:</label>
           <input name="system.rank" type="number" value="{{system.rank}}" data-dtype="Number" style="width: 50px; font-size: 0.9em; color: #666; border: none; background: transparent;" readonly />

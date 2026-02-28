@@ -102,6 +102,11 @@ export class DeathwatchActorSheet extends ActorSheet {
       context.chapterItem = this.actor.items.get(context.system.chapterId);
     }
 
+    // Get specialty item if set
+    if (context.system.specialtyId) {
+      context.specialtyItem = this.actor.items.get(context.system.specialtyId);
+    }
+
     // Get chapter skill cost overrides
     const chapterSkillCosts = {};
     if (context.chapterItem && context.chapterItem.system.skillCosts) {
@@ -338,6 +343,25 @@ export class DeathwatchActorSheet extends ActorSheet {
       }
       await this.actor.update({ "system.chapterId": "" });
       ui.notifications.info('Chapter removed.');
+    });
+
+    // Drop handler for specialty
+    html.find('.specialty-drop-zone').each((i, el) => {
+      el.addEventListener('drop', this._onDropSpecialty.bind(this), false);
+      el.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
+
+    // Remove specialty
+    html.find('.specialty-remove').click(async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const specialtyId = this.actor.system.specialtyId;
+      if (specialtyId) {
+        const specialty = this.actor.items.get(specialtyId);
+        if (specialty) await specialty.delete();
+      }
+      await this.actor.update({ "system.specialtyId": "" });
+      ui.notifications.info('Specialty removed.');
     });
   }
 
@@ -700,6 +724,36 @@ export class DeathwatchActorSheet extends ActorSheet {
     const chapterItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
     await this.actor.update({ "system.chapterId": chapterItem.id });
     ui.notifications.info(`Chapter set to ${chapterItem.name}.`);
+  }
+
+  /**
+   * Handle dropping a specialty item
+   * @param {Event} event The drop event
+   * @private
+   */
+  async _onDropSpecialty(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== 'specialty') {
+      ui.notifications.warn('Only specialty items can be dropped here.');
+      return;
+    }
+
+    if (this.actor.system.specialtyId) {
+      const existingSpecialty = this.actor.items.get(this.actor.system.specialtyId);
+      if (existingSpecialty) {
+        await existingSpecialty.delete();
+      }
+    }
+
+    const specialtyItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
+    await this.actor.update({ "system.specialtyId": specialtyItem.id });
+    ui.notifications.info(`Specialty set to ${specialtyItem.name}.`);
   }
 
 }

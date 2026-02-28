@@ -35,6 +35,7 @@
             "biography": "",
             "pastEvents": "",
             "specialty": "",
+            "specialtyId": "",
             "rank": 1,
             "xp": {
                 "total": 13000,

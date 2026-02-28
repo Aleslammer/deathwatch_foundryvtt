@@ -1,0 +1,22 @@
+{
+  "name": "Specialty Name",
+  "type": "specialty",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "<p>Specialty description.</p>",
+    "book": "",
+    "page": "",
+    "characteristicCosts": {
+      "ws": 0,
+      "bs": 0,
+      "str": 0,
+      "tg": 0,
+      "ag": 0,
+      "int": 0,
+      "per": 0,
+      "wil": 0,
+      "fs": 0
+    },
+    "ranks": []
+  }
+}
