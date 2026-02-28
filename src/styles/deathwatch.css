@@ -1077,3 +1077,10 @@
   grid-template-columns: 1fr 1fr;
   gap: 0;
 }
+
+
+.deathwatch .talents-list .item-cost {
+  flex: 0 0 80px;
+  text-align: center;
+  font-size: 12px;
+}
