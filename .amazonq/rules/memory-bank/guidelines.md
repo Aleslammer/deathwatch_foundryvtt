@@ -79,6 +79,21 @@ const mockActor = {
 
 ## Code Quality Standards
 
+### Current State Analysis (as of recent review)
+- **Total Lines**: ~3000+ lines across core modules
+- **Test Coverage**: ~60% (good foundation, room for improvement)
+- **Key Files**:
+  - actor.mjs: ~300 lines (needs refactoring)
+  - actor-sheet.mjs: ~800 lines (needs refactoring)
+  - combat.mjs: ~400 lines (well-structured)
+  - deathwatch.css: ~1000 lines (needs modularization)
+
+### Code Complexity Issues
+1. **actor.mjs _prepareCharacterData()**: 250+ lines, multiple responsibilities
+2. **actor-sheet.mjs**: Duplicate roll dialog code (~90% similar)
+3. **CSS**: High specificity selectors, no variables
+4. **HTML in JS**: Large template strings embedded in methods
+
 ### File Extensions and Module System
 - Use `.mjs` extension for all ES module JavaScript files (100% of core modules)
 - Use `.js` extension only for legacy compatibility files (e.g., handlebars.js)
@@ -568,6 +583,20 @@ if (modifier !== 0) {
 ```
 
 ## Best Practices
+
+### Code Organization Principles
+1. **Single Responsibility**: Each class/function should have one clear purpose
+2. **Separation of Concerns**: Keep business logic separate from UI code
+3. **DRY (Don't Repeat Yourself)**: Extract common patterns into reusable functions
+4. **Testability**: Write code that can be easily unit tested
+5. **Modularity**: Keep files focused and under 300 lines when possible
+
+### When to Extract Code
+- Method exceeds 50 lines → Extract helper functions
+- Class exceeds 300 lines → Split into multiple classes
+- Duplicate code appears 2+ times → Create shared utility
+- Complex logic in UI code → Move to helper class
+- HTML strings exceed 20 lines → Move to template or builder
 
 ### Always Check Existence
 ```javascript

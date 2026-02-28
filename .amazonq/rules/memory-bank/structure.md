@@ -68,15 +68,17 @@ src/
   - Item-specific methods
 
 ### 3. Helper Modules (`module/helpers/`)
-- **combat.mjs**: Combat system logic and calculations
-- **combat-dialog.mjs**: Testable combat dialog utilities and calculations
-- **config.mjs**: System configuration and constants
-- **constants.mjs**: Game-specific constant values
+- **combat.mjs**: Combat system logic and calculations (weapon attacks, damage, hit locations)
+- **combat-dialog.mjs**: Testable combat dialog utilities and calculations (pure functions)
+- **config.mjs**: System configuration and constants (DWConfig object)
+- **constants.mjs**: Game-specific constant values (characteristics, modifiers, effects)
+- **critical-effects.mjs**: Critical damage effects and application
 - **debug.mjs**: Debug logging utilities with feature flags
 - **effects.mjs**: Active effects and modifier application
 - **foundry-adapter.mjs**: Wrapper for Foundry VTT API calls (canvas, rolls, notifications, chat)
 - **handlebars.js**: Custom Handlebars helpers for templates
-- **modifiers.mjs**: Modifier calculation and management
+- **initiative.mjs**: Initiative rolling with dialog
+- **modifiers.mjs**: Modifier CRUD operations and UI dialogs
 - **templates.mjs**: Template preloading and registration
 
 ### 4. Sheet Classes (`module/sheets/`)
@@ -144,6 +146,21 @@ Handlebars templates for rendering:
   - Token distance measurement
 - Enables unit testing of business logic by mocking adapter
 - Keeps platform-specific code isolated and maintainable
+
+### Current Code Organization Issues
+- **actor.mjs**: 300+ lines with complex XP and modifier logic (needs extraction)
+- **actor-sheet.mjs**: 800+ lines with embedded HTML and duplicate roll logic
+- **combat.mjs**: Mix of testable and UI code (marked with istanbul ignore)
+- **CSS**: Single large file with high specificity selectors
+
+### Recommended Improvements
+See `refactoring-recommendations.md` for detailed analysis:
+- Extract XPCalculator helper
+- Extract ModifierCollector helper
+- Extract DialogTemplates helper
+- Consolidate duplicate roll dialog code
+- Split CSS into component files
+- Create event handler classes
 
 ## Component Relationships
 
