@@ -1,0 +1,41 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="100" width="100"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Specialty Name"/></h1>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="description">Description</a>
+    <a class="item" data-tab="characteristics">Characteristic Costs</a>
+    <a class="item" data-tab="ranks">Rank Advances</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab active" data-group="primary" data-tab="description">
+      <div class="form-group">
+        {{editor system.description target="system.description" button=true owner=owner editable=editable engine="prosemirror"}}
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="characteristics">
+      <h3>Characteristic Advance Costs</h3>
+      <div class="form-group">
+        {{#each system.characteristicCosts as |cost key|}}
+        <div class="flexrow" style="margin-bottom: 5px;">
+          <label style="flex: 1;">{{lookup ../characteristics key}}</label>
+          <input type="number" name="system.characteristicCosts.{{key}}" value="{{cost}}" data-dtype="Number" style="width: 80px;"/>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="ranks">
+      <h3>Rank Advance Scheme</h3>
+      <div class="ranks-list">
+        <textarea name="system.ranks" rows="15" style="width: 100%; font-family: monospace;">{{system.ranks}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

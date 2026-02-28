@@ -31,7 +31,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristic = characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
+    const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
     
     return effectiveChar + skillBonus + skill.modifier;
   }
@@ -126,6 +126,8 @@ export class DeathwatchActorSheet extends ActorSheet {
     const criticalEffects = [];
     const talents = [];
     const traits = [];
+    const specialties = [];
+    const characteristicAdvances = [];
     const spells = {
       0: [],
       1: [],
@@ -185,6 +187,12 @@ export class DeathwatchActorSheet extends ActorSheet {
       else if (i.type === 'trait') {
         traits.push(i);
       }
+      else if (i.type === 'specialty') {
+        specialties.push(i);
+      }
+      else if (i.type === 'characteristic-advance') {
+        characteristicAdvances.push(i);
+      }
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
@@ -210,6 +218,8 @@ export class DeathwatchActorSheet extends ActorSheet {
     context.criticalEffects = criticalEffects;
     context.talents = talents;
     context.traits = traits;
+    context.specialties = specialties;
+    context.characteristicAdvances = characteristicAdvances;
     context.spells = spells;
   }
 
@@ -380,14 +390,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.trained/)[1];
       if (!ev.target.checked) {
         html.find(`input[name="system.skills.${skillKey}.mastered"]`).prop('checked', false);
-        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+        html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
     });
 
     html.find('input[type="checkbox"][name*=".mastered"]').change(ev => {
       const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.mastered/)[1];
       if (!ev.target.checked) {
-        html.find(`input[name="system.skills.${skillKey}.advanced"]`).prop('checked', false);
+        html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
     });
 
@@ -630,7 +640,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristic = this.actor.system.characteristics[skill.characteristic];
     const baseCharValue = characteristic ? characteristic.value : 0;
     const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const skillBonus = skill.advanced ? 20 : (skill.mastered ? 10 : 0);
+    const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
     const skillModTotal = skill.modifierTotal || 0;
     const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + skillModTotal;
 

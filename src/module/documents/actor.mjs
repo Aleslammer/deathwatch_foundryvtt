@@ -63,6 +63,40 @@ export class DeathwatchActor extends Actor {
     const systemData = actorData.system;
     const modifiers = systemData.modifiers || [];
 
+    // Calculate rank from XP
+    const xp = systemData.xp?.total || systemData.xp || 0;
+    if (xp < 13000) systemData.rank = 1;
+    else if (xp < 17000) systemData.rank = 1;
+    else if (xp < 21000) systemData.rank = 2;
+    else if (xp < 25000) systemData.rank = 3;
+    else if (xp < 30000) systemData.rank = 4;
+    else if (xp < 35000) systemData.rank = 5;
+    else if (xp < 40000) systemData.rank = 6;
+    else if (xp < 45000) systemData.rank = 7;
+    else systemData.rank = 8;
+
+    // Calculate spent XP from characteristic advances and skills
+    let spentXP = 13000;
+    for (const item of this.items) {
+      if (item.type === 'characteristic-advance' && item.system.cost) {
+        spentXP += item.system.cost;
+      }
+    }
+    
+    // Add skill costs
+    if (systemData.skills) {
+      for (const [key, skill] of Object.entries(systemData.skills)) {
+        if (skill.trained) spentXP += skill.costTrain || 0;
+        if (skill.mastered) spentXP += skill.costMaster || 0;
+        if (skill.expert) spentXP += skill.costExpert || 0;
+      }
+    }
+    
+    if (typeof systemData.xp === 'object') {
+      systemData.xp.spent = spentXP;
+      systemData.xp.available = (systemData.xp.total || 13000) - spentXP;
+    }
+
     // Collect modifiers from equipped items
     const itemModifiers = [];
     for (const item of this.items) {

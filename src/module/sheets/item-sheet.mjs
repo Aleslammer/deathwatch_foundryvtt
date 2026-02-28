@@ -46,6 +46,21 @@ export class DeathwatchItemSheet extends ItemSheet {
         context.system = itemData.system;
         context.flags = itemData.flags;
 
+        // Add characteristic labels for specialty sheet
+        if (itemData.type === 'specialty') {
+            context.characteristics = {
+                ws: 'Weapon Skill',
+                bs: 'Ballistic Skill',
+                str: 'Strength',
+                tg: 'Toughness',
+                ag: 'Agility',
+                int: 'Intelligence',
+                per: 'Perception',
+                wil: 'Willpower',
+                fs: 'Fellowship'
+            };
+        }
+
         // Initialize capacity.max from clip field for weapons if not set
         if (itemData.type === 'weapon' && itemData.system.clip && !itemData.system.capacity?.max) {
             const clipValue = parseInt(itemData.system.clip);

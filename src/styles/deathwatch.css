@@ -674,7 +674,7 @@
   flex: 0 0 20px;
 }
 
-.deathwatch .skill-advanced-header {
+.deathwatch .skill-expert-header {
   flex: 0 0 20px;
 }
 
@@ -750,14 +750,14 @@
   text-align: center;
 }
 
-.deathwatch .skill-advanced {
+.deathwatch .skill-expert {
   flex: 0 0 20px;
   text-align: center;
 }
 
 .deathwatch .skill-trained input[type="checkbox"],
 .deathwatch .skill-mastered input[type="checkbox"],
-.deathwatch .skill-advanced input[type="checkbox"] {
+.deathwatch .skill-expert input[type="checkbox"] {
   margin: 0;
 }
 

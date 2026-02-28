@@ -8,6 +8,13 @@
       <div class="chapter-field" style="margin-top: -5px; margin-bottom: 10px;">
         <input name="system.chapter" type="text" value="{{system.chapter}}" placeholder="Chapter" style="font-size: 0.9em; color: #666; border: none; background: transparent; width: 100%;" />
       </div>
+      <div class="specialty-rank-field" style="margin-top: -5px; margin-bottom: 10px; display: flex; gap: 10px;">
+        <input name="system.specialty" type="text" value="{{system.specialty}}" placeholder="Specialty" style="font-size: 0.9em; color: #666; border: none; background: transparent; flex: 1;" />
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <label style="font-size: 0.9em; color: #666;">Rank:</label>
+          <input name="system.rank" type="number" value="{{system.rank}}" data-dtype="Number" style="width: 50px; font-size: 0.9em; color: #666; border: none; background: transparent;" readonly />
+        </div>
+      </div>
       {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
       use both the "grid" and "grid-Ncol" class where "N" can be any number
       from 1 to 12 and will create that number of columns. --}}
@@ -26,10 +33,13 @@
         </div>
 
         <div class="resource flex-group-center">
-          <label for="system.attributes.level.value" class="resource-label">Level</label>
+          <label for="system.xp.total" class="resource-label">XP</label>
           <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.attributes.level.value" value="{{system.attributes.level.value}}" data-dtype="Number" />
+            <input type="text" name="system.xp.spent" value="{{system.xp.spent}}" data-dtype="Number" readonly style="background: #f0f0f0;" />
+            <span> / </span>
+            <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
           </div>
+          <div style="font-size: 0.75em; color: {{#if (lt system.xp.available 0)}}#cc0000{{else}}#666{{/if}}; text-align: center; margin-top: 2px;">{{system.xp.available}} available</div>
         </div>
 
       </div>
@@ -108,6 +118,33 @@
             </div>
             <div class="item-controls">
               <a class="item-control item-create" title="Create Trait" data-type="trait"><i class="fas fa-plus"></i></a>
+              <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+              <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+          {{/each}}
+        </ol>
+      </div>
+
+      <div class="characteristic-advances-section">
+        <h3 class="section-header">Characteristic Advances</h3>
+        <ol class="items-list characteristic-advances-list">
+          <li class="item flexrow items-header">
+            <div class="item-name">Characteristic</div>
+            <div class="item-level">Level</div>
+            <div class="item-cost">XP Cost</div>
+            <div class="item-controls">
+              <a class="item-control item-create" title="Create Characteristic Advance" data-type="characteristic-advance"><i class="fas fa-plus"></i></a>
+            </div>
+          </li>
+          {{#each characteristicAdvances as |item id|}}
+          <li class="item flexrow" data-item-id="{{item._id}}" draggable="true">
+            <div class="item-name">
+              <h4>{{item.name}}</h4>
+            </div>
+            <div class="item-level">{{item.system.level}}</div>
+            <div class="item-cost">{{item.system.cost}}</div>
+            <div class="item-controls">
               <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
               <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
             </div>
