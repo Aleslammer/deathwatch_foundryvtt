@@ -11,10 +11,10 @@ describe('DeathwatchActor', () => {
       type: 'character',
       system: {
         characteristics: {
-          ws: { base: 40, value: 40, mod: 4 },
-          bs: { base: 45, value: 45, mod: 4 },
-          str: { base: 50, value: 50, mod: 5 },
-          ag: { base: 35, value: 35, mod: 3 }
+          ws: { base: 40, value: 40, mod: 4, advances: { simple: false, intermediate: false, trained: false, expert: false } },
+          bs: { base: 45, value: 45, mod: 4, advances: { simple: false, intermediate: false, trained: false, expert: false } },
+          str: { base: 50, value: 50, mod: 5, advances: { simple: false, intermediate: false, trained: false, expert: false } },
+          ag: { base: 35, value: 35, mod: 3, advances: { simple: false, intermediate: false, trained: false, expert: false } }
         },
         skills: {
           awareness: { trained: true, modifier: 0 }
@@ -218,6 +218,14 @@ describe('DeathwatchActor', () => {
         value: 10,
         source: undefined
       });
+    });
+
+    it('applies characteristic advances from checkboxes', () => {
+      mockActor.system.characteristics.ws.base = 40;
+      mockActor.system.characteristics.ws.advances.simple = true;
+      mockActor.system.characteristics.ws.advances.intermediate = true;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.characteristics.ws.value).toBe(50); // 40 + 5 + 5
     });
   });
 

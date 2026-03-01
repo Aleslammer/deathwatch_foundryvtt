@@ -45,39 +45,48 @@
             "characteristics": {
                 "ws": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "bs": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "str": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "tg": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "ag": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "int": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "per": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "wil": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "fs": {
                     "value": 0,
-                    "bonus": 0
+                    "bonus": 0,
+                    "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 }
             },
             "skills": {
@@ -1515,7 +1524,6 @@
             "talent",
             "trait",
             "specialty",
-            "characteristic-advance",
             "chapter"
         ],
         "templates": {
@@ -1630,26 +1638,20 @@
             "templates": [
                 "base"
             ],
+            "book": "",
+            "page": "",
             "characteristicCosts": {
-                "ws": 0,
-                "bs": 0,
-                "str": 0,
-                "tg": 0,
-                "ag": 0,
-                "int": 0,
-                "per": 0,
-                "wil": 0,
-                "fs": 0
+                "ws": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "bs": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "str": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "tg": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "ag": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "int": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "per": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "wil": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+                "fs": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 }
             },
             "ranks": []
-        },
-        "characteristic-advance": {
-            "templates": [
-                "base"
-            ],
-            "characteristic": "",
-            "level": "simple",
-            "cost": 0
         },
         "chapter": {
             "templates": [

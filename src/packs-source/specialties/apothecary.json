@@ -6,7 +6,17 @@
     "description": "<p>Apothecaries are the keepers of the Chapter's gene-seed and the healers of the Space Marines. They are responsible for harvesting the progenoid glands from fallen battle-brothers and tending to the wounded.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "47",
-    "characteristicCosts": {},
+    "characteristicCosts": {
+      "ws": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "bs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "str": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "tg": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "ag": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "int": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "per": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "wil": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "fs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 }
+    },
     "ranks": []
   }
 }

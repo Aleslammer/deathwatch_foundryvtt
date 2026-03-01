@@ -6,7 +6,17 @@
     "description": "<p>Librarians are psykers who have been trained to harness the power of the Warp. They serve as the Chapter's psychic warriors and keepers of lore, wielding devastating psychic powers in battle.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "50",
-    "characteristicCosts": {},
+    "characteristicCosts": {
+      "ws": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "bs": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
+      "str": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "tg": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "ag": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
+      "int": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "per": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "wil": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "fs": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 }
+    },
     "ranks": []
   }
 }

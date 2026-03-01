@@ -7,15 +7,15 @@
     "book": "",
     "page": "",
     "characteristicCosts": {
-      "ws": 0,
-      "bs": 0,
-      "str": 0,
-      "tg": 0,
-      "ag": 0,
-      "int": 0,
-      "per": 0,
-      "wil": 0,
-      "fs": 0
+      "ws": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "bs": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "str": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "tg": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "ag": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "int": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "per": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "wil": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
+      "fs": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 }
     },
     "ranks": []
   }

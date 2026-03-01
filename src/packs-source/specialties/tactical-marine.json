@@ -6,7 +6,17 @@
     "description": "<p>Tactical Marines are the backbone of any Space Marine force. They are versatile warriors trained in all aspects of warfare, equally capable in ranged and close combat.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "51",
-    "characteristicCosts": {},
+    "characteristicCosts": {
+      "ws": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "bs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "str": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "tg": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "ag": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "int": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "per": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
+      "wil": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
+      "fs": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 }
+    },
     "ranks": []
   }
 }
