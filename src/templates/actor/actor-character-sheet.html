@@ -2,68 +2,65 @@
 
   {{!-- Sheet Header --}}
   <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
-    <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
-      <div class="specialty-rank-field" style="margin-top: -5px; margin-bottom: 10px; display: flex; gap: 10px; align-items: center;">
-        <div class="chapter-field" style="flex: 0 0 60px;">
+    <div class="header-fields" style="width: 100%;">
+      <h1 class="charname" style="margin-bottom: 10px;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <div style="flex: 0 0 100px; text-align: center;">
+          <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 3px; border: 1px solid #999; cursor: pointer;" />
+          <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Profile</div>
+        </div>
+        <div style="flex: 0 0 100px; text-align: center;">
           {{#if chapterItem}}
-          <div class="item" data-item-id="{{chapterItem._id}}" style="position: relative; width: 60px; text-align: center;">
-            <img src="{{chapterItem.img}}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 3px; border: 1px solid #999;" title="{{chapterItem.name}}" />
-            <a class="chapter-remove" style="position: absolute; top: -5px; right: -5px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 8px; cursor: pointer;" title="Remove Chapter"><i class="fas fa-times"></i></a>
-            <div style="font-size: 0.7em; color: #666; margin-top: 2px; line-height: 1.1;">{{chapterItem.name}}</div>
+          <div class="item" data-item-id="{{chapterItem._id}}" style="position: relative;">
+            <img src="{{chapterItem.img}}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 3px; border: 1px solid #999;" title="{{chapterItem.name}}" />
+            <a class="chapter-remove" style="position: absolute; top: -5px; right: -5px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer;" title="Remove Chapter"><i class="fas fa-times"></i></a>
+            <div style="font-size: 0.7em; color: #666; margin-top: 2px;">{{chapterItem.name}}</div>
           </div>
           {{else}}
-          <div class="chapter-drop-zone" style="width: 60px; height: 60px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; text-align: center; cursor: pointer;" title="Drop Chapter Here">
-            <i class="fas fa-shield-alt" style="font-size: 24px; opacity: 0.3;"></i>
+          <div class="chapter-drop-zone" style="width: 100px; height: 100px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Drop Chapter Here">
+            <i class="fas fa-shield-alt" style="font-size: 40px; opacity: 0.3;"></i>
           </div>
+          <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Chapter</div>
           {{/if}}
         </div>
-        <div class="specialty-field" style="flex: 0 0 60px;">
+        <div style="flex: 0 0 100px; text-align: center;">
           {{#if specialtyItem}}
-          <div class="item" data-item-id="{{specialtyItem._id}}" style="position: relative; width: 60px; text-align: center;">
-            <img src="{{specialtyItem.img}}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 3px; border: 1px solid #999;" title="{{specialtyItem.name}}" />
-            <a class="specialty-remove" style="position: absolute; top: -5px; right: -5px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 8px; cursor: pointer;" title="Remove Specialty"><i class="fas fa-times"></i></a>
-            <div style="font-size: 0.7em; color: #666; margin-top: 2px; line-height: 1.1;">{{specialtyItem.name}}</div>
+          <div class="item" data-item-id="{{specialtyItem._id}}" style="position: relative;">
+            <img src="{{specialtyItem.img}}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 3px; border: 1px solid #999;" title="{{specialtyItem.name}}" />
+            <a class="specialty-remove" style="position: absolute; top: -5px; right: -5px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer;" title="Remove Specialty"><i class="fas fa-times"></i></a>
+            <div style="font-size: 0.7em; color: #666; margin-top: 2px;">{{specialtyItem.name}}</div>
           </div>
           {{else}}
-          <div class="specialty-drop-zone" style="width: 60px; height: 60px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; text-align: center; cursor: pointer;" title="Drop Specialty Here">
-            <i class="fas fa-user-shield" style="font-size: 24px; opacity: 0.3;"></i>
+          <div class="specialty-drop-zone" style="width: 100px; height: 100px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Drop Specialty Here">
+            <i class="fas fa-user-shield" style="font-size: 40px; opacity: 0.3;"></i>
           </div>
+          <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Specialty</div>
           {{/if}}
         </div>
-        <div style="display: flex; align-items: center; gap: 5px;">
-          <label style="font-size: 0.9em; color: #666;">Rank:</label>
-          <input name="system.rank" type="number" value="{{system.rank}}" data-dtype="Number" style="width: 50px; font-size: 0.9em; color: #666; border: none; background: transparent;" readonly />
+        <div style="flex: 0 0 100px; text-align: center;">
+          <img src="{{rankImage}}" title="Rank {{system.rank}}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 3px; border: 1px solid #999;" />
+          <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Rank</div>
         </div>
-      </div>
-      {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
-      use both the "grid" and "grid-Ncol" class where "N" can be any number
-      from 1 to 12 and will create that number of columns. --}}
-      <div class="resources grid grid-2col">
-
-        {{!-- "flex-group-center" is also defined in the _grid.scss file
-        and it will add a small amount of padding, a border, and will
-        center all of its child elements content and text. --}}
-        <div class="resource flex-group-center">
-          <label for="system.wounds.value" class="resource-label">Wounds</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.wounds.value" value="{{system.wounds.value}}" data-dtype="Number" />
-            <span> / </span>
-            <input type="text" name="system.wounds.max" value="{{system.wounds.max}}" data-dtype="Number" />
+        <div style="flex: 1;"></div>
+        <div style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+          <div class="resource flex-group-center" style="width: 200px;">
+            <label for="system.xp.total" class="resource-label">XP</label>
+            <div class="resource-content flexrow flex-center flex-between">
+              <input type="text" name="system.xp.spent" value="{{system.xp.spent}}" data-dtype="Number" readonly style="background: #f0f0f0;" />
+              <span> / </span>
+              <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
+            </div>
+            <div style="font-size: 0.75em; color: {{#if (lt system.xp.available 0)}}#cc0000{{else}}#666{{/if}}; text-align: center; margin-top: 2px;">{{system.xp.available}} available</div>
+          </div>
+          <div class="resource flex-group-center" style="width: 200px;">
+            <label for="system.wounds.value" class="resource-label">Wounds</label>
+            <div class="resource-content flexrow flex-center flex-between">
+              <input type="text" name="system.wounds.value" value="{{system.wounds.value}}" data-dtype="Number" />
+              <span> / </span>
+              <input type="text" name="system.wounds.max" value="{{system.wounds.max}}" data-dtype="Number" />
+            </div>
           </div>
         </div>
-
-        <div class="resource flex-group-center">
-          <label for="system.xp.total" class="resource-label">XP</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.xp.spent" value="{{system.xp.spent}}" data-dtype="Number" readonly style="background: #f0f0f0;" />
-            <span> / </span>
-            <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
-          </div>
-          <div style="font-size: 0.75em; color: {{#if (lt system.xp.available 0)}}#cc0000{{else}}#666{{/if}}; text-align: center; margin-top: 2px;">{{system.xp.available}} available</div>
-        </div>
-
       </div>
     </div>
   </header>

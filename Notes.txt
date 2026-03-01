@@ -22,4 +22,6 @@ TODO: True Grit
 
 TODO: Look to alternate text to add specialties.  (Need to look into creating icons for the specialties.)
 
-For the Warhammer 40k Deathwatch RPG from FFG I need an icon that represents the specialty of the Librarian.
+here is a prompt for the librarian.   Otherwise got to wait for ChatGPT to reset.
+
+A grimdark Warhammer 40k style emblem icon. Centered realistic skull wearing a psychic hood apparatus with metal cabling and arcane nodes. Eyes glowing bright electric blue with soft warp energy glow. Behind the skull are crossed force weapons: one force staff and one force sword, both metallic with subtle blue energy arcing along their blades. Background is a red iron-cross shape with beveled steel edging and dark brushed metal wings extending outward symmetrically. Faint blue lightning arcs across the red background. Hyper-detailed steel textures, battle-worn metal, high contrast lighting, dramatic shadows, no text, no banner, black outer background, square icon composition, 512x512 pixels.

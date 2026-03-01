@@ -5,6 +5,7 @@ import { ModifierHelper } from "../helpers/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/chat-message-builder.mjs";
 import { ItemHandlers } from "../helpers/item-handlers.mjs";
+import { getRankImage } from "../helpers/rank-helper.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -133,6 +134,9 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Add config to context for template access
     context.config = game.deathwatch.config;
+
+    // Add rank image
+    context.rankImage = getRankImage(context.system.rank);
   }
 
   /**
