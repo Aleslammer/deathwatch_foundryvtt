@@ -58,41 +58,6 @@ describe('ItemHandlers', () => {
     });
   });
 
-  describe('characteristic', () => {
-    it('identifies demeanours by name', () => {
-      const demeanours = [
-        { name: 'Zeal of the Chapter' },
-        { name: 'Thirst for Battle' },
-        { name: 'Calculating' },
-        { name: 'Gregarious' },
-        { name: 'Hot-Blooded' },
-        { name: 'Studious' },
-        { name: 'Taciturn' },
-        { name: 'Pious' },
-        { name: 'Stoic' },
-        { name: 'Scornful' },
-        { name: 'Ambitious' },
-        { name: 'Proud' }
-      ];
-
-      demeanours.forEach(item => {
-        expect(ItemHandlers.characteristic(item)).toBe('demeanour');
-      });
-    });
-
-    it('identifies non-demeanour characteristics', () => {
-      const characteristics = [
-        { name: 'Weapon Skill' },
-        { name: 'Ballistic Skill' },
-        { name: 'Other Characteristic' }
-      ];
-
-      characteristics.forEach(item => {
-        expect(ItemHandlers.characteristic(item)).toBe('characteristic');
-      });
-    });
-  });
-
   describe('processItems', () => {
     it('categorizes all item types correctly', () => {
       const items = [
@@ -101,14 +66,13 @@ describe('ItemHandlers', () => {
         { _id: '3', type: 'gear', system: {} },
         { _id: '4', type: 'ammunition', system: {} },
         { _id: '5', type: 'characteristic', name: 'Weapon Skill', system: {} },
-        { _id: '6', type: 'characteristic', name: 'Calculating', system: {} },
+        { _id: '6', type: 'demeanour', name: 'Calculating', system: {} },
         { _id: '7', type: 'critical-effect', system: {} },
         { _id: '8', type: 'talent', system: {} },
         { _id: '9', type: 'trait', system: {} },
         { _id: '10', type: 'specialty', system: {} },
-        { _id: '11', type: 'characteristic-advance', system: {} },
-        { _id: '12', type: 'chapter', system: {} },
-        { _id: '13', type: 'spell', system: { spellLevel: 1 } }
+        { _id: '11', type: 'chapter', system: {} },
+        { _id: '12', type: 'spell', system: { spellLevel: 1 } }
       ];
 
       const result = ItemHandlers.processItems(items);
@@ -123,7 +87,6 @@ describe('ItemHandlers', () => {
       expect(result.talents).toHaveLength(1);
       expect(result.traits).toHaveLength(1);
       expect(result.specialties).toHaveLength(1);
-      expect(result.characteristicAdvances).toHaveLength(1);
       expect(result.chapters).toHaveLength(1);
       expect(result.spells[1]).toHaveLength(1);
     });

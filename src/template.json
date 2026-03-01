@@ -1520,6 +1520,7 @@
             "gear",
             "ammunition",
             "characteristic",
+            "demeanour",
             "critical-effect",
             "talent",
             "trait",
@@ -1597,6 +1598,14 @@
             }
         },
         "characteristic": {
+            "templates": [
+                "base"
+            ],
+            "chapter": "",
+            "book": "",
+            "page": ""
+        },
+        "demeanour": {
             "templates": [
                 "base"
             ],

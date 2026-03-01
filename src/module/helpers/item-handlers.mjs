@@ -29,22 +29,6 @@ export class ItemHandlers {
   }
 
   /**
-   * Handle characteristic items (separate demeanours)
-   * @param {Object} item The characteristic item
-   * @returns {string} The category ('demeanour' or 'characteristic')
-   */
-  static characteristic(item) {
-    const demeanourNames = [
-      'Zeal', 'Thirst', 'Lion', 'Russ', 'Glory', 'Codex',
-      'Calculating', 'Gregarious', 'Hot-Blooded', 'Studious',
-      'Taciturn', 'Pious', 'Stoic', 'Scornful', 'Ambitious', 'Proud'
-    ];
-    
-    const isDemeanour = demeanourNames.some(name => item.name?.includes(name));
-    return isDemeanour ? 'demeanour' : 'characteristic';
-  }
-
-  /**
    * Process all items and categorize them
    * @param {Array} items The items to process
    * @returns {Object} Categorized items
@@ -83,8 +67,10 @@ export class ItemHandlers {
           categories.gear.push(item);
           break;
         case 'characteristic':
-          const category = this.characteristic(item);
-          categories[category === 'demeanour' ? 'demeanours' : 'characteristics'].push(item);
+          categories.characteristics.push(item);
+          break;
+        case 'demeanour':
+          categories.demeanours.push(item);
           break;
         case 'critical-effect':
           categories.criticalEffects.push(item);
