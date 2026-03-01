@@ -125,7 +125,7 @@ describe('ModifierCollector', () => {
   describe('applyCharacteristicModifiers', () => {
     it('applies modifiers to characteristics', () => {
       const characteristics = {
-        ws: { value: 40 }
+        ws: { value: 40, advances: {} }
       };
       const modifiers = [
         { effectType: 'characteristic', valueAffected: 'ws', modifier: 10, enabled: true, name: 'Bonus' }
@@ -136,9 +136,29 @@ describe('ModifierCollector', () => {
       expect(characteristics.ws.mod).toBe(5);
     });
 
+    it('applies characteristic advances', () => {
+      const characteristics = {
+        ws: { value: 40, advances: { simple: true, intermediate: true, trained: false, expert: false } }
+      };
+
+      ModifierCollector.applyCharacteristicModifiers(characteristics, []);
+      expect(characteristics.ws.value).toBe(50); // 40 + 5 + 5
+      expect(characteristics.ws.mod).toBe(5);
+    });
+
+    it('applies all four advances', () => {
+      const characteristics = {
+        ws: { value: 40, advances: { simple: true, intermediate: true, trained: true, expert: true } }
+      };
+
+      ModifierCollector.applyCharacteristicModifiers(characteristics, []);
+      expect(characteristics.ws.value).toBe(60); // 40 + 5 + 5 + 5 + 5
+      expect(characteristics.ws.mod).toBe(6);
+    });
+
     it('stores base value', () => {
       const characteristics = {
-        ws: { value: 40 }
+        ws: { value: 40, advances: {} }
       };
 
       ModifierCollector.applyCharacteristicModifiers(characteristics, []);
@@ -147,7 +167,7 @@ describe('ModifierCollector', () => {
 
     it('tracks applied modifiers', () => {
       const characteristics = {
-        ws: { value: 40 }
+        ws: { value: 40, advances: {} }
       };
       const modifiers = [
         { effectType: 'characteristic', valueAffected: 'ws', modifier: 10, name: 'Mod1', source: 'Item' }

@@ -47,7 +47,7 @@ describe('CombatHelper', () => {
 
     it('shows notification if weapon not jammed', async () => {
       const weapon = { name: 'Bolter', system: { jammed: false } };
-      const actor = { system: { characteristics: { bs: { value: 40, advances: 10 } } } };
+      const actor = { system: { characteristics: { bs: { value: 40, advances: { simple: true, intermediate: false, trained: false, expert: false } } } } };
       
       jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
       
@@ -63,7 +63,7 @@ describe('CombatHelper', () => {
       };
       const loadedAmmo = { system: { capacity: { value: 10 } } };
       const actor = { 
-        system: { characteristics: { bs: { value: 40, advances: 10 } } },
+        system: { characteristics: { bs: { value: 40, advances: { simple: true, intermediate: true, trained: false, expert: false } } } },
         items: { get: () => loadedAmmo }
       };
       const roll = { total: 45 };
@@ -84,7 +84,7 @@ describe('CombatHelper', () => {
     it('fails to clear jam on failure', async () => {
       const weapon = { name: 'Bolter', system: { jammed: true } };
       const actor = { 
-        system: { characteristics: { bs: { value: 40, advances: 10 } } },
+        system: { characteristics: { bs: { value: 40, advances: { simple: true, intermediate: true, trained: false, expert: false } } } },
         items: { get: () => null }
       };
       const roll = { total: 55 };

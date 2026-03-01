@@ -72,6 +72,14 @@ export class ModifierCollector {
       let total = characteristic.base || 0;
       const appliedMods = [];
       
+      // Apply advances (+5 each)
+      if (characteristic.advances) {
+        if (characteristic.advances.simple) total += 5;
+        if (characteristic.advances.intermediate) total += 5;
+        if (characteristic.advances.trained) total += 5;
+        if (characteristic.advances.expert) total += 5;
+      }
+      
       for (const mod of modifiers) {
         if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
           const modValue = parseInt(mod.modifier) || 0;

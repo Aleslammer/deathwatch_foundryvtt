@@ -82,7 +82,9 @@
       <li class="item flexrow" data-item-id="{{item._id}}">
         {{> "systems/deathwatch/templates/actor/parts/item-equipped.html"}}
         <div class="item-name">
-          {{> "systems/deathwatch/templates/actor/parts/item-image.html"}}
+          <div class="item-image">
+            <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
+          </div>
           <h4>{{item.name}}</h4>
         </div>
         <div class="item-armor">{{item.system.body}}</div>
@@ -129,7 +131,9 @@
       <li class="item flexrow" data-item-id="{{item._id}}">
         {{> "systems/deathwatch/templates/actor/parts/item-equipped.html"}}
         <div class="item-name">
-          {{> "systems/deathwatch/templates/actor/parts/item-image.html"}}
+          <div class="item-image">
+            <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
+          </div>
           <h4>{{item.name}}</h4>
         </div>
         <div class="item-description">{{item.system.shortDescription}}</div>
@@ -153,7 +157,9 @@
     {{#each ammunition as |item id|}}
       <li class="item flexrow" data-item-id="{{item._id}}">
         <div class="item-name">
-          {{> "systems/deathwatch/templates/actor/parts/item-image.html"}}
+          <div class="item-image">
+            <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
+          </div>
           <h4>{{item.name}}</h4>
         </div>
         <div class="item-stat">{{item.system.capacity.value}} / {{item.system.capacity.max}}</div>

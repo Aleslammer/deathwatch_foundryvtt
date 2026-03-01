@@ -61,7 +61,6 @@ export class ItemHandlers {
       talents: [],
       traits: [],
       specialties: [],
-      characteristicAdvances: [],
       chapters: [],
       spells: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] }
     };
@@ -98,9 +97,6 @@ export class ItemHandlers {
           break;
         case 'specialty':
           categories.specialties.push(item);
-          break;
-        case 'characteristic-advance':
-          categories.characteristicAdvances.push(item);
           break;
         case 'chapter':
           categories.chapters.push(item);

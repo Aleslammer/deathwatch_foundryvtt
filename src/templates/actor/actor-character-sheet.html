@@ -97,6 +97,12 @@
             <div class="characteristic-center">{{characteristic.value}}</div>
             <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
           </div>
+          <div class="characteristic-advances flexrow" style="font-size: 0.7em; margin-top: 2px; justify-content: center; gap: 4px;">
+            <input type="checkbox" name="system.characteristics.{{key}}.advances.simple" {{checked characteristic.advances.simple}} title="Simple (+5)" />
+            <input type="checkbox" name="system.characteristics.{{key}}.advances.intermediate" {{checked characteristic.advances.intermediate}} title="Intermediate (+5)" />
+            <input type="checkbox" name="system.characteristics.{{key}}.advances.trained" {{checked characteristic.advances.trained}} title="Trained (+5)" />
+            <input type="checkbox" name="system.characteristics.{{key}}.advances.expert" {{checked characteristic.advances.expert}} title="Expert (+5)" />
+          </div>
         </li>
         {{/each}}
       </ul>
@@ -150,29 +156,7 @@
         </ol>
       </div>
 
-      <div class="characteristic-advances-section">
-        <h3 class="section-header">Characteristic Advances</h3>
-        <ol class="items-list characteristic-advances-list">
-          <li class="item flexrow items-header">
-            <div class="item-name">Characteristic</div>
-            <div class="item-level">Level</div>
-            <div class="item-cost">XP Cost</div>
-            <div class="item-controls">
-              <a class="item-control item-create" title="Create Characteristic Advance" data-type="characteristic-advance"><i class="fas fa-plus"></i></a>
-            </div>
-          </li>
-          {{#each characteristicAdvances as |item id|}}
-          <li class="item flexrow" data-item-id="{{item._id}}" draggable="true">
-            <div class="item-name">
-              <h4>{{item.name}}</h4>
-            </div>
-            <div class="item-level">{{item.system.level}}</div>
-            <div class="item-cost">{{item.system.cost}}</div>
-            {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
-          </li>
-          {{/each}}
-        </ol>
-      </div>
+
     </div>
 
     {{!-- Skills Tab --}}
