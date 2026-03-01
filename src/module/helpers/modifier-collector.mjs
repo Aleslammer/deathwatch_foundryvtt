@@ -15,7 +15,11 @@ export class ModifierCollector {
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
     
     for (const item of itemsArray) {
-      if (!item?.system?.equipped) continue;
+      if (!item?.system) continue;
+      
+      // Chapter items are always active (no equipped check)
+      const isActive = item.type === 'chapter' || item.system.equipped;
+      if (!isActive) continue;
       
       debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
       
@@ -74,10 +78,10 @@ export class ModifierCollector {
       
       // Apply advances (+5 each)
       if (characteristic.advances) {
-        if (characteristic.advances.simple) total += 5;
-        if (characteristic.advances.intermediate) total += 5;
-        if (characteristic.advances.trained) total += 5;
-        if (characteristic.advances.expert) total += 5;
+        if (characteristic.advances.simple) { total += 5; appliedMods.push({ name: 'Simple Advance', value: 5, source: 'Advances' }); }
+        if (characteristic.advances.intermediate) { total += 5; appliedMods.push({ name: 'Intermediate Advance', value: 5, source: 'Advances' }); }
+        if (characteristic.advances.trained) { total += 5; appliedMods.push({ name: 'Trained Advance', value: 5, source: 'Advances' }); }
+        if (characteristic.advances.expert) { total += 5; appliedMods.push({ name: 'Expert Advance', value: 5, source: 'Advances' }); }
       }
       
       for (const mod of modifiers) {

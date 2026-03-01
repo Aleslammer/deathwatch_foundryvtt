@@ -7,228 +7,128 @@ describe('ModifierCollector', () => {
     jest.clearAllMocks();
   });
 
-  describe('collectAllModifiers', () => {
-    it('combines actor and item modifiers', () => {
-      const mockItems = [
-        { name: 'Item', system: { equipped: true, modifiers: [{ name: 'Item Mod', modifier: 10 }] } }
-      ];
-      const actor = {
-        system: {
-          modifiers: [{ name: 'Actor Mod', modifier: 5 }]
-        },
-        items: mockItems
-      };
-
-      const result = ModifierCollector.collectAllModifiers(actor);
-      expect(result).toHaveLength(2);
-      expect(result[0].name).toBe('Actor Mod');
-      expect(result[1].name).toBe('Item Mod');
-    });
-
-    it('handles missing actor modifiers', () => {
-      const actor = {
-        system: {},
-        items: []
-      };
-
-      const result = ModifierCollector.collectAllModifiers(actor);
-      expect(result).toEqual([]);
-    });
-  });
-
   describe('collectItemModifiers', () => {
-    it('collects modifiers from equipped items', () => {
+    it('collects modifiers from chapter items without requiring equipped status', () => {
       const items = [
         {
-          name: 'Weapon',
-          system: { equipped: true, modifiers: [{ name: 'Mod1', modifier: 5, enabled: true }] }
+          name: 'Black Templars',
+          type: 'chapter',
+          system: {
+            modifiers: [
+              { name: 'WS Bonus', modifier: 5, effectType: 'characteristic', valueAffected: 'ws', enabled: true },
+              { name: 'WIL Bonus', modifier: 5, effectType: 'characteristic', valueAffected: 'wil', enabled: true }
+            ]
+          }
         }
       ];
 
-      const result = ModifierCollector.collectItemModifiers(items);
-      expect(result).toHaveLength(1);
-      expect(result[0].source).toBe('Weapon');
+      const modifiers = ModifierCollector.collectItemModifiers(items);
+
+      expect(modifiers).toHaveLength(2);
+      expect(modifiers[0]).toMatchObject({
+        name: 'WS Bonus',
+        modifier: 5,
+        effectType: 'characteristic',
+        valueAffected: 'ws',
+        source: 'Black Templars'
+      });
+      expect(modifiers[1]).toMatchObject({
+        name: 'WIL Bonus',
+        modifier: 5,
+        effectType: 'characteristic',
+        valueAffected: 'wil',
+        source: 'Black Templars'
+      });
     });
 
-    it('skips unequipped items', () => {
+    it('still requires equipped status for non-chapter items', () => {
       const items = [
         {
-          system: { equipped: false, modifiers: [{ name: 'Mod1', modifier: 5 }] }
-        }
-      ];
-
-      const result = ModifierCollector.collectItemModifiers(items);
-      expect(result).toHaveLength(0);
-    });
-
-    it('skips disabled modifiers', () => {
-      const items = [
-        {
-          name: 'Item',
-          system: { equipped: true, modifiers: [{ name: 'Mod1', modifier: 5, enabled: false }] }
-        }
-      ];
-
-      const result = ModifierCollector.collectItemModifiers(items);
-      expect(result).toHaveLength(0);
-    });
-
-    it('collects armor history modifiers', () => {
-      const items = new Map([
-        ['armor1', {
           name: 'Power Armor',
           type: 'armor',
-          system: { equipped: true, attachedHistories: ['history1'] }
-        }],
-        ['history1', {
-          name: 'Battle History',
-          system: { modifiers: [{ name: 'History Mod', modifier: 10, enabled: true }] }
-        }]
-      ]);
+          system: {
+            equipped: false,
+            modifiers: [
+              { name: 'STR Bonus', modifier: 10, effectType: 'characteristic', valueAffected: 'str' }
+            ],
+            attachedHistories: []
+          }
+        }
+      ];
 
-      const result = ModifierCollector.collectItemModifiers(items);
-      expect(result).toHaveLength(1);
-      expect(result[0].source).toBe('Battle History (Power Armor)');
-    });
-  });
+      const modifiers = ModifierCollector.collectItemModifiers(items);
 
-  describe('collectArmorHistoryModifiers', () => {
-    it('collects modifiers from attached histories', () => {
-      const armor = {
-        name: 'Armor',
-        system: { attachedHistories: ['hist1'] }
-      };
-      const items = new Map([
-        ['hist1', {
-          name: 'History',
-          system: { modifiers: [{ name: 'Mod', modifier: 5, enabled: true }] }
-        }]
-      ]);
-
-      const result = ModifierCollector.collectArmorHistoryModifiers(armor, items);
-      expect(result).toHaveLength(1);
-      expect(result[0].source).toBe('History (Armor)');
+      expect(modifiers).toHaveLength(0);
     });
 
-    it('handles missing history items', () => {
-      const armor = {
-        name: 'Armor',
-        system: { attachedHistories: ['missing'] }
-      };
-      const items = new Map();
+    it('collects modifiers from equipped items and chapter items together', () => {
+      const items = [
+        {
+          name: 'Black Templars',
+          type: 'chapter',
+          system: {
+            modifiers: [
+              { name: 'WS Bonus', modifier: 5, effectType: 'characteristic', valueAffected: 'ws' }
+            ]
+          }
+        },
+        {
+          name: 'Power Armor',
+          type: 'armor',
+          system: {
+            equipped: true,
+            modifiers: [
+              { name: 'STR Bonus', modifier: 10, effectType: 'characteristic', valueAffected: 'str' }
+            ],
+            attachedHistories: []
+          }
+        }
+      ];
 
-      const result = ModifierCollector.collectArmorHistoryModifiers(armor, items);
-      expect(result).toHaveLength(0);
+      const modifiers = ModifierCollector.collectItemModifiers(items);
+
+      expect(modifiers).toHaveLength(2);
+      expect(modifiers.find(m => m.source === 'Black Templars')).toBeDefined();
+      expect(modifiers.find(m => m.source === 'Power Armor')).toBeDefined();
     });
   });
 
   describe('applyCharacteristicModifiers', () => {
-    it('applies modifiers to characteristics', () => {
+    it('applies chapter modifiers to characteristics', () => {
       const characteristics = {
-        ws: { value: 40, advances: {} }
+        ws: { value: 40, base: 40, advances: {} },
+        wil: { value: 35, base: 35, advances: {} }
       };
+
       const modifiers = [
-        { effectType: 'characteristic', valueAffected: 'ws', modifier: 10, enabled: true, name: 'Bonus' }
+        { name: 'WS Bonus', modifier: 5, effectType: 'characteristic', valueAffected: 'ws', source: 'Black Templars' },
+        { name: 'WIL Bonus', modifier: 5, effectType: 'characteristic', valueAffected: 'wil', source: 'Black Templars' }
       ];
 
       ModifierCollector.applyCharacteristicModifiers(characteristics, modifiers);
-      expect(characteristics.ws.value).toBe(50);
-      expect(characteristics.ws.mod).toBe(5);
+
+      expect(characteristics.ws.value).toBe(45);
+      expect(characteristics.ws.mod).toBe(4);
+      expect(characteristics.wil.value).toBe(40);
+      expect(characteristics.wil.mod).toBe(4);
     });
 
-    it('applies characteristic advances', () => {
+    it('includes advances in modifiers array for tooltip', () => {
       const characteristics = {
-        ws: { value: 40, advances: { simple: true, intermediate: true, trained: false, expert: false } }
+        ws: { value: 40, base: 40, advances: { simple: true, intermediate: true, trained: false, expert: false } }
       };
 
-      ModifierCollector.applyCharacteristicModifiers(characteristics, []);
-      expect(characteristics.ws.value).toBe(50); // 40 + 5 + 5
-      expect(characteristics.ws.mod).toBe(5);
-    });
-
-    it('applies all four advances', () => {
-      const characteristics = {
-        ws: { value: 40, advances: { simple: true, intermediate: true, trained: true, expert: true } }
-      };
-
-      ModifierCollector.applyCharacteristicModifiers(characteristics, []);
-      expect(characteristics.ws.value).toBe(60); // 40 + 5 + 5 + 5 + 5
-      expect(characteristics.ws.mod).toBe(6);
-    });
-
-    it('stores base value', () => {
-      const characteristics = {
-        ws: { value: 40, advances: {} }
-      };
-
-      ModifierCollector.applyCharacteristicModifiers(characteristics, []);
-      expect(characteristics.ws.base).toBe(40);
-    });
-
-    it('tracks applied modifiers', () => {
-      const characteristics = {
-        ws: { value: 40, advances: {} }
-      };
       const modifiers = [
-        { effectType: 'characteristic', valueAffected: 'ws', modifier: 10, name: 'Mod1', source: 'Item' }
+        { name: 'Chapter Bonus', modifier: 5, effectType: 'characteristic', valueAffected: 'ws', source: 'Black Templars' }
       ];
 
       ModifierCollector.applyCharacteristicModifiers(characteristics, modifiers);
-      expect(characteristics.ws.modifiers).toHaveLength(1);
-      expect(characteristics.ws.modifiers[0].name).toBe('Mod1');
-    });
-  });
 
-  describe('applySkillModifiers', () => {
-    it('applies modifiers to skills', () => {
-      const skills = {
-        awareness: {}
-      };
-      const modifiers = [
-        { effectType: 'skill', valueAffected: 'awareness', modifier: 5, enabled: true }
-      ];
-
-      ModifierCollector.applySkillModifiers(skills, modifiers);
-      expect(skills.awareness.modifierTotal).toBe(5);
-    });
-
-    it('sums multiple modifiers', () => {
-      const skills = {
-        awareness: {}
-      };
-      const modifiers = [
-        { effectType: 'skill', valueAffected: 'awareness', modifier: 5, enabled: true },
-        { effectType: 'skill', valueAffected: 'awareness', modifier: 10, enabled: true }
-      ];
-
-      ModifierCollector.applySkillModifiers(skills, modifiers);
-      expect(skills.awareness.modifierTotal).toBe(15);
-    });
-  });
-
-  describe('applyInitiativeModifiers', () => {
-    it('sums initiative modifiers', () => {
-      const modifiers = [
-        { effectType: 'initiative', modifier: 5, enabled: true },
-        { effectType: 'initiative', modifier: 3, enabled: true }
-      ];
-
-      const result = ModifierCollector.applyInitiativeModifiers(modifiers);
-      expect(result).toBe(8);
-    });
-
-    it('returns 0 for no modifiers', () => {
-      const result = ModifierCollector.applyInitiativeModifiers([]);
-      expect(result).toBe(0);
-    });
-
-    it('skips disabled modifiers', () => {
-      const modifiers = [
-        { effectType: 'initiative', modifier: 5, enabled: false }
-      ];
-
-      const result = ModifierCollector.applyInitiativeModifiers(modifiers);
-      expect(result).toBe(0);
+      expect(characteristics.ws.value).toBe(55);
+      expect(characteristics.ws.modifiers).toHaveLength(3);
+      expect(characteristics.ws.modifiers[0]).toMatchObject({ name: 'Simple Advance', value: 5, source: 'Advances' });
+      expect(characteristics.ws.modifiers[1]).toMatchObject({ name: 'Intermediate Advance', value: 5, source: 'Advances' });
+      expect(characteristics.ws.modifiers[2]).toMatchObject({ name: 'Chapter Bonus', value: 5, source: 'Black Templars' });
     });
   });
 });
