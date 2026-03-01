@@ -1,7 +1,7 @@
 {
   "name": "Tactical Marine",
   "type": "specialty",
-  "img": "icons/svg/book.svg",
+  "img": "systems/deathwatch/icons/specialty/tacticalmarine.webp",
   "system": {
     "description": "<p>Tactical Marines are the backbone of any Space Marine force. They are versatile warriors trained in all aspects of warfare, equally capable in ranged and close combat.</p>",
     "book": "Deathwatch Core Rulebook",

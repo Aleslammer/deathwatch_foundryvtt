@@ -1,7 +1,7 @@
 {
   "name": "Assault Marine",
   "type": "specialty",
-  "img": "icons/svg/book.svg",
+  "img": "systems/deathwatch/icons/specialty/assaultmarine.webp",
   "system": {
     "description": "<p>Assault Marines are close combat specialists who use jump packs to rapidly close with the enemy. They excel at shock assaults and are often the first to engage the foe in melee combat.</p>",
     "book": "Deathwatch Core Rulebook",

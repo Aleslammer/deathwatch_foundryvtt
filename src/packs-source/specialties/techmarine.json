@@ -1,7 +1,7 @@
 {
   "name": "Techmarine",
   "type": "specialty",
-  "img": "icons/svg/book.svg",
+  "img": "systems/deathwatch/icons/specialty/techmarine.webp",
   "system": {
     "description": "<p>Techmarines are trained by the Adeptus Mechanicus to maintain and repair the Chapter's wargear and vehicles. They serve as the bridge between the Chapter and the Machine Cult.</p>",
     "book": "Deathwatch Core Rulebook",

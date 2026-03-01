@@ -1,7 +1,7 @@
 {
   "name": "Devastator Marine",
   "type": "specialty",
-  "img": "icons/svg/book.svg",
+  "img": "systems/deathwatch/icons/specialty/devastatormarine.webp",
   "system": {
     "description": "<p>Devastator Marines are heavy weapons specialists who provide devastating fire support. They wield the Chapter's most powerful ranged weapons and excel at destroying enemy armor and fortifications.</p>",
     "book": "Deathwatch Core Rulebook",
