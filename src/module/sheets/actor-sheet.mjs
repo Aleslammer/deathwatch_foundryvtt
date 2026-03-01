@@ -222,6 +222,14 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
+    // Toggle Equip Item
+    html.find('.item-equip').click(async ev => {
+      ev.preventDefault();
+      const li = $(ev.currentTarget).closest(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      await item.update({ "system.equipped": !item.system.equipped });
+    });
+
     // Add Inventory Item
     html.find('.item-create').click(this._onItemCreate.bind(this));
 
@@ -231,13 +239,6 @@ export class DeathwatchActorSheet extends ActorSheet {
       const item = this.actor.items.get(li.data("itemId"));
       item.delete();
       li.slideUp(200, () => this.render(false));
-    });
-
-    // Toggle Equip Item
-    html.find('.item-equip').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.items.get(li.data("itemId"));
-      item.update({ "system.equipped": !item.system.equipped });
     });
 
     // Active Effect management
@@ -259,16 +260,20 @@ export class DeathwatchActorSheet extends ActorSheet {
     });
 
     // Skill checkbox cascade logic
-    html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
-      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.trained/)[1];
+    html.find('input[type="checkbox"][name*="system.skills."][name*=".trained"]').change(ev => {
+      const match = ev.target.name.match(/system\.skills\.(\w+)\.trained/);
+      if (!match) return;
+      const skillKey = match[1];
       if (!ev.target.checked) {
         html.find(`input[name="system.skills.${skillKey}.mastered"]`).prop('checked', false);
         html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
     });
 
-    html.find('input[type="checkbox"][name*=".mastered"]').change(ev => {
-      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.mastered/)[1];
+    html.find('input[type="checkbox"][name*="system.skills."][name*=".mastered"]').change(ev => {
+      const match = ev.target.name.match(/system\.skills\.(\w+)\.mastered/);
+      if (!match) return;
+      const skillKey = match[1];
       if (!ev.target.checked) {
         html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
