@@ -81,6 +81,23 @@ describe('XPCalculator', () => {
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13700); // 13000 + 200 + 200 + 300
     });
 
+    it('treats -1 skill costs as 0 (free)', () => {
+      mockActor.items = [];
+      mockActor.system.skills = {
+        awareness: { trained: true, costTrain: -1 },
+        dodge: { trained: true, mastered: true, costTrain: 0, costMaster: 200 }
+      };
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13200); // 13000 + 0 + 0 + 200
+    });
+
+    it('treats -1 talent costs as 0 (free)', () => {
+      mockActor.items = [
+        { type: 'talent', name: 'FreeTalent', system: { cost: -1 }, _id: 'id1' },
+        { type: 'talent', name: 'PaidTalent', system: { cost: 300 }, _id: 'id2' }
+      ];
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13300); // 13000 + 0 + 300
+    });
+
     it('applies chapter cost overrides', () => {
       const mockChapter = {
         system: {
@@ -100,6 +117,27 @@ describe('XPCalculator', () => {
       };
       
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13200); // 13000 + 100 (chapter talent) + 100 (chapter skill)
+    });
+
+    it('treats chapter override of -1 as free', () => {
+      const mockChapter = {
+        system: {
+          talentCosts: { 'talent1': -1 },
+          skillCosts: { awareness: { costTrain: -1 } }
+        }
+      };
+      mockActor.system.chapterId = 'chapter1';
+      mockActor.items = {
+        get: jest.fn(() => mockChapter),
+        [Symbol.iterator]: function* () {
+          yield { type: 'talent', name: 'Talent1', system: { cost: 300, compendiumId: 'talent1' }, _id: 'id1' };
+        }
+      };
+      mockActor.system.skills = {
+        awareness: { trained: true, costTrain: 200 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13000); // 13000 + 0 + 0
     });
   });
 

@@ -89,11 +89,11 @@ export class XPCalculator {
       talent.count++;
       
       if (talent.count === 1) {
-        total += cost;
+        total += Math.max(0, cost);
       } else if (talent.stackable && talent.subsequentCost) {
-        total += talent.subsequentCost;
+        total += Math.max(0, talent.subsequentCost);
       } else {
-        total += cost;
+        total += Math.max(0, cost);
       }
     }
     
@@ -128,9 +128,9 @@ export class XPCalculator {
       const masterCost = costs.costMaster ?? skill.costMaster ?? 0;
       const expertCost = costs.costExpert ?? skill.costExpert ?? 0;
       
-      if (skill.trained) total += trainCost;
-      if (skill.mastered) total += masterCost;
-      if (skill.expert) total += expertCost;
+      if (skill.trained) total += Math.max(0, trainCost);
+      if (skill.mastered) total += Math.max(0, masterCost);
+      if (skill.expert) total += Math.max(0, expertCost);
     }
     
     return total;

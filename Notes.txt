@@ -21,7 +21,7 @@ TODO: True Grit
 
 
 TODO: Look to alternate text to add specialties.  (Need to look into creating icons for the specialties.)
-
+TODO: Need to work out "free" skills (Nova Marine Lore Xenos a value of 0 shows as he cannot get it.)
 
 here is a prompt for the librarian.   Otherwise got to wait for ChatGPT to reset.
 

@@ -102,6 +102,9 @@ export class ItemHandlers {
       }
     }
 
+    // Sort talents by name
+    categories.talents.sort((a, b) => a.name.localeCompare(b.name));
+
     return categories;
   }
 }
