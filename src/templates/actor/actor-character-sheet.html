@@ -74,6 +74,14 @@
             </div>
             <div style="font-size: 0.75em; color: {{#if (lt system.xp.available 0)}}#cc0000{{else}}#666{{/if}}; text-align: center; margin-top: 2px;">{{system.xp.available}} available</div>
           </div>
+          <div class="resource flex-group-center" style="width: 200px;">
+            <label for="system.fatePoints.max" class="resource-label">Fate Points</label>
+            <div class="resource-content flexrow flex-center flex-between">
+              <input type="text" name="system.fatePoints.value" value="{{system.fatePoints.value}}" data-dtype="Number" />
+              <span> / </span>
+              <input type="text" name="system.fatePoints.max" value="{{system.fatePoints.max}}" data-dtype="Number" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -42,6 +42,10 @@
                 "total": 13000,
                 "spent": 0
             },
+            "fatePoints": {
+                "value": 0,
+                "max": 0
+            },
             "modifiers": [],
             "characteristics": {
                 "ws": {

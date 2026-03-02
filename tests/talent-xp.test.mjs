@@ -37,7 +37,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13800); // 13000 base + 500 + 300
+      expect(actor.system.xp.spent).toBe(12800); // 12000 base + 500 + 300
     });
 
     it('handles talents with zero cost', () => {
@@ -68,7 +68,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13000); // 13000 base only
+      expect(actor.system.xp.spent).toBe(12000); // 12000 base only
     });
 
     it('combines talent costs with skill and characteristic advance costs', () => {
@@ -112,7 +112,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13750); // 13000 + 500 + 250 + 0
+      expect(actor.system.xp.spent).toBe(12750); // 12000 + 500 + 250 + 0
     });
 
     it('ignores talents without cost field', () => {
@@ -143,7 +143,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13000); // 13000 base only
+      expect(actor.system.xp.spent).toBe(12000); // 12000 base only
     });
   });
 });

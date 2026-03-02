@@ -46,7 +46,7 @@ describe('XPCalculator', () => {
     });
 
     it('returns starting XP with no advances', () => {
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13000);
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000);
     });
 
     it('includes characteristic advance costs', () => {
@@ -54,14 +54,14 @@ describe('XPCalculator', () => {
         { type: 'characteristic-advance', system: { cost: 500 } },
         { type: 'characteristic-advance', system: { cost: 750 } }
       ];
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(14250);
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13250);
     });
 
     it('includes talent costs', () => {
       mockActor.items = [
         { type: 'talent', name: 'Talent1', system: { cost: 300 }, _id: 'id1' }
       ];
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13300);
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12300);
     });
 
     it('handles stackable talents with subsequent costs', () => {
@@ -69,7 +69,7 @@ describe('XPCalculator', () => {
         { type: 'talent', name: 'Stackable', system: { cost: 300, stackable: true, subsequentCost: 200 }, _id: 'id1' },
         { type: 'talent', name: 'Stackable', system: { cost: 300, stackable: true, subsequentCost: 200 }, _id: 'id2' }
       ];
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13500); // 13000 + 300 + 200
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12500); // 12000 + 300 + 200
     });
 
     it('includes skill costs', () => {
@@ -78,7 +78,7 @@ describe('XPCalculator', () => {
         awareness: { trained: true, costTrain: 200 },
         dodge: { trained: true, mastered: true, costTrain: 200, costMaster: 300 }
       };
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13700); // 13000 + 200 + 200 + 300
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12700); // 12000 + 200 + 200 + 300
     });
 
     it('treats -1 skill costs as 0 (free)', () => {
@@ -87,7 +87,7 @@ describe('XPCalculator', () => {
         awareness: { trained: true, costTrain: -1 },
         dodge: { trained: true, mastered: true, costTrain: 0, costMaster: 200 }
       };
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13200); // 13000 + 0 + 0 + 200
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12200); // 12000 + 0 + 0 + 200
     });
 
     it('treats -1 talent costs as 0 (free)', () => {
@@ -95,7 +95,7 @@ describe('XPCalculator', () => {
         { type: 'talent', name: 'FreeTalent', system: { cost: -1 }, _id: 'id1' },
         { type: 'talent', name: 'PaidTalent', system: { cost: 300 }, _id: 'id2' }
       ];
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13300); // 13000 + 0 + 300
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12300); // 12000 + 0 + 300
     });
 
     it('applies chapter cost overrides', () => {
@@ -116,7 +116,7 @@ describe('XPCalculator', () => {
         awareness: { trained: true, costTrain: 200 }
       };
       
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13200); // 13000 + 100 (chapter talent) + 100 (chapter skill)
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12200); // 12000 + 100 (chapter talent) + 100 (chapter skill)
     });
 
     it('treats chapter override of -1 as free', () => {
@@ -137,7 +137,7 @@ describe('XPCalculator', () => {
         awareness: { trained: true, costTrain: 200 }
       };
       
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13000); // 13000 + 0 + 0
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 + 0
     });
   });
 

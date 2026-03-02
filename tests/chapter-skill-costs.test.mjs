@@ -27,7 +27,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(13000);
+      expect(mockActor.system.xp.spent).toBe(12000);
     });
 
     it('should override skill costs when chapter is assigned', () => {
@@ -62,7 +62,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(13100);
+      expect(mockActor.system.xp.spent).toBe(12100);
     });
 
     it('should apply chapter costs for multiple skill levels', () => {
@@ -104,7 +104,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(13600);
+      expect(mockActor.system.xp.spent).toBe(12600);
     });
 
     it('should use default costs for skills not overridden by chapter', () => {
@@ -140,7 +140,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(13400);
+      expect(mockActor.system.xp.spent).toBe(12400);
     });
 
     it('should handle partial chapter cost overrides', () => {
@@ -182,7 +182,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(13800);
+      expect(mockActor.system.xp.spent).toBe(12800);
     });
   });
 });

@@ -66,6 +66,11 @@ export class DeathwatchActor extends Actor {
 
     const systemData = actorData.system;
 
+    // Initialize fatePoints if not present
+    if (!systemData.fatePoints) {
+      systemData.fatePoints = { value: 0, max: 0 };
+    }
+
     // Load skills dynamically from JSON
     systemData.skills = SkillLoader.loadSkills(systemData.skills);
 

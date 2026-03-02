@@ -258,6 +258,18 @@ describe('DeathwatchActor', () => {
         run: 0
       });
     });
+
+    it('initializes fatePoints if not present', () => {
+      delete mockActor.system.fatePoints;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatePoints).toEqual({ value: 0, max: 0 });
+    });
+
+    it('preserves existing fatePoints values', () => {
+      mockActor.system.fatePoints = { value: 2, max: 3 };
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatePoints).toEqual({ value: 2, max: 3 });
+    });
   });
 
   describe('_prepareNpcData', () => {

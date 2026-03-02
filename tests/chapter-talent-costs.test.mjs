@@ -80,8 +80,8 @@ describe('Chapter Talent Cost Overrides', () => {
     it('applies chapter talent cost override for matching talent', () => {
       actor._prepareCharacterData(actor);
       
-      // Base XP (13000) + chapter override cost (800) = 13800
-      expect(actor.system.xp.spent).toBe(13800);
+      // Base XP (12000) + chapter override cost (800) = 12800
+      expect(actor.system.xp.spent).toBe(12800);
     });
 
     it('uses default talent cost when no chapter override exists', () => {
@@ -91,8 +91,8 @@ describe('Chapter Talent Cost Overrides', () => {
       
       actor._prepareCharacterData(actor);
       
-      // Base XP (13000) + default cost (1000) = 14000
-      expect(actor.system.xp.spent).toBe(14000);
+      // Base XP (12000) + default cost (1000) = 13000
+      expect(actor.system.xp.spent).toBe(13000);
     });
 
     it('normalizes talent names with spaces for lookup', () => {
@@ -104,7 +104,7 @@ describe('Chapter Talent Cost Overrides', () => {
       actor._prepareCharacterData(actor);
       
       // Should use chapter override 500 instead of 1000
-      expect(actor.system.xp.spent).toBe(13500);
+      expect(actor.system.xp.spent).toBe(12500);
     });
 
     it('normalizes talent names with parentheses for lookup', () => {
@@ -116,7 +116,7 @@ describe('Chapter Talent Cost Overrides', () => {
       
       actor._prepareCharacterData(actor);
       
-      expect(actor.system.xp.spent).toBe(13500);
+      expect(actor.system.xp.spent).toBe(12500);
     });
 
     it('handles multiple talents with different costs', () => {
@@ -142,8 +142,8 @@ describe('Chapter Talent Cost Overrides', () => {
 
       actor._prepareCharacterData(actor);
       
-      // Base (13000) + Abhor the Witch (800) + Fearless (800) = 14600
-      expect(actor.system.xp.spent).toBe(14600);
+      // Base (12000) + Abhor the Witch (800) + Fearless (800) = 13600
+      expect(actor.system.xp.spent).toBe(13600);
     });
 
     it('works when chapter has no talent cost overrides', () => {
@@ -152,7 +152,7 @@ describe('Chapter Talent Cost Overrides', () => {
       actor._prepareCharacterData(actor);
       
       // Should use default cost
-      expect(actor.system.xp.spent).toBe(14000);
+      expect(actor.system.xp.spent).toBe(13000);
     });
 
     it('works when actor has no chapter assigned', () => {
@@ -165,7 +165,7 @@ describe('Chapter Talent Cost Overrides', () => {
       actor._prepareCharacterData(actor);
       
       // Should use default cost
-      expect(actor.system.xp.spent).toBe(14000);
+      expect(actor.system.xp.spent).toBe(13000);
     });
 
     it('handles stackable talents with chapter override on first instance', () => {
@@ -194,8 +194,8 @@ describe('Chapter Talent Cost Overrides', () => {
 
       actor._prepareCharacterData(actor);
       
-      // Base (13000) + first instance with override (800) + subsequent (500) = 14300
-      expect(actor.system.xp.spent).toBe(14300);
+      // Base (12000) + first instance with override (800) + subsequent (500) = 13300
+      expect(actor.system.xp.spent).toBe(13300);
     });
   });
 
@@ -208,7 +208,7 @@ describe('Chapter Talent Cost Overrides', () => {
       
       actor._prepareCharacterData(actor);
       
-      expect(actor.system.xp.spent).toBe(14000);
+      expect(actor.system.xp.spent).toBe(13000);
     });
 
     it('ignores talent name when looking up cost', () => {
@@ -219,7 +219,7 @@ describe('Chapter Talent Cost Overrides', () => {
       actor._prepareCharacterData(actor);
       
       // Should match by ID and use 800
-      expect(actor.system.xp.spent).toBe(13800);
+      expect(actor.system.xp.spent).toBe(12800);
     });
 
     it('works with talents that have parentheses in name', () => {
@@ -230,7 +230,7 @@ describe('Chapter Talent Cost Overrides', () => {
       
       actor._prepareCharacterData(actor);
       
-      expect(actor.system.xp.spent).toBe(13500);
+      expect(actor.system.xp.spent).toBe(12500);
     });
 
     it('falls back to default cost when ID not in chapter costs', () => {
@@ -241,7 +241,7 @@ describe('Chapter Talent Cost Overrides', () => {
       
       actor._prepareCharacterData(actor);
       
-      expect(actor.system.xp.spent).toBe(14200);
+      expect(actor.system.xp.spent).toBe(13200);
     });
   });
 });
