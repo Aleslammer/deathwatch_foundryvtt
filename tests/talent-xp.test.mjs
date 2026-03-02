@@ -101,7 +101,7 @@ describe('Talent XP Cost', () => {
               mastered: false,
               expert: false,
               modifier: 0,
-              costTrain: 200,
+              costTrain: 0,
               costMaster: 300,
               costExpert: 800
             }
@@ -112,7 +112,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13950); // 13000 + 500 + 250 + 200
+      expect(actor.system.xp.spent).toBe(13750); // 13000 + 500 + 250 + 0
     });
 
     it('ignores talents without cost field', () => {

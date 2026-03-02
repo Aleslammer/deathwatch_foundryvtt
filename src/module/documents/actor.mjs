@@ -6,6 +6,7 @@ import { debug } from "../helpers/debug.mjs";
 import { XPCalculator } from "../helpers/xp-calculator.mjs";
 import { ModifierCollector } from "../helpers/modifier-collector.mjs";
 import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
+import { SkillLoader } from "../helpers/skill-loader.mjs";
 
 export class DeathwatchActor extends Actor {
 
@@ -64,6 +65,9 @@ export class DeathwatchActor extends Actor {
     if (actorData.type !== 'character') return;
 
     const systemData = actorData.system;
+
+    // Load skills dynamically from JSON
+    systemData.skills = SkillLoader.loadSkills(systemData.skills);
 
     // Calculate rank and XP using XPCalculator
     systemData.rank = XPCalculator.calculateRank(systemData.xp?.total || systemData.xp);

@@ -11,6 +11,7 @@ import { initializeHandlebars } from "./helpers/handlebars.js";
 import { CombatHelper } from "./helpers/combat.mjs";
 import { CriticalEffectsHelper } from "./helpers/critical-effects.mjs";
 import { InitiativeHelper } from "./helpers/initiative.mjs";
+import { SkillLoader } from "./helpers/skill-loader.mjs";
 
 
 /* -------------------------------------------- */
@@ -18,6 +19,9 @@ import { InitiativeHelper } from "./helpers/initiative.mjs";
 /* -------------------------------------------- */
 
 Hooks.once('init', async function () {
+
+    // Load skill definitions
+    await SkillLoader.init();
 
     // Add utility classes to the global game object so that they're more easily
     // accessible in global contexts.

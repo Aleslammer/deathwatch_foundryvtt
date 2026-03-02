@@ -15,7 +15,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
           chapterId: '',
           xp: { total: 13000 },
           skills: {
-            awareness: { trained: true, costTrain: 200, costMaster: 300, costExpert: 800 }
+            awareness: { trained: true, costTrain: 0, costMaster: 300, costExpert: 800 }
           },
           characteristics: {},
           modifiers: []
@@ -27,7 +27,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       Object.assign(actor, mockActor);
       actor._prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(13200);
+      expect(mockActor.system.xp.spent).toBe(13000);
     });
 
     it('should override skill costs when chapter is assigned', () => {
@@ -47,7 +47,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
           chapterId: 'chapter1',
           xp: { total: 13000 },
           skills: {
-            awareness: { trained: true, costTrain: 200, costMaster: 300, costExpert: 800 }
+            awareness: { trained: true, costTrain: 0, costMaster: 300, costExpert: 800 }
           },
           characteristics: {},
           modifiers: []
@@ -124,7 +124,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
           chapterId: 'chapter1',
           xp: { total: 13000 },
           skills: {
-            awareness: { trained: true, costTrain: 200, costMaster: 300, costExpert: 800 },
+            awareness: { trained: true, costTrain: 0, costMaster: 300, costExpert: 800 },
             command: { trained: true, costTrain: 300, costMaster: 500, costExpert: 800 }
           },
           characteristics: {},
