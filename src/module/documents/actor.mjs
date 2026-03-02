@@ -88,6 +88,16 @@ export class DeathwatchActor extends Actor {
     
     systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
+
+    // Calculate movement based on Agility Bonus
+    const agBonus = systemData.characteristics?.ag?.mod || 0;
+    if (!systemData.movement) {
+      systemData.movement = {};
+    }
+    systemData.movement.half = agBonus;
+    systemData.movement.full = agBonus * 2;
+    systemData.movement.charge = agBonus * 3;
+    systemData.movement.run = agBonus * 6;
   }
 
   /**

@@ -52,6 +52,17 @@
             </div>
           </div>
         </div>
+        <div style="flex: 0 0 125px; text-align: center;">
+          <div class="movement-box">
+            <h4 class="box-title">Movement</h4>
+            <table style="width: 100%; font-size: 0.8em; margin-top: 4px;">
+              <tr><td style="text-align: left; padding: 2px 4px;">Half:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.half}}{{else}}0{{/if}}m</td></tr>
+              <tr><td style="text-align: left; padding: 2px 4px;">Full:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.full}}{{else}}0{{/if}}m</td></tr>
+              <tr><td style="text-align: left; padding: 2px 4px;">Charge:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.charge}}{{else}}0{{/if}}m</td></tr>
+              <tr><td style="text-align: left; padding: 2px 4px;">Run:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.run}}{{else}}0{{/if}}m</td></tr>
+            </table>
+          </div>
+        </div>
         <div style="flex: 1;"></div>
         <div style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
           <div class="resource flex-group-center" style="width: 200px;">

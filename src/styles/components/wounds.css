@@ -9,6 +9,24 @@
   background: rgba(144, 238, 144, 0.2); /* Light green default (0-25%) */
 }
 
+/* Movement Box - neutral background */
+.deathwatch .movement-box {
+  width: 125px;
+  height: 100px;
+  text-align: center;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
+  position: relative;
+  background: #f5f5f5;
+}
+
+.deathwatch .movement-box h4.box-title {
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-md);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
+}
+
 /* Yellow tint for 26-74% */
 .deathwatch .wounds-box.wounds-warning {
   background: rgba(255, 255, 0, 0.2);

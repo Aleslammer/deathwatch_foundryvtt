@@ -1,7 +1,7 @@
 {
   "name": "Librarian",
   "type": "specialty",
-  "img": "icons/svg/book.svg",
+  "img": "systems/deathwatch/icons/specialty/librarian.webp",
   "system": {
     "description": "<p>Librarians are psykers who have been trained to harness the power of the Warp. They serve as the Chapter's psychic warriors and keepers of lore, wielding devastating psychic powers in battle.</p>",
     "book": "Deathwatch Core Rulebook",

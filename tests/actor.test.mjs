@@ -227,6 +227,37 @@ describe('DeathwatchActor', () => {
       mockActor._prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.value).toBe(50); // 40 + 5 + 5
     });
+
+    it('calculates movement based on agility bonus', () => {
+      mockActor.system.characteristics.ag.base = 50;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.movement).toEqual({
+        half: 5,
+        full: 10,
+        charge: 15,
+        run: 30
+      });
+    });
+
+    it('calculates movement with different agility bonuses', () => {
+      mockActor.system.characteristics.ag.base = 30;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.movement.half).toBe(3);
+      expect(mockActor.system.movement.full).toBe(6);
+      expect(mockActor.system.movement.charge).toBe(9);
+      expect(mockActor.system.movement.run).toBe(18);
+    });
+
+    it('handles zero agility bonus for movement', () => {
+      mockActor.system.characteristics.ag.base = 5;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.movement).toEqual({
+        half: 0,
+        full: 0,
+        charge: 0,
+        run: 0
+      });
+    });
   });
 
   describe('_prepareNpcData', () => {
