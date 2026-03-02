@@ -186,8 +186,28 @@
     {{!-- Biography Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
       <div class="biography-section">
-        <h3 class="section-header">Biography</h3>
-        {{editor system.biography target="system.biography" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+        <h3 class="section-header">Description</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 80px; flex-shrink: 0;">Gender</label>
+            <input type="text" name="system.gender" value="{{system.gender}}" placeholder="Gender" style="flex: 1;" />
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 80px; flex-shrink: 0;">Age</label>
+            <input type="text" name="system.age" value="{{system.age}}" placeholder="Age" style="flex: 1;" />
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 80px; flex-shrink: 0;">Complexion</label>
+            <input type="text" name="system.complexion" value="{{system.complexion}}" placeholder="Complexion" style="flex: 1;" />
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 80px; flex-shrink: 0;">Hair</label>
+            <input type="text" name="system.hair" value="{{system.hair}}" placeholder="Hair" style="flex: 1;" />
+          </div>
+        </div>
+        <div class="editor" style="height: 150px; border: 1px solid #ccc; border-radius: 3px;">
+          {{editor system.description target="system.description" rollData=rollData button=true owner=owner editable=editable}}
+        </div>
       </div>
       
       <div class="demeanours-section">
@@ -217,7 +237,9 @@
       
       <div class="past-events-section">
         <h3 class="section-header">Past Events</h3>
-        {{editor system.pastEvents target="system.pastEvents" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+        <div class="editor" style="height: 150px; border: 1px solid #ccc; border-radius: 3px;">
+          {{editor system.pastEvents target="system.pastEvents" rollData=rollData button=true owner=owner editable=editable}}
+        </div>
       </div>
     </div>
 

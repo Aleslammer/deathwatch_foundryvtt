@@ -33,7 +33,11 @@
                 }
             },
             "chapterId": "",
-            "biography": "",
+            "gender": "",
+            "age": "",
+            "complexion": "",
+            "hair": "",
+            "description": "",
             "pastEvents": "",
             "specialty": "",
             "specialtyId": "",
