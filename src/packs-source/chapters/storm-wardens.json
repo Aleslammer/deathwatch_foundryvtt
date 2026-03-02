@@ -24,6 +24,12 @@
         "effectType": "characteristic",
         "valueAffected": "str",
         "enabled": true
+      },
+      {
+        "name": "Chapter Wounds",
+        "modifier": 2,
+        "effectType": "wounds",
+        "enabled": true
       }
     ]
   }

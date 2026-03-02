@@ -89,7 +89,7 @@ export class CombatHelper {
     let rangeLabel = "Unknown";
     let distanceText = "";
     
-    if (attackerToken && targetToken && weapon.system.range) {
+    if (attackerToken && targetToken) {
       const weaponRange = parseInt(weapon.system.range) || 0;
       if (weaponRange > 0) {
         const distance = this.getTokenDistance(attackerToken, targetToken);
@@ -99,6 +99,8 @@ export class CombatHelper {
           rangeLabel = rangeInfo.label;
           distanceText = `<div class="form-group"><strong>Distance:</strong> ${Math.round(distance)}m (${rangeLabel} Range: ${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod})</div>`;
         }
+      } else {
+        distanceText = `<div class="form-group"><strong>Warning:</strong> Weapon has no range value set (range: ${weapon.system.range})</div>`;
       }
     }
 

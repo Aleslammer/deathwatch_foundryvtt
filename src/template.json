@@ -1540,6 +1540,11 @@
             "damage": "1d10",
             "damageType": "",
             "weaponType": "",
+            "range": 0,
+            "rof": "S/-/-",
+            "dmg": "1d10",
+            "penetration": 0,
+            "class": "",
             "equipped": false,
             "jammed": false,
             "capacity": {
