@@ -64,9 +64,10 @@ export class ModifierHelper {
           <option value="${EFFECT_TYPES.SKILL}" ${modifier.effectType === EFFECT_TYPES.SKILL ? 'selected' : ''}>Skill</option>
           <option value="${EFFECT_TYPES.CHARACTERISTIC_BONUS}" ${modifier.effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS ? 'selected' : ''}>Characteristic Bonus</option>
           <option value="${EFFECT_TYPES.INITIATIVE}" ${modifier.effectType === EFFECT_TYPES.INITIATIVE ? 'selected' : ''}>Initiative</option>
+          <option value="${EFFECT_TYPES.WOUNDS}" ${modifier.effectType === EFFECT_TYPES.WOUNDS ? 'selected' : ''}>Wounds</option>
         </select>
       </div>
-      <div class="form-group" id="valueAffectedGroup">
+      <div class="form-group" id="valueAffectedGroup" style="${modifier.effectType === EFFECT_TYPES.INITIATIVE || modifier.effectType === EFFECT_TYPES.WOUNDS ? 'display: none;' : ''}">
         <label>Value Affected:</label>
         ${valueAffectedField}
       </div>
@@ -79,16 +80,20 @@ export class ModifierHelper {
         html.find('#effectType').change((ev) => {
           const effectType = ev.target.value;
           const group = html.find('#valueAffectedGroup');
-          group.find('input, select').remove();
           
-          if (effectType === EFFECT_TYPES.CHARACTERISTIC) {
-            group.append(this._getCharacteristicSelect());
-          } else if (effectType === EFFECT_TYPES.SKILL) {
-            group.append(this._getSkillSelect());
-          } else if (effectType === EFFECT_TYPES.INITIATIVE) {
-            group.append(`<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`);
+          if (effectType === EFFECT_TYPES.INITIATIVE || effectType === EFFECT_TYPES.WOUNDS) {
+            group.hide();
           } else {
-            group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
+            group.show();
+            group.find('input, select').remove();
+            
+            if (effectType === EFFECT_TYPES.CHARACTERISTIC || effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS) {
+              group.append(this._getCharacteristicSelect());
+            } else if (effectType === EFFECT_TYPES.SKILL) {
+              group.append(this._getSkillSelect());
+            } else {
+              group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
+            }
           }
         });
       },
@@ -118,12 +123,10 @@ export class ModifierHelper {
   }
 
   static _getValueAffectedField(modifier) {
-    if (modifier.effectType === EFFECT_TYPES.CHARACTERISTIC) {
+    if (modifier.effectType === EFFECT_TYPES.CHARACTERISTIC || modifier.effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS) {
       return this._getCharacteristicSelect(modifier.valueAffected);
     } else if (modifier.effectType === EFFECT_TYPES.SKILL) {
       return this._getSkillSelect(modifier.valueAffected);
-    } else if (modifier.effectType === EFFECT_TYPES.INITIATIVE) {
-      return `<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`;
     } else {
       return `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
     }

@@ -83,6 +83,7 @@ export class DeathwatchActor extends Actor {
     }
     
     systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
+    ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
   }
 
   /**

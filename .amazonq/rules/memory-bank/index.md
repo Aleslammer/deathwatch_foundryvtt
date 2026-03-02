@@ -25,6 +25,10 @@ Documentation for the Deathwatch Foundry VTT system, including architecture, gui
 **Purpose**: Summary of 2024 refactoring improvements  
 **Contents**: Key achievements, new helper classes, patterns established
 
+### 6. modifiers.md
+**Purpose**: Modifier system documentation  
+**Contents**: Modifier architecture, effect types, sources, implementation details, examples
+
 ## Quick Reference
 
 ### File Locations

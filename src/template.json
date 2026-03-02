@@ -8,6 +8,7 @@
             "base": {
                 "wounds": {
                     "value": 0,
+                    "base": 0,
                     "max": 0
                 },
                 "fatigue": {

@@ -41,6 +41,17 @@
           <img src="{{rankImage}}" title="Rank {{system.rank}}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 3px; border: 1px solid #999;" />
           <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Rank</div>
         </div>
+        <div style="flex: 0 0 125px; text-align: center;">
+          <div class="wounds-box {{woundColorClass}}">
+            <h4 class="box-title">Wounds</h4>
+            <div class="wounds-center">{{system.wounds.value}}</div>
+            <input class="wounds-center-input" name="system.wounds.value" type="text" value="{{system.wounds.value}}" data-dtype="Number" title="Current Wounds" />
+            <div class="wounds-modifiers flexrow">
+              <span class="wounds-max" title="{{#if system.wounds.modifiers.length}}Modified Max Wounds&#10;&#10;Base: {{system.wounds.base}}&#10;{{#each system.wounds.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}} ({{this.source}})&#10;{{/each}}Total: {{system.wounds.max}}{{else}}Modified Max Wounds{{/if}}">{{system.wounds.max}}</span>
+              <input class="wounds-base" name="system.wounds.base" type="text" value="{{system.wounds.base}}" data-dtype="Number" placeholder="0" title="Base Max Wounds" />
+            </div>
+          </div>
+        </div>
         <div style="flex: 1;"></div>
         <div style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
           <div class="resource flex-group-center" style="width: 200px;">
@@ -51,14 +62,6 @@
               <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
             </div>
             <div style="font-size: 0.75em; color: {{#if (lt system.xp.available 0)}}#cc0000{{else}}#666{{/if}}; text-align: center; margin-top: 2px;">{{system.xp.available}} available</div>
-          </div>
-          <div class="resource flex-group-center" style="width: 200px;">
-            <label for="system.wounds.value" class="resource-label">Wounds</label>
-            <div class="resource-content flexrow flex-center flex-between">
-              <input type="text" name="system.wounds.value" value="{{system.wounds.value}}" data-dtype="Number" />
-              <span> / </span>
-              <input type="text" name="system.wounds.max" value="{{system.wounds.max}}" data-dtype="Number" />
-            </div>
           </div>
         </div>
       </div>
@@ -90,7 +93,7 @@
           </div>
           <h4 class="characteristic-name box-title rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" data-tooltip="{{#if characteristic.modifiers.length}}<strong>Modifiers:</strong><br>{{#each characteristic.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}}<br>{{/each}}{{/if}}">{{characteristic.label}}</h4>
           <div class="characteristic-modifiers flexrow">
-            <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
+            <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" title="{{#if characteristic.bonusModifiers.length}}Characteristic Bonus&#10;&#10;Base: {{numberFormat characteristic.baseMod decimals=0 sign=true}}&#10;{{#each characteristic.bonusModifiers}}{{this.name}}: {{#if this.display}}{{this.display}}{{else}}{{numberFormat this.value decimals=0 sign=true}}{{/if}} ({{this.source}})&#10;{{/each}}Total: {{numberFormat characteristic.mod decimals=0 sign=true}}{{/if}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
             <div class="characteristic-center">{{characteristic.value}}</div>
             <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
           </div>

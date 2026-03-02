@@ -37,7 +37,8 @@ export const EFFECT_TYPES = {
   CHARACTERISTIC: 'characteristic',
   SKILL: 'skill',
   CHARACTERISTIC_BONUS: 'characteristic-bonus',
-  INITIATIVE: 'initiative'
+  INITIATIVE: 'initiative',
+  WOUNDS: 'wounds'
 };
 
 // Combat Modifiers
