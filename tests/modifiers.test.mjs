@@ -239,12 +239,20 @@ describe('ModifierHelper', () => {
       expect(result).toContain('Select Skill');
     });
 
-    it('returns disabled input for initiative effect type', () => {
+    it('returns text input for initiative effect type', () => {
       const modifier = { effectType: EFFECT_TYPES.INITIATIVE, valueAffected: '' };
       const result = ModifierHelper._getValueAffectedField(modifier);
 
-      expect(result).toContain('disabled');
-      expect(result).toContain('N/A');
+      expect(result).toContain('text');
+      expect(result).toContain('acrobatics');
+    });
+
+    it('returns text input for wounds effect type', () => {
+      const modifier = { effectType: EFFECT_TYPES.WOUNDS, valueAffected: '' };
+      const result = ModifierHelper._getValueAffectedField(modifier);
+
+      expect(result).toContain('text');
+      expect(result).toContain('acrobatics');
     });
 
     it('returns text input for other effect types', () => {

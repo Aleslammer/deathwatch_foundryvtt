@@ -6,6 +6,7 @@ import { debug } from "../helpers/debug.mjs";
 import { XPCalculator } from "../helpers/xp-calculator.mjs";
 import { ModifierCollector } from "../helpers/modifier-collector.mjs";
 import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
+import { SkillLoader } from "../helpers/skill-loader.mjs";
 
 export class DeathwatchActor extends Actor {
 
@@ -65,6 +66,14 @@ export class DeathwatchActor extends Actor {
 
     const systemData = actorData.system;
 
+    // Initialize fatePoints if not present
+    if (!systemData.fatePoints) {
+      systemData.fatePoints = { value: 0, max: 0 };
+    }
+
+    // Load skills dynamically from JSON
+    systemData.skills = SkillLoader.loadSkills(systemData.skills);
+
     // Calculate rank and XP using XPCalculator
     systemData.rank = XPCalculator.calculateRank(systemData.xp?.total || systemData.xp);
     const spentXP = XPCalculator.calculateSpentXP(this);
@@ -83,6 +92,17 @@ export class DeathwatchActor extends Actor {
     }
     
     systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
+    ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
+
+    // Calculate movement based on Agility Bonus
+    const agBonus = systemData.characteristics?.ag?.mod || 0;
+    if (!systemData.movement) {
+      systemData.movement = {};
+    }
+    systemData.movement.half = agBonus;
+    systemData.movement.full = agBonus * 2;
+    systemData.movement.charge = agBonus * 3;
+    systemData.movement.run = agBonus * 6;
   }
 
   /**

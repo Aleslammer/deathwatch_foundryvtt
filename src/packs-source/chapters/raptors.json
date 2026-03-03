@@ -16,6 +16,22 @@
       "tal00000000013": 400,
       "tal00000000046": 400,
       "tal00000000154": 600
-    }
+    },
+    "modifiers": [
+      {
+        "name": "Chapter Bonus",
+        "modifier": 5,
+        "effectType": "characteristic",
+        "valueAffected": "ag",
+        "enabled": true
+      },
+      {
+        "name": "Chapter Bonus",
+        "modifier": 5,
+        "effectType": "characteristic",
+        "valueAffected": "per",
+        "enabled": true
+      }
+    ]
   }
 }

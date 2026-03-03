@@ -15,7 +15,11 @@ export class ModifierCollector {
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
     
     for (const item of itemsArray) {
-      if (!item?.system?.equipped) continue;
+      if (!item?.system) continue;
+      
+      // Chapter items are always active (no equipped check)
+      const isActive = item.type === 'chapter' || item.system.equipped;
+      if (!isActive) continue;
       
       debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
       
@@ -72,6 +76,14 @@ export class ModifierCollector {
       let total = characteristic.base || 0;
       const appliedMods = [];
       
+      // Apply advances (+5 each)
+      if (characteristic.advances) {
+        if (characteristic.advances.simple) { total += 5; appliedMods.push({ name: 'Simple Advance', value: 5, source: 'Advances' }); }
+        if (characteristic.advances.intermediate) { total += 5; appliedMods.push({ name: 'Intermediate Advance', value: 5, source: 'Advances' }); }
+        if (characteristic.advances.trained) { total += 5; appliedMods.push({ name: 'Trained Advance', value: 5, source: 'Advances' }); }
+        if (characteristic.advances.expert) { total += 5; appliedMods.push({ name: 'Expert Advance', value: 5, source: 'Advances' }); }
+      }
+      
       for (const mod of modifiers) {
         if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
           const modValue = parseInt(mod.modifier) || 0;
@@ -83,6 +95,35 @@ export class ModifierCollector {
       characteristic.value = total;
       characteristic.modifiers = appliedMods;
       characteristic.mod = Math.floor(total / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
+      characteristic.baseMod = characteristic.mod;
+      
+      // Apply characteristic bonus modifiers (additive first, then multiplicative)
+      const bonusMods = [];
+      for (const mod of modifiers) {
+        if (mod.enabled !== false && mod.effectType === 'characteristic-bonus' && mod.valueAffected === key) {
+          const modStr = String(mod.modifier);
+          if (!modStr.startsWith('x')) {
+            const modValue = parseInt(mod.modifier) || 0;
+            characteristic.mod += modValue;
+            bonusMods.push({ name: mod.name, value: modValue, source: mod.source });
+          }
+        }
+      }
+      
+      // Apply multiplicative modifiers to base
+      for (const mod of modifiers) {
+        if (mod.enabled !== false && mod.effectType === 'characteristic-bonus' && mod.valueAffected === key) {
+          const modStr = String(mod.modifier);
+          if (modStr.startsWith('x')) {
+            const multiplier = parseFloat(modStr.substring(1)) || 1;
+            const multipliedValue = Math.floor(characteristic.baseMod * multiplier);
+            const addedValue = multipliedValue - characteristic.baseMod;
+            characteristic.mod += addedValue;
+            bonusMods.push({ name: mod.name, value: multipliedValue, source: mod.source, display: modStr });
+          }
+        }
+      }
+      characteristic.bonusModifiers = bonusMods;
     }
   }
 
@@ -110,5 +151,27 @@ export class ModifierCollector {
     }
     
     return total;
+  }
+
+  static applyWoundModifiers(wounds, modifiers) {
+    if (!wounds) return;
+    
+    if (wounds.base === undefined) {
+      wounds.base = wounds.max;
+    }
+    
+    let total = wounds.base || 0;
+    const appliedMods = [];
+    
+    for (const mod of modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'wounds') {
+        const modValue = parseInt(mod.modifier) || 0;
+        total += modValue;
+        appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
+      }
+    }
+    
+    wounds.max = total;
+    wounds.modifiers = appliedMods;
   }
 }

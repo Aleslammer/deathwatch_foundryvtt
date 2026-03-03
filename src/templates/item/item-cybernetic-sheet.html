@@ -1,0 +1,65 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64" />
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+      <div class="form-group">
+        <label><input type="checkbox" name="system.equipped" {{checked system.equipped}} /> Equipped</label>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">Description</a>
+    <a class="item" data-tab="modifiers">Modifiers</a>
+    <a class="item" data-tab="source">Source</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="description">
+      {{editor system.description target="system.description" button=true owner=owner editable=editable engine="prosemirror"}}
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="modifiers">
+      <ol class="modifiers-list">
+        <li class="modifier flexrow items-header">
+          <div class="modifier-name">Name</div>
+          <div class="modifier-value">Modifier</div>
+          <div class="modifier-effect">Effect Type</div>
+          <div class="modifier-target">Target</div>
+          <div class="modifier-controls">
+            <a class="modifier-control modifier-create" title="Create Modifier"><i class="fas fa-plus"></i></a>
+          </div>
+        </li>
+        {{#each system.modifiers as |modifier|}}
+        <li class="modifier flexrow" data-modifier-id="{{modifier._id}}">
+          <div class="modifier-name">{{modifier.name}}</div>
+          <div class="modifier-value">{{modifier.modifier}}</div>
+          <div class="modifier-effect">{{modifier.effectType}}</div>
+          <div class="modifier-target">{{modifier.valueAffected}}</div>
+          <div class="modifier-controls">
+            <a class="modifier-control modifier-toggle" title="{{#if modifier.enabled}}Disable{{else}}Enable{{/if}}">
+              <i class="fas {{#if modifier.enabled}}fa-check-circle{{else}}fa-times-circle{{/if}}"></i>
+            </a>
+            <a class="modifier-control modifier-edit" title="Edit Modifier"><i class="fas fa-edit"></i></a>
+            <a class="modifier-control modifier-delete" title="Delete Modifier"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="source">
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Book:</label>
+          <input type="text" name="system.book" value="{{system.book}}" placeholder="e.g., Core Rulebook" />
+        </div>
+        <div class="flex1">
+          <label>Page:</label>
+          <input type="text" name="system.page" value="{{system.page}}" placeholder="e.g., 130" />
+        </div>
+      </div>
+    </div>
+  </section>
+</form>

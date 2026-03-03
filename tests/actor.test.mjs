@@ -11,10 +11,10 @@ describe('DeathwatchActor', () => {
       type: 'character',
       system: {
         characteristics: {
-          ws: { base: 40, value: 40, mod: 4 },
-          bs: { base: 45, value: 45, mod: 4 },
-          str: { base: 50, value: 50, mod: 5 },
-          ag: { base: 35, value: 35, mod: 3 }
+          ws: { base: 40, value: 40, mod: 4, advances: { simple: false, intermediate: false, trained: false, expert: false } },
+          bs: { base: 45, value: 45, mod: 4, advances: { simple: false, intermediate: false, trained: false, expert: false } },
+          str: { base: 50, value: 50, mod: 5, advances: { simple: false, intermediate: false, trained: false, expert: false } },
+          ag: { base: 35, value: 35, mod: 3, advances: { simple: false, intermediate: false, trained: false, expert: false } }
         },
         skills: {
           awareness: { trained: true, modifier: 0 }
@@ -218,6 +218,57 @@ describe('DeathwatchActor', () => {
         value: 10,
         source: undefined
       });
+    });
+
+    it('applies characteristic advances from checkboxes', () => {
+      mockActor.system.characteristics.ws.base = 40;
+      mockActor.system.characteristics.ws.advances.simple = true;
+      mockActor.system.characteristics.ws.advances.intermediate = true;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.characteristics.ws.value).toBe(50); // 40 + 5 + 5
+    });
+
+    it('calculates movement based on agility bonus', () => {
+      mockActor.system.characteristics.ag.base = 50;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.movement).toEqual({
+        half: 5,
+        full: 10,
+        charge: 15,
+        run: 30
+      });
+    });
+
+    it('calculates movement with different agility bonuses', () => {
+      mockActor.system.characteristics.ag.base = 30;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.movement.half).toBe(3);
+      expect(mockActor.system.movement.full).toBe(6);
+      expect(mockActor.system.movement.charge).toBe(9);
+      expect(mockActor.system.movement.run).toBe(18);
+    });
+
+    it('handles zero agility bonus for movement', () => {
+      mockActor.system.characteristics.ag.base = 5;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.movement).toEqual({
+        half: 0,
+        full: 0,
+        charge: 0,
+        run: 0
+      });
+    });
+
+    it('initializes fatePoints if not present', () => {
+      delete mockActor.system.fatePoints;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatePoints).toEqual({ value: 0, max: 0 });
+    });
+
+    it('preserves existing fatePoints values', () => {
+      mockActor.system.fatePoints = { value: 2, max: 3 };
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatePoints).toEqual({ value: 2, max: 3 });
     });
   });
 

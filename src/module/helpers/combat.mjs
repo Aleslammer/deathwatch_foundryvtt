@@ -39,7 +39,8 @@ export class CombatHelper {
     }
 
     const bs = actor.system.characteristics.bs.value || 0;
-    const bsAdv = actor.system.characteristics.bs.advances || 0;
+    const advances = actor.system.characteristics.bs.advances || {};
+    const bsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
     const targetNumber = CombatDialogHelper.calculateClearJamTarget(bs, bsAdv);
 
     const roll = await FoundryAdapter.evaluateRoll('1d100');
@@ -73,7 +74,8 @@ export class CombatHelper {
     }
 
     const bs = actor.system.characteristics.bs.base || actor.system.characteristics.bs.value;
-    const bsAdv = actor.system.characteristics.bs.advances || 0;
+    const advances = actor.system.characteristics.bs.advances || {};
+    const bsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
 
     // Get selected tokens for range calculation
     const attackerToken = canvas.tokens.controlled[0];
@@ -87,7 +89,7 @@ export class CombatHelper {
     let rangeLabel = "Unknown";
     let distanceText = "";
     
-    if (attackerToken && targetToken && weapon.system.range) {
+    if (attackerToken && targetToken) {
       const weaponRange = parseInt(weapon.system.range) || 0;
       if (weaponRange > 0) {
         const distance = this.getTokenDistance(attackerToken, targetToken);
@@ -97,6 +99,8 @@ export class CombatHelper {
           rangeLabel = rangeInfo.label;
           distanceText = `<div class="form-group"><strong>Distance:</strong> ${Math.round(distance)}m (${rangeLabel} Range: ${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod})</div>`;
         }
+      } else {
+        distanceText = `<div class="form-group"><strong>Warning:</strong> Weapon has no range value set (range: ${weapon.system.range})</div>`;
       }
     }
 

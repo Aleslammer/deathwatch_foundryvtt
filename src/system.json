@@ -89,6 +89,27 @@
             "path": "packs/chapters",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "specialties",
+            "label": "Specialties",
+            "path": "packs/specialties",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
+            "name": "implants",
+            "label": "Implants",
+            "path": "packs/implants",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
+            "name": "cybernetics",
+            "label": "Cybernetics",
+            "path": "packs/cybernetics",
+            "type": "Item",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

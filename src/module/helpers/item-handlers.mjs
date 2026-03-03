@@ -29,22 +29,6 @@ export class ItemHandlers {
   }
 
   /**
-   * Handle characteristic items (separate demeanours)
-   * @param {Object} item The characteristic item
-   * @returns {string} The category ('demeanour' or 'characteristic')
-   */
-  static characteristic(item) {
-    const demeanourNames = [
-      'Zeal', 'Thirst', 'Lion', 'Russ', 'Glory', 'Codex',
-      'Calculating', 'Gregarious', 'Hot-Blooded', 'Studious',
-      'Taciturn', 'Pious', 'Stoic', 'Scornful', 'Ambitious', 'Proud'
-    ];
-    
-    const isDemeanour = demeanourNames.some(name => item.name?.includes(name));
-    return isDemeanour ? 'demeanour' : 'characteristic';
-  }
-
-  /**
    * Process all items and categorize them
    * @param {Array} items The items to process
    * @returns {Object} Categorized items
@@ -61,8 +45,9 @@ export class ItemHandlers {
       talents: [],
       traits: [],
       specialties: [],
-      characteristicAdvances: [],
       chapters: [],
+      implants: [],
+      cybernetics: [],
       spells: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] }
     };
 
@@ -84,8 +69,10 @@ export class ItemHandlers {
           categories.gear.push(item);
           break;
         case 'characteristic':
-          const category = this.characteristic(item);
-          categories[category === 'demeanour' ? 'demeanours' : 'characteristics'].push(item);
+          categories.characteristics.push(item);
+          break;
+        case 'demeanour':
+          categories.demeanours.push(item);
           break;
         case 'critical-effect':
           categories.criticalEffects.push(item);
@@ -99,11 +86,14 @@ export class ItemHandlers {
         case 'specialty':
           categories.specialties.push(item);
           break;
-        case 'characteristic-advance':
-          categories.characteristicAdvances.push(item);
-          break;
         case 'chapter':
           categories.chapters.push(item);
+          break;
+        case 'implant':
+          categories.implants.push(item);
+          break;
+        case 'cybernetic':
+          categories.cybernetics.push(item);
           break;
         case 'spell':
           if (item.system.spellLevel !== undefined) {
@@ -119,6 +109,9 @@ export class ItemHandlers {
         categories.ammunition.push(item);
       }
     }
+
+    // Sort talents by name
+    categories.talents.sort((a, b) => a.name.localeCompare(b.name));
 
     return categories;
   }

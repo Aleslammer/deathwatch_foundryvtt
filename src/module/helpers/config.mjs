@@ -71,7 +71,7 @@ DWConfig.Skills = {
     "interrogation": "Interrogation",
     "invocation": "Invocation",
     "lip_reading": "Lip Reading",
-    "literacty": "Literacy",
+    "literacy": "Literacy",
     "lore_common_adeptus_arbites": "Lore Common: Adeptus Arbites",
     "lore_common_adeptus_astartes": "Lore Common: Adeptus Astartes",
     "lore_common_adeptus_mechanicus": "Lore Common: Adeptus Mechanicus",

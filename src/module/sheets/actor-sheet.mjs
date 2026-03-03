@@ -5,6 +5,8 @@ import { ModifierHelper } from "../helpers/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/chat-message-builder.mjs";
 import { ItemHandlers } from "../helpers/item-handlers.mjs";
+import { getRankImage } from "../helpers/rank-helper.mjs";
+import { WoundHelper } from "../helpers/wound-helper.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -102,6 +104,11 @@ export class DeathwatchActorSheet extends ActorSheet {
       context.chapterItem = this.actor.items.get(context.system.chapterId);
     }
 
+    // Get specialty item if set
+    if (context.system.specialtyId) {
+      context.specialtyItem = this.actor.items.get(context.system.specialtyId);
+    }
+
     // Get chapter skill cost overrides
     const chapterSkillCosts = {};
     if (context.chapterItem && context.chapterItem.system.skillCosts) {
@@ -110,7 +117,14 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
-      for (let [k, v] of Object.entries(context.system.skills)) {
+      const sortedSkills = Object.entries(context.system.skills)
+        .sort(([keyA, a], [keyB, b]) => {
+          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
+          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
+          return labelA.localeCompare(labelB);
+        });
+
+      for (const [k, v] of sortedSkills) {
         v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
         const liveSkill = this.actor.system.skills[k];
         const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
@@ -128,6 +142,13 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Add config to context for template access
     context.config = game.deathwatch.config;
+
+    // Add rank image
+    context.rankImage = getRankImage(context.system.rank);
+
+    // Calculate wound color class
+    const wounds = context.system.wounds;
+    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
   }
 
   /**
@@ -198,6 +219,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       if (trait) ChatMessageBuilder.createItemCard(trait, this.actor);
     });
 
+    // Show implant in chat
+    html.find('.implant-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const implant = this.actor.items.get(itemId);
+      if (implant) ChatMessageBuilder.createItemCard(implant, this.actor);
+    });
+
     // Remove armor history from armor
     html.find('.history-remove').click(async ev => {
       const historyId = $(ev.currentTarget).data('historyId');
@@ -217,6 +246,14 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
+    // Toggle Equip Item
+    html.find('.item-equip').click(async ev => {
+      ev.preventDefault();
+      const li = $(ev.currentTarget).closest(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      await item.update({ "system.equipped": !item.system.equipped });
+    });
+
     // Add Inventory Item
     html.find('.item-create').click(this._onItemCreate.bind(this));
 
@@ -226,13 +263,6 @@ export class DeathwatchActorSheet extends ActorSheet {
       const item = this.actor.items.get(li.data("itemId"));
       item.delete();
       li.slideUp(200, () => this.render(false));
-    });
-
-    // Toggle Equip Item
-    html.find('.item-equip').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.items.get(li.data("itemId"));
-      item.update({ "system.equipped": !item.system.equipped });
     });
 
     // Active Effect management
@@ -254,16 +284,20 @@ export class DeathwatchActorSheet extends ActorSheet {
     });
 
     // Skill checkbox cascade logic
-    html.find('input[type="checkbox"][name*=".trained"]').change(ev => {
-      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.trained/)[1];
+    html.find('input[type="checkbox"][name*="system.skills."][name*=".trained"]').change(ev => {
+      const match = ev.target.name.match(/system\.skills\.(\w+)\.trained/);
+      if (!match) return;
+      const skillKey = match[1];
       if (!ev.target.checked) {
         html.find(`input[name="system.skills.${skillKey}.mastered"]`).prop('checked', false);
         html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
     });
 
-    html.find('input[type="checkbox"][name*=".mastered"]').change(ev => {
-      const skillKey = ev.target.name.match(/system\.skills\.(\w+)\.mastered/)[1];
+    html.find('input[type="checkbox"][name*="system.skills."][name*=".mastered"]').change(ev => {
+      const match = ev.target.name.match(/system\.skills\.(\w+)\.mastered/);
+      if (!match) return;
+      const skillKey = match[1];
       if (!ev.target.checked) {
         html.find(`input[name="system.skills.${skillKey}.expert"]`).prop('checked', false);
       }
@@ -338,6 +372,25 @@ export class DeathwatchActorSheet extends ActorSheet {
       }
       await this.actor.update({ "system.chapterId": "" });
       ui.notifications.info('Chapter removed.');
+    });
+
+    // Drop handler for specialty
+    html.find('.specialty-drop-zone').each((i, el) => {
+      el.addEventListener('drop', this._onDropSpecialty.bind(this), false);
+      el.addEventListener('dragover', ev => ev.preventDefault(), false);
+    });
+
+    // Remove specialty
+    html.find('.specialty-remove').click(async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const specialtyId = this.actor.system.specialtyId;
+      if (specialtyId) {
+        const specialty = this.actor.items.get(specialtyId);
+        if (specialty) await specialty.delete();
+      }
+      await this.actor.update({ "system.specialtyId": "" });
+      ui.notifications.info('Specialty removed.');
     });
   }
 
@@ -700,6 +753,36 @@ export class DeathwatchActorSheet extends ActorSheet {
     const chapterItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
     await this.actor.update({ "system.chapterId": chapterItem.id });
     ui.notifications.info(`Chapter set to ${chapterItem.name}.`);
+  }
+
+  /**
+   * Handle dropping a specialty item
+   * @param {Event} event The drop event
+   * @private
+   */
+  async _onDropSpecialty(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== 'specialty') {
+      ui.notifications.warn('Only specialty items can be dropped here.');
+      return;
+    }
+
+    if (this.actor.system.specialtyId) {
+      const existingSpecialty = this.actor.items.get(this.actor.system.specialtyId);
+      if (existingSpecialty) {
+        await existingSpecialty.delete();
+      }
+    }
+
+    const specialtyItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
+    await this.actor.update({ "system.specialtyId": specialtyItem.id });
+    ui.notifications.info(`Specialty set to ${specialtyItem.name}.`);
   }
 
 }

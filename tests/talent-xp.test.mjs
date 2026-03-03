@@ -37,7 +37,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13800); // 13000 base + 500 + 300
+      expect(actor.system.xp.spent).toBe(12800); // 12000 base + 500 + 300
     });
 
     it('handles talents with zero cost', () => {
@@ -68,13 +68,14 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13000); // 13000 base only
+      expect(actor.system.xp.spent).toBe(12000); // 12000 base only
     });
 
     it('combines talent costs with skill and characteristic advance costs', () => {
+      const mockSpecialty = { type: 'specialty', system: { characteristicCosts: { ws: { simple: 250 } } } };
       const mockItems = [
         { type: 'talent', system: { cost: 500 } },
-        { type: 'characteristic-advance', system: { cost: 250 } }
+        mockSpecialty
       ];
 
       const actor = new DeathwatchActor({
@@ -82,8 +83,9 @@ describe('Talent XP Cost', () => {
         type: 'character',
         system: {
           xp: { total: 20000, spent: 0 },
+          specialtyId: 'spec1',
           characteristics: {
-            ws: { value: 40 },
+            ws: { value: 40, advances: { simple: true } },
             bs: { value: 40 },
             str: { value: 40 },
             tg: { value: 40 },
@@ -101,7 +103,7 @@ describe('Talent XP Cost', () => {
               mastered: false,
               expert: false,
               modifier: 0,
-              costTrain: 200,
+              costTrain: 0,
               costMaster: 300,
               costExpert: 800
             }
@@ -109,10 +111,10 @@ describe('Talent XP Cost', () => {
         }
       });
 
-      actor.items = mockItems;
+      actor.items = { [Symbol.iterator]: function* () { yield* mockItems; }, get: (id) => id === 'spec1' ? mockSpecialty : null };
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13950); // 13000 + 500 + 250 + 200
+      expect(actor.system.xp.spent).toBe(12750); // 12000 + 500 + 250 + 0
     });
 
     it('ignores talents without cost field', () => {
@@ -143,7 +145,7 @@ describe('Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13000); // 13000 base only
+      expect(actor.system.xp.spent).toBe(12000); // 12000 base only
     });
   });
 });

@@ -38,7 +38,7 @@ describe('Stackable Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(13500); // 13000 + 500
+      expect(actor.system.xp.spent).toBe(12500); // 12000 + 500
     });
   });
 
@@ -91,7 +91,7 @@ describe('Stackable Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(15500); // 13000 + 500 + 1000 + 1000
+      expect(actor.system.xp.spent).toBe(14500); // 12000 + 500 + 1000 + 1000
     });
   });
 
@@ -135,7 +135,7 @@ describe('Stackable Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(15000); // 13000 + 1000 + 1000
+      expect(actor.system.xp.spent).toBe(14000); // 12000 + 1000 + 1000
     });
   });
 
@@ -188,7 +188,7 @@ describe('Stackable Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(15500); // 13000 + 500 + 1000 + 1000
+      expect(actor.system.xp.spent).toBe(14500); // 12000 + 500 + 1000 + 1000
     });
   });
 
@@ -232,7 +232,7 @@ describe('Stackable Talent XP Cost', () => {
       actor.items = mockItems;
       actor._prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(14000); // 13000 + 500 + 500
+      expect(actor.system.xp.spent).toBe(13000); // 12000 + 500 + 500
     });
   });
 
@@ -296,8 +296,8 @@ describe('Stackable Talent XP Cost', () => {
 
       // Sound Constitution: 500 + 1000 = 1500
       // Signature Wargear: 500 + 1000 = 1500
-      // Total: 13000 + 1500 + 1500 = 16000
-      expect(actor.system.xp.spent).toBe(16000);
+      // Total: 12000 + 1500 + 1500 = 15000
+      expect(actor.system.xp.spent).toBe(15000);
     });
   });
 });

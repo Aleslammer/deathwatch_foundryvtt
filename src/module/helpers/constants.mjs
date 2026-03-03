@@ -37,7 +37,8 @@ export const EFFECT_TYPES = {
   CHARACTERISTIC: 'characteristic',
   SKILL: 'skill',
   CHARACTERISTIC_BONUS: 'characteristic-bonus',
-  INITIATIVE: 'initiative'
+  INITIATIVE: 'initiative',
+  WOUNDS: 'wounds'
 };
 
 // Combat Modifiers
@@ -69,7 +70,7 @@ export const RANGE_MODIFIERS = {
 
 // XP Constants
 export const XP_CONSTANTS = {
-  STARTING_XP: 13000,
+  STARTING_XP: 12000,
   RANK_THRESHOLDS: [13000, 17000, 21000, 25000, 30000, 35000, 40000, 45000]
 };
 

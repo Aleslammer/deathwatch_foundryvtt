@@ -1,0 +1,94 @@
+/* Wounds Box Styles */
+.deathwatch .wounds-box {
+  width: 125px;
+  height: 100px;
+  text-align: center;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
+  position: relative;
+  background: rgba(144, 238, 144, 0.2); /* Light green default (0-25%) */
+}
+
+/* Movement Box - neutral background */
+.deathwatch .movement-box {
+  width: 125px;
+  height: 100px;
+  text-align: center;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
+  position: relative;
+  background: #f5f5f5;
+}
+
+.deathwatch .movement-box h4.box-title {
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-md);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
+}
+
+/* Yellow tint for 26-74% */
+.deathwatch .wounds-box.wounds-warning {
+  background: rgba(255, 255, 0, 0.2);
+}
+
+/* Red tint for 75%+ */
+.deathwatch .wounds-box.wounds-danger {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.deathwatch .wounds-box h4.box-title {
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-md);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
+}
+
+.deathwatch .wounds-box .wounds-center {
+  display: none;
+}
+
+.deathwatch .wounds-box input[type="text"].wounds-center-input {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: var(--dw-font-size-xxl);
+  font-weight: bold;
+  padding: 0;
+}
+
+.deathwatch .wounds-box .wounds-modifiers {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.deathwatch .wounds-box .wounds-modifiers span.wounds-max,
+.deathwatch .wounds-box .wounds-modifiers input[type="text"].wounds-base {
+  flex: 0 0 40px;
+  height: 30px;
+  overflow: hidden;
+  border-top: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  font-size: var(--dw-font-size-sm);
+}
+
+.deathwatch .wounds-box .wounds-modifiers span.wounds-max {
+  border-right: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  padding: var(--dw-spacing-md) 0 0;
+  background: #f0f0f0;
+}
+
+.deathwatch .wounds-box .wounds-modifiers input[type="text"].wounds-base {
+  border-left: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: 0;
+}

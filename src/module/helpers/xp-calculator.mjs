@@ -53,11 +53,16 @@ export class XPCalculator {
    * @private
    */
   static _calculateCharacteristicAdvanceCosts(actor) {
+    const specialty = actor.system.specialtyId ? actor.items.get(actor.system.specialtyId) : null;
+    const costs = specialty?.system.characteristicCosts || {};
+    
     let total = 0;
-    for (const item of actor.items) {
-      if (item.type === 'characteristic-advance' && item.system.cost) {
-        total += item.system.cost;
-      }
+    for (const [key, char] of Object.entries(actor.system.characteristics || {})) {
+      const charCosts = costs[key] || {};
+      if (char.advances?.simple) total += charCosts.simple || 0;
+      if (char.advances?.intermediate) total += charCosts.intermediate || 0;
+      if (char.advances?.trained) total += charCosts.trained || 0;
+      if (char.advances?.expert) total += charCosts.expert || 0;
     }
     return total;
   }
@@ -89,11 +94,11 @@ export class XPCalculator {
       talent.count++;
       
       if (talent.count === 1) {
-        total += cost;
+        total += Math.max(0, cost);
       } else if (talent.stackable && talent.subsequentCost) {
-        total += talent.subsequentCost;
+        total += Math.max(0, talent.subsequentCost);
       } else {
-        total += cost;
+        total += Math.max(0, cost);
       }
     }
     
@@ -128,9 +133,9 @@ export class XPCalculator {
       const masterCost = costs.costMaster ?? skill.costMaster ?? 0;
       const expertCost = costs.costExpert ?? skill.costExpert ?? 0;
       
-      if (skill.trained) total += trainCost;
-      if (skill.mastered) total += masterCost;
-      if (skill.expert) total += expertCost;
+      if (skill.trained) total += Math.max(0, trainCost);
+      if (skill.mastered) total += Math.max(0, masterCost);
+      if (skill.expert) total += Math.max(0, expertCost);
     }
     
     return total;

@@ -16,6 +16,21 @@
       "tal00000000246": 800,
       "tal00000000254": 500,
       "tal00000000259": 1000
-    }
+    },
+    "modifiers": [
+      {
+        "name": "Chapter Bonus",
+        "modifier": 5,
+        "effectType": "characteristic",
+        "valueAffected": "str",
+        "enabled": true
+      },
+      {
+        "name": "Chapter Wounds",
+        "modifier": 2,
+        "effectType": "wounds",
+        "enabled": true
+      }
+    ]
   }
 }
