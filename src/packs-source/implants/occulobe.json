@@ -1,0 +1,13 @@
+{
+  "name": "Occulobe",
+  "type": "implant",
+  "img": "systems/deathwatch/icons/implants/generic.webp",
+  "system": {
+    "description": "<p>This implant grants the Space Marine the Heightened Senses (Sight) Talent.</p>",
+    "summary": "Grants Heightened Senses (Sight)",
+    "book": "Deathwatch Core Rulebook",
+    "page": "36",
+    "equipped": true,
+    "modifiers": []
+  }
+}

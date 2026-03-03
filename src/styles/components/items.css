@@ -226,6 +226,19 @@
   justify-content: flex-end;
 }
 
+/* Implants table specific widths */
+.deathwatch .implants-list .item-name,
+.deathwatch .implants-list .items-header .item-name {
+  flex: 0 0 200px;
+}
+
+.deathwatch .implants-list .item-summary,
+.deathwatch .implants-list .items-header .item-summary {
+  flex: 3;
+  text-align: left;
+  padding-left: 5px;
+}
+
 .deathwatch .item-image.rollable {
   cursor: pointer;
 }

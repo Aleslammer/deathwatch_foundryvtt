@@ -46,6 +46,8 @@ export class ItemHandlers {
       traits: [],
       specialties: [],
       chapters: [],
+      implants: [],
+      cybernetics: [],
       spells: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] }
     };
 
@@ -86,6 +88,12 @@ export class ItemHandlers {
           break;
         case 'chapter':
           categories.chapters.push(item);
+          break;
+        case 'implant':
+          categories.implants.push(item);
+          break;
+        case 'cybernetic':
+          categories.cybernetics.push(item);
           break;
         case 'spell':
           if (item.system.spellLevel !== undefined) {

@@ -117,7 +117,9 @@
             "talent",
             "trait",
             "specialty",
-            "chapter"
+            "chapter",
+            "implant",
+            "cybernetic"
         ],
         "templates": {
             "base": {
@@ -267,6 +269,25 @@
             "page": "",
             "skillCosts": {},
             "talentCosts": {},
+            "modifiers": []
+        },
+        "implant": {
+            "templates": [
+                "base"
+            ],
+            "summary": "",
+            "book": "",
+            "page": "",
+            "equipped": false,
+            "modifiers": []
+        },
+        "cybernetic": {
+            "templates": [
+                "base"
+            ],
+            "book": "",
+            "page": "",
+            "equipped": false,
             "modifiers": []
         }
     }
