@@ -13,8 +13,6 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/data-slate.png" -o 
  TODO: exclude tests from copy
  TODO: Create build that runs tests
 TODO: Add ability to add armor effects (Essentially Armour-Monger where a techmarine can add +2 to all regions of their armor)
-TODO: Astartes Weapon Specialisation (no penalty greater than -30)
-TODO: Deadeye shot reduces the penalty for Called Shot
+TODO: Review all talens to determine if effects can be applied to anythig
+
 TODO: Need to handle called shot mechanic
-TODO: Deathwatch Training Talent for confirm RF resutls
-TODO: True Grit

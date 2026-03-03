@@ -93,6 +93,7 @@ export class DeathwatchActor extends Actor {
     
     systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
+    ModifierCollector.applyArmorModifiers(this.items, allModifiers);
 
     // Calculate movement based on Agility Bonus
     const agBonus = systemData.characteristics?.ag?.mod || 0;
