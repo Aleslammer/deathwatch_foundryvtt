@@ -5,5 +5,5 @@
  */
 export function getRankImage(rank) {
   const clampedRank = Math.max(1, Math.min(8, rank || 1));
-  return `systems/deathwatch/icons/ranks/rank-${clampedRank}.svg`;
+  return `systems/deathwatch/icons/ranks/rank-${clampedRank}.webp`;
 }

@@ -270,6 +270,18 @@ describe('DeathwatchActor', () => {
       mockActor._prepareCharacterData(mockActor);
       expect(mockActor.system.fatePoints).toEqual({ value: 2, max: 3 });
     });
+
+    it('initializes renown to 0 if not present', () => {
+      delete mockActor.system.renown;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.renown).toBe(0);
+    });
+
+    it('preserves existing renown value', () => {
+      mockActor.system.renown = 50;
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.renown).toBe(50);
+    });
   });
 
   describe('_prepareNpcData', () => {

@@ -50,6 +50,7 @@
                 "value": 0,
                 "max": 0
             },
+            "renown": 0,
             "modifiers": [],
             "characteristics": {
                 "ws": {

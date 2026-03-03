@@ -3,7 +3,13 @@
   {{!-- Sheet Header --}}
   <header class="sheet-header">
     <div class="header-fields" style="width: 100%;">
-      <h1 class="charname" style="margin-bottom: 10px;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+        <h1 class="charname" style="flex: 1; margin: 0;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+        <div style="display: flex; align-items: center; gap: 8px; flex: 0 0 200px;">
+          <label style="font-weight: bold;">Renown:</label>
+          <input name="system.renown" type="text" value="{{system.renown}}" data-dtype="Number" style="width: 80px; text-align: center;" />
+        </div>
+      </div>
       <div style="display: flex; gap: 10px; align-items: flex-start;">
         <div style="flex: 0 0 100px; text-align: center;">
           <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 3px; border: 1px solid #999; cursor: pointer;" />
@@ -38,7 +44,7 @@
           {{/if}}
         </div>
         <div style="flex: 0 0 100px; text-align: center;">
-          <img src="{{rankImage}}" title="Rank {{system.rank}}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 3px; border: 1px solid #999;" />
+          <img src="{{rankImage}}" title="Rank {{system.rank}}" style="width: 100px; height: 100px; object-fit: contain; border-radius: 3px; border: 1px solid transparent;" />
           <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Rank</div>
         </div>
         <div style="flex: 0 0 125px; text-align: center;">
