@@ -36,6 +36,8 @@ describe('XPCalculator', () => {
       mockActor = {
         system: {
           chapterId: null,
+          specialtyId: null,
+          characteristics: {},
           skills: {}
         },
         items: {
@@ -50,11 +52,21 @@ describe('XPCalculator', () => {
     });
 
     it('includes characteristic advance costs', () => {
-      mockActor.items = [
-        { type: 'characteristic-advance', system: { cost: 500 } },
-        { type: 'characteristic-advance', system: { cost: 750 } }
-      ];
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13250);
+      const mockSpecialty = {
+        system: {
+          characteristicCosts: {
+            ws: { simple: 200, intermediate: 500 },
+            bs: { simple: 500 }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.characteristics = {
+        ws: { advances: { simple: true, intermediate: true } },
+        bs: { advances: { simple: true } }
+      };
+      mockActor.items.get = jest.fn(() => mockSpecialty);
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13200); // 12000 + 200 + 500 + 500
     });
 
     it('includes talent costs', () => {

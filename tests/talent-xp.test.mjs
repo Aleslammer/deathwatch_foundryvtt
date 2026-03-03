@@ -72,9 +72,10 @@ describe('Talent XP Cost', () => {
     });
 
     it('combines talent costs with skill and characteristic advance costs', () => {
+      const mockSpecialty = { type: 'specialty', system: { characteristicCosts: { ws: { simple: 250 } } } };
       const mockItems = [
         { type: 'talent', system: { cost: 500 } },
-        { type: 'characteristic-advance', system: { cost: 250 } }
+        mockSpecialty
       ];
 
       const actor = new DeathwatchActor({
@@ -82,8 +83,9 @@ describe('Talent XP Cost', () => {
         type: 'character',
         system: {
           xp: { total: 20000, spent: 0 },
+          specialtyId: 'spec1',
           characteristics: {
-            ws: { value: 40 },
+            ws: { value: 40, advances: { simple: true } },
             bs: { value: 40 },
             str: { value: 40 },
             tg: { value: 40 },
@@ -109,7 +111,7 @@ describe('Talent XP Cost', () => {
         }
       });
 
-      actor.items = mockItems;
+      actor.items = { [Symbol.iterator]: function* () { yield* mockItems; }, get: (id) => id === 'spec1' ? mockSpecialty : null };
       actor._prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(12750); // 12000 + 500 + 250 + 0
