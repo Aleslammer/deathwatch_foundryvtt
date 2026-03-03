@@ -68,3 +68,34 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - One-shot tactical combat scenarios
 - Long-term campaign character progression
 - Multi-player cooperative gameplay sessions
+
+
+### Talents and Traits System
+- Talent management with prerequisites, benefits, and XP costs
+- Trait tracking for special abilities and characteristics
+- Clickable talent/trait names post full details to chat
+- Drag-and-drop from compendium packs
+- Integrated into Characteristics tab for easy access
+- Chat cards display all relevant information (prerequisite, benefit, description, source)
+
+### Augmentations System
+- **Implants**: 19 standard Space Marine biological implants
+  - Secondary Heart, Ossmodula, Biscopea, Haemastamen, Larraman's Organ
+  - Catalepsean Node, Preomnor, Omophagea, Multi-lung, Occulobe
+  - Lyman's Ear, Sus-an Membrane, Melanchromic Organ, Oolitic Kidney
+  - Neuroglottis, Mucranoid, Betcher's Gland, Progenoids, Black Carapace
+  - Each implant includes summary and full description
+  - Clickable names post full details to chat
+- **Cybernetics**: Mechanical augmentations with modifier support
+  - Equipped/unequipped toggle
+  - Modifiers applied when equipped
+  - Support for characteristic, skill, initiative, and wound modifiers
+- Dedicated Augmentations tab on character sheet
+- All items include book references (Deathwatch Core Rulebook)
+
+### Characteristic Advances
+- Integrated checkbox system on characteristic boxes
+- Four advance levels: Simple, Intermediate, Trained, Expert
+- Each advance adds +5 to characteristic value
+- Visual feedback directly on characteristic display
+- No separate items needed for tracking advances

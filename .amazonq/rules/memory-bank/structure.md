@@ -211,3 +211,54 @@ deathwatch.mjs (Entry Point)
 - Items have requisition (req) and renown requirements
 - Reflects Deathwatch RPG's resource management
 - Book and page references for all items
+
+
+## UI Implementation Details
+
+### Characteristic Advances System
+- **Location**: Integrated directly into characteristic boxes on actor sheet
+- **Implementation**: Four checkboxes (Simple, Intermediate, Trained, Expert) per characteristic
+- **Data Structure**: Stored in `system.characteristics.{key}.advances` object
+- **Calculation**: Each checked advance adds +5 to characteristic value
+- **Application Order**: Advances applied before other modifiers in ModifierCollector
+- **Benefits**: Simpler UI, no separate items needed, direct visual feedback
+
+### Talents and Traits Display
+- **Location**: Characteristics tab, below characteristic grid
+- **Talents Section**:
+  - Displays name, benefit, prerequisite, XP cost
+  - Clickable names post full details to chat (prerequisite, benefit, description, source)
+  - Create/edit/delete controls
+  - Drag-and-drop support from compendium
+- **Traits Section**:
+  - Displays name and description
+  - Clickable names post full details to chat (description, source)
+  - Create/edit/delete controls
+  - Drag-and-drop support from compendium
+- **Chat Cards**: Formatted with talent/trait details, book references
+
+### Augmentations System
+- **Location**: Dedicated "Augmentations" tab on actor sheet
+- **Implants Section**:
+  - Displays name and summary (short description)
+  - Clickable names post full description to chat
+  - Always equipped (biological implants)
+  - 19 standard Space Marine implants included
+  - Icon: `systems/deathwatch/icons/implants/generic.webp`
+- **Cybernetics Section**:
+  - Displays name, description, equipped status
+  - Equipped checkbox (can be toggled)
+  - Modifier support (applied when equipped)
+  - Create/edit/delete controls
+- **Item Sheets**: Separate templates for implant-sheet.html and cybernetic-sheet.html
+
+### Section Header Styling
+- **Unified Style**: All section headers use `.section-header` class
+- **Appearance**: Bold text with 2px solid underline, no background box
+- **Consistency**: Applied across all tabs (Biography, Demeanours, Talents, Traits, Weapons, Armor, Gear, Augmentations)
+- **Spacing**: 15px top margin, 10px bottom margin, 5px bottom padding
+
+### Item Table Layouts
+- **Standard Layout**: Name (flex: 3), Description (flex: 2), Controls (100px)
+- **Implants Layout**: Name (200px fixed), Summary (flex: 3), Controls (100px)
+- **Responsive**: Flexbox-based columns adjust to available space
