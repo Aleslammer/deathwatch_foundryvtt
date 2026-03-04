@@ -1,6 +1,6 @@
 /* Wounds Box Styles */
 .deathwatch .wounds-box {
-  width: 125px;
+  width: 106px;
   height: 100px;
   text-align: center;
   border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
@@ -9,15 +9,77 @@
   background: rgba(144, 238, 144, 0.2); /* Light green default (0-25%) */
 }
 
-/* Movement Box - neutral background */
-.deathwatch .movement-box {
-  width: 125px;
+/* Fatigue Box Styles */
+.deathwatch .fatigue-box {
+  width: 106px;
   height: 100px;
   text-align: center;
   border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   border-radius: var(--dw-border-radius-sm);
   position: relative;
+  background: rgba(173, 216, 230, 0.2); /* Light blue default */
+}
+
+.deathwatch .fatigue-box.unconscious {
+  background: rgba(128, 0, 128, 0.3); /* Purple for unconscious */
+}
+
+.deathwatch .fatigue-box h4.box-title {
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-md);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
+}
+
+.deathwatch .fatigue-box .fatigue-center {
+  display: none;
+}
+
+.deathwatch .fatigue-box input[type="text"].fatigue-center-input {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: var(--dw-font-size-xxl);
+  font-weight: bold;
+  padding: 0;
+}
+
+.deathwatch .fatigue-box .fatigue-modifiers {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.deathwatch .fatigue-box .fatigue-modifiers span.fatigue-max {
+  flex: 1;
+  height: 30px;
+  overflow: hidden;
+  border-top: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  font-size: var(--dw-font-size-sm);
+  padding: var(--dw-spacing-md) 0 0;
+  background: #f0f0f0;
+}
+
+/* Movement Box - neutral background */
+.deathwatch .movement-box {
+  width: 106px;
+  min-height: 100px;
+  text-align: center;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
+  position: relative;
   background: #f5f5f5;
+  overflow: visible;
 }
 
 .deathwatch .movement-box h4.box-title {

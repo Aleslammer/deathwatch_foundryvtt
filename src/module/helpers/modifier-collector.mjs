@@ -5,7 +5,34 @@ export class ModifierCollector {
   static collectAllModifiers(actor) {
     const actorModifiers = actor.system.modifiers || [];
     const itemModifiers = this.collectItemModifiers(actor.items);
-    return [...actorModifiers, ...itemModifiers];
+    const effectModifiers = this.collectActiveEffectModifiers(actor);
+    return [...actorModifiers, ...itemModifiers, ...effectModifiers];
+  }
+
+  static collectActiveEffectModifiers(actor) {
+    const modifiers = [];
+    
+    if (!actor.effects) return modifiers;
+    
+    for (const effect of actor.effects) {
+      if (effect.disabled) continue;
+      
+      for (const change of effect.changes) {
+        const match = change.key.match(/^system\.characteristics\.(\w+)\.value$/);
+        if (match && change.mode === 2) {
+          modifiers.push({
+            name: effect.name,
+            modifier: change.value,
+            effectType: 'characteristic',
+            valueAffected: match[1],
+            enabled: true,
+            source: 'Status Effect'
+          });
+        }
+      }
+    }
+    
+    return modifiers;
   }
 
   static collectItemModifiers(items) {
@@ -173,6 +200,14 @@ export class ModifierCollector {
     
     wounds.max = total;
     wounds.modifiers = appliedMods;
+  }
+
+  static applyFatigueModifiers(fatigue, toughnessBonus) {
+    if (!fatigue) return;
+    
+    fatigue.max = toughnessBonus;
+    fatigue.unconscious = fatigue.value > toughnessBonus;
+    fatigue.penalty = fatigue.value > 0 ? -10 : 0;
   }
 
   static applyArmorModifiers(items, modifiers) {

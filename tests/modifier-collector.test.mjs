@@ -7,6 +7,96 @@ describe('ModifierCollector', () => {
     jest.clearAllMocks();
   });
 
+  describe('collectActiveEffectModifiers', () => {
+    it('collects modifiers from active effects', () => {
+      const actor = {
+        effects: [
+          {
+            name: 'Prone',
+            disabled: false,
+            changes: [
+              { key: 'system.characteristics.ws.value', mode: 2, value: -20 }
+            ]
+          }
+        ]
+      };
+
+      const modifiers = ModifierCollector.collectActiveEffectModifiers(actor);
+
+      expect(modifiers).toHaveLength(1);
+      expect(modifiers[0]).toMatchObject({
+        name: 'Prone',
+        modifier: -20,
+        effectType: 'characteristic',
+        valueAffected: 'ws',
+        source: 'Status Effect'
+      });
+    });
+
+    it('ignores disabled effects', () => {
+      const actor = {
+        effects: [
+          {
+            name: 'Prone',
+            disabled: true,
+            changes: [
+              { key: 'system.characteristics.ws.value', mode: 2, value: -20 }
+            ]
+          }
+        ]
+      };
+
+      const modifiers = ModifierCollector.collectActiveEffectModifiers(actor);
+
+      expect(modifiers).toHaveLength(0);
+    });
+
+    it('collects multiple modifiers from multiple effects', () => {
+      const actor = {
+        effects: [
+          {
+            name: 'Prone',
+            disabled: false,
+            changes: [
+              { key: 'system.characteristics.ws.value', mode: 2, value: -20 }
+            ]
+          },
+          {
+            name: 'Blinded',
+            disabled: false,
+            changes: [
+              { key: 'system.characteristics.ws.value', mode: 2, value: -30 }
+            ]
+          }
+        ]
+      };
+
+      const modifiers = ModifierCollector.collectActiveEffectModifiers(actor);
+
+      expect(modifiers).toHaveLength(2);
+      expect(modifiers[0].name).toBe('Prone');
+      expect(modifiers[1].name).toBe('Blinded');
+    });
+
+    it('ignores non-characteristic changes', () => {
+      const actor = {
+        effects: [
+          {
+            name: 'Effect',
+            disabled: false,
+            changes: [
+              { key: 'system.wounds.max', mode: 2, value: 5 }
+            ]
+          }
+        ]
+      };
+
+      const modifiers = ModifierCollector.collectActiveEffectModifiers(actor);
+
+      expect(modifiers).toHaveLength(0);
+    });
+  });
+
   describe('collectItemModifiers', () => {
     it('collects modifiers from chapter items without requiring equipped status', () => {
       const items = [

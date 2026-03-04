@@ -282,6 +282,29 @@ describe('DeathwatchActor', () => {
       mockActor._prepareCharacterData(mockActor);
       expect(mockActor.system.renown).toBe(50);
     });
+
+    it('applies fatigue modifiers based on toughness bonus', () => {
+      mockActor.system.characteristics.tg = { base: 40, value: 40, mod: 4 };
+      mockActor.system.fatigue = { value: 2, max: 0 };
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatigue.max).toBe(4);
+      expect(mockActor.system.fatigue.penalty).toBe(-10);
+      expect(mockActor.system.fatigue.unconscious).toBe(false);
+    });
+
+    it('marks character unconscious when fatigue exceeds TB', () => {
+      mockActor.system.characteristics.tg = { base: 40, value: 40, mod: 4 };
+      mockActor.system.fatigue = { value: 5, max: 0 };
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatigue.unconscious).toBe(true);
+    });
+
+    it('applies no penalty when fatigue is 0', () => {
+      mockActor.system.characteristics.tg = { base: 40, value: 40, mod: 4 };
+      mockActor.system.fatigue = { value: 0, max: 0 };
+      mockActor._prepareCharacterData(mockActor);
+      expect(mockActor.system.fatigue.penalty).toBe(0);
+    });
   });
 
   describe('_prepareNpcData', () => {

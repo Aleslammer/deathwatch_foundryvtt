@@ -113,10 +113,27 @@
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",
-    "grid":{
+    "grid": {
         "distance": 3,
         "units": "m"
     },
     "primaryTokenAttribute": "wounds",
-    "secondaryTokenAttribute": "fatigue"
+    "secondaryTokenAttribute": "fatigue",
+    "media": [
+        {
+            "type": "cover",
+            "url": "https://raw.githubusercontent.com/Aleslammer/deathwatch_foundryvtt/main/src/icons/Deathwatch.png",
+            "caption": "Deathwatch"
+        },
+        {
+            "type": "icon",
+            "url": "https://raw.githubusercontent.com/Aleslammer/deathwatch_foundryvtt/main/src/icons/Deathwatch.png",
+            "caption": "Deathwatch"
+        },
+        {
+            "type": "setup",
+            "url": "https://raw.githubusercontent.com/Aleslammer/deathwatch_foundryvtt/main/src/icons/Deathwatch.png",
+            "caption": "Deathwatch"
+        }
+    ]
 }

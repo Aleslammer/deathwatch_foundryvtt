@@ -42,4 +42,19 @@ function registerHandlebarsHelpers() {
     Handlebars.registerHelper("substring", function (str, start, length) {
         return str ? str.substring(start, start + length) : ""
     })
+
+    Handlebars.registerHelper("numberFormat", function (value, options) {
+        const num = parseFloat(value);
+        if (isNaN(num)) return value;
+        
+        const decimals = options.hash.decimals !== undefined ? options.hash.decimals : 0;
+        const sign = options.hash.sign || false;
+        
+        const formatted = num.toFixed(decimals);
+        
+        if (sign && num > 0) {
+            return `+${formatted}`;
+        }
+        return formatted;
+    })
 }

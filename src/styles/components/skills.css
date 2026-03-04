@@ -94,7 +94,7 @@
 .deathwatch .skill-item {
   display: flex;
   align-items: center;
-  padding: var(--dw-spacing-sm) var(--dw-spacing-md);
+  padding: 2px var(--dw-spacing-md);
   border-bottom: var(--dw-border-width) solid var(--dw-color-border-light);
   font-size: var(--dw-font-size-sm);
 }
@@ -155,6 +155,8 @@
 .deathwatch .skill-mastered input[type="checkbox"],
 .deathwatch .skill-expert input[type="checkbox"] {
   margin: 0;
+  width: 12px;
+  height: 12px;
 }
 
 .dw-skill-modifier,
