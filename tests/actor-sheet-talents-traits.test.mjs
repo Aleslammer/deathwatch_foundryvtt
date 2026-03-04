@@ -226,6 +226,16 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         }
       };
 
+      // Mock CONFIG.statusEffects
+      global.CONFIG = {
+        statusEffects: [
+          { id: 'stunned', name: 'Stunned', img: 'icons/svg/daze.svg' }
+        ]
+      };
+
+      // Mock hasCondition
+      mockActor.hasCondition = jest.fn(() => false);
+
       // Mock the parent getData to return a proper context
       const parentGetData = jest.spyOn(Object.getPrototypeOf(DeathwatchActorSheet.prototype), 'getData');
       parentGetData.mockReturnValue({

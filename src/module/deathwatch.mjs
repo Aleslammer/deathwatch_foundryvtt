@@ -77,6 +77,19 @@ Hooks.once('init', async function () {
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;
 
+    // Re-render actor sheets when Active Effects change to keep checkboxes in sync
+    Hooks.on('createActiveEffect', (effect, options, userId) => {
+        if (effect.parent?.documentName === 'Actor') {
+            effect.parent.sheet?.render(false);
+        }
+    });
+    
+    Hooks.on('deleteActiveEffect', (effect, options, userId) => {
+        if (effect.parent?.documentName === 'Actor') {
+            effect.parent.sheet?.render(false);
+        }
+    });
+
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });

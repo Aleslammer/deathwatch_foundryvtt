@@ -1,19 +1,24 @@
 export const ActorConditionsMixin = (superclass) => class extends superclass {
   hasCondition(conditionId) {
-    return this.system.conditions?.[conditionId] === true;
+    return this.effects.some(e => e.statuses?.has(conditionId));
   }
 
   async setCondition(conditionId, enabled) {
-    const updateData = {};
-    updateData[`system.conditions.${conditionId}`] = enabled;
-    await this.update(updateData);
+    const effect = CONFIG.statusEffects.find(e => e.id === conditionId);
+    if (!effect) return enabled;
 
-    // Update token status effects
-    const tokens = this.getActiveTokens(true);
-    for (const token of tokens) {
-      token._onApplyStatusEffect(conditionId, enabled);
+    const existing = this.effects.find(e => e.statuses?.has(conditionId));
+    
+    if (enabled && !existing) {
+      await this.createEmbeddedDocuments('ActiveEffect', [{
+        name: effect.name,
+        icon: effect.img,
+        statuses: [conditionId]
+      }]);
+    } else if (!enabled && existing) {
+      await existing.delete();
     }
-
+    
     return enabled;
   }
 

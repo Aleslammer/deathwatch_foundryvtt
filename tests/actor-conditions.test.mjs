@@ -4,21 +4,24 @@ import { ActorConditionsMixin } from '../src/module/documents/actor-conditions.m
 
 class MockActor {
   constructor() {
-    this.system = { conditions: {} };
-    this._updates = [];
+    this.effects = [];
+    this._createdEffects = [];
+    this._deletedEffects = [];
   }
 
-  async update(data) {
-    this._updates.push(data);
-    // Apply update to system
-    for (const [key, value] of Object.entries(data)) {
-      const path = key.split('.');
-      let target = this;
-      for (let i = 0; i < path.length - 1; i++) {
-        target = target[path[i]];
-      }
-      target[path[path.length - 1]] = value;
-    }
+  async createEmbeddedDocuments(type, data) {
+    if (type !== 'ActiveEffect') return [];
+    const effects = data.map(d => ({
+      ...d,
+      statuses: new Set(d.statuses || []),
+      delete: jest.fn(async () => {
+        this.effects = this.effects.filter(e => e !== effect);
+        this._deletedEffects.push(effect);
+      })
+    }));
+    this.effects.push(...effects);
+    this._createdEffects.push(...effects);
+    return effects;
   }
 
   getActiveTokens() {
@@ -33,6 +36,11 @@ describe('ActorConditionsMixin', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    global.CONFIG = { statusEffects: [
+      { id: 'stunned', name: 'Stunned', img: 'icons/svg/daze.svg' },
+      { id: 'prone', name: 'Prone', img: 'icons/svg/falling.svg' },
+      { id: 'blinded', name: 'Blinded', img: 'icons/svg/blind.svg' }
+    ]};
     actor = new TestActor();
   });
 
@@ -42,45 +50,69 @@ describe('ActorConditionsMixin', () => {
     });
 
     it('returns true when condition is set', () => {
-      actor.system.conditions.stunned = true;
+      actor.effects.push({
+        statuses: new Set(['stunned'])
+      });
       expect(actor.hasCondition('stunned')).toBe(true);
     });
 
-    it('returns false when condition is explicitly false', () => {
-      actor.system.conditions.stunned = false;
-      expect(actor.hasCondition('stunned')).toBe(false);
+    it('returns false when no effects exist', () => {
+      expect(actor.hasCondition('prone')).toBe(false);
     });
   });
 
   describe('setCondition', () => {
-    it('sets condition to true', async () => {
+    it('creates Active Effect when enabling condition', async () => {
       await actor.setCondition('stunned', true);
-      expect(actor.system.conditions.stunned).toBe(true);
+      expect(actor._createdEffects).toHaveLength(1);
+      expect(actor._createdEffects[0].name).toBe('Stunned');
+      expect(actor._createdEffects[0].statuses.has('stunned')).toBe(true);
     });
 
-    it('sets condition to false', async () => {
-      actor.system.conditions.stunned = true;
+    it('deletes Active Effect when disabling condition', async () => {
+      const effect = {
+        statuses: new Set(['prone']),
+        delete: jest.fn()
+      };
+      actor.effects.push(effect);
+      
+      await actor.setCondition('prone', false);
+      expect(effect.delete).toHaveBeenCalled();
+    });
+
+    it('does nothing when enabling already enabled condition', async () => {
+      actor.effects.push({
+        statuses: new Set(['blinded'])
+      });
+      
+      await actor.setCondition('blinded', true);
+      expect(actor._createdEffects).toHaveLength(0);
+    });
+
+    it('does nothing when disabling already disabled condition', async () => {
       await actor.setCondition('stunned', false);
-      expect(actor.system.conditions.stunned).toBe(false);
-    });
-
-    it('updates actor data with correct path', async () => {
-      await actor.setCondition('prone', true);
-      expect(actor._updates).toHaveLength(1);
-      expect(actor._updates[0]).toEqual({ 'system.conditions.prone': true });
+      expect(actor._deletedEffects).toHaveLength(0);
     });
   });
 
   describe('toggleStatusEffect', () => {
     it('enables condition when not set', async () => {
       await actor.toggleStatusEffect('blinded');
-      expect(actor.system.conditions.blinded).toBe(true);
+      expect(actor.hasCondition('blinded')).toBe(true);
     });
 
     it('disables condition when already set', async () => {
-      actor.system.conditions.blinded = true;
+      const effect = {
+        statuses: new Set(['blinded']),
+        delete: jest.fn(async () => {
+          actor.effects = actor.effects.filter(e => e !== effect);
+        })
+      };
+      actor.effects.push(effect);
+      
       await actor.toggleStatusEffect('blinded');
-      expect(actor.system.conditions.blinded).toBe(false);
+      expect(effect.delete).toHaveBeenCalled();
+      expect(actor.hasCondition('blinded')).toBe(false);
     });
   });
 });

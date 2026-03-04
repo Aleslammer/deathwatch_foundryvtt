@@ -16,9 +16,11 @@ describe('DW_STATUS_EFFECTS', () => {
       expect(effect).toHaveProperty('id');
       expect(effect).toHaveProperty('name');
       expect(effect).toHaveProperty('img');
+      expect(effect).toHaveProperty('description');
       expect(typeof effect.id).toBe('string');
       expect(typeof effect.name).toBe('string');
       expect(typeof effect.img).toBe('string');
+      expect(typeof effect.description).toBe('string');
     });
   });
 
