@@ -83,6 +83,12 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Prepare modifiers
     context.modifiers = actorData.system.modifiers || [];
 
+    // Prepare status effects
+    context.statusEffects = CONFIG.statusEffects.map(effect => ({
+      ...effect,
+      active: this.actor.hasCondition?.(effect.id) || false
+    }));
+
     return context;
   }
 
@@ -267,6 +273,13 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Active Effect management
     html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
+
+    // Status effect toggle
+    html.find('.effect-toggle').change(async ev => {
+      const effectId = $(ev.currentTarget).data('effectId');
+      const enabled = ev.currentTarget.checked;
+      await this.actor.setCondition(effectId, enabled);
+    });
 
     // Modifier management
     html.find('.modifier-create').click(ev => ModifierHelper.createModifier(this.actor));

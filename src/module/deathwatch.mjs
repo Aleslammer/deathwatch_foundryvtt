@@ -12,6 +12,7 @@ import { CombatHelper } from "./helpers/combat.mjs";
 import { CriticalEffectsHelper } from "./helpers/critical-effects.mjs";
 import { InitiativeHelper } from "./helpers/initiative.mjs";
 import { SkillLoader } from "./helpers/skill-loader.mjs";
+import { DW_STATUS_EFFECTS } from "./helpers/status-effects.mjs";
 
 
 /* -------------------------------------------- */
@@ -72,6 +73,9 @@ Hooks.once('init', async function () {
     // Define custom Document classes
     CONFIG.Actor.documentClass = DeathwatchActor;
     CONFIG.Item.documentClass = DeathwatchItem;
+
+    // Register status effects
+    CONFIG.statusEffects = DW_STATUS_EFFECTS;
 
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);

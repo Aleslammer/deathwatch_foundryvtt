@@ -1,5 +1,17 @@
-<div class="inventory">
-  <h3 class="inventory-header">Modifiers</h3>
+<div class="effects-section">
+  <h3 class="section-header">Status Effects</h3>
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 12px;">
+    {{#each statusEffects as |effect|}}
+    <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; padding: 2px 4px;" data-effect-id="{{effect.id}}" data-tooltip="<strong>{{effect.name}}</strong><br>{{effect.description}}">
+      <input type="checkbox" class="effect-toggle" data-effect-id="{{effect.id}}" {{checked effect.active}} style="width: 12px; height: 12px;" />
+      <span style="font-size: 0.9em;">{{effect.name}}</span>
+    </label>
+    {{/each}}
+  </div>
+</div>
+
+<div class="modifiers-section">
+  <h3 class="section-header">Modifiers</h3>
   <ol class="items-list modifiers-list">
     <li class="items-header flexrow">
       <h3 class="item-name modifier-name">Name</h3>
@@ -16,16 +28,16 @@
 
     <ol class="item-list">
     {{#each modifiers as |modifier|}}
-      <li class="item modifier flexrow" data-modifier-id="{{modifier._id}}">
+      <li class="item modifier flexrow" data-modifier-id="{{modifier._id}}" data-tooltip="<strong>{{modifier.name}}</strong><br>{{#if modifier.enabled}}Enabled{{else}}Disabled{{/if}}">
         <div class="item-name modifier-name">
           <h4>{{modifier.name}}</h4>
         </div>
-        <div class="modifier-mod">{{modifier.modifier}}</div>
+        <div class="modifier-mod">{{numberFormat modifier.modifier decimals=0 sign=true}}</div>
         <div class="modifier-type">{{modifier.type}}</div>
         <div class="modifier-effect-type">{{modifier.effectType}}</div>
         <div class="modifier-value-affected">{{modifier.valueAffected}}</div>
         <div class="item-controls">
-          <a class="modifier-toggle" title="Toggle Modifier">
+          <a class="modifier-toggle" title="Toggle Modifier On/Off">
             <i class="{{#if modifier.enabled}}far fa-check-square{{else}}far fa-square{{/if}}"></i>
           </a>
           <a class="modifier-edit" title="Edit Modifier">
@@ -39,8 +51,10 @@
     {{/each}}
     </ol>
   </ol>
+</div>
 
-  <h3 class="inventory-header">Critical Effects</h3>
+<div class="critical-effects-section">
+  <h3 class="section-header">Critical Effects</h3>
   <ol class="items-list">
     <li class="item flexrow items-header">
       <div class="item-name">Name</div>

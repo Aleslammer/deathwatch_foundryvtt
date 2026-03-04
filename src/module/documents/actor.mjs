@@ -7,8 +7,9 @@ import { XPCalculator } from "../helpers/xp-calculator.mjs";
 import { ModifierCollector } from "../helpers/modifier-collector.mjs";
 import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
 import { SkillLoader } from "../helpers/skill-loader.mjs";
+import { ActorConditionsMixin } from "./actor-conditions.mjs";
 
-export class DeathwatchActor extends Actor {
+export class DeathwatchActor extends ActorConditionsMixin(Actor) {
 
   /** @override */
   prepareData() {

@@ -10,6 +10,7 @@
 @import url("components/characteristics.css");
 @import url("components/wounds.css");
 @import url("components/modifiers.css");
+@import url("components/tooltips.css");
 
 /* Styles limited to deathwatch sheets */
 .deathwatch {
