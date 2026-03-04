@@ -174,4 +174,30 @@ export class ModifierCollector {
     wounds.max = total;
     wounds.modifiers = appliedMods;
   }
+
+  static applyArmorModifiers(items, modifiers) {
+    const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
+    
+    for (const item of itemsArray) {
+      if (item?.type === 'armor' && item.system.equipped) {
+        const locations = ['head', 'body', 'left_arm', 'right_arm', 'left_leg', 'right_leg'];
+        
+        for (const location of locations) {
+          if (item.system[location] !== undefined) {
+            const base = item.system[`${location}_base`] ?? item.system[location];
+            item.system[`${location}_base`] = base;
+            let total = base;
+            
+            for (const mod of modifiers) {
+              if (mod.enabled !== false && mod.effectType === 'armor') {
+                total += parseInt(mod.modifier) || 0;
+              }
+            }
+            
+            item.system[location] = total;
+          }
+        }
+      }
+    }
+  }
 }

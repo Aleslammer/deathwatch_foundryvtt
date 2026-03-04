@@ -9,12 +9,24 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/data-slate.png" -o 
 
  cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
- TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
  TODO: exclude tests from copy
  TODO: Create build that runs tests
-TODO: Add ability to add armor effects (Essentially Armour-Monger where a techmarine can add +2 to all regions of their armor)
-TODO: Astartes Weapon Specialisation (no penalty greater than -30)
-TODO: Deadeye shot reduces the penalty for Called Shot
+
+TODO: Review all talens to determine if effects can be applied to anythig
+
 TODO: Need to handle called shot mechanic
-TODO: Deathwatch Training Talent for confirm RF resutls
-TODO: True Grit
+TODO: weapon damage does not appear to be modifyable on the gear page.
+TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
+
+TODO: Melee Weapons 153
+
+
+TODO: Weapon Qualities 142
+TODO: Weaspon Upgrades 156
+TODO: Ammmunition 158
+ TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
+TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
+TODO: Psychic Powers (180)
+
+
+

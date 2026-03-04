@@ -17,7 +17,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
    - Equipped items
    - Chapter items (always active)
    - Armor histories (on equipped armor)
-3. Modifiers applied to characteristics, skills, initiative, and wounds
+3. Modifiers applied to characteristics, skills, initiative, wounds, and armor
 4. Modified values used throughout system
 
 ## Modifier Structure
@@ -27,7 +27,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
 {
   "name": "Modifier Name",
   "modifier": 5,
-  "effectType": "characteristic|skill|initiative|wounds",
+  "effectType": "characteristic|skill|initiative|wounds|armor",
   "valueAffected": "ws|bs|str|tg|ag|int|per|wil|fs|skillName",
   "enabled": true,
   "source": "Item Name"
@@ -139,6 +139,31 @@ Modify maximum wounds.
 - Talents (e.g., True Grit)
 - Chapter bonuses
 - Injuries (negative modifiers)
+
+### 5. Armor Modifiers
+Modify armor values on all locations of equipped armor.
+
+**Structure:**
+```json
+{
+  "name": "Armor Enhancement",
+  "modifier": 2,
+  "effectType": "armor",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Applied to all armor locations (head, body, left_arm, right_arm, left_leg, right_leg)
+- Only affects equipped armor
+- Base armor values stored in `{location}_base` fields
+- Modified values in location fields
+- Applies to all equipped armor on the actor (not source-specific)
+
+**Example Use Cases:**
+- Talents that enhance armor (e.g., +2 to all armor locations)
+- Temporary armor bonuses from abilities
+- Armor degradation (negative modifiers)
 
 ## Modifier Sources
 

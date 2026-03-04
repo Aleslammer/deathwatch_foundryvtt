@@ -65,9 +65,10 @@ export class ModifierHelper {
           <option value="${EFFECT_TYPES.CHARACTERISTIC_BONUS}" ${modifier.effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS ? 'selected' : ''}>Characteristic Bonus</option>
           <option value="${EFFECT_TYPES.INITIATIVE}" ${modifier.effectType === EFFECT_TYPES.INITIATIVE ? 'selected' : ''}>Initiative</option>
           <option value="${EFFECT_TYPES.WOUNDS}" ${modifier.effectType === EFFECT_TYPES.WOUNDS ? 'selected' : ''}>Wounds</option>
+          <option value="${EFFECT_TYPES.ARMOR}" ${modifier.effectType === EFFECT_TYPES.ARMOR ? 'selected' : ''}>Armor</option>
         </select>
       </div>
-      <div class="form-group" id="valueAffectedGroup" style="${modifier.effectType === EFFECT_TYPES.INITIATIVE || modifier.effectType === EFFECT_TYPES.WOUNDS ? 'display: none;' : ''}">
+      <div class="form-group" id="valueAffectedGroup" style="${modifier.effectType === EFFECT_TYPES.INITIATIVE || modifier.effectType === EFFECT_TYPES.WOUNDS || modifier.effectType === EFFECT_TYPES.ARMOR ? 'display: none;' : ''}">
         <label>Value Affected:</label>
         ${valueAffectedField}
       </div>
@@ -81,7 +82,7 @@ export class ModifierHelper {
           const effectType = ev.target.value;
           const group = html.find('#valueAffectedGroup');
           
-          if (effectType === EFFECT_TYPES.INITIATIVE || effectType === EFFECT_TYPES.WOUNDS) {
+          if (effectType === EFFECT_TYPES.INITIATIVE || effectType === EFFECT_TYPES.WOUNDS || effectType === EFFECT_TYPES.ARMOR) {
             group.hide();
           } else {
             group.show();

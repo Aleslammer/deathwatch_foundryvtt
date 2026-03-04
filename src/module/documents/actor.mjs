@@ -71,6 +71,11 @@ export class DeathwatchActor extends Actor {
       systemData.fatePoints = { value: 0, max: 0 };
     }
 
+    // Initialize renown if not present
+    if (systemData.renown === undefined) {
+      systemData.renown = 0;
+    }
+
     // Load skills dynamically from JSON
     systemData.skills = SkillLoader.loadSkills(systemData.skills);
 
@@ -93,6 +98,7 @@ export class DeathwatchActor extends Actor {
     
     systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
+    ModifierCollector.applyArmorModifiers(this.items, allModifiers);
 
     // Calculate movement based on Agility Bonus
     const agBonus = systemData.characteristics?.ag?.mod || 0;
