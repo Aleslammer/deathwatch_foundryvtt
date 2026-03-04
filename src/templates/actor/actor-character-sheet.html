@@ -68,17 +68,6 @@
             </div>
           </div>
         </div>
-        <div style="flex: 0 0 125px; text-align: center;">
-          <div class="movement-box">
-            <h4 class="box-title">Movement</h4>
-            <table style="width: 100%; font-size: 0.8em; margin-top: 4px;">
-              <tr><td style="text-align: left; padding: 2px 4px;">Half:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.half}}{{else}}0{{/if}}m</td></tr>
-              <tr><td style="text-align: left; padding: 2px 4px;">Full:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.full}}{{else}}0{{/if}}m</td></tr>
-              <tr><td style="text-align: left; padding: 2px 4px;">Charge:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.charge}}{{else}}0{{/if}}m</td></tr>
-              <tr><td style="text-align: left; padding: 2px 4px;">Run:</td><td style="text-align: right; padding: 2px 4px;">{{#if system.movement}}{{system.movement.run}}{{else}}0{{/if}}m</td></tr>
-            </table>
-          </div>
-        </div>
         <div style="flex: 1;"></div>
         <div style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
           <div class="resource flex-group-center" style="width: 200px;">
@@ -106,8 +95,8 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
-    <a class="item" data-tab="characteristics">Characteristics</a>
-    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="characteristics">Attributes</a>
+    <a class="item" data-tab="abilities">Abilities</a>
     <a class="item" data-tab="description">Description</a>
     <a class="item" data-tab="items">Gear</a>
     <a class="item" data-tab="augmentations">Augmentations</a>
@@ -120,29 +109,54 @@
 
     {{!-- Owned Characteristics Tab --}}
     <div class="tab characteristics" data-group="primary" data-tab="characteristics">
-      <ul class="characteristics flexrow">
-        {{#each system.characteristics as |characteristic key|}}
-        <li class="characteristic" data-characteristic="{{key}}">
-          <div class="characteristic-header flexrow">
-            <input class="characteristic-damage" name="system.characteristics.{{key}}.damage" type="text" title="Damage" value="{{#if characteristic.damage}}{{characteristic.damage}}{{/if}}" data-dtype="Number" placeholder="0"/>
-            <input class="characteristic-penalty" name="system.characteristics.{{key}}.penalty" type="text" title="Penalty" value="{{#if characteristic.penalty}}{{characteristic.penalty}}{{/if}}" data-dtype="Number" placeholder="0"/>
+      <div style="display: flex; gap: 20px; align-items: flex-start; height: 100%;">
+        {{!-- Left Column: Characteristics and Movement --}}
+        <div>
+          <div style="display: grid; grid-template-columns: auto auto auto; column-gap: 5px; row-gap: 20px; align-content: start;">
+            {{#each system.characteristics as |characteristic key|}}
+            <div class="characteristic" data-characteristic="{{key}}">
+              <div class="characteristic-header flexrow">
+                <input class="characteristic-damage" name="system.characteristics.{{key}}.damage" type="text" title="Damage" value="{{#if characteristic.damage}}{{characteristic.damage}}{{/if}}" data-dtype="Number" placeholder="0"/>
+                <input class="characteristic-penalty" name="system.characteristics.{{key}}.penalty" type="text" title="Penalty" value="{{#if characteristic.penalty}}{{characteristic.penalty}}{{/if}}" data-dtype="Number" placeholder="0"/>
+              </div>
+              <h4 class="characteristic-name box-title rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" data-tooltip="{{#if characteristic.modifiers.length}}<strong>Modifiers:</strong><br>{{#each characteristic.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}}<br>{{/each}}{{/if}}">{{characteristic.label}}</h4>
+              <div class="characteristic-modifiers flexrow">
+                <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" title="{{#if characteristic.bonusModifiers.length}}Characteristic Bonus&#10;&#10;Base: {{numberFormat characteristic.baseMod decimals=0 sign=true}}&#10;{{#each characteristic.bonusModifiers}}{{this.name}}: {{#if this.display}}{{this.display}}{{else}}{{numberFormat this.value decimals=0 sign=true}}{{/if}} ({{this.source}})&#10;{{/each}}Total: {{numberFormat characteristic.mod decimals=0 sign=true}}{{/if}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
+                <div class="characteristic-center">{{characteristic.value}}</div>
+                <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
+              </div>
+              <div class="characteristic-advances flexrow" style="font-size: 0.7em; margin-top: 2px; justify-content: center; gap: 4px;">
+                <input type="checkbox" name="system.characteristics.{{key}}.advances.simple" {{checked characteristic.advances.simple}} title="Simple (+5)" />
+                <input type="checkbox" name="system.characteristics.{{key}}.advances.intermediate" {{checked characteristic.advances.intermediate}} title="Intermediate (+5)" />
+                <input type="checkbox" name="system.characteristics.{{key}}.advances.trained" {{checked characteristic.advances.trained}} title="Trained (+5)" />
+                <input type="checkbox" name="system.characteristics.{{key}}.advances.expert" {{checked characteristic.advances.expert}} title="Expert (+5)" />
+              </div>
+            </div>
+            {{/each}}
           </div>
-          <h4 class="characteristic-name box-title rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" data-tooltip="{{#if characteristic.modifiers.length}}<strong>Modifiers:</strong><br>{{#each characteristic.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}}<br>{{/each}}{{/if}}">{{characteristic.label}}</h4>
-          <div class="characteristic-modifiers flexrow">
-            <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" title="{{#if characteristic.bonusModifiers.length}}Characteristic Bonus&#10;&#10;Base: {{numberFormat characteristic.baseMod decimals=0 sign=true}}&#10;{{#each characteristic.bonusModifiers}}{{this.name}}: {{#if this.display}}{{this.display}}{{else}}{{numberFormat this.value decimals=0 sign=true}}{{/if}} ({{this.source}})&#10;{{/each}}Total: {{numberFormat characteristic.mod decimals=0 sign=true}}{{/if}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
-            <div class="characteristic-center">{{characteristic.value}}</div>
-            <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
+          
+          {{!-- Movement Box --}}
+          <div class="movement-box" style="margin-top: 20px; margin-bottom: 20px; overflow: visible;">
+            <h4 class="box-title">Movement</h4>
+            <table style="width: 100%; font-size: 0.8em; margin: 0; padding: 0; background: transparent; border: none;">
+              <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Half:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{system.movement.half}}{{else}}0{{/if}}m</td></tr>
+              <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Full:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{system.movement.full}}{{else}}0{{/if}}m</td></tr>
+              <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Charge:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{system.movement.charge}}{{else}}0{{/if}}m</td></tr>
+              <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Run:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{system.movement.run}}{{else}}0{{/if}}m</td></tr>
+            </table>
           </div>
-          <div class="characteristic-advances flexrow" style="font-size: 0.7em; margin-top: 2px; justify-content: center; gap: 4px;">
-            <input type="checkbox" name="system.characteristics.{{key}}.advances.simple" {{checked characteristic.advances.simple}} title="Simple (+5)" />
-            <input type="checkbox" name="system.characteristics.{{key}}.advances.intermediate" {{checked characteristic.advances.intermediate}} title="Intermediate (+5)" />
-            <input type="checkbox" name="system.characteristics.{{key}}.advances.trained" {{checked characteristic.advances.trained}} title="Trained (+5)" />
-            <input type="checkbox" name="system.characteristics.{{key}}.advances.expert" {{checked characteristic.advances.expert}} title="Expert (+5)" />
-          </div>
-        </li>
-        {{/each}}
-      </ul>
+        
+        </div>
 
+        {{!-- Right Column: Skills --}}
+        <div style="flex: 1; overflow-y: auto; max-height: calc(100vh - 475px); border: 1px solid #999; border-radius: 3px; padding: 0.5px;">
+          {{> "systems/deathwatch/templates/actor/parts/actor-skills.html"}}
+        </div>
+      </div>
+    </div>
+
+    {{!-- Abilities Tab --}}
+    <div class="tab abilities" data-group="primary" data-tab="abilities">
       <div class="talents-section">
         <h3 class="section-header">Talents</h3>
         <ol class="items-list talents-list">
@@ -191,13 +205,6 @@
           {{/each}}
         </ol>
       </div>
-
-
-    </div>
-
-    {{!-- Skills Tab --}}
-    <div class="tab skills" data-group="primary" data-tab="skills">
-      {{> "systems/deathwatch/templates/actor/parts/actor-skills.html"}}
     </div>
 
     {{!-- Biography Tab --}}
