@@ -9,13 +9,20 @@ export const DW_STATUS_EFFECTS = [
     id: "prone",
     name: "Prone",
     img: "icons/svg/falling.svg",
-    description: "Lying on the ground. -20 to WS tests. +20 to be hit by ranged attacks."
+    description: "Lying on the ground. -20 to WS tests. +20 to be hit by ranged attacks.",
+    modifiers: [
+      { name: "Prone Penalty", modifier: -20, effectType: "characteristic", valueAffected: "ws" }
+    ]
   },
   {
     id: "grappled",
     name: "Grappled",
     img: "icons/svg/net.svg",
-    description: "Held by opponent. Cannot move. -20 to WS and BS tests."
+    description: "Held by opponent. Cannot move. -20 to WS and BS tests.",
+    modifiers: [
+      { name: "Grappled Penalty", modifier: -20, effectType: "characteristic", valueAffected: "ws" },
+      { name: "Grappled Penalty", modifier: -20, effectType: "characteristic", valueAffected: "bs" }
+    ]
   },
   {
     id: "pinned",
@@ -27,7 +34,10 @@ export const DW_STATUS_EFFECTS = [
     id: "blinded",
     name: "Blinded",
     img: "icons/svg/blind.svg",
-    description: "Auto-fail vision and BS tests. -30 to WS tests. -30 to tests relying on sight."
+    description: "Auto-fail vision and BS tests. -30 to WS tests. -30 to tests relying on sight.",
+    modifiers: [
+      { name: "Blinded Penalty", modifier: -30, effectType: "characteristic", valueAffected: "ws" }
+    ]
   },
   {
     id: "deafened",
@@ -87,7 +97,10 @@ export const DW_STATUS_EFFECTS = [
     id: "lost-eye",
     name: "Lost Eye",
     img: "icons/svg/eye.svg",
-    description: "-10 BS permanently. -20 to sight-based tests. Losing both eyes causes Blinded."
+    description: "-10 BS permanently. -20 to sight-based tests. Losing both eyes causes Blinded.",
+    modifiers: [
+      { name: "Lost Eye Penalty", modifier: -10, effectType: "characteristic", valueAffected: "bs" }
+    ]
   },
   {
     id: "lost-foot",

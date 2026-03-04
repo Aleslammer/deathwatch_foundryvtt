@@ -7,6 +7,7 @@ class MockActor {
     this.effects = [];
     this._createdEffects = [];
     this._deletedEffects = [];
+    this.system = { modifiers: [] };
   }
 
   async createEmbeddedDocuments(type, data) {
@@ -24,6 +25,12 @@ class MockActor {
     return effects;
   }
 
+  async update(data) {
+    if (data['system.modifiers']) {
+      this.system.modifiers = data['system.modifiers'];
+    }
+  }
+
   getActiveTokens() {
     return [];
   }
@@ -38,8 +45,16 @@ describe('ActorConditionsMixin', () => {
     jest.clearAllMocks();
     global.CONFIG = { statusEffects: [
       { id: 'stunned', name: 'Stunned', img: 'icons/svg/daze.svg' },
-      { id: 'prone', name: 'Prone', img: 'icons/svg/falling.svg' },
-      { id: 'blinded', name: 'Blinded', img: 'icons/svg/blind.svg' }
+      { id: 'prone', name: 'Prone', img: 'icons/svg/falling.svg', modifiers: [
+        { name: 'Prone Penalty', modifier: -20, effectType: 'characteristic', valueAffected: 'ws' }
+      ]},
+      { id: 'blinded', name: 'Blinded', img: 'icons/svg/blind.svg', modifiers: [
+        { name: 'Blinded Penalty', modifier: -30, effectType: 'characteristic', valueAffected: 'ws' }
+      ]},
+      { id: 'grappled', name: 'Grappled', img: 'icons/svg/net.svg', modifiers: [
+        { name: 'Grappled Penalty', modifier: -20, effectType: 'characteristic', valueAffected: 'ws' },
+        { name: 'Grappled Penalty', modifier: -20, effectType: 'characteristic', valueAffected: 'bs' }
+      ]}
     ]};
     actor = new TestActor();
   });
@@ -92,6 +107,45 @@ describe('ActorConditionsMixin', () => {
     it('does nothing when disabling already disabled condition', async () => {
       await actor.setCondition('stunned', false);
       expect(actor._deletedEffects).toHaveLength(0);
+    });
+
+    it('adds modifiers to actor when enabling condition with modifiers', async () => {
+      await actor.setCondition('prone', true);
+      expect(actor.system.modifiers).toHaveLength(1);
+      expect(actor.system.modifiers[0]).toMatchObject({
+        name: 'Prone Penalty',
+        modifier: -20,
+        effectType: 'characteristic',
+        valueAffected: 'ws',
+        _statusId: 'prone',
+        source: 'Prone'
+      });
+    });
+
+    it('does not add modifiers when enabling condition without modifiers', async () => {
+      await actor.setCondition('stunned', true);
+      expect(actor.system.modifiers).toHaveLength(0);
+    });
+
+    it('removes modifiers when disabling condition', async () => {
+      actor.system.modifiers = [
+        { name: 'Prone Penalty', modifier: -20, effectType: 'characteristic', valueAffected: 'ws', _statusId: 'prone' }
+      ];
+      const effect = {
+        statuses: new Set(['prone']),
+        delete: jest.fn()
+      };
+      actor.effects.push(effect);
+      
+      await actor.setCondition('prone', false);
+      expect(actor.system.modifiers).toHaveLength(0);
+    });
+
+    it('adds multiple modifiers for effects with multiple modifiers', async () => {
+      await actor.setCondition('grappled', true);
+      expect(actor.system.modifiers).toHaveLength(2);
+      expect(actor.system.modifiers[0].valueAffected).toBe('ws');
+      expect(actor.system.modifiers[1].valueAffected).toBe('bs');
     });
   });
 
