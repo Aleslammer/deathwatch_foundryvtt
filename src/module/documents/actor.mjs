@@ -99,6 +99,7 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
     
     systemData.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
+    ModifierCollector.applyFatigueModifiers(systemData.fatigue, systemData.characteristics?.tg?.mod || 0);
     ModifierCollector.applyArmorModifiers(this.items, allModifiers);
 
     // Calculate movement based on Agility Bonus

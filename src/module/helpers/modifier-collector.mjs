@@ -202,6 +202,14 @@ export class ModifierCollector {
     wounds.modifiers = appliedMods;
   }
 
+  static applyFatigueModifiers(fatigue, toughnessBonus) {
+    if (!fatigue) return;
+    
+    fatigue.max = toughnessBonus;
+    fatigue.unconscious = fatigue.value > toughnessBonus;
+    fatigue.penalty = fatigue.value > 0 ? -10 : 0;
+  }
+
   static applyArmorModifiers(items, modifiers) {
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
     
