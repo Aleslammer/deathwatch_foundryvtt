@@ -88,6 +88,7 @@ const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHi
 ## Melee Combat
 
 ### Attack Dialog Options
+- **Aim**: None (0), Half (+10), Full (+20)
 - **All Out Attack**: +20 bonus
 - **Charge**: +10 bonus
 - **Called Shot**: -20 penalty
@@ -104,7 +105,7 @@ export const MELEE_MODIFIERS = {
 
 ### Hit Calculation
 ```javascript
-const modifiers = wsAdv + allOut + charge + calledShot + runningTarget + miscModifier;
+const modifiers = wsAdv + aim + allOut + charge + calledShot + runningTarget + miscModifier;
 const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
 const targetNumber = ws + clampedModifiers;
 const success = hitValue <= targetNumber;

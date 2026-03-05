@@ -1,4 +1,4 @@
-import { COMBAT_PENALTIES, MELEE_MODIFIERS } from "./constants.mjs";
+import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS } from "./constants.mjs";
 import { CombatHelper } from "./combat.mjs";
 
 export class MeleeCombatHelper {
@@ -11,6 +11,14 @@ export class MeleeCombatHelper {
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
         <img src="${weapon.img}" alt="${weapon.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+      </div>
+      <div class="form-group">
+        <label>Aim:</label>
+        <select id="aim" name="aim">
+          <option value="${AIM_MODIFIERS.NONE}">None</option>
+          <option value="${AIM_MODIFIERS.HALF}">Half (+${AIM_MODIFIERS.HALF})</option>
+          <option value="${AIM_MODIFIERS.FULL}">Full (+${AIM_MODIFIERS.FULL})</option>
+        </select>
       </div>
       <div class="form-group" style="display: flex; gap: 20px;">
         <label><i class="far fa-square" id="allOutIcon"></i> All Out Attack (+${MELEE_MODIFIERS.ALL_OUT_ATTACK})
@@ -56,13 +64,14 @@ export class MeleeCombatHelper {
         attack: {
           label: "Attack",
           callback: async (html) => {
+            const aim = parseInt(html.find('#aim').val()) || 0;
             const allOut = html.find('#allOut').prop('checked') ? MELEE_MODIFIERS.ALL_OUT_ATTACK : 0;
             const charge = html.find('#charge').prop('checked') ? MELEE_MODIFIERS.CHARGE : 0;
             const calledShot = html.find('#calledShot').prop('checked') ? COMBAT_PENALTIES.CALLED_SHOT : 0;
             const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
-            const modifiers = wsAdv + allOut + charge + calledShot + runningTarget + miscModifier;
+            const modifiers = wsAdv + aim + allOut + charge + calledShot + runningTarget + miscModifier;
             const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
             const targetNumber = ws + clampedModifiers;
 
@@ -77,6 +86,7 @@ export class MeleeCombatHelper {
             const modifierParts = [];
             modifierParts.push(`${ws} Base WS`);
             if (wsAdv !== 0) modifierParts.push(`${wsAdv >= 0 ? '+' : ''}${wsAdv} WS Advances`);
+            if (aim !== 0) modifierParts.push(`+${aim} Aim`);
             if (allOut !== 0) modifierParts.push(`+${allOut} All Out Attack`);
             if (charge !== 0) modifierParts.push(`+${charge} Charge`);
             if (calledShot !== 0) modifierParts.push(`${calledShot} Called Shot`);
