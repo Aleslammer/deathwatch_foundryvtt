@@ -43,14 +43,17 @@
           {{/if}}
         </div>
         <div class="item-ammo">
+          {{#unless (eq item.system.class "Melee")}}
           {{#if item.loadedAmmoItem}}
             {{item.loadedAmmoItem.name}}
           {{else}}
             <span style="font-style: italic; color: #999;">Drop ammo here</span>
           {{/if}}
+          {{/unless}}
         </div>
         {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
       </li>
+      {{#unless (eq item.system.class "Melee")}}
       {{#if item.loadedAmmoItem}}
       <li class="item flexrow" data-item-id="{{item.loadedAmmoItem._id}}" style="background: rgba(0,0,0,0.05); padding-left: 30px;">
         <div class="item-name">
@@ -68,6 +71,7 @@
         </div>
       </li>
       {{/if}}
+      {{/unless}}
     {{/each}}
   </ol>
 
