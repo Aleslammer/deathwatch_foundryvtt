@@ -12,6 +12,21 @@ export class ItemHandlers {
     if (item.system.loadedAmmo) {
       item.loadedAmmoItem = context.items.find(i => i._id === item.system.loadedAmmo);
     }
+    item.attachedQualities = (item.system.attachedQualities || [])
+      .map(q => {
+        const qualityId = typeof q === 'string' ? q : q.id;
+        const quality = context.items.find(i => i._id === qualityId);
+        if (!quality) return null;
+        return {
+          _id: quality._id,
+          name: quality.name,
+          system: {
+            ...quality.system,
+            value: (typeof q === 'object' && q.value !== undefined) ? q.value : quality.system.value
+          }
+        };
+      })
+      .filter(q => q);
     return item;
   }
 

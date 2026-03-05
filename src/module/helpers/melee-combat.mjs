@@ -72,7 +72,8 @@ export class MeleeCombatHelper {
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
             const modifiers = wsAdv + aim + allOut + charge + calledShot + runningTarget + miscModifier;
-            const defensivePenalty = weapon.system.isDefensive ? -10 : 0;
+            const isDefensive = weapon.attachedQualities?.some(q => q.system.key === 'defensive');
+            const defensivePenalty = isDefensive ? -10 : 0;
             const clampedModifiers = Math.max(-60, Math.min(60, modifiers + defensivePenalty));
             const targetNumber = ws + clampedModifiers;
 

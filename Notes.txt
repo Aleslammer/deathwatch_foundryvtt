@@ -45,3 +45,5 @@ Aim
 Called shot
 Running
 PowerLevel (for powerswords)
+
+Add more weapon qualities...

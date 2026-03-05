@@ -126,7 +126,8 @@ export class RangedCombatHelper {
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
             const maxHits = roundsFired;
 
-            const { targetNumber, accurateBonus } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, weapon.system.isAccurate);
+            const isAccurate = weapon.attachedQualities?.some(q => q.system.key === 'accurate');
+            const { targetNumber, accurateBonus } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, isAccurate);
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
