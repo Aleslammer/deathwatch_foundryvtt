@@ -147,7 +147,8 @@
                 "max": 0
             },
             "loadedAmmo": null,
-            "modifiers": []
+            "modifiers": [],
+            "isAccurate": false
         },
         "armor": {
             "templates": [

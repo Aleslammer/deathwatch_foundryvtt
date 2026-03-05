@@ -380,36 +380,39 @@ describe('calculateCriticalDamage', () => {
 describe('buildDamageMessage', () => {
   it('builds basic damage message', () => {
     const msg = CombatDialogHelper.buildDamageMessage(
-      'Marine', 5, 'Body', 10, 5, 0, 5, false, 0, 'actor1', 'Impact'
+      'Marine', 5, 'Body', 10, 5, 0, 5, 4, false, 0, 'actor1', 'Impact'
     );
     expect(msg).toContain('Marine');
     expect(msg).toContain('5 wounds');
     expect(msg).toContain('Body');
     expect(msg).toContain('Damage: 10');
     expect(msg).toContain('Armor: 5');
+    expect(msg).toContain('TB: 4');
     expect(msg).not.toContain('CRITICAL');
   });
 
   it('includes critical damage section', () => {
     const msg = CombatDialogHelper.buildDamageMessage(
-      'Marine', 8, 'Head', 15, 5, 2, 3, true, 3, 'actor1', 'Energy'
+      'Marine', 8, 'Head', 15, 5, 2, 3, 4, true, 3, 'actor1', 'Energy'
     );
     expect(msg).toContain('CRITICAL DAMAGE: 3');
     expect(msg).toContain('roll-critical-btn');
     expect(msg).toContain('data-actor-id="actor1"');
     expect(msg).toContain('data-location="Head"');
     expect(msg).toContain('data-damage-type="Energy"');
+    expect(msg).toContain('TB: 4');
   });
 });
 
 describe('buildArmorAbsorbMessage', () => {
   it('builds armor absorb message', () => {
-    const msg = CombatDialogHelper.buildArmorAbsorbMessage('Marine', 'Body', 8, 10, 0);
+    const msg = CombatDialogHelper.buildArmorAbsorbMessage('Marine', 'Body', 8, 10, 0, 5);
     expect(msg).toContain('Marine');
-    expect(msg).toContain('armor absorbs all damage');
+    expect(msg).toContain('armor and toughness absorb all damage');
     expect(msg).toContain('Body');
     expect(msg).toContain('Damage: 8');
     expect(msg).toContain('Armor: 10');
+    expect(msg).toContain('TB: 5');
   });
 });
 

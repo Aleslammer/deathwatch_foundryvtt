@@ -2,17 +2,19 @@ import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./const
 
 export class CombatDialogHelper {
   
-  static buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier) {
-    const modifiers = bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier;
+  static buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, isAccurate = false) {
+    const accurateBonus = (isAccurate && aim > 0) ? 10 : 0;
+    const modifiers = bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier + accurateBonus;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers };
+    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus };
   }
 
-  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier) {
+  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0) {
     const parts = [];
     parts.push(`${bs} Base BS`);
     if (bsAdv !== 0) parts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
     if (aim !== 0) parts.push(`+${aim} Aim`);
+    if (accurateBonus !== 0) parts.push(`+${accurateBonus} Accurate`);
     if (autoFire !== 0) parts.push(`+${autoFire} Rate of Fire`);
     if (calledShot !== 0) parts.push(`${calledShot} Called Shot`);
     if (autoRangeMod !== 0) parts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
@@ -111,7 +113,7 @@ export class CombatDialogHelper {
     return { valid: true };
   }
 
-  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex) {
+  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex, isAccurate = false, isAiming = false, isSingleShot = false) {
     let formula = baseDmg;
     
     if (hitIndex === 0 && degreesOfSuccess > 0) {
@@ -122,6 +124,11 @@ export class CombatDialogHelper {
         }
         return `1${die}min${degreesOfSuccess}`;
       });
+    }
+    
+    if (hitIndex === 0 && !isMelee && isAccurate && isAiming && isSingleShot && degreesOfSuccess >= 2) {
+      const extraDice = Math.min(Math.floor(degreesOfSuccess / 2), 2);
+      formula += ` + ${extraDice}d10`;
     }
     
     if (isMelee && strBonus !== 0) {
@@ -136,10 +143,12 @@ export class CombatDialogHelper {
     return Math.floor((targetNumber - attackRoll) / 10);
   }
 
-  static calculateDamageResult(damage, armorValue, penetration) {
+  static calculateDamageResult(damage, armorValue, penetration, toughnessBonus = 0, unnaturalToughnessMultiplier = 1, felling = 0) {
+    const effectiveMultiplier = Math.max(1, unnaturalToughnessMultiplier - felling);
+    const effectiveTB = toughnessBonus * effectiveMultiplier;
     const effectiveArmor = Math.max(0, armorValue - penetration);
-    const woundsTaken = Math.max(0, damage - effectiveArmor);
-    return { effectiveArmor, woundsTaken };
+    const woundsTaken = Math.max(0, damage - effectiveArmor - effectiveTB);
+    return { effectiveArmor, woundsTaken, effectiveTB };
   }
 
   static calculateCriticalDamage(currentWounds, woundsTaken, maxWounds) {
@@ -149,8 +158,8 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, isCritical, criticalDamage, targetId, damageType) {
-    let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor}</em>`;
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType) {
+    let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
     if (isCritical) {
       message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
@@ -160,8 +169,8 @@ export class CombatDialogHelper {
     return message;
   }
 
-  static buildArmorAbsorbMessage(targetName, location, damage, armorValue, penetration) {
-    return `<strong>${targetName}</strong>'s armor absorbs all damage to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration}</em>`;
+  static buildArmorAbsorbMessage(targetName, location, damage, armorValue, penetration, toughnessBonus) {
+    return `<strong>${targetName}</strong>'s armor and toughness absorb all damage to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | TB: ${toughnessBonus}</em>`;
   }
 
   static calculateClearJamTarget(bs, bsAdv) {

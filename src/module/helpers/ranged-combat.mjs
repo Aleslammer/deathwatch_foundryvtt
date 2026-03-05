@@ -15,7 +15,7 @@ export class RangedCombatHelper {
     const advances = actor.system.characteristics.bs.advances || {};
     const bsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
 
-    const attackerToken = canvas.tokens.controlled[0];
+    const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
     
     if (!targetToken) {
@@ -126,7 +126,7 @@ export class RangedCombatHelper {
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
             const maxHits = roundsFired;
 
-            const { targetNumber } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier);
+            const { targetNumber, accurateBonus } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, weapon.system.isAccurate);
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
@@ -142,8 +142,9 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
+            CombatHelper.lastAttackAim = aim;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
