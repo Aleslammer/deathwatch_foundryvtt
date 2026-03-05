@@ -73,10 +73,12 @@ src/
 - **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
 - **chat-message-builder.mjs**: Chat message formatting and creation
 - **item-handlers.mjs**: Item categorization and processing
-- **combat.mjs**: Combat system logic (weapon attacks, damage, hit locations)
+- **combat.mjs**: Core combat logic (hit locations, damage application, routing)
+- **ranged-combat.mjs**: Ranged weapon attack dialog and logic
+- **melee-combat.mjs**: Melee weapon attack dialog and logic
 - **combat-dialog.mjs**: Combat dialog utilities (pure functions)
 - **config.mjs**: System configuration (DWConfig object)
-- **constants.mjs**: Game constants (XP, characteristics, rolls)
+- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers)
 - **critical-effects.mjs**: Critical damage effects
 - **debug.mjs**: Debug logging with feature flags
 - **effects.mjs**: Active effects and modifiers

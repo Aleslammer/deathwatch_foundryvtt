@@ -422,6 +422,44 @@ describe('CombatHelper', () => {
     });
   });
 
+  describe('weaponAttackDialog', () => {
+    it('should route to melee dialog for melee weapons', () => {
+      const mockActor = {};
+      const mockWeapon = {
+        system: { class: 'Melee' }
+      };
+      
+      expect(() => CombatHelper.weaponAttackDialog(mockActor, mockWeapon)).not.toThrow();
+    });
+
+    it('should route to ranged dialog for ranged weapons', () => {
+      const mockActor = {};
+      const mockWeapon = {
+        system: { class: 'Ranged' }
+      };
+      
+      expect(() => CombatHelper.weaponAttackDialog(mockActor, mockWeapon)).not.toThrow();
+    });
+
+    it('should route to ranged dialog for weapons without class', () => {
+      const mockActor = {};
+      const mockWeapon = {
+        system: {}
+      };
+      
+      expect(() => CombatHelper.weaponAttackDialog(mockActor, mockWeapon)).not.toThrow();
+    });
+
+    it('should handle case-insensitive melee check', () => {
+      const mockActor = {};
+      const mockWeapon = {
+        system: { class: 'MELEE' }
+      };
+      
+      expect(() => CombatHelper.weaponAttackDialog(mockActor, mockWeapon)).not.toThrow();
+    });
+  });
+
   describe('static properties', () => {
     it('initializes lastAttackRoll as null', () => {
       expect(CombatHelper.lastAttackRoll).toBeNull();

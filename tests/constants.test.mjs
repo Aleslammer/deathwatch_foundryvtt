@@ -6,7 +6,8 @@ import {
   AIM_MODIFIERS,
   RATE_OF_FIRE_MODIFIERS,
   COMBAT_PENALTIES,
-  RANGE_MODIFIERS
+  RANGE_MODIFIERS,
+  MELEE_MODIFIERS
 } from '../src/module/helpers/constants.mjs';
 
 describe('Constants', () => {
@@ -86,6 +87,13 @@ describe('Constants', () => {
       expect(RANGE_MODIFIERS.NORMAL).toBe(0);
       expect(RANGE_MODIFIERS.LONG).toBe(-10);
       expect(RANGE_MODIFIERS.EXTREME).toBe(-20);
+    });
+  });
+
+  describe('MELEE_MODIFIERS', () => {
+    it('defines melee modifiers', () => {
+      expect(MELEE_MODIFIERS.ALL_OUT_ATTACK).toBe(20);
+      expect(MELEE_MODIFIERS.CHARGE).toBe(10);
     });
   });
 });

@@ -29,6 +29,10 @@ Documentation for the Deathwatch Foundry VTT system, including architecture, gui
 **Purpose**: Modifier system documentation  
 **Contents**: Modifier architecture, effect types, sources, implementation details, examples
 
+### 7. combat-systems.md
+**Purpose**: Combat system architecture and implementation  
+**Contents**: Ranged/melee combat separation, attack dialogs, damage application, hit locations, constants
+
 ## Quick Reference
 
 ### File Locations

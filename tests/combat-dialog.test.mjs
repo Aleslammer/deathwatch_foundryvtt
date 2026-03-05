@@ -41,14 +41,28 @@ describe('CombatDialogHelper', () => {
   });
 
   describe('calculateHits', () => {
-    it('calculates hits based on degrees of success', () => {
-      expect(CombatDialogHelper.calculateHits(30, 50, 10)).toBe(3);
-      expect(CombatDialogHelper.calculateHits(45, 50, 10)).toBe(1);
-      expect(CombatDialogHelper.calculateHits(60, 50, 10)).toBe(0);
+    it('calculates hits for single shot (1 hit only)', () => {
+      expect(CombatDialogHelper.calculateHits(30, 50, 10, RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(45, 50, 10, RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(60, 50, 10, RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(0);
+    });
+
+    it('calculates hits for full-auto (1 + 1 per degree)', () => {
+      expect(CombatDialogHelper.calculateHits(30, 50, 10, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(3);
+      expect(CombatDialogHelper.calculateHits(45, 50, 10, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(10, 50, 10, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(5);
+    });
+
+    it('calculates hits for semi-auto (1 + 1 per 2 degrees)', () => {
+      expect(CombatDialogHelper.calculateHits(30, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(2);
+      expect(CombatDialogHelper.calculateHits(45, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(10, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(3);
+      expect(CombatDialogHelper.calculateHits(20, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(2);
     });
 
     it('caps hits at maxHits', () => {
-      expect(CombatDialogHelper.calculateHits(10, 50, 2)).toBe(2);
+      expect(CombatDialogHelper.calculateHits(10, 50, 2, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(2);
+      expect(CombatDialogHelper.calculateHits(10, 50, 2, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(2);
     });
   });
 
