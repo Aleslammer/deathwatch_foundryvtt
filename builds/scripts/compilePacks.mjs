@@ -63,17 +63,20 @@ async function compilePackFile(packName) {
     const srcPath = path.join(PACKS_SOURCE, packName);
     const destPath = path.join(PACKS_DEST, packName);
 
-    if (fs.existsSync(destPath)) {
-        fs.rmSync(destPath, { recursive: true });
-    }
-
     const sourceFiles = getAllJsonFiles(srcPath);
     const db = new ClassicLevel(destPath, { keyEncoding: 'utf8', valueEncoding: 'json' });
     
     const { folders, folderMap } = getAllFolders(srcPath);
     
+    const isRollTable = packName === 'tables';
+    
+    const tablesDb = isRollTable ? db.sublevel('tables', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    const resultsDb = isRollTable ? db.sublevel('tables.results', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    const foldersDb = db.sublevel('folders', { keyEncoding: 'utf8', valueEncoding: 'json' });
+    const itemsDb = !isRollTable ? db.sublevel('items', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    
     for (const folder of folders) {
-        await db.put(`!folders!${folder._id}`, folder);
+        await foldersDb.put(folder._id, folder);
     }
     
     for (const filePath of sourceFiles) {
@@ -86,17 +89,47 @@ async function compilePackFile(packName) {
             folderId = folderMap[relativePath];
         }
         
-        // Check if this is a RollTable
-        const isRollTable = packName === 'tables' || doc.formula !== undefined;
-        
-        let entry;
         if (isRollTable) {
-            entry = {
+            const resultIds = [];
+            if (doc.results && Array.isArray(doc.results)) {
+                for (const result of doc.results) {
+                    const resultId = result._id || randomID();
+                    resultIds.push(resultId);
+                    const resultEntry = {
+                        _id: resultId,
+                        type: result.type || 'text',
+                        name: result.name || '',
+                        description: result.description || result.text || '',
+                        img: result.img || 'icons/svg/d20-grey.svg',
+                        weight: result.weight ?? 1,
+                        range: result.range || [1, 1],
+                        drawn: result.drawn ?? false,
+                        flags: result.flags || {},
+                        _stats: {
+                            compendiumSource: null,
+                            coreVersion: '13.351',
+                            createdTime: null,
+                            duplicateSource: null,
+                            exportSource: null,
+                            lastModifiedBy: null,
+                            modifiedTime: null,
+                            systemId: null,
+                            systemVersion: null
+                        }
+                    };
+                    await resultsDb.put(`${id}.${resultId}`, resultEntry);
+                }
+            }
+            
+            const entry = {
                 _id: id,
                 name: doc.name,
+                description: doc.description || '',
+                img: doc.img || 'icons/svg/d20-grey.svg',
                 formula: doc.formula || '1d6',
                 replacement: doc.replacement ?? true,
                 displayRoll: doc.displayRoll ?? true,
+                results: resultIds,
                 folder: folderId,
                 sort: doc.sort || 0,
                 ownership: doc.ownership || { default: 0 },
@@ -105,39 +138,17 @@ async function compilePackFile(packName) {
                     systemId: 'deathwatch',
                     systemVersion: '0.0.2',
                     coreVersion: '13.351',
+                    createdTime: null,
+                    modifiedTime: null,
                     lastModifiedBy: null,
                     compendiumSource: null,
-                    duplicateSource: null,
-                    exportSource: null
+                    duplicateSource: null
                 }
             };
             
-            // Store table entry
-            await db.put(`!tables!${id}`, entry);
-            
-            // Store each result as a separate embedded document
-            if (doc.results && Array.isArray(doc.results)) {
-                for (const result of doc.results) {
-                    const resultEntry = {
-                        _id: result._id || randomID(),
-                        type: result.type ?? 0,
-                        text: result.text || '',
-                        img: result.img || 'icons/svg/d20-grey.svg',
-                        weight: result.weight ?? 1,
-                        range: result.range || [1, 1],
-                        drawn: result.drawn ?? false,
-                        flags: result.flags || {},
-                        _stats: {
-                            compendiumSource: null,
-                            duplicateSource: null
-                        }
-                    };
-                    await db.put(`!tables.results!${id}.${resultEntry._id}`, resultEntry);
-                }
-            }
-            continue;
+            await tablesDb.put(id, entry);
         } else {
-            entry = {
+            const entry = {
                 _id: id,
                 name: doc.name,
                 type: doc.type,
@@ -152,17 +163,14 @@ async function compilePackFile(packName) {
                     systemId: 'deathwatch',
                     systemVersion: '0.0.2',
                     coreVersion: '13.351',
+                    createdTime: null,
+                    modifiedTime: null,
                     lastModifiedBy: null,
                     compendiumSource: null,
-                    duplicateSource: null,
-                    exportSource: null
+                    duplicateSource: null
                 }
             };
-        }
-        
-        const key = isRollTable ? `!tables!${id}` : `!items!${id}`;
-        if (!isRollTable) {
-            await db.put(key, entry);
+            await itemsDb.put(id, entry);
         }
     }
     
@@ -171,6 +179,12 @@ async function compilePackFile(packName) {
 }
 
 async function compileAll() {
+    // Delete entire packs destination directory first
+    if (fs.existsSync(PACKS_DEST)) {
+        fs.rmSync(PACKS_DEST, { recursive: true });
+        console.log('Cleared all existing packs');
+    }
+    
     const packs = fs.readdirSync(PACKS_SOURCE).filter(f => 
         fs.statSync(path.join(PACKS_SOURCE, f)).isDirectory() && !f.startsWith('_')
     );
