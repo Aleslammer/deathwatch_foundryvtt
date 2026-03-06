@@ -2,11 +2,29 @@ import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./const
 
 export class CombatDialogHelper {
   
-  static buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, isAccurate = false) {
+  static buildAttackModifiers(options) {
+    const {
+      bs,
+      bsAdv = 0,
+      aim = 0,
+      autoFire = 0,
+      calledShot = 0,
+      rangeMod = 0,
+      runningTarget = 0,
+      miscModifier = 0,
+      isAccurate = false,
+      isGyroStabilised = false
+    } = options;
+
     const accurateBonus = (isAccurate && aim > 0) ? 10 : 0;
-    const modifiers = bsAdv + aim + autoFire + calledShot + autoRangeMod + runningTarget + miscModifier + accurateBonus;
+    const gyroRangeMod = isGyroStabilised ? this.applyGyroStabilisedRangeLimit(rangeMod) : rangeMod;
+    const modifiers = bsAdv + aim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus };
+    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod };
+  }
+
+  static applyGyroStabilisedRangeLimit(rangeMod) {
+    return Math.max(rangeMod, -10);
   }
 
   static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0) {

@@ -127,7 +127,19 @@ export class RangedCombatHelper {
             const maxHits = roundsFired;
 
             const isAccurate = weapon.attachedQualities?.some(q => q.system.key === 'accurate');
-            const { targetNumber, accurateBonus } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, isAccurate);
+            const isGyroStabilised = weapon.attachedQualities?.some(q => q.system.key === 'gyro-stabilised');
+            const { targetNumber, accurateBonus, gyroRangeMod } = CombatDialogHelper.buildAttackModifiers({
+              bs,
+              bsAdv,
+              aim,
+              autoFire,
+              calledShot,
+              rangeMod: autoRangeMod,
+              runningTarget,
+              miscModifier,
+              isAccurate,
+              isGyroStabilised
+            });
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
@@ -145,7 +157,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 

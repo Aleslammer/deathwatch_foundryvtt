@@ -4,18 +4,27 @@ import { RATE_OF_FIRE_MODIFIERS } from '../src/module/helpers/constants.mjs';
 describe('CombatDialogHelper', () => {
   describe('buildAttackModifiers', () => {
     it('calculates total modifiers', () => {
-      const result = CombatDialogHelper.buildAttackModifiers(40, 5, 10, 10, -20, 10, -20, 5);
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        bsAdv: 5,
+        aim: 10,
+        autoFire: 10,
+        calledShot: -20,
+        rangeMod: 10,
+        runningTarget: -20,
+        miscModifier: 5
+      });
       expect(result.modifiers).toBe(0);
       expect(result.targetNumber).toBe(40);
     });
 
     it('clamps modifiers to -60', () => {
-      const result = CombatDialogHelper.buildAttackModifiers(40, -100, 0, 0, 0, 0, 0, 0);
+      const result = CombatDialogHelper.buildAttackModifiers({ bs: 40, bsAdv: -100 });
       expect(result.clampedModifiers).toBe(-60);
     });
 
     it('clamps modifiers to +60', () => {
-      const result = CombatDialogHelper.buildAttackModifiers(40, 100, 0, 0, 0, 0, 0, 0);
+      const result = CombatDialogHelper.buildAttackModifiers({ bs: 40, bsAdv: 100 });
       expect(result.clampedModifiers).toBe(60);
     });
   });

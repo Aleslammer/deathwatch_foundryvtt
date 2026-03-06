@@ -1,13 +1,12 @@
 {
-  "_id": "quality000000009",
-  "name": "Gyro-Stabilised",
+  "_id": "gyrostabilised001",
+  "name": "Gyro-stabilised",
   "type": "weapon-quality",
-  "img": "icons/svg/upgrade.svg",
+  "img": "icons/svg/item-bag.svg",
   "system": {
     "key": "gyro-stabilised",
-    "value": "",
-    "description": "<p>The weapon has a small auto-stabilisation unit that is typically built towards the end of the barrel. While not as powerful as a suspensor, the gyro-stabiliser helps keep the weapon levelled at the optimal angle for firing. A Gyro-Stabilised weapon never counts its target as being further than Long Range (normal maximum range still applies). Heavy weapons with this Quality reduce the penalty for firing without Bracing to –20.</p>",
+    "description": "<p>The weapon has a small auto-stabilisation unit that is typically built towards the end of the barrel. While not as powerful as a suspensor, the gyro-stabiliser helps keep the weapon levelled at the optimal angle for firing.</p><p>A Gyro-Stabilised weapon never counts its target as being further than Long Range (normal maximum range still applies).</p><p>Heavy weapons with this Quality reduce the penalty for firing without Bracing to –20.</p>",
     "book": "Deathwatch Core Rulebook",
-    "page": "143"
+    "page": "142"
   }
 }
