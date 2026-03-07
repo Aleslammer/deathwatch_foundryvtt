@@ -46,4 +46,5 @@ Called shot
 Running
 PowerLevel (for powerswords)
 
-Add more weapon qualities...
+Reliable is not working
+Overheats is not working

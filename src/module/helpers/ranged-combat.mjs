@@ -126,8 +126,17 @@ export class RangedCombatHelper {
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
             const maxHits = roundsFired;
 
-            const isAccurate = weapon.attachedQualities?.some(q => q.system.key === 'accurate');
-            const isGyroStabilised = weapon.attachedQualities?.some(q => q.system.key === 'gyro-stabilised');
+            const hasQuality = (key) => {
+              if (!weapon.system.attachedQualities) return false;
+              return weapon.system.attachedQualities.some(aq => {
+                const quality = game.items.get(aq.id);
+                return quality?.system.key === key;
+              });
+            };
+
+            const isAccurate = hasQuality('accurate');
+            const isGyroStabilised = hasQuality('gyro-stabilised');
+            const hasOverheats = hasQuality('overheats');
             const { targetNumber, accurateBonus, gyroRangeMod } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv,
@@ -146,7 +155,20 @@ export class RangedCombatHelper {
             const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
-            const isJammed = hitValue >= jamThreshold;
+            let isJammed = hitValue >= jamThreshold;
+            const hasReliable = hasQuality('reliable');
+            
+            if (isJammed && hasReliable) {
+              const reliableRoll = await new Roll('1d10').evaluate();
+              await reliableRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `<strong>Reliable Check:</strong> ${weapon.name} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
+                rollMode: game.settings.get('core', 'rollMode')
+              });
+              isJammed = reliableRoll.total === 10;
+            }
+            
+            const isOverheated = hasOverheats && hitValue >= 91;
 
             if (isJammed) {
               await weapon.update({ "system.jammed": true });
@@ -158,7 +180,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackAim = aim;
 
             const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus);
-            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed);
+            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
             hitRoll.toMessage({

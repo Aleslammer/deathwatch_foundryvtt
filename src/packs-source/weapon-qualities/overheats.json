@@ -1,12 +1,11 @@
 {
-  "_id": "quality000000011",
+  "_id": "overheats00000001",
   "name": "Overheats",
   "type": "weapon-quality",
   "img": "icons/svg/fire.svg",
   "system": {
     "key": "overheats",
-    "value": "",
-    "description": "<p>Certain weapons are prone to overheating, either because of poor design or because they fire unstable superheated ammunition. A weapon with this Quality overheats on an attack roll of 91 or higher. When this happens, the wielder suffers energy damage equal to the weapon's damage with a Penetration of 0 to an arm location (the arm holding the weapon if it was fired one-handed, or a random arm if it was fired with two hands). The wielder may choose to avoid taking damage by dropping the weapon. Dropping a weapon is a Free Action. A weapon that overheats must spend the round afterwards cooling down and may not be fired again until the second round after overheating. A weapon with this Quality does not Jam, and any effect that would cause a Jam (i.e., certain psychic powers) instead causes the weapon to overheat.</p>",
+    "description": "<p>A weapon with this Quality overheats on an attack roll of 91 or higher.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "143"
   }

@@ -104,8 +104,11 @@ export class CombatDialogHelper {
     return 1;
   }
 
-  static buildAttackLabel(weaponName, targetNumber, hitsTotal, isJammed) {
-    return `[Attack] ${weaponName} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${isJammed ? '<br><strong style="color: red;">WEAPON JAMMED!</strong>' : ''}`;
+  static buildAttackLabel(weaponName, targetNumber, hitsTotal, isJammed, isOverheated = false) {
+    let warnings = '';
+    if (isJammed) warnings += '<br><strong style="color: red;">WEAPON JAMMED!</strong>';
+    if (isOverheated) warnings += '<br><strong style="color: orange;">WEAPON OVERHEATED!</strong>';
+    return `[Attack] ${weaponName} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${warnings}`;
   }
 
   static buildAttackFlavor(label, modifierParts) {
