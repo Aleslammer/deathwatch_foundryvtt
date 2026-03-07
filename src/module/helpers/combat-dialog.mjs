@@ -41,7 +41,7 @@ export class CombatDialogHelper {
     return parts;
   }
 
-  static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE, isScatter = false, isPointBlank = false) {
+  static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE, isScatter = false, isPointBlank = false, isStorm = false) {
     if (hitValue > targetNumber) return 0;
     
     const degreesOfSuccess = Math.floor((targetNumber - hitValue) / 10);
@@ -53,6 +53,10 @@ export class CombatDialogHelper {
       calculatedHits += degreesOfSuccess;
     } else if (rateOfFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
       calculatedHits += Math.floor(degreesOfSuccess / 2);
+    }
+    
+    if (isStorm) {
+      calculatedHits *= 2;
     }
     
     return Math.min(calculatedHits, maxHits);

@@ -138,6 +138,7 @@ export class RangedCombatHelper {
             const isGyroStabilised = hasQuality('gyro-stabilised');
             const hasOverheats = hasQuality('overheats');
             const isScatter = hasQuality('scatter');
+            const isStorm = hasQuality('storm');
             const isPointBlank = rangeLabel === "Point Blank";
             const { targetNumber, accurateBonus, gyroRangeMod } = CombatDialogHelper.buildAttackModifiers({
               bs,
@@ -154,7 +155,7 @@ export class RangedCombatHelper {
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank);
+            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
             let isJammed = hitValue >= jamThreshold;
@@ -196,7 +197,8 @@ export class RangedCombatHelper {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;
-                const newAmmoValue = Math.max(0, currentValue - roundsFired);
+                const ammoExpended = isStorm ? roundsFired * 2 : roundsFired;
+                const newAmmoValue = Math.max(0, currentValue - ammoExpended);
                 await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
                 if (newAmmoValue === 0) {
                   ui.notifications.warn(`${weapon.name} is out of ammunition!`);
