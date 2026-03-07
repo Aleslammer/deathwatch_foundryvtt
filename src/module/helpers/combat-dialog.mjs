@@ -41,13 +41,15 @@ export class CombatDialogHelper {
     return parts;
   }
 
-  static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE) {
+  static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE, isScatter = false, isPointBlank = false) {
     if (hitValue > targetNumber) return 0;
     
     const degreesOfSuccess = Math.floor((targetNumber - hitValue) / 10);
     let calculatedHits = 1;
     
-    if (rateOfFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
+    if (isScatter && isPointBlank) {
+      calculatedHits += Math.floor(degreesOfSuccess / 2);
+    } else if (rateOfFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
       calculatedHits += degreesOfSuccess;
     } else if (rateOfFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
       calculatedHits += Math.floor(degreesOfSuccess / 2);
@@ -174,13 +176,19 @@ export class CombatDialogHelper {
       felling = 0,
       isPrimitive = false,
       isRazorSharp = false,
-      degreesOfSuccess = 0
+      degreesOfSuccess = 0,
+      isScatter = false,
+      isLongOrExtremeRange = false
     } = options;
 
     const effectiveMultiplier = Math.max(1, unnaturalToughnessMultiplier - felling);
     const effectiveTB = toughnessBonus * effectiveMultiplier;
     const effectivePenetration = (isRazorSharp && degreesOfSuccess >= 2) ? penetration * 2 : penetration;
-    const effectiveArmor = isPrimitive ? Math.max(0, (armorValue * 2) - effectivePenetration) : Math.max(0, armorValue - effectivePenetration);
+    let baseArmor = armorValue;
+    if (isScatter && isLongOrExtremeRange) {
+      baseArmor = armorValue * 2;
+    }
+    const effectiveArmor = isPrimitive ? Math.max(0, (baseArmor * 2) - effectivePenetration) : Math.max(0, baseArmor - effectivePenetration);
     const woundsTaken = Math.max(0, damage - effectiveArmor - effectiveTB);
     return { effectiveArmor, woundsTaken, effectiveTB };
   }

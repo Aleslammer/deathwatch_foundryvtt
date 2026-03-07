@@ -137,6 +137,8 @@ export class RangedCombatHelper {
             const isAccurate = hasQuality('accurate');
             const isGyroStabilised = hasQuality('gyro-stabilised');
             const hasOverheats = hasQuality('overheats');
+            const isScatter = hasQuality('scatter');
+            const isPointBlank = rangeLabel === "Point Blank";
             const { targetNumber, accurateBonus, gyroRangeMod } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv,
@@ -152,7 +154,7 @@ export class RangedCombatHelper {
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire);
+            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
             let isJammed = hitValue >= jamThreshold;
@@ -178,6 +180,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
+            CombatHelper.lastAttackRangeLabel = rangeLabel;
 
             const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
