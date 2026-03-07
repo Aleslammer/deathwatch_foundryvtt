@@ -13,26 +13,29 @@ export class CombatDialogHelper {
       runningTarget = 0,
       miscModifier = 0,
       isAccurate = false,
-      isGyroStabilised = false
+      isGyroStabilised = false,
+      isTwinLinked = false
     } = options;
 
     const accurateBonus = (isAccurate && aim > 0) ? 10 : 0;
+    const twinLinkedBonus = isTwinLinked ? 20 : 0;
     const gyroRangeMod = isGyroStabilised ? this.applyGyroStabilisedRangeLimit(rangeMod) : rangeMod;
-    const modifiers = bsAdv + aim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus;
+    const modifiers = bsAdv + aim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod };
+    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus };
   }
 
   static applyGyroStabilisedRangeLimit(rangeMod) {
     return Math.max(rangeMod, -10);
   }
 
-  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0) {
+  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0) {
     const parts = [];
     parts.push(`${bs} Base BS`);
     if (bsAdv !== 0) parts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
     if (aim !== 0) parts.push(`+${aim} Aim`);
     if (accurateBonus !== 0) parts.push(`+${accurateBonus} Accurate`);
+    if (twinLinkedBonus !== 0) parts.push(`+${twinLinkedBonus} Twin-Linked`);
     if (autoFire !== 0) parts.push(`+${autoFire} Rate of Fire`);
     if (calledShot !== 0) parts.push(`${calledShot} Called Shot`);
     if (autoRangeMod !== 0) parts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
@@ -41,11 +44,15 @@ export class CombatDialogHelper {
     return parts;
   }
 
-  static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE, isScatter = false, isPointBlank = false, isStorm = false) {
+  static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE, isScatter = false, isPointBlank = false, isStorm = false, isTwinLinked = false) {
     if (hitValue > targetNumber) return 0;
     
     const degreesOfSuccess = Math.floor((targetNumber - hitValue) / 10);
     let calculatedHits = 1;
+    
+    if (isTwinLinked && degreesOfSuccess >= 2) {
+      calculatedHits += 1;
+    }
     
     if (isScatter && isPointBlank) {
       calculatedHits += Math.floor(degreesOfSuccess / 2);

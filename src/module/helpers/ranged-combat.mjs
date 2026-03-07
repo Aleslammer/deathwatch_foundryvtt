@@ -132,8 +132,9 @@ export class RangedCombatHelper {
             const hasOverheats = await WeaponQualityHelper.hasQuality(weapon, 'overheats');
             const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
             const isStorm = await WeaponQualityHelper.hasQuality(weapon, 'storm');
+            const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
             const isPointBlank = rangeLabel === "Point Blank";
-            const { targetNumber, accurateBonus, gyroRangeMod } = CombatDialogHelper.buildAttackModifiers({
+            const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv,
               aim,
@@ -143,12 +144,13 @@ export class RangedCombatHelper {
               runningTarget,
               miscModifier,
               isAccurate,
-              isGyroStabilised
+              isGyroStabilised,
+              isTwinLinked
             });
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm);
+            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
             let isJammed = hitValue >= jamThreshold;
@@ -176,7 +178,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackAim = aim;
             CombatHelper.lastAttackRangeLabel = rangeLabel;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
@@ -190,7 +192,9 @@ export class RangedCombatHelper {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;
-                const ammoExpended = isStorm ? roundsFired * 2 : roundsFired;
+                let ammoExpended = roundsFired;
+                if (isStorm) ammoExpended *= 2;
+                if (isTwinLinked) ammoExpended *= 2;
                 const newAmmoValue = Math.max(0, currentValue - ammoExpended);
                 await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
                 if (newAmmoValue === 0) {
