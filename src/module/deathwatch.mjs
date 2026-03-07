@@ -119,6 +119,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const degreesOfSuccess = parseInt(button.data('degreesOfSuccess')) || 0;
         const isScatter = button.data('isScatter') === 'true' || button.data('isScatter') === true;
         const isLongOrExtremeRange = button.data('isLongOrExtremeRange') === 'true' || button.data('isLongOrExtremeRange') === true;
+        const isShocking = button.data('isShocking') === 'true' || button.data('isShocking') === true;
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -126,7 +127,40 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange);
+        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking);
+    });
+    
+    html.find('.shocking-test-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actorId = button.data('actorId');
+        const armorValue = parseInt(button.data('armorValue'));
+        const stunRounds = parseInt(button.data('stunRounds'));
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+        
+        const tg = actor.system.characteristics?.tg?.value || 0;
+        const armorBonus = armorValue * 10;
+        const targetNumber = tg + armorBonus;
+        
+        const roll = await new Roll('1d100').evaluate();
+        const success = roll.total <= targetNumber;
+        
+        let flavor = `<strong>Shocking Toughness Test</strong><br>Target: ${targetNumber} (TG ${tg} + ${armorBonus} armor bonus)<br>`;
+        if (success) {
+            flavor += '<strong style="color: green;">SUCCESS - Not Stunned</strong>';
+        } else {
+            flavor += `<strong style="color: red;">FAILED - Stunned for ${stunRounds} rounds!</strong>`;
+        }
+        
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor,
+            rollMode: game.settings.get('core', 'rollMode')
+        });
     });
     
     html.find('.roll-critical-btn').click(async (ev) => {

@@ -65,8 +65,8 @@ export class ChatMessageBuilder {
     });
   }
 
-  static createDamageApplyButton(damage, penetration, location, targetId, damageType = 'Impact', isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false) {
-    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}">Apply Damage</button>`;
+  static createDamageApplyButton(damage, penetration, location, targetId, damageType = 'Impact', isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false, isShocking = false) {
+    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}">Apply Damage</button>`;
   }
 
   static createDamageFlavor(weapon, hitNumber, totalHits, location, degreesOfSuccess, penetration, isMelee, strBonus, applyButton = '') {
