@@ -140,17 +140,34 @@ export class CombatDialogHelper {
     return { valid: true };
   }
 
-  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex, isAccurate = false, isAiming = false, isSingleShot = false) {
+  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex, isAccurate = false, isAiming = false, isSingleShot = false, isTearing = false) {
     let formula = baseDmg;
     
-    if (hitIndex === 0 && degreesOfSuccess > 0) {
-      formula = formula.replace(/(\d+)(d\d+)/, (match, count, die) => {
+    if (isTearing) {
+      formula = formula.replace(/(\d+)(d\d+)/g, (match, count, die) => {
         const diceCount = parseInt(count);
-        if (diceCount > 1) {
-          return `(${diceCount - 1}${die} + 1${die}min${degreesOfSuccess})`;
-        }
-        return `1${die}min${degreesOfSuccess}`;
+        return `${diceCount + 1}${die}dl1`;
       });
+    }
+    
+    if (hitIndex === 0 && degreesOfSuccess > 0) {
+      if (isTearing) {
+        formula = formula.replace(/(\d+)(d\d+)dl1/, (match, count, die) => {
+          const diceCount = parseInt(count);
+          if (diceCount > 1) {
+            return `(${diceCount - 1}${die}dl1 + 1${die}min${degreesOfSuccess})`;
+          }
+          return `1${die}min${degreesOfSuccess}`;
+        });
+      } else {
+        formula = formula.replace(/(\d+)(d\d+)/, (match, count, die) => {
+          const diceCount = parseInt(count);
+          if (diceCount > 1) {
+            return `(${diceCount - 1}${die} + 1${die}min${degreesOfSuccess})`;
+          }
+          return `1${die}min${degreesOfSuccess}`;
+        });
+      }
     }
     
     if (hitIndex === 0 && !isMelee && isAccurate && isAiming && isSingleShot && degreesOfSuccess >= 2) {
@@ -204,12 +221,17 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false) {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false) {
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
     if (isShocking && woundsTaken > 0) {
       const stunRounds = Math.floor(woundsTaken / 2);
       message += `<br><button class="shocking-test-btn" data-actor-id="${targetId}" data-armor-value="${armorValue}" data-stun-rounds="${stunRounds}">Shocking: Roll Toughness Test</button>`;
+    }
+    
+    if (isToxic && woundsTaken > 0) {
+      const penalty = woundsTaken * 5;
+      message += `<br><button class="toxic-test-btn" data-actor-id="${targetId}" data-penalty="${penalty}">Toxic: Roll Toughness Test (-${penalty})</button>`;
     }
     
     if (isCritical) {

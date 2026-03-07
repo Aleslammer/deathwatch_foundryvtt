@@ -73,6 +73,7 @@ src/
 - **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
 - **chat-message-builder.mjs**: Chat message formatting and creation
 - **item-handlers.mjs**: Item categorization and processing
+- **weapon-quality-helper.mjs**: Weapon quality detection and lookup
 - **combat.mjs**: Core combat logic (hit locations, damage application, routing)
 - **ranged-combat.mjs**: Ranged weapon attack dialog and logic
 - **melee-combat.mjs**: Melee weapon attack dialog and logic

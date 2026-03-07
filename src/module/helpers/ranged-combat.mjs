@@ -1,6 +1,7 @@
 import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
+import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class RangedCombatHelper {
   /* istanbul ignore next */
@@ -126,19 +127,11 @@ export class RangedCombatHelper {
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
             const maxHits = roundsFired;
 
-            const hasQuality = (key) => {
-              if (!weapon.system.attachedQualities) return false;
-              return weapon.system.attachedQualities.some(aq => {
-                const quality = game.items.get(aq.id);
-                return quality?.system.key === key;
-              });
-            };
-
-            const isAccurate = hasQuality('accurate');
-            const isGyroStabilised = hasQuality('gyro-stabilised');
-            const hasOverheats = hasQuality('overheats');
-            const isScatter = hasQuality('scatter');
-            const isStorm = hasQuality('storm');
+            const isAccurate = await WeaponQualityHelper.hasQuality(weapon, 'accurate');
+            const isGyroStabilised = await WeaponQualityHelper.hasQuality(weapon, 'gyro-stabilised');
+            const hasOverheats = await WeaponQualityHelper.hasQuality(weapon, 'overheats');
+            const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
+            const isStorm = await WeaponQualityHelper.hasQuality(weapon, 'storm');
             const isPointBlank = rangeLabel === "Point Blank";
             const { targetNumber, accurateBonus, gyroRangeMod } = CombatDialogHelper.buildAttackModifiers({
               bs,
@@ -159,7 +152,7 @@ export class RangedCombatHelper {
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
             let isJammed = hitValue >= jamThreshold;
-            const hasReliable = hasQuality('reliable');
+            const hasReliable = await WeaponQualityHelper.hasQuality(weapon, 'reliable');
             
             if (isJammed && hasReliable) {
               const reliableRoll = await new Roll('1d10').evaluate();

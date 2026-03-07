@@ -18,7 +18,8 @@
     "renown": "Respected",
     "req": 20,
     "rof": "S/2/4",
-    "wt": 26
+    "wt": 26,
+    "attachedQualities": ["quality000000023"]
   },
   "type": "weapon"
 }

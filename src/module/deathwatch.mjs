@@ -120,6 +120,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const isScatter = button.data('isScatter') === 'true' || button.data('isScatter') === true;
         const isLongOrExtremeRange = button.data('isLongOrExtremeRange') === 'true' || button.data('isLongOrExtremeRange') === true;
         const isShocking = button.data('isShocking') === 'true' || button.data('isShocking') === true;
+        const isToxic = button.data('isToxic') === 'true' || button.data('isToxic') === true;
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -127,7 +128,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking);
+        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic);
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {
@@ -154,6 +155,48 @@ Hooks.on('renderChatMessage', (message, html) => {
             flavor += '<strong style="color: green;">SUCCESS - Not Stunned</strong>';
         } else {
             flavor += `<strong style="color: red;">FAILED - Stunned for ${stunRounds} rounds!</strong>`;
+        }
+        
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor,
+            rollMode: game.settings.get('core', 'rollMode')
+        });
+    });
+    
+    html.find('.toxic-test-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actorId = button.data('actorId');
+        const penalty = parseInt(button.data('penalty'));
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+        
+        const tg = actor.system.characteristics?.tg?.value || 0;
+        const targetNumber = tg - penalty;
+        
+        const roll = await new Roll('1d100').evaluate();
+        const success = roll.total <= targetNumber;
+        
+        let flavor = `<strong>Toxic Toughness Test</strong><br>Target: ${targetNumber} (TG ${tg} - ${penalty} penalty)<br>`;
+        if (success) {
+            flavor += '<strong style="color: green;">SUCCESS - No Additional Damage</strong>';
+        } else {
+            const toxicRoll = await new Roll('1d10').evaluate();
+            const toxicDamage = toxicRoll.total;
+            flavor += `<strong style="color: red;">FAILED - Takes ${toxicDamage} Impact Damage (ignores armor & TB)</strong>`;
+            
+            const currentWounds = actor.system.wounds.value || 0;
+            await actor.update({ 'system.wounds.value': currentWounds + toxicDamage });
+            
+            await toxicRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: '<strong>Toxic Damage</strong>',
+                rollMode: game.settings.get('core', 'rollMode')
+            });
         }
         
         await roll.toMessage({
