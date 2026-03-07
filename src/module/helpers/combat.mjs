@@ -140,11 +140,21 @@ export class CombatHelper {
     return armorField ? (equippedArmor.system[armorField] || 0) : 0;
   }
 
-  static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false) {
+  static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0) {
     const armorValue = this.getArmorValue(targetActor, location);
     const toughnessBonus = targetActor.system.characteristics?.tg?.baseMod || 0;
     const unnaturalToughnessMultiplier = targetActor.system.characteristics?.tg?.unnaturalMultiplier || 1;
-    const { effectiveArmor, woundsTaken, effectiveTB } = CombatDialogHelper.calculateDamageResult(damage, armorValue, penetration, toughnessBonus, unnaturalToughnessMultiplier, felling, isPrimitive);
+    const { effectiveArmor, woundsTaken, effectiveTB } = CombatDialogHelper.calculateDamageResult({
+      damage,
+      armorValue,
+      penetration,
+      toughnessBonus,
+      unnaturalToughnessMultiplier,
+      felling,
+      isPrimitive,
+      isRazorSharp,
+      degreesOfSuccess
+    });
 
     if (woundsTaken > 0) {
       const currentDamage = targetActor.system.wounds.value || 0;
@@ -247,6 +257,7 @@ export class CombatHelper {
             const isAiming = aimUsed > 0;
             const isSingleShot = numHits === 1;
             const isPrimitive = weapon.system.isPrimitive || false;
+            const isRazorSharp = weapon.system.attachedQualities?.some(q => q.system?.key === 'razor-sharp') || false;
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
@@ -259,7 +270,7 @@ export class CombatHelper {
               totalDamage += roll.total;
               allRolls.push(roll);
               
-              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive) : '';
+              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess) : '';
               const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
               await roll.toMessage({
@@ -285,7 +296,7 @@ export class CombatHelper {
                   keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
                 }
                 
-                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive) : '';
+                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess) : '';
                 const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 
                 await ChatMessage.create({

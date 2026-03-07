@@ -105,31 +105,31 @@ describe('Weapon Qualities', () => {
   describe('Primitive Quality', () => {
     describe('calculateDamageResult', () => {
       it('doubles armor before penetration when primitive', () => {
-        const result = CombatDialogHelper.calculateDamageResult(20, 8, 4, 0, 1, 0, true);
+        const result = CombatDialogHelper.calculateDamageResult({ damage: 20, armorValue: 8, penetration: 4, isPrimitive: true });
         expect(result.effectiveArmor).toBe(12); // (8 * 2) - 4 = 12
         expect(result.woundsTaken).toBe(8); // 20 - 12 = 8
       });
 
       it('applies normal armor calculation when not primitive', () => {
-        const result = CombatDialogHelper.calculateDamageResult(20, 8, 4, 0, 1, 0, false);
+        const result = CombatDialogHelper.calculateDamageResult({ damage: 20, armorValue: 8, penetration: 4, isPrimitive: false });
         expect(result.effectiveArmor).toBe(4); // 8 - 4 = 4
         expect(result.woundsTaken).toBe(16); // 20 - 4 = 16
       });
 
       it('handles zero armor with primitive', () => {
-        const result = CombatDialogHelper.calculateDamageResult(20, 0, 4, 0, 1, 0, true);
+        const result = CombatDialogHelper.calculateDamageResult({ damage: 20, armorValue: 0, penetration: 4, isPrimitive: true });
         expect(result.effectiveArmor).toBe(0); // (0 * 2) - 4 = 0 (clamped)
         expect(result.woundsTaken).toBe(20);
       });
 
       it('handles high penetration with primitive', () => {
-        const result = CombatDialogHelper.calculateDamageResult(20, 5, 12, 0, 1, 0, true);
+        const result = CombatDialogHelper.calculateDamageResult({ damage: 20, armorValue: 5, penetration: 12, isPrimitive: true });
         expect(result.effectiveArmor).toBe(0); // (5 * 2) - 12 = -2 (clamped to 0)
         expect(result.woundsTaken).toBe(20);
       });
 
       it('combines primitive with toughness bonus', () => {
-        const result = CombatDialogHelper.calculateDamageResult(20, 8, 4, 5, 1, 0, true);
+        const result = CombatDialogHelper.calculateDamageResult({ damage: 20, armorValue: 8, penetration: 4, toughnessBonus: 5, isPrimitive: true });
         expect(result.effectiveArmor).toBe(12); // (8 * 2) - 4 = 12
         expect(result.effectiveTB).toBe(5);
         expect(result.woundsTaken).toBe(3); // 20 - 12 - 5 = 3

@@ -326,31 +326,31 @@ describe('calculateDegreesOfSuccess', () => {
 
 describe('calculateDamageResult', () => {
   it('calculates wounds taken with no armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 0, 0);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 0, penetration: 0 });
     expect(result.effectiveArmor).toBe(0);
     expect(result.woundsTaken).toBe(15);
   });
 
   it('calculates wounds taken with armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 8, 0);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 8, penetration: 0 });
     expect(result.effectiveArmor).toBe(8);
     expect(result.woundsTaken).toBe(7);
   });
 
   it('applies penetration to armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 8, 4);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 8, penetration: 4 });
     expect(result.effectiveArmor).toBe(4);
     expect(result.woundsTaken).toBe(11);
   });
 
   it('prevents negative effective armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 5, 10);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 5, penetration: 10 });
     expect(result.effectiveArmor).toBe(0);
     expect(result.woundsTaken).toBe(15);
   });
 
   it('prevents negative wounds taken', () => {
-    const result = CombatDialogHelper.calculateDamageResult(5, 10, 0);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 5, armorValue: 10, penetration: 0 });
     expect(result.effectiveArmor).toBe(10);
     expect(result.woundsTaken).toBe(0);
   });
