@@ -114,6 +114,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const location = button.data('location');
         const targetId = button.data('targetId');
         const damageType = button.data('damageType') || 'Impact';
+        const isPrimitive = button.data('isPrimitive') === 'true' || button.data('isPrimitive') === true;
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -121,7 +122,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType);
+        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive);
     });
     
     html.find('.roll-critical-btn').click(async (ev) => {

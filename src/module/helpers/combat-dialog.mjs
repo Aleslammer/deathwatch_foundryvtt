@@ -164,10 +164,10 @@ export class CombatDialogHelper {
     return Math.floor((targetNumber - attackRoll) / 10);
   }
 
-  static calculateDamageResult(damage, armorValue, penetration, toughnessBonus = 0, unnaturalToughnessMultiplier = 1, felling = 0) {
+  static calculateDamageResult(damage, armorValue, penetration, toughnessBonus = 0, unnaturalToughnessMultiplier = 1, felling = 0, isPrimitive = false) {
     const effectiveMultiplier = Math.max(1, unnaturalToughnessMultiplier - felling);
     const effectiveTB = toughnessBonus * effectiveMultiplier;
-    const effectiveArmor = Math.max(0, armorValue - penetration);
+    const effectiveArmor = isPrimitive ? Math.max(0, (armorValue * 2) - penetration) : Math.max(0, armorValue - penetration);
     const woundsTaken = Math.max(0, damage - effectiveArmor - effectiveTB);
     return { effectiveArmor, woundsTaken, effectiveTB };
   }

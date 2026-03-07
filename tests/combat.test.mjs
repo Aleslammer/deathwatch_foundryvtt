@@ -423,8 +423,23 @@ describe('CombatHelper', () => {
   });
 
   describe('weaponAttackDialog', () => {
+    beforeEach(() => {
+      global.canvas = {
+        tokens: { controlled: [] },
+        grid: { measurePath: jest.fn(() => ({ distance: 0 })) }
+      };
+    });
+
     it('should route to melee dialog for melee weapons', () => {
-      const mockActor = {};
+      const mockActor = {
+        system: {
+          characteristics: {
+            ws: { base: 40, value: 40, advances: {} },
+            bs: { base: 40, value: 40, advances: {} }
+          }
+        },
+        getActiveTokens: jest.fn(() => [])
+      };
       const mockWeapon = {
         system: { class: 'Melee' }
       };
@@ -433,7 +448,15 @@ describe('CombatHelper', () => {
     });
 
     it('should route to ranged dialog for ranged weapons', () => {
-      const mockActor = {};
+      const mockActor = {
+        system: {
+          characteristics: {
+            ws: { base: 40, value: 40, advances: {} },
+            bs: { base: 40, value: 40, advances: {} }
+          }
+        },
+        getActiveTokens: jest.fn(() => [])
+      };
       const mockWeapon = {
         system: { class: 'Ranged' }
       };
@@ -442,7 +465,15 @@ describe('CombatHelper', () => {
     });
 
     it('should route to ranged dialog for weapons without class', () => {
-      const mockActor = {};
+      const mockActor = {
+        system: {
+          characteristics: {
+            ws: { base: 40, value: 40, advances: {} },
+            bs: { base: 40, value: 40, advances: {} }
+          }
+        },
+        getActiveTokens: jest.fn(() => [])
+      };
       const mockWeapon = {
         system: {}
       };
@@ -451,7 +482,15 @@ describe('CombatHelper', () => {
     });
 
     it('should handle case-insensitive melee check', () => {
-      const mockActor = {};
+      const mockActor = {
+        system: {
+          characteristics: {
+            ws: { base: 40, value: 40, advances: {} },
+            bs: { base: 40, value: 40, advances: {} }
+          }
+        },
+        getActiveTokens: jest.fn(() => [])
+      };
       const mockWeapon = {
         system: { class: 'MELEE' }
       };

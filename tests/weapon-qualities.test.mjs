@@ -10,25 +10,25 @@ describe('Weapon Qualities', () => {
   describe('Accurate Quality', () => {
     describe('buildAttackModifiers', () => {
       it('adds +10 when Accurate and Aiming (Half)', () => {
-        const result = CombatDialogHelper.buildAttackModifiers(50, 0, 10, 0, 0, 0, 0, 0, true);
+        const result = CombatDialogHelper.buildAttackModifiers({ bs: 50, bsAdv: 0, aim: 10, autoFire: 0, calledShot: 0, rangeMod: 0, runningTarget: 0, miscModifier: 0, isAccurate: true });
         expect(result.accurateBonus).toBe(10);
         expect(result.targetNumber).toBe(70); // 50 + 10 aim + 10 accurate
       });
 
       it('adds +10 when Accurate and Aiming (Full)', () => {
-        const result = CombatDialogHelper.buildAttackModifiers(50, 0, 20, 0, 0, 0, 0, 0, true);
+        const result = CombatDialogHelper.buildAttackModifiers({ bs: 50, bsAdv: 0, aim: 20, autoFire: 0, calledShot: 0, rangeMod: 0, runningTarget: 0, miscModifier: 0, isAccurate: true });
         expect(result.accurateBonus).toBe(10);
         expect(result.targetNumber).toBe(80); // 50 + 20 aim + 10 accurate
       });
 
       it('adds no bonus when Accurate but not Aiming', () => {
-        const result = CombatDialogHelper.buildAttackModifiers(50, 0, 0, 0, 0, 0, 0, 0, true);
+        const result = CombatDialogHelper.buildAttackModifiers({ bs: 50, bsAdv: 0, aim: 0, autoFire: 0, calledShot: 0, rangeMod: 0, runningTarget: 0, miscModifier: 0, isAccurate: true });
         expect(result.accurateBonus).toBe(0);
         expect(result.targetNumber).toBe(50);
       });
 
       it('adds no bonus when not Accurate', () => {
-        const result = CombatDialogHelper.buildAttackModifiers(50, 0, 10, 0, 0, 0, 0, 0, false);
+        const result = CombatDialogHelper.buildAttackModifiers({ bs: 50, bsAdv: 0, aim: 10, autoFire: 0, calledShot: 0, rangeMod: 0, runningTarget: 0, miscModifier: 0, isAccurate: false });
         expect(result.accurateBonus).toBe(0);
         expect(result.targetNumber).toBe(60); // 50 + 10 aim
       });
@@ -99,6 +99,41 @@ describe('Weapon Qualities', () => {
       // Note: Defensive penalty is applied in melee-combat.mjs, not in CombatDialogHelper
       // This is tested via integration tests in melee-combat.test.mjs
       expect(true).toBe(true);
+    });
+  });
+
+  describe('Primitive Quality', () => {
+    describe('calculateDamageResult', () => {
+      it('doubles armor before penetration when primitive', () => {
+        const result = CombatDialogHelper.calculateDamageResult(20, 8, 4, 0, 1, 0, true);
+        expect(result.effectiveArmor).toBe(12); // (8 * 2) - 4 = 12
+        expect(result.woundsTaken).toBe(8); // 20 - 12 = 8
+      });
+
+      it('applies normal armor calculation when not primitive', () => {
+        const result = CombatDialogHelper.calculateDamageResult(20, 8, 4, 0, 1, 0, false);
+        expect(result.effectiveArmor).toBe(4); // 8 - 4 = 4
+        expect(result.woundsTaken).toBe(16); // 20 - 4 = 16
+      });
+
+      it('handles zero armor with primitive', () => {
+        const result = CombatDialogHelper.calculateDamageResult(20, 0, 4, 0, 1, 0, true);
+        expect(result.effectiveArmor).toBe(0); // (0 * 2) - 4 = 0 (clamped)
+        expect(result.woundsTaken).toBe(20);
+      });
+
+      it('handles high penetration with primitive', () => {
+        const result = CombatDialogHelper.calculateDamageResult(20, 5, 12, 0, 1, 0, true);
+        expect(result.effectiveArmor).toBe(0); // (5 * 2) - 12 = -2 (clamped to 0)
+        expect(result.woundsTaken).toBe(20);
+      });
+
+      it('combines primitive with toughness bonus', () => {
+        const result = CombatDialogHelper.calculateDamageResult(20, 8, 4, 5, 1, 0, true);
+        expect(result.effectiveArmor).toBe(12); // (8 * 2) - 4 = 12
+        expect(result.effectiveTB).toBe(5);
+        expect(result.woundsTaken).toBe(3); // 20 - 12 - 5 = 3
+      });
     });
   });
 });
