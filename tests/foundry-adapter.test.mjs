@@ -117,7 +117,7 @@ describe('CombatHelper', () => {
       jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
       jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue({});
       
-      await CombatHelper.applyDamage(targetActor, 10, 0, 'Body');
+      await CombatHelper.applyDamage(targetActor, { damage: 10, penetration: 0, location: 'Body' });
       
       expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(targetActor, { "system.wounds.value": 20 });
       expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', 'Marine takes 10 wounds!');
@@ -136,7 +136,7 @@ describe('CombatHelper', () => {
       jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
       jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue({});
       
-      await CombatHelper.applyDamage(targetActor, 5, 0, 'Head');
+      await CombatHelper.applyDamage(targetActor, { damage: 5, penetration: 0, location: 'Head' });
       
       expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('warn', 'Marine is taking CRITICAL DAMAGE!');
     });
@@ -152,7 +152,7 @@ describe('CombatHelper', () => {
       jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
       jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue({});
       
-      await CombatHelper.applyDamage(targetActor, 5, 0, 'Body');
+      await CombatHelper.applyDamage(targetActor, { damage: 5, penetration: 0, location: 'Body' });
       
       expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', "Marine's armor absorbs all damage!");
     });

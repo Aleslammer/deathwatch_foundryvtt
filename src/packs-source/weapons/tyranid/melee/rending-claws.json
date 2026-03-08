@@ -1,0 +1,29 @@
+{
+  "_id": "tyranid000000011",
+  "img": "systems/deathwatch/icons/weapons/tyranid-rending-claws.webp",
+  "name": "Rending Claws",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Melee",
+    "clip": "",
+    "description": "<p>Rending Claws are diamond hard growths of bone capable of crushing reinforced ceramite and ripping through the thickest of armour with frightening ease.</p>",
+    "dmg": "1d10",
+    "dmgType": "Rending",
+    "attachedQualities": [
+      {
+        "id": "quality000000017"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "",
+    "penetration": "5",
+    "range": "",
+    "reload": "",
+    "renown": "",
+    "req": 0,
+    "rof": "",
+    "wt": 0
+  },
+  "type": "weapon"
+}

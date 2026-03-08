@@ -1,0 +1,29 @@
+{
+  "_id": "tau000000004",
+  "img": "systems/deathwatch/icons/weapons/tau-pulse-rifle.webp",
+  "name": "Pulse Rifle",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Basic",
+    "clip": "36",
+    "description": "<p>Tau Pulse Rifle</p>",
+    "dmg": "1d10+12",
+    "dmgType": "Energy",
+    "attachedQualities": [
+      {
+        "id": "gyrostabilised001"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "",
+    "penetration": "4",
+    "range": "150",
+    "reload": "Half",
+    "renown": "",
+    "req": 0,
+    "rof": "S/3/-",
+    "wt": 0
+  },
+  "type": "weapon"
+}

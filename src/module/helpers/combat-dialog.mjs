@@ -134,7 +134,10 @@ export class CombatDialogHelper {
       return { valid: false, message: `${weapon.name} is jammed! Clear the jam before firing.` };
     }
 
-    if (weapon.system.capacity && weapon.system.capacity.max > 0) {
+    const clip = weapon.system.clip;
+    const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
+    
+    if (hasAmmoManagement && weapon.system.capacity && weapon.system.capacity.max > 0) {
       if (!weapon.system.loadedAmmo) {
         return { valid: false, message: `${weapon.name} has no ammunition loaded!` };
       }
@@ -236,7 +239,7 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false) {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '') {
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
     if (isShocking && woundsTaken > 0) {
@@ -247,6 +250,10 @@ export class CombatDialogHelper {
     if (isToxic && woundsTaken > 0) {
       const penalty = woundsTaken * 5;
       message += `<br><button class="toxic-test-btn" data-actor-id="${targetId}" data-penalty="${penalty}">Toxic: Roll Toughness Test (-${penalty})</button>`;
+    }
+    
+    if (drainLifeMessage) {
+      message += `<br>${drainLifeMessage}`;
     }
     
     if (isCritical) {

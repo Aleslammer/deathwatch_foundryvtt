@@ -1,0 +1,43 @@
+{
+  "_id": "tyranid000000001",
+  "img": "systems/deathwatch/icons/weapons/tyranid-barbed-strangler.webp",
+  "name": "Barbed Strangler",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Heavy",
+    "clip": "—",
+    "description": "<p>The Barbed Strangler shoots a seed pod the size of a man's fist using muscle contraction along the fleshy barrel of the weapon. Upon impact, the strangler seed-pod grows to maturity in seconds, sending out hooked tendrils to bind and tear at its prey.</p>",
+    "dmg": "1d10+5",
+    "dmgType": "Impact",
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "10"
+      },
+      {
+        "id": "quality000000030"
+      },
+      {
+        "id": "quality000000006",
+        "value": "2"
+      },
+      {
+        "id": "quality000000023"
+      },
+      {
+        "id": "quality000000029"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "",
+    "penetration": "3",
+    "range": "80",
+    "reload": "—",
+    "renown": "",
+    "req": 0,
+    "rof": "S/-/-",
+    "wt": 0
+  },
+  "type": "weapon"
+}
