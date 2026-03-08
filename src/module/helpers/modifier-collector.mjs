@@ -44,8 +44,8 @@ export class ModifierCollector {
     for (const item of itemsArray) {
       if (!item?.system) continue;
       
-      // Chapter items are always active (no equipped check)
-      const isActive = item.type === 'chapter' || item.system.equipped;
+      // Chapter items and traits are always active (no equipped check)
+      const isActive = item.type === 'chapter' || item.type === 'trait' || item.system.equipped;
       if (!isActive) continue;
       
       debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
@@ -123,31 +123,44 @@ export class ModifierCollector {
       characteristic.modifiers = appliedMods;
       characteristic.mod = Math.floor(total / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
       characteristic.baseMod = characteristic.mod;
+      characteristic.unnaturalMultiplier = 1;
       
-      // Apply characteristic bonus modifiers (additive first, then multiplicative)
-      const bonusMods = [];
+      // Group and apply characteristic bonus modifiers
+      const bonusModGroups = new Map();
       for (const mod of modifiers) {
         if (mod.enabled !== false && mod.effectType === 'characteristic-bonus' && mod.valueAffected === key) {
           const modStr = String(mod.modifier);
-          if (!modStr.startsWith('x')) {
-            const modValue = parseInt(mod.modifier) || 0;
-            characteristic.mod += modValue;
-            bonusMods.push({ name: mod.name, value: modValue, source: mod.source });
+          if (bonusModGroups.has(mod.name)) {
+            const existing = bonusModGroups.get(mod.name);
+            if (modStr.startsWith('x')) {
+              const mult = parseFloat(modStr.substring(1)) || 1;
+              existing.multiplier += mult - 1;
+            } else {
+              existing.value += parseInt(mod.modifier) || 0;
+            }
+          } else {
+            bonusModGroups.set(mod.name, {
+              name: mod.name,
+              source: mod.source,
+              value: modStr.startsWith('x') ? 0 : (parseInt(mod.modifier) || 0),
+              multiplier: modStr.startsWith('x') ? (parseFloat(modStr.substring(1)) || 1) : null
+            });
           }
         }
       }
       
-      // Apply multiplicative modifiers to base
-      for (const mod of modifiers) {
-        if (mod.enabled !== false && mod.effectType === 'characteristic-bonus' && mod.valueAffected === key) {
-          const modStr = String(mod.modifier);
-          if (modStr.startsWith('x')) {
-            const multiplier = parseFloat(modStr.substring(1)) || 1;
-            const multipliedValue = Math.floor(characteristic.baseMod * multiplier);
-            const addedValue = multipliedValue - characteristic.baseMod;
-            characteristic.mod += addedValue;
-            bonusMods.push({ name: mod.name, value: multipliedValue, source: mod.source, display: modStr });
-          }
+      // Apply grouped modifiers
+      const bonusMods = [];
+      for (const group of bonusModGroups.values()) {
+        if (group.multiplier !== null) {
+          const multipliedValue = Math.floor(characteristic.baseMod * group.multiplier);
+          const addedValue = multipliedValue - characteristic.baseMod;
+          characteristic.mod += addedValue;
+          characteristic.unnaturalMultiplier = group.multiplier;
+          bonusMods.push({ name: group.name, value: multipliedValue, source: group.source, display: `x${group.multiplier}` });
+        } else if (group.value !== 0) {
+          characteristic.mod += group.value;
+          bonusMods.push({ name: group.name, value: group.value, source: group.source });
         }
       }
       characteristic.bonusModifiers = bonusMods;
@@ -219,8 +232,10 @@ export class ModifierCollector {
         
         for (const location of locations) {
           if (item.system[location] !== undefined) {
-            const base = item.system[`${location}_base`] ?? item.system[location];
-            item.system[`${location}_base`] = base;
+            if (item.system[`${location}_base`] === undefined) {
+              item.system[`${location}_base`] = item.system[location];
+            }
+            const base = item.system[`${location}_base`];
             let total = base;
             
             for (const mod of modifiers) {

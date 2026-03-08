@@ -89,41 +89,6 @@ describe('deathwatch.mjs', () => {
       await readyCallback();
       expect(Hooks.on).toHaveBeenCalledWith('hotbarDrop', expect.any(Function));
     });
-
-    it('creates scatter table for GM', async () => {
-      game.user.isGM = true;
-      game.tables.getName.mockReturnValue(null);
-      const mockTable = {
-        createEmbeddedDocuments: jest.fn()
-      };
-      RollTable.create.mockResolvedValue(mockTable);
-
-      await readyCallback();
-
-      expect(RollTable.create).toHaveBeenCalledWith(expect.objectContaining({
-        name: 'Scatter',
-        formula: '1d10'
-      }));
-      expect(mockTable.createEmbeddedDocuments).toHaveBeenCalledWith('TableResult', expect.any(Array));
-    });
-
-    it('updates scatter table if results count wrong', async () => {
-      game.user.isGM = true;
-      const mockTable = {
-        results: { size: 5 },
-        delete: jest.fn()
-      };
-      game.tables.getName.mockReturnValue(mockTable);
-      const mockNewTable = {
-        createEmbeddedDocuments: jest.fn()
-      };
-      RollTable.create.mockResolvedValue(mockNewTable);
-
-      await readyCallback();
-
-      expect(mockTable.delete).toHaveBeenCalled();
-      expect(RollTable.create).toHaveBeenCalled();
-    });
   });
 
   describe('renderChatMessage hook', () => {

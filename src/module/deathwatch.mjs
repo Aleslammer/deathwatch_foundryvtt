@@ -104,37 +104,6 @@ Hooks.once('init', async function () {
 Hooks.once('ready', async function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
-    
-    // Create or update Scatter table
-    if (game.user.isGM) {
-        let table = game.tables.getName("Scatter");
-        const needsUpdate = !table || table.results.size !== 8;
-        
-        if (needsUpdate) {
-            if (table) await table.delete();
-            
-            table = await RollTable.create({
-                name: "Scatter",
-                img: "systems/deathwatch/icons/tables/table.webp",
-                formula: "1d10",
-                replacement: true,
-                displayRoll: false
-            });
-            
-            await table.createEmbeddedDocuments("TableResult", [
-                { type: 0, text: "Upper Left", img: "systems/deathwatch/icons/tables/upleft.webp", weight: 1, range: [1, 1] },
-                { type: 0, text: "Up", img: "systems/deathwatch/icons/tables/up.webp", weight: 1, range: [2, 2] },
-                { type: 0, text: "Upper Right", img: "systems/deathwatch/icons/tables/upright.webp", weight: 1, range: [3, 3] },
-                { type: 0, text: "Left", img: "systems/deathwatch/icons/tables/left.webp", weight: 1, range: [4, 4] },
-                { type: 0, text: "Right", img: "systems/deathwatch/icons/tables/right.webp", weight: 1, range: [5, 5] },
-                { type: 0, text: "Lower Left", img: "systems/deathwatch/icons/tables/downleft.webp", weight: 2, range: [6, 7] },
-                { type: 0, text: "Down", img: "systems/deathwatch/icons/tables/down.webp", weight: 1, range: [8, 8] },
-                { type: 0, text: "Lower Right", img: "systems/deathwatch/icons/tables/downright.webp", weight: 2, range: [9, 10] }
-            ]);
-        }
-        
-        // No longer creating critical effect tables - using compendium instead
-    }
 });
 
 Hooks.on('renderChatMessage', (message, html) => {
@@ -145,6 +114,13 @@ Hooks.on('renderChatMessage', (message, html) => {
         const location = button.data('location');
         const targetId = button.data('targetId');
         const damageType = button.data('damageType') || 'Impact';
+        const isPrimitive = button.data('isPrimitive') === 'true' || button.data('isPrimitive') === true;
+        const isRazorSharp = button.data('isRazorSharp') === 'true' || button.data('isRazorSharp') === true;
+        const degreesOfSuccess = parseInt(button.data('degreesOfSuccess')) || 0;
+        const isScatter = button.data('isScatter') === 'true' || button.data('isScatter') === true;
+        const isLongOrExtremeRange = button.data('isLongOrExtremeRange') === 'true' || button.data('isLongOrExtremeRange') === true;
+        const isShocking = button.data('isShocking') === 'true' || button.data('isShocking') === true;
+        const isToxic = button.data('isToxic') === 'true' || button.data('isToxic') === true;
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -152,7 +128,82 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType);
+        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic);
+    });
+    
+    html.find('.shocking-test-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actorId = button.data('actorId');
+        const armorValue = parseInt(button.data('armorValue'));
+        const stunRounds = parseInt(button.data('stunRounds'));
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+        
+        const tg = actor.system.characteristics?.tg?.value || 0;
+        const armorBonus = armorValue * 10;
+        const targetNumber = tg + armorBonus;
+        
+        const roll = await new Roll('1d100').evaluate();
+        const success = roll.total <= targetNumber;
+        
+        let flavor = `<strong>Shocking Toughness Test</strong><br>Target: ${targetNumber} (TG ${tg} + ${armorBonus} armor bonus)<br>`;
+        if (success) {
+            flavor += '<strong style="color: green;">SUCCESS - Not Stunned</strong>';
+        } else {
+            flavor += `<strong style="color: red;">FAILED - Stunned for ${stunRounds} rounds!</strong>`;
+        }
+        
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor,
+            rollMode: game.settings.get('core', 'rollMode')
+        });
+    });
+    
+    html.find('.toxic-test-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actorId = button.data('actorId');
+        const penalty = parseInt(button.data('penalty'));
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+        
+        const tg = actor.system.characteristics?.tg?.value || 0;
+        const targetNumber = tg - penalty;
+        
+        const roll = await new Roll('1d100').evaluate();
+        const success = roll.total <= targetNumber;
+        
+        let flavor = `<strong>Toxic Toughness Test</strong><br>Target: ${targetNumber} (TG ${tg} - ${penalty} penalty)<br>`;
+        if (success) {
+            flavor += '<strong style="color: green;">SUCCESS - No Additional Damage</strong>';
+        } else {
+            const toxicRoll = await new Roll('1d10').evaluate();
+            const toxicDamage = toxicRoll.total;
+            flavor += `<strong style="color: red;">FAILED - Takes ${toxicDamage} Impact Damage (ignores armor & TB)</strong>`;
+            
+            const currentWounds = actor.system.wounds.value || 0;
+            await actor.update({ 'system.wounds.value': currentWounds + toxicDamage });
+            
+            await toxicRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: '<strong>Toxic Damage</strong>',
+                rollMode: game.settings.get('core', 'rollMode')
+            });
+        }
+        
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor,
+            rollMode: game.settings.get('core', 'rollMode')
+        });
     });
     
     html.find('.roll-critical-btn').click(async (ev) => {

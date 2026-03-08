@@ -246,6 +246,22 @@ export const RANGE_MODIFIERS = {
 
 ## Future Enhancements
 
+### Weapon Qualities
+See `weapon-qualities.md` for implemented qualities:
+- **Accurate**: +10 BS when aiming, bonus damage on single shots
+- **Primitive**: Doubles armor before penetration
+- **Tearing**: Roll extra die, drop lowest
+- **Proven (X)**: Minimum damage roll
+- **Razor Sharp**: Doubles penetration with 2+ DoS
+- **Twin-Linked**: +20 BS, +1 hit with 2+ DoS
+- **Gyro-Stabilised**: Caps range penalty at -10
+- **Scatter**: Bonus hits at point blank, doubles armor at long range
+- **Storm**: Doubles total hits
+- **Shocking**: Stun test on damage
+- **Toxic**: Toughness test on damage
+- **Felling (X)**: Reduces Unnatural Toughness
+- **Power Field**: Doubles STR bonus when active
+
 ### Planned Melee Features
 - Swift Attack (multiple melee attacks)
 - Lightning Attack (even more attacks)

@@ -72,7 +72,9 @@ export class MeleeCombatHelper {
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
             const modifiers = wsAdv + aim + allOut + charge + calledShot + runningTarget + miscModifier;
-            const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
+            const isDefensive = weapon.attachedQualities?.some(q => q.system.key === 'defensive');
+            const defensivePenalty = isDefensive ? -10 : 0;
+            const clampedModifiers = Math.max(-60, Math.min(60, modifiers + defensivePenalty));
             const targetNumber = ws + clampedModifiers;
 
             const hitRoll = await new Roll('1d100').evaluate();
@@ -89,6 +91,7 @@ export class MeleeCombatHelper {
             if (aim !== 0) modifierParts.push(`+${aim} Aim`);
             if (allOut !== 0) modifierParts.push(`+${allOut} All Out Attack`);
             if (charge !== 0) modifierParts.push(`+${charge} Charge`);
+            if (defensivePenalty !== 0) modifierParts.push(`${defensivePenalty} Defensive`);
             if (calledShot !== 0) modifierParts.push(`${calledShot} Called Shot`);
             if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
             if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);

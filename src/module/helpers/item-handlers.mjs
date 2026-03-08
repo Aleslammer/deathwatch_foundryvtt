@@ -12,6 +12,21 @@ export class ItemHandlers {
     if (item.system.loadedAmmo) {
       item.loadedAmmoItem = context.items.find(i => i._id === item.system.loadedAmmo);
     }
+    item.attachedQualities = (item.system.attachedQualities || [])
+      .map(q => {
+        const qualityId = typeof q === 'string' ? q : q.id;
+        const quality = context.items.find(i => i._id === qualityId);
+        if (!quality) return null;
+        return {
+          _id: quality._id,
+          name: quality.name,
+          system: {
+            ...quality.system,
+            value: (typeof q === 'object' && q.value !== undefined) ? q.value : quality.system.value
+          }
+        };
+      })
+      .filter(q => q);
     return item;
   }
 
@@ -113,6 +128,50 @@ export class ItemHandlers {
     // Sort talents by name
     categories.talents.sort((a, b) => a.name.localeCompare(b.name));
 
+    // Group duplicate traits and add count/multiplier
+    categories.traits = this.groupTraits(categories.traits);
+
     return categories;
+  }
+
+  /**
+   * Group duplicate traits and add count/multiplier display
+   * @param {Array} traits The trait items
+   * @returns {Array} Grouped traits with count
+   */
+  static groupTraits(traits) {
+    const grouped = new Map();
+    
+    for (const trait of traits) {
+      const key = trait.name;
+      if (grouped.has(key)) {
+        const existing = grouped.get(key);
+        existing.count++;
+        existing.ids.push(trait._id);
+        // Update multiplier if it's an Unnatural Characteristic
+        if (trait.system.modifiers?.length > 0) {
+          const mod = trait.system.modifiers[0];
+          if (mod.effectType === 'characteristic-bonus' && mod.modifier?.startsWith('x')) {
+            existing.multiplier = existing.count + 1;
+          }
+        }
+      } else {
+        grouped.set(key, {
+          ...trait,
+          count: 1,
+          ids: [trait._id],
+          multiplier: null
+        });
+        // Check if it's an Unnatural Characteristic
+        if (trait.system.modifiers?.length > 0) {
+          const mod = trait.system.modifiers[0];
+          if (mod.effectType === 'characteristic-bonus' && mod.modifier?.startsWith('x')) {
+            grouped.get(key).multiplier = 2;
+          }
+        }
+      }
+    }
+    
+    return Array.from(grouped.values());
   }
 }

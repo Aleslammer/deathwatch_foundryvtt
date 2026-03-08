@@ -1,6 +1,7 @@
 import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
+import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class RangedCombatHelper {
   /* istanbul ignore next */
@@ -15,7 +16,7 @@ export class RangedCombatHelper {
     const advances = actor.system.characteristics.bs.advances || {};
     const bsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
 
-    const attackerToken = canvas.tokens.controlled[0];
+    const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
     
     if (!targetToken) {
@@ -126,14 +127,46 @@ export class RangedCombatHelper {
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
             const maxHits = roundsFired;
 
-            const { targetNumber } = CombatDialogHelper.buildAttackModifiers(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier);
+            const isAccurate = await WeaponQualityHelper.hasQuality(weapon, 'accurate');
+            const isGyroStabilised = await WeaponQualityHelper.hasQuality(weapon, 'gyro-stabilised');
+            const hasOverheats = await WeaponQualityHelper.hasQuality(weapon, 'overheats');
+            const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
+            const isStorm = await WeaponQualityHelper.hasQuality(weapon, 'storm');
+            const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
+            const isPointBlank = rangeLabel === "Point Blank";
+            const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
+              bs,
+              bsAdv,
+              aim,
+              autoFire,
+              calledShot,
+              rangeMod: autoRangeMod,
+              runningTarget,
+              miscModifier,
+              isAccurate,
+              isGyroStabilised,
+              isTwinLinked
+            });
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
-            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire);
+            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
-            const isJammed = hitValue >= jamThreshold;
+            let isJammed = hitValue >= jamThreshold;
+            const hasReliable = await WeaponQualityHelper.hasQuality(weapon, 'reliable');
+            
+            if (isJammed && hasReliable) {
+              const reliableRoll = await new Roll('1d10').evaluate();
+              await reliableRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `<strong>Reliable Check:</strong> ${weapon.name} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
+                rollMode: game.settings.get('core', 'rollMode')
+              });
+              isJammed = reliableRoll.total === 10;
+            }
+            
+            const isOverheated = hasOverheats && hitValue >= 91;
 
             if (isJammed) {
               await weapon.update({ "system.jammed": true });
@@ -142,9 +175,11 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
+            CombatHelper.lastAttackAim = aim;
+            CombatHelper.lastAttackRangeLabel = rangeLabel;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier);
-            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus);
+            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
             hitRoll.toMessage({
@@ -157,7 +192,10 @@ export class RangedCombatHelper {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;
-                const newAmmoValue = Math.max(0, currentValue - roundsFired);
+                let ammoExpended = roundsFired;
+                if (isStorm) ammoExpended *= 2;
+                if (isTwinLinked) ammoExpended *= 2;
+                const newAmmoValue = Math.max(0, currentValue - ammoExpended);
                 await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
                 if (newAmmoValue === 0) {
                   ui.notifications.warn(`${weapon.name} is out of ammunition!`);

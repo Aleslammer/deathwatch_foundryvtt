@@ -4,12 +4,16 @@ import { CanvasHelper, FoundryAdapter } from "./foundry-adapter.mjs";
 import { ChatMessageBuilder } from "./chat-message-builder.mjs";
 import { RangedCombatHelper } from "./ranged-combat.mjs";
 import { MeleeCombatHelper } from "./melee-combat.mjs";
+import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
+import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
 import { debug } from "./debug.mjs";
 
 export class CombatHelper {
   static lastAttackRoll = null;
   static lastAttackTarget = null;
   static lastAttackHits = 1;
+  static lastAttackAim = 0;
+  static lastAttackRangeLabel = null;
 
   static calculateRangeModifier(distance, weaponRange) {
     debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
@@ -139,9 +143,23 @@ export class CombatHelper {
     return armorField ? (equippedArmor.system[armorField] || 0) : 0;
   }
 
-  static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact') {
+  static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false, isShocking = false, isToxic = false) {
     const armorValue = this.getArmorValue(targetActor, location);
-    const { effectiveArmor, woundsTaken } = CombatDialogHelper.calculateDamageResult(damage, armorValue, penetration);
+    const toughnessBonus = targetActor.system.characteristics?.tg?.baseMod || 0;
+    const unnaturalToughnessMultiplier = targetActor.system.characteristics?.tg?.unnaturalMultiplier || 1;
+    const { effectiveArmor, woundsTaken, effectiveTB } = CombatDialogHelper.calculateDamageResult({
+      damage,
+      armorValue,
+      penetration,
+      toughnessBonus,
+      unnaturalToughnessMultiplier,
+      felling,
+      isPrimitive,
+      isRazorSharp,
+      degreesOfSuccess,
+      isScatter,
+      isLongOrExtremeRange
+    });
 
     if (woundsTaken > 0) {
       const currentDamage = targetActor.system.wounds.value || 0;
@@ -152,7 +170,7 @@ export class CombatHelper {
       
       const message = CombatDialogHelper.buildDamageMessage(
         targetActor.name, woundsTaken, location, damage, armorValue, penetration, 
-        effectiveArmor, isCritical, criticalDamage, targetActor.id, damageType
+        effectiveArmor, effectiveTB, isCritical, criticalDamage, targetActor.id, damageType, isShocking, isToxic
       );
       
       if (isCritical) {
@@ -164,24 +182,17 @@ export class CombatHelper {
       await FoundryAdapter.createChatMessage(message);
     } else {
       FoundryAdapter.showNotification('info', `${targetActor.name}'s armor absorbs all damage!`);
-      const message = CombatDialogHelper.buildArmorAbsorbMessage(targetActor.name, location, damage, armorValue, penetration);
+      const message = CombatDialogHelper.buildArmorAbsorbMessage(targetActor.name, location, damage, armorValue, penetration, effectiveTB);
       await FoundryAdapter.createChatMessage(message);
     }
   }
 
   static hasNaturalTen(roll) {
-    return roll.dice.some(d => d.results.some(r => r.result === 10 || (d.faces === 5 && r.result === 5)));
+    return RighteousFuryHelper.hasNaturalTen(roll);
   }
 
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
-    const confirmRoll = await FoundryAdapter.evaluateRoll('1d100');
-    const confirmed = confirmRoll.total <= targetNumber;
-    
-    const speaker = FoundryAdapter.getChatSpeaker(actor);
-    const flavor = ChatMessageBuilder.createRighteousFuryFlavor(targetNumber, confirmed);
-    await FoundryAdapter.sendRollToChat(confirmRoll, speaker, flavor);
-    
-    return confirmed;
+    return RighteousFuryHelper.rollConfirmation(actor, targetNumber, hitLocation);
   }
 
   /* istanbul ignore next */
@@ -192,6 +203,7 @@ export class CombatHelper {
     const defaultRoll = this.lastAttackRoll || '';
     const defaultTarget = this.lastAttackTarget || '';
     const defaultHits = this.lastAttackHits || 1;
+    const aimUsed = this.lastAttackAim || 0;
     const isMelee = weapon.system.class?.toLowerCase().includes('melee');
     const strBonus = actor.system.characteristics.str?.mod || 0;
     const targetToken = game.user.targets.first();
@@ -239,19 +251,46 @@ export class CombatHelper {
 
             const hitLocations = this.determineMultipleHitLocations(firstHitLocation, numHits);
             const penetration = weapon.system.penetration || 0;
+            const isAccurate = weapon.system.isAccurate || false;
+            const isAiming = aimUsed > 0;
+            const isSingleShot = numHits === 1;
+            const isPrimitive = weapon.system.isPrimitive || false;
+            const isRazorSharp = await WeaponQualityHelper.hasQuality(weapon, 'razor-sharp');
+            const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
+            const isShocking = await WeaponQualityHelper.hasQuality(weapon, 'shocking');
+            const isTearing = await WeaponQualityHelper.hasQuality(weapon, 'tearing');
+            const isToxic = await WeaponQualityHelper.hasQuality(weapon, 'toxic');
+            const isVolatile = await WeaponQualityHelper.hasQuality(weapon, 'volatile');
+            const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
+            const rangeLabel = this.lastAttackRangeLabel || "Unknown";
+            const isLongOrExtremeRange = rangeLabel === "Long" || rangeLabel === "Extreme";
+            const isPowerFist = await WeaponQualityHelper.hasQuality(weapon, 'power-fist');
+            const isLightningClaw = await WeaponQualityHelper.isLightningClaw(weapon);
+            const hasLightningClawPair = await WeaponQualityHelper.hasLightningClawPair(actor);
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
-              let allRolls = [];
-              let furyCount = 0;
               
-              const damageFormula = CombatDialogHelper.buildDamageFormula(dmg, degreesOfSuccess, isMelee, strBonus, i);
+              const damageFormula = CombatDialogHelper.buildDamageFormula({
+                baseDmg: dmg,
+                degreesOfSuccess,
+                isMelee,
+                strBonus,
+                hitIndex: i,
+                isAccurate,
+                isAiming,
+                isSingleShot,
+                isTearing,
+                provenRating,
+                isPowerFist,
+                isLightningClaw,
+                hasLightningClawPair
+              });
 
               const roll = await new Roll(damageFormula).evaluate();
               totalDamage += roll.total;
-              allRolls.push(roll);
               
-              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact') : '';
+              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic) : '';
               const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
               await roll.toMessage({
@@ -260,24 +299,13 @@ export class CombatHelper {
               });
               
               if (this.hasNaturalTen(roll) && targetNumber > 0) {
-                let keepChecking = await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
+                const { totalDamage: furyDamage, furyCount } = await RighteousFuryHelper.processFuryChain(
+                  actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile
+                );
                 
-                while (keepChecking) {
-                  furyCount++;
-                  const furyRoll = await new Roll(dmg).evaluate();
-                  totalDamage += furyRoll.total;
-                  allRolls.push(furyRoll);
-                  
-                  const furyFlavor = ChatMessageBuilder.createRighteousFuryDamageFlavor(furyCount);
-                  await furyRoll.toMessage({
-                    speaker: ChatMessage.getSpeaker({ actor }),
-                    flavor: furyFlavor
-                  });
-                  
-                  keepChecking = this.hasNaturalTen(furyRoll) && await this.rollRighteousFury(actor, weapon, targetNumber, hitLocations[i]);
-                }
+                totalDamage += furyDamage;
                 
-                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact') : '';
+                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic) : '';
                 const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 
                 await ChatMessage.create({

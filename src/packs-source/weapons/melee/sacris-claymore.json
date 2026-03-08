@@ -1,0 +1,27 @@
+{
+  "_id": "melee0000000011",
+  "img": "systems/deathwatch/icons/weapons/sacris-claymore.webp",
+  "name": "Sacris Claymore",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Melee",
+    "clip": "",
+    "description": "<p>The feral clansmen of Sacris are raised with giant claymores in their hands. After a warrior's transfiguration into a Space Marine is complete, the sword of his youth is a light and simple thing, but the Storm Wardens have made a habit of forging improved versions of these primitive weapons of size and materials befitting an Adeptus Astartes. It is far from unheard of for an enraged Storm Warden to favour his simple claymore over a power sword, particularly when matters of honour are at stake. A Sacris claymore replaces the Astartes combat knife, and requires two hands to wield.</p>",
+    "dmg": "2d10+2",
+    "dmgType": "R",
+    "equipped": false,
+    "modifiers": [],
+    "page": "156",
+    "penetration": "2",
+    "range": "",
+    "reload": "",
+    "renown": "",
+    "req": 10,
+    "rof": "",
+    "wt": 3,
+    "attachedQualities": [
+      "quality000000026"
+    ]
+  },
+  "type": "weapon"
+}

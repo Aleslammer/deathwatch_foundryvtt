@@ -43,13 +43,13 @@
           {{/if}}
         </div>
         <div class="item-ammo">
-          {{#unless (eq item.system.class "Melee")}}
-          {{#if item.loadedAmmoItem}}
+          {{#if (eq item.system.class "Melee")}}
+            {{!-- Empty for melee weapons --}}
+          {{else if item.loadedAmmoItem}}
             {{item.loadedAmmoItem.name}}
           {{else}}
             <span style="font-style: italic; color: #999;">Drop ammo here</span>
           {{/if}}
-          {{/unless}}
         </div>
         {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
       </li>

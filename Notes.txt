@@ -4,7 +4,7 @@ file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/data-slate.png" -o "./src/icons/gear/data-slate.webp"
+C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/adamantine_mantle.png.png" -o "./src/icons/gear/adamantine_mantle.webp"
 
 
  cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
@@ -18,10 +18,8 @@ TODO: Need to handle called shot mechanic
 TODO: weapon damage does not appear to be modifyable on the gear page.
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 
-TODO: Melee Weapons 153
 
 
-TODO: Weapon Qualities 142
 TODO: Weaspon Upgrades 156
 TODO: Ammmunition 158
  TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
@@ -30,3 +28,20 @@ TODO: Psychic Powers (180)
 
 
 
+Relics
+Deathwatch Relics
+Chapter Relics
+Chapter Trappings
+Cybernetics
+Servitors
+
+
+Melee Attack 
+All Out
+Charge
+Aim
+Called shot
+Running
+PowerLevel (for powerswords)
+
+TODO: Melee Weapons 153 (Force and Other)

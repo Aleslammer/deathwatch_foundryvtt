@@ -5,6 +5,20 @@ global.game = {
   packs: new Map(),
   i18n: {
     localize: (key) => key
+  },
+  user: {
+    targets: {
+      first: jest.fn(() => null)
+    }
+  }
+};
+
+global.canvas = {
+  tokens: {
+    controlled: []
+  },
+  grid: {
+    measurePath: jest.fn(() => ({ distance: 0 }))
   }
 };
 
