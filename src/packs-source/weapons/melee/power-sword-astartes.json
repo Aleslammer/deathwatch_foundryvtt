@@ -1,0 +1,28 @@
+{
+  "_id": "melee0000000006",
+  "img": "systems/deathwatch/icons/weapons/powersword.webp",
+  "name": "Astartes Power Sword",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Melee",
+    "clip": "",
+    "description": "<p>Power weapons require great investments of time and rare materials to produce. Therefore, power swords are typically reserved for ranking members of the Adeptus Astartes. Elegant but effective, they allow the user greater attack options and defensive responses than many other varieties of power weapon. This efficient design makes them popular with officers regardless of whether they specialise in close combat or not.</p>",
+    "dmg": "1d10+6",
+    "dmgType": "E",
+    "equipped": false,
+    "modifiers": [],
+    "page": "155",
+    "penetration": "6",
+    "range": "",
+    "reload": "",
+    "renown": "Respected",
+    "req": 5,
+    "rof": "",
+    "wt": 20,
+    "attachedQualities": [
+      "quality000000007",
+      "quality000000012"
+    ]
+  },
+  "type": "weapon"
+}

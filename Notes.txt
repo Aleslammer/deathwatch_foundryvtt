@@ -18,10 +18,8 @@ TODO: Need to handle called shot mechanic
 TODO: weapon damage does not appear to be modifyable on the gear page.
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 
-TODO: Melee Weapons 153
 
 
-TODO: Weapon Qualities 142
 TODO: Weaspon Upgrades 156
 TODO: Ammmunition 158
  TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
@@ -46,4 +44,4 @@ Called shot
 Running
 PowerLevel (for powerswords)
 
-Ok lets do testing for the weapon qualities.
+TODO: Melee Weapons 153 (Force and Other)

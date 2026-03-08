@@ -1,0 +1,27 @@
+{
+  "_id": "melee0000000010",
+  "img": "systems/deathwatch/icons/weapons/ceremonial-sword.webp",
+  "name": "Ceremonial Sword",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Melee",
+    "clip": "",
+    "description": "<p>Dark Angels frequently carry swords with winged hilts in echo of their Chapter symbol. These weapons are used more in ceremony than in combat, but they are perfectly functional weapons should the Battle-Brother have reason to draw one. They are carried either in addition to, or in lieu of, a combat knife depending on the individual's preferences.</p>",
+    "dmg": "1d10+3",
+    "dmgType": "R",
+    "equipped": false,
+    "modifiers": [],
+    "page": "156",
+    "penetration": "2",
+    "range": "",
+    "reload": "",
+    "renown": "",
+    "req": 5,
+    "rof": "",
+    "wt": 3,
+    "attachedQualities": [
+      "quality000000007"
+    ]
+  },
+  "type": "weapon"
+}
