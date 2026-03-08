@@ -147,34 +147,20 @@ export class CombatDialogHelper {
     return { valid: true };
   }
 
-  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex, isAccurate = false, isAiming = false, isSingleShot = false, isTearing = false) {
+  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex, isAccurate = false, isAiming = false, isSingleShot = false, isTearing = false, provenRating = 0, isPowerFist = false) {
     let formula = baseDmg;
+    const effectiveMin = Math.max(provenRating, (hitIndex === 0 ? degreesOfSuccess : 0));
     
     if (isTearing) {
       formula = formula.replace(/(\d+)(d\d+)/g, (match, count, die) => {
         const diceCount = parseInt(count);
-        return `${diceCount + 1}${die}dl1`;
+        const minClause = effectiveMin > 0 ? `min${effectiveMin}` : '';
+        return `${diceCount + 1}${die}${minClause}dl1`;
       });
-    }
-    
-    if (hitIndex === 0 && degreesOfSuccess > 0) {
-      if (isTearing) {
-        formula = formula.replace(/(\d+)(d\d+)dl1/, (match, count, die) => {
-          const diceCount = parseInt(count);
-          if (diceCount > 1) {
-            return `(${diceCount - 1}${die}dl1 + 1${die}min${degreesOfSuccess})`;
-          }
-          return `1${die}min${degreesOfSuccess}`;
-        });
-      } else {
-        formula = formula.replace(/(\d+)(d\d+)/, (match, count, die) => {
-          const diceCount = parseInt(count);
-          if (diceCount > 1) {
-            return `(${diceCount - 1}${die} + 1${die}min${degreesOfSuccess})`;
-          }
-          return `1${die}min${degreesOfSuccess}`;
-        });
-      }
+    } else if (effectiveMin > 0) {
+      formula = formula.replace(/(\d+)(d\d+)/g, (match, count, die) => {
+        return `${count}${die}min${effectiveMin}`;
+      });
     }
     
     if (hitIndex === 0 && !isMelee && isAccurate && isAiming && isSingleShot && degreesOfSuccess >= 2) {
@@ -183,7 +169,8 @@ export class CombatDialogHelper {
     }
     
     if (isMelee && strBonus !== 0) {
-      formula += ` + ${strBonus}`;
+      const effectiveStrBonus = isPowerFist ? strBonus * 2 : strBonus;
+      formula += ` + ${effectiveStrBonus}`;
     }
     
     return formula;

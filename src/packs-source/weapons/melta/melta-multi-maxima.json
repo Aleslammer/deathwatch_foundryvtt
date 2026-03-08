@@ -7,18 +7,19 @@
     "class": "Heavy",
     "clip": "12",
     "description": "<p>Meltaguns are the most common form of melta weapon and are found in many Imperial forces. They are less prone to catastrophic failure than plasma guns and work best at shorter ranges. An ideal weapon for cutting through bulkheads or armour, the Deathwatch has no end of uses for it. The Vulkan-pattern uses a built-in fuel canister, but versions with a backpack attachment are also common.</p>",
-    "dmg": "4d10+6",
+    "dmg": "2d10+16",
     "dmgType": "Energy",
     "equipped": false,
     "modifiers": [],
     "page": "145",
-    "penetration": "13",
+    "penetration": "12",
     "range": "60",
     "reload": "2 Full",
     "renown": "Respected",
     "req": 35,
     "rof": "S/-/-",
-    "wt": 72
+    "wt": 72,
+    "attachedQualities": [{"id": "quality000000004", "value": "1"}]
   },
   "type": "weapon"
 }

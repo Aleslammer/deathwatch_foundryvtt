@@ -26,7 +26,7 @@ describe('Tearing Weapon Quality', () => {
 
     it('combines Tearing with degrees of success', () => {
       const formula = CombatDialogHelper.buildDamageFormula('1d10', 2, false, 0, 0, false, false, false, true);
-      expect(formula).toBe('(1d10dl1 + 1d10min2)');
+      expect(formula).toBe('2d10min2dl1');
     });
 
     it('combines Tearing with melee strength bonus', () => {
@@ -36,7 +36,7 @@ describe('Tearing Weapon Quality', () => {
 
     it('combines Tearing with Accurate bonus', () => {
       const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, false, 0, 0, true, true, true, true);
-      expect(formula).toBe('(1d10dl1 + 1d10min4) + 2d10');
+      expect(formula).toBe('2d10min4dl1 + 2d10');
     });
 
     it('handles complex damage formula with Tearing', () => {

@@ -18,7 +18,11 @@
     "renown": "",
     "req": 5,
     "rof": "",
-    "wt": 10
+    "wt": 10,
+    "attachedQualities": [
+      "quality000000007",
+      "quality000000023"
+    ]
   },
   "type": "weapon"
 }

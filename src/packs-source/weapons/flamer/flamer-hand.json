@@ -7,18 +7,19 @@
     "class": "Pistol",
     "clip": "4",
     "description": "<p>This hand-held flamer is still capable of unleashing large blasts of flame, but is good for only a few shots before the fuel canister must be switched out.</p>",
-    "dmg": "2d10+2",
+    "dmg": "1d10+7",
     "dmgType": "Energy",
     "equipped": false,
     "modifiers": [],
     "page": "145",
-    "penetration": "3",
+    "penetration": "4",
     "range": "10",
     "reload": "2 Full",
     "renown": "",
     "req": 10,
     "rof": "S/-/-",
-    "wt": 6
+    "wt": 6,
+    "attachedQualities": ["quality000000008"]
   },
   "type": "weapon"
 }

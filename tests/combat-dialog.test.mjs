@@ -277,7 +277,7 @@ describe('buildDamageFormula', () => {
 
   it('applies degrees of success to first hit', () => {
     const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 0);
-    expect(result).toBe('(1d10 + 1d10min3)+5');
+    expect(result).toBe('2d10min3+5');
   });
 
   it('applies degrees of success to single die', () => {
@@ -292,7 +292,7 @@ describe('buildDamageFormula', () => {
 
   it('applies both DoS and strength bonus', () => {
     const result = CombatDialogHelper.buildDamageFormula('2d10+5', 2, true, 6, 0);
-    expect(result).toBe('(1d10 + 1d10min2)+5 + 6');
+    expect(result).toBe('2d10min2+5 + 6');
   });
 
   it('handles negative strength bonus', () => {

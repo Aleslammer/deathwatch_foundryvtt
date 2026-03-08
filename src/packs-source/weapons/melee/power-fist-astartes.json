@@ -1,0 +1,29 @@
+{
+  "_id": "melee0000000003",
+  "img": "systems/deathwatch/icons/weapons/power-fist.webp",
+  "name": "Astartes Power Fist",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Melee",
+    "clip": "",
+    "description": "<p>A power fist generates an energy field so violently disruptive that the weapon inside it is of little consequence. Therefore, instead of surrounding a traditional weapon, the field envelopes an oversized and augmented glove. Backed by a Battle-Brother's strength, a power fist can sunder even the heaviest armour or rupture flesh as though bursting a bloody, overripe fruit. Keeping these superior energy fields charged requires heavy cables linked to the armour's power system. The generators are also rare and difficult to maintain, making such a weapon a sign of status, even within the Adeptus Astartes.</p><p>A power fist adds a multiplier to the wielder's Strength Bonus. (Note: A Space Marine already doubles his Strength Bonus from his Unnatural Strength Trait. Therefore, the Power Fist increases the multiplier by one, tripling the Space Marine's Strength Bonus) It replaces the normal glove on Astartes power armour. In addition, the poor manual dexterity penalty increases to –20.</p>",
+    "dmg": "2d10",
+    "dmgType": "Energy",
+    "equipped": false,
+    "modifiers": [],
+    "page": "153",
+    "penetration": "9",
+    "range": "",
+    "reload": "",
+    "renown": "Distinguished",
+    "req": 30,
+    "rof": "",
+    "wt": 25,
+    "attachedQualities": [
+      "quality000000012",
+      "quality000000027"
+    ],
+    "doublesStrengthBonus": true
+  },
+  "type": "weapon"
+}

@@ -7,7 +7,7 @@
     "class": "Heavy",
     "clip": "16",
     "description": "<p>The largest portable plasma weapon is the plasma cannon or heavy plasma gun, which is also seen in service on some Adeptus Astartes transports. Rather than using attached flasks, the wielder wears a large fuel canister that attaches to his backpack unit. This weapon has a much greater range and ammunition supply, and its violent discharges hurtle like miniature suns from its barrel, impacting a large area. It can also fire on Maximal mode which exhausts even more fuel but provides an even larger blast of heat on impact, creating a fireball capable of destroying heavily armoured targets.</p>",
-    "dmg": "2d10+11",
+    "dmg": "2d10+12",
     "dmgType": "Energy",
     "equipped": false,
     "modifiers": [],
@@ -18,7 +18,11 @@
     "renown": "Distinguished",
     "req": 30,
     "rof": "S/-/-",
-    "wt": 70
+    "wt": 70,
+    "attachedQualities": [
+      {"id": "quality000000004", "value": "3"},
+      "quality000000028"
+    ]
   },
   "type": "weapon"
 }

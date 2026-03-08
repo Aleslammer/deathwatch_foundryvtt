@@ -46,5 +46,4 @@ Called shot
 Running
 PowerLevel (for powerswords)
 
-Reliable is not working
-Overheats is not working
+Ok lets do testing for the weapon qualities.

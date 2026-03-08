@@ -261,13 +261,15 @@ export class CombatHelper {
             const isTearing = await WeaponQualityHelper.hasQuality(weapon, 'tearing');
             const isToxic = await WeaponQualityHelper.hasQuality(weapon, 'toxic');
             const isVolatile = await WeaponQualityHelper.hasQuality(weapon, 'volatile');
+            const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
             const rangeLabel = this.lastAttackRangeLabel || "Unknown";
             const isLongOrExtremeRange = rangeLabel === "Long" || rangeLabel === "Extreme";
+            const isPowerFist = weapon.system.doublesStrengthBonus || false;
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
               
-              const damageFormula = CombatDialogHelper.buildDamageFormula(dmg, degreesOfSuccess, isMelee, strBonus, i, isAccurate, isAiming, isSingleShot, isTearing);
+              const damageFormula = CombatDialogHelper.buildDamageFormula(dmg, degreesOfSuccess, isMelee, strBonus, i, isAccurate, isAiming, isSingleShot, isTearing, provenRating, isPowerFist);
 
               const roll = await new Roll(damageFormula).evaluate();
               totalDamage += roll.total;

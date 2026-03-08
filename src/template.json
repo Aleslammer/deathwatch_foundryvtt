@@ -149,7 +149,8 @@
             },
             "loadedAmmo": null,
             "modifiers": [],
-            "attachedQualities": []
+            "attachedQualities": [],
+            "doublesStrengthBonus": false
         },
         "armor": {
             "templates": [
