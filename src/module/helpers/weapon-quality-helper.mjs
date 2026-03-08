@@ -35,4 +35,18 @@ export class WeaponQualityHelper {
     }
     return 0;
   }
+
+  static async isLightningClaw(weapon) {
+    return await this.hasQuality(weapon, 'lightning-claw');
+  }
+
+  static async hasLightningClawPair(actor) {
+    const equippedClaws = [];
+    for (const item of actor.items) {
+      if (item.type === 'weapon' && item.system.equipped && await this.isLightningClaw(item)) {
+        equippedClaws.push(item);
+      }
+    }
+    return equippedClaws.length >= 2;
+  }
 }

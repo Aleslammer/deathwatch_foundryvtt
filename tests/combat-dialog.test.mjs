@@ -271,32 +271,32 @@ describe('validateWeaponForAttack', () => {
 
 describe('buildDamageFormula', () => {
   it('returns base damage for hit index > 0', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 1);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 3, isMelee: false, strBonus: 0, hitIndex: 1 });
     expect(result).toBe('2d10+5');
   });
 
   it('applies degrees of success to first hit', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 3, isMelee: false, strBonus: 0, hitIndex: 0 });
     expect(result).toBe('2d10min3+5');
   });
 
   it('applies degrees of success to single die', () => {
-    const result = CombatDialogHelper.buildDamageFormula('1d10+5', 2, false, 0, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 2, isMelee: false, strBonus: 0, hitIndex: 0 });
     expect(result).toBe('1d10min2+5');
   });
 
   it('adds strength bonus for melee', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 0, true, 8, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 0, isMelee: true, strBonus: 8, hitIndex: 0 });
     expect(result).toBe('2d10+5 + 8');
   });
 
   it('applies both DoS and strength bonus', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 2, true, 6, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 2, isMelee: true, strBonus: 6, hitIndex: 0 });
     expect(result).toBe('2d10min2+5 + 6');
   });
 
   it('handles negative strength bonus', () => {
-    const result = CombatDialogHelper.buildDamageFormula('1d10', 0, true, -2, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 0, isMelee: true, strBonus: -2, hitIndex: 0 });
     expect(result).toBe('1d10 + -2');
   });
 });

@@ -147,7 +147,23 @@ export class CombatDialogHelper {
     return { valid: true };
   }
 
-  static buildDamageFormula(baseDmg, degreesOfSuccess, isMelee, strBonus, hitIndex, isAccurate = false, isAiming = false, isSingleShot = false, isTearing = false, provenRating = 0, isPowerFist = false) {
+  static buildDamageFormula(options) {
+    const {
+      baseDmg,
+      degreesOfSuccess,
+      isMelee,
+      strBonus,
+      hitIndex,
+      isAccurate = false,
+      isAiming = false,
+      isSingleShot = false,
+      isTearing = false,
+      provenRating = 0,
+      isPowerFist = false,
+      isLightningClaw = false,
+      hasLightningClawPair = false
+    } = options;
+
     let formula = baseDmg;
     const effectiveMin = Math.max(provenRating, (hitIndex === 0 ? degreesOfSuccess : 0));
     
@@ -171,6 +187,11 @@ export class CombatDialogHelper {
     if (isMelee && strBonus !== 0) {
       const effectiveStrBonus = isPowerFist ? strBonus * 2 : strBonus;
       formula += ` + ${effectiveStrBonus}`;
+    }
+    
+    if (isLightningClaw && degreesOfSuccess > 0) {
+      const bonusPerDegree = hasLightningClawPair ? 2 : 1;
+      formula += ` + ${degreesOfSuccess * bonusPerDegree}`;
     }
     
     return formula;

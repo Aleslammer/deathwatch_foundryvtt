@@ -265,11 +265,27 @@ export class CombatHelper {
             const rangeLabel = this.lastAttackRangeLabel || "Unknown";
             const isLongOrExtremeRange = rangeLabel === "Long" || rangeLabel === "Extreme";
             const isPowerFist = await WeaponQualityHelper.hasQuality(weapon, 'power-fist');
+            const isLightningClaw = await WeaponQualityHelper.isLightningClaw(weapon);
+            const hasLightningClawPair = await WeaponQualityHelper.hasLightningClawPair(actor);
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
               
-              const damageFormula = CombatDialogHelper.buildDamageFormula(dmg, degreesOfSuccess, isMelee, strBonus, i, isAccurate, isAiming, isSingleShot, isTearing, provenRating, isPowerFist);
+              const damageFormula = CombatDialogHelper.buildDamageFormula({
+                baseDmg: dmg,
+                degreesOfSuccess,
+                isMelee,
+                strBonus,
+                hitIndex: i,
+                isAccurate,
+                isAiming,
+                isSingleShot,
+                isTearing,
+                provenRating,
+                isPowerFist,
+                isLightningClaw,
+                hasLightningClawPair
+              });
 
               const roll = await new Roll(damageFormula).evaluate();
               totalDamage += roll.total;
