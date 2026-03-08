@@ -33,6 +33,10 @@ Documentation for the Deathwatch Foundry VTT system, including architecture, gui
 **Purpose**: Combat system architecture and implementation  
 **Contents**: Ranged/melee combat separation, attack dialogs, damage application, hit locations, constants
 
+### 8. weapon-qualities.md
+**Purpose**: Weapon qualities system documentation  
+**Contents**: Quality implementations (Accurate, Primitive, Tearing, etc.), detection methods, combat integration, test coverage
+
 ## Quick Reference
 
 ### File Locations

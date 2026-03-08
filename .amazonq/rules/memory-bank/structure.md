@@ -88,6 +88,11 @@ src/
 - **initiative.mjs**: Initiative rolling
 - **modifiers.mjs**: Modifier CRUD operations
 - **templates.mjs**: Template preloading
+- **righteous-fury-helper.mjs**: Righteous Fury mechanics
+- **wound-helper.mjs**: Wound calculation utilities
+- **rank-helper.mjs**: Rank progression utilities
+- **skill-loader.mjs**: Skill data loading
+- **status-effects.mjs**: Status effect management
 
 ### 4. Sheet Classes (`module/sheets/`)
 - **actor-sheet.mjs**: Character and NPC sheet UI logic
