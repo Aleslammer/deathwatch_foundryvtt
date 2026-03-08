@@ -9,6 +9,15 @@
     "description": "<p>A larger incarnation of the plasma grenade, a salvo of plasma missiles can easily turn enemy troops into a smoking crater. Indeed, a Battle-Brother must take care when firing one of these dangerous weapons that his own Kill-team is sufficiently out of harm’s way. Plasma missiles have the same continuing effect as a plasma grenade. In addition, they pose an additional threat to vehicles. The plasma core can become fused with the hull, leaving no escape. If a plasma missile attack on a vehicle scores 4 or more degrees of success, the Blast radius becomes centred on the vehicle rather than a stationary point.</p>",
     "dmg": "2d10+12",
     "dmgType": "Energy",
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "3"
+      },
+      {
+        "id": "quality000000028"
+      }
+    ],
     "equipped": false,
     "modifiers": [],
     "page": "150",

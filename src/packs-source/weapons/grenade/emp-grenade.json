@@ -9,6 +9,12 @@
     "description": "<p>A rare example of xenos technology employed in limited capacity by the Deathwatch, the exact form of such a grenade varies with its origin. The function of an EMP grenade is to generate a field of electro-magnetic static that interferes with most technology and generally causes machine spirits to malfunction. There are many appellations for this weapon: EMP, Haywire, Scrambler, and it takes many shapes including those found with the Tau and the Eldar.</p>",
     "dmg": "-",
     "dmgType": "Explosive",
+    "attachedQualities": [
+      {
+        "id": "quality000000010",
+        "value": "3"
+      }
+    ],
     "equipped": false,
     "modifiers": [],
     "page": "150",

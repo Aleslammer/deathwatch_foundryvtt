@@ -7,12 +7,18 @@
     "class": "Missile",
     "clip": "1",
     "description": "<p>Krak grenades and missiles use concentrated explosives to punch holes in armoured targets such as vehicles or bunkers. The powerful detonations do not produce a blast effect however, making them impractical for use against most infantry or moving targets.</p>",
-    "dmg": "4d10+6",
+    "dmg": "3d10+10",
     "dmgType": "Explosive",
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "1"
+      }
+    ],
     "equipped": false,
     "modifiers": [],
     "page": "150",
-    "penetration": "10",
+    "penetration": "8",
     "range": "-",
     "reload": "-",
     "renown": "",

@@ -4,6 +4,19 @@ import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class RangedCombatHelper {
+  static calculateThrownWeaponRange(weapon, actor) {
+    if (weapon.system.class?.toLowerCase() !== 'thrown') {
+      return null;
+    }
+    const match = weapon.system.range?.match(/sb\s*x\s*(\d+)/i);
+    if (!match) {
+      return null;
+    }
+    const multiplier = parseInt(match[1]);
+    const strBonus = actor.system.characteristics.str?.mod || 0;
+    return strBonus * multiplier;
+  }
+
   /* istanbul ignore next */
   static async attackDialog(actor, weapon) {
     const validation = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
@@ -28,7 +41,15 @@ export class RangedCombatHelper {
     let distanceText = "";
     
     if (attackerToken && targetToken) {
-      const weaponRange = parseInt(weapon.system.range) || 0;
+      let weaponRange = 0;
+      if (weapon.system.class?.toLowerCase() === 'thrown') {
+        const thrownRange = this.calculateThrownWeaponRange(weapon, actor);
+        weaponRange = thrownRange || 0;
+      }
+      else {
+        weaponRange = parseInt(weapon.system.range) || 0;
+      }
+      
       if (weaponRange > 0) {
         const distance = CombatHelper.getTokenDistance(attackerToken, targetToken);
         if (distance !== null) {

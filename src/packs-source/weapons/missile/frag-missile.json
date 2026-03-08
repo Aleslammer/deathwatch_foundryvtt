@@ -9,6 +9,16 @@
     "description": "<p>The Adeptus Astartes fill their large fragmentation (or frag) grenades and missiles with powerful explosives and aerodynamic metallic shards. The high velocity shrapnel created when they detonate is deadly against common infantry.</p>",
     "dmg": "2d10",
     "dmgType": "Explosive",
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "5"
+      },
+      {
+        "id": "quality000000006",
+        "value": "1"
+      }
+    ],
     "equipped": false,
     "modifiers": [],
     "page": "150",

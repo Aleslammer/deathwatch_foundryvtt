@@ -10,32 +10,32 @@ describe('Proven Weapon Quality', () => {
 
   describe('buildDamageFormula with Proven', () => {
     it('applies Proven 3 to single d10', () => {
-      const formula = CombatDialogHelper.buildDamageFormula('1d10+5', 0, false, 0, 0, false, false, false, false, 3);
+      const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 0, isMelee: false, strBonus: 0, hitIndex: 0, provenRating: 3 });
       expect(formula).toBe('1d10min3+5');
     });
 
     it('applies Proven 4 to multiple dice', () => {
-      const formula = CombatDialogHelper.buildDamageFormula('2d10+8', 0, false, 0, 0, false, false, false, false, 4);
+      const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+8', degreesOfSuccess: 0, isMelee: false, strBonus: 0, hitIndex: 0, provenRating: 4 });
       expect(formula).toBe('2d10min4+8');
     });
 
     it('applies Proven with degrees of success (uses higher value)', () => {
-      const formula = CombatDialogHelper.buildDamageFormula('1d10+5', 2, false, 0, 0, false, false, false, false, 3);
+      const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 2, isMelee: false, strBonus: 0, hitIndex: 0, provenRating: 3 });
       expect(formula).toBe('1d10min3+5');
     });
 
     it('does not apply Proven when rating is 0', () => {
-      const formula = CombatDialogHelper.buildDamageFormula('1d10+5', 0, false, 0, 0, false, false, false, false, 0);
+      const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 0, isMelee: false, strBonus: 0, hitIndex: 0, provenRating: 0 });
       expect(formula).toBe('1d10+5');
     });
 
     it('applies Proven with Tearing', () => {
-      const formula = CombatDialogHelper.buildDamageFormula('1d10+5', 0, false, 0, 0, false, false, false, true, 3);
+      const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 0, isMelee: false, strBonus: 0, hitIndex: 0, isTearing: true, provenRating: 3 });
       expect(formula).toBe('2d10min3dl1+5');
     });
 
     it('applies Proven with melee STR bonus', () => {
-      const formula = CombatDialogHelper.buildDamageFormula('1d10+5', 0, true, 4, 0, false, false, false, false, 3);
+      const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 0, isMelee: true, strBonus: 4, hitIndex: 0, provenRating: 3 });
       expect(formula).toBe('1d10min3+5 + 4');
     });
   });
