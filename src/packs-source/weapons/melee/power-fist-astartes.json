@@ -1,6 +1,6 @@
 {
   "_id": "melee0000000003",
-  "img": "systems/deathwatch/icons/weapons/power-fist.webp",
+  "img": "systems/deathwatch/icons/weapons/powerfist.webp",
   "name": "Astartes Power Fist",
   "system": {
     "book": "Deathwatch Core Rulebook",
@@ -21,7 +21,8 @@
     "wt": 25,
     "attachedQualities": [
       "quality000000012",
-      "quality000000027"
+      "quality000000027",
+      "quality000000030"
     ],
     "doublesStrengthBonus": true
   },

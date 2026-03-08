@@ -264,7 +264,7 @@ export class CombatHelper {
             const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
             const rangeLabel = this.lastAttackRangeLabel || "Unknown";
             const isLongOrExtremeRange = rangeLabel === "Long" || rangeLabel === "Extreme";
-            const isPowerFist = weapon.system.doublesStrengthBonus || false;
+            const isPowerFist = await WeaponQualityHelper.hasQuality(weapon, 'power-fist');
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
