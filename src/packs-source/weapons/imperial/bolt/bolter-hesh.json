@@ -1,0 +1,25 @@
+{
+  "_id": "bolt00000000001",
+  "img": "systems/deathwatch/icons/weapons/bolter-hesh.webp",
+  "name": "Astartes Bolter (Hesh)",
+  "system": {
+    "book": "Rits of Battle",
+    "class": "Basic",
+    "clip": "28",
+    "description": "<p></p>",
+    "dmg": "1d10+9",
+    "dmgType": "Explosive",
+    "equipped": false,
+    "modifiers": [],
+    "page": "134",
+    "penetration": "4",
+    "range": "50",
+    "reload": "Full",
+    "renown": "Special",
+    "req": 0,
+    "rof": "S/3/-",
+    "wt": 15,
+    "attachedQualities": ["quality000000023", "quality000000001", "quality000000016"]
+  },
+  "type": "weapon"
+}
