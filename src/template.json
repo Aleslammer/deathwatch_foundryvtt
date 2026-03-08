@@ -121,7 +121,8 @@
             "specialty",
             "chapter",
             "implant",
-            "cybernetic"
+            "cybernetic",
+            "weapon-quality"
         ],
         "templates": {
             "base": {
@@ -147,7 +148,9 @@
                 "max": 0
             },
             "loadedAmmo": null,
-            "modifiers": []
+            "modifiers": [],
+            "attachedQualities": [],
+            "doublesStrengthBonus": false
         },
         "armor": {
             "templates": [
@@ -291,6 +294,15 @@
             "page": "",
             "equipped": false,
             "modifiers": []
+        },
+        "weapon-quality": {
+            "templates": [
+                "base"
+            ],
+            "value": "",
+            "key": "",
+            "book": "",
+            "page": ""
         }
     }
 }

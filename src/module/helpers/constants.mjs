@@ -60,6 +60,11 @@ export const COMBAT_PENALTIES = {
   RUNNING_TARGET: -20
 };
 
+export const MELEE_MODIFIERS = {
+  ALL_OUT_ATTACK: 20,
+  CHARGE: 10
+};
+
 // Range Modifiers
 export const RANGE_MODIFIERS = {
   POINT_BLANK: 20,  // <= 2m

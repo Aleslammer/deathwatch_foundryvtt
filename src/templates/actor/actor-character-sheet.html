@@ -149,7 +149,7 @@
         </div>
 
         {{!-- Right Column: Skills --}}
-        <div style="flex: 1; overflow-y: auto; max-height: calc(100vh - 475px); border: 1px solid #999; border-radius: 3px; padding: 0.5px;">
+        <div style="flex: 1; overflow-y: auto; max-height: calc(100vh - 435px); border: 1px solid #999; border-radius: 3px; padding: 0;">
           {{> "systems/deathwatch/templates/actor/parts/actor-skills.html"}}
         </div>
       </div>
@@ -194,7 +194,14 @@
           <li class="item flexrow" data-item-id="{{item._id}}" draggable="true">
             <div class="item-name">
               <div class="item-image" style="background-image: url({{item.img}})"></div>
-              <h4 class="trait-show" style="cursor: pointer;">{{item.name}}</h4>
+              <h4 class="trait-show" style="cursor: pointer;">
+                {{item.name}}
+                {{#if item.multiplier}}
+                  <span style="color: #4b9cd3; font-weight: bold;"> (x{{item.multiplier}})</span>
+                {{else if (gt item.count 1)}}
+                  <span style="color: #888;"> ({{item.count}})</span>
+                {{/if}}
+              </h4>
             </div>
             <div class="item-controls">
               <a class="item-control item-create" title="Create Trait" data-type="trait"><i class="fas fa-plus"></i></a>

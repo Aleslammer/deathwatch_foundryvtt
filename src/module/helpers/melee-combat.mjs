@@ -1,0 +1,118 @@
+import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS } from "./constants.mjs";
+import { CombatHelper } from "./combat.mjs";
+
+export class MeleeCombatHelper {
+  /* istanbul ignore next */
+  static async attackDialog(actor, weapon) {
+    const ws = actor.system.characteristics.ws.base || actor.system.characteristics.ws.value;
+    const advances = actor.system.characteristics.ws.advances || {};
+    const wsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
+
+    const content = `
+      <div style="text-align: center; margin-bottom: 10px;">
+        <img src="${weapon.img}" alt="${weapon.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+      </div>
+      <div class="form-group">
+        <label>Aim:</label>
+        <select id="aim" name="aim">
+          <option value="${AIM_MODIFIERS.NONE}">None</option>
+          <option value="${AIM_MODIFIERS.HALF}">Half (+${AIM_MODIFIERS.HALF})</option>
+          <option value="${AIM_MODIFIERS.FULL}">Full (+${AIM_MODIFIERS.FULL})</option>
+        </select>
+      </div>
+      <div class="form-group" style="display: flex; gap: 20px;">
+        <label><i class="far fa-square" id="allOutIcon"></i> All Out Attack (+${MELEE_MODIFIERS.ALL_OUT_ATTACK})
+          <input type="checkbox" id="allOut" name="allOut" style="display:none;" />
+        </label>
+        <label><i class="far fa-square" id="chargeIcon"></i> Charge (+${MELEE_MODIFIERS.CHARGE})
+          <input type="checkbox" id="charge" name="charge" style="display:none;" />
+        </label>
+      </div>
+      <div class="form-group" style="display: flex; gap: 20px;">
+        <label><i class="far fa-square" id="calledShotIcon"></i> Called Shot (${COMBAT_PENALTIES.CALLED_SHOT})
+          <input type="checkbox" id="calledShot" name="calledShot" style="display:none;" />
+        </label>
+        <label><i class="far fa-square" id="runningTargetIcon"></i> Running Target (${COMBAT_PENALTIES.RUNNING_TARGET})
+          <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Misc Modifier:</label>
+        <input type="text" id="miscModifier" name="miscModifier" value="0" />
+      </div>
+    `;
+
+    new Dialog({
+      title: `Melee Attack: ${weapon.name}`,
+      content: content,
+      render: (html) => {
+        html.find('#miscModifier').on('input', function() {
+          this.value = this.value.replace(/[^0-9+\-]/g, '');
+        });
+        
+        ['allOut', 'charge', 'calledShot', 'runningTarget'].forEach(id => {
+          html.find(`label:has(#${id})`).click(function(e) {
+            e.preventDefault();
+            const checkbox = $(this).find(`#${id}`);
+            const icon = $(this).find(`#${id}Icon`);
+            checkbox.prop('checked', !checkbox.prop('checked'));
+            icon.toggleClass('fa-square').toggleClass('fa-check-square');
+          });
+        });
+      },
+      buttons: {
+        attack: {
+          label: "Attack",
+          callback: async (html) => {
+            const aim = parseInt(html.find('#aim').val()) || 0;
+            const allOut = html.find('#allOut').prop('checked') ? MELEE_MODIFIERS.ALL_OUT_ATTACK : 0;
+            const charge = html.find('#charge').prop('checked') ? MELEE_MODIFIERS.CHARGE : 0;
+            const calledShot = html.find('#calledShot').prop('checked') ? COMBAT_PENALTIES.CALLED_SHOT : 0;
+            const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
+            const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
+
+            const modifiers = wsAdv + aim + allOut + charge + calledShot + runningTarget + miscModifier;
+            const isDefensive = weapon.attachedQualities?.some(q => q.system.key === 'defensive');
+            const defensivePenalty = isDefensive ? -10 : 0;
+            const clampedModifiers = Math.max(-60, Math.min(60, modifiers + defensivePenalty));
+            const targetNumber = ws + clampedModifiers;
+
+            const hitRoll = await new Roll('1d100').evaluate();
+            const hitValue = hitRoll.total;
+            const success = hitValue <= targetNumber;
+
+            CombatHelper.lastAttackRoll = hitValue;
+            CombatHelper.lastAttackTarget = targetNumber;
+            CombatHelper.lastAttackHits = success ? 1 : 0;
+
+            const modifierParts = [];
+            modifierParts.push(`${ws} Base WS`);
+            if (wsAdv !== 0) modifierParts.push(`${wsAdv >= 0 ? '+' : ''}${wsAdv} WS Advances`);
+            if (aim !== 0) modifierParts.push(`+${aim} Aim`);
+            if (allOut !== 0) modifierParts.push(`+${allOut} All Out Attack`);
+            if (charge !== 0) modifierParts.push(`+${charge} Charge`);
+            if (defensivePenalty !== 0) modifierParts.push(`${defensivePenalty} Defensive`);
+            if (calledShot !== 0) modifierParts.push(`${calledShot} Called Shot`);
+            if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
+            if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+
+            const label = `[Melee Attack] ${weapon.name} - Target: ${targetNumber}<br><strong>${success ? 'HIT!' : 'MISS!'}</strong>`;
+            const flavor = modifierParts.length > 0 
+              ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`
+              : label;
+
+            hitRoll.toMessage({
+              speaker: ChatMessage.getSpeaker({ actor }),
+              flavor: flavor,
+              rollMode: game.settings.get('core', 'rollMode')
+            });
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "attack"
+    }).render(true);
+  }
+}

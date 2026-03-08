@@ -73,10 +73,13 @@ src/
 - **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
 - **chat-message-builder.mjs**: Chat message formatting and creation
 - **item-handlers.mjs**: Item categorization and processing
-- **combat.mjs**: Combat system logic (weapon attacks, damage, hit locations)
+- **weapon-quality-helper.mjs**: Weapon quality detection and lookup
+- **combat.mjs**: Core combat logic (hit locations, damage application, routing)
+- **ranged-combat.mjs**: Ranged weapon attack dialog and logic
+- **melee-combat.mjs**: Melee weapon attack dialog and logic
 - **combat-dialog.mjs**: Combat dialog utilities (pure functions)
 - **config.mjs**: System configuration (DWConfig object)
-- **constants.mjs**: Game constants (XP, characteristics, rolls)
+- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers)
 - **critical-effects.mjs**: Critical damage effects
 - **debug.mjs**: Debug logging with feature flags
 - **effects.mjs**: Active effects and modifiers
@@ -85,6 +88,11 @@ src/
 - **initiative.mjs**: Initiative rolling
 - **modifiers.mjs**: Modifier CRUD operations
 - **templates.mjs**: Template preloading
+- **righteous-fury-helper.mjs**: Righteous Fury mechanics
+- **wound-helper.mjs**: Wound calculation utilities
+- **rank-helper.mjs**: Rank progression utilities
+- **skill-loader.mjs**: Skill data loading
+- **status-effects.mjs**: Status effect management
 
 ### 4. Sheet Classes (`module/sheets/`)
 - **actor-sheet.mjs**: Character and NPC sheet UI logic

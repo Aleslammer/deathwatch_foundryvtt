@@ -110,6 +110,13 @@
             "path": "packs/cybernetics",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "weapon-qualities",
+            "label": "Weapon Qualities",
+            "path": "packs/weapon-qualities",
+            "type": "Item",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

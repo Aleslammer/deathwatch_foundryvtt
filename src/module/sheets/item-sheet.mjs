@@ -72,14 +72,38 @@ export class DeathwatchItemSheet extends ItemSheet {
         }
 
         // Populate attached histories for armor
-        if (itemData.type === 'armor' && actor) {
-            const historyIds = Array.isArray(itemData.system.attachedHistories) ? itemData.system.attachedHistories : [];
-            context.system.attachedHistories = historyIds.map(histId => {
-                const hist = actor.items.get(histId);
-                return hist ? { _id: hist.id, name: hist.name, img: hist.img } : null;
-            }).filter(h => h);
-        } else if (itemData.type === 'armor') {
-            context.system.attachedHistories = [];
+        if (itemData.type === 'armor') {
+            if (actor) {
+                const historyIds = Array.isArray(itemData.system.attachedHistories) ? itemData.system.attachedHistories : [];
+                context.system.attachedHistories = historyIds.map(histId => {
+                    const hist = actor.items.get(histId);
+                    return hist ? { _id: hist.id, name: hist.name, img: hist.img } : null;
+                }).filter(h => h);
+            } else {
+                context.system.attachedHistories = [];
+            }
+        }
+
+        // Populate attached qualities for weapons
+        if (itemData.type === 'weapon') {
+            const qualityIds = Array.isArray(itemData.system.attachedQualities) ? itemData.system.attachedQualities : [];
+            const pack = game.packs.get('deathwatch.weapon-qualities');
+            context.attachedQualities = qualityIds.map(q => {
+                const qualityId = typeof q === 'string' ? q : q.id;
+                let quality = actor?.items.get(qualityId);
+                if (!quality && pack) {
+                    quality = pack.index.get(qualityId);
+                }
+                if (!quality) return null;
+                return {
+                    _id: quality._id || quality.id,
+                    name: quality.name,
+                    system: {
+                        key: quality.system?.key,
+                        value: (typeof q === 'object' && q.value !== undefined) ? q.value : quality.system?.value
+                    }
+                };
+            }).filter(q => q);
         }
 
         return context;
@@ -106,6 +130,10 @@ export class DeathwatchItemSheet extends ItemSheet {
 
         // Armor history management
         html.find('.history-remove').click(this._onHistoryRemove.bind(this));
+
+        // Weapon quality management
+        html.find('.quality-remove').click(this._onQualityRemove.bind(this));
+        html.find('.quality-value').change(this._onQualityValueChange.bind(this));
     }
 
     async _onModifierCreate(event) {
@@ -334,6 +362,33 @@ export class DeathwatchItemSheet extends ItemSheet {
             return false;
         }
 
+        // Handle weapon quality drop on weapon
+        if (this.item.type === 'weapon' && droppedItem.type === 'weapon-quality') {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const currentQualities = this.item.system.attachedQualities || [];
+            const qualityExists = currentQualities.some(q => {
+                const id = typeof q === 'string' ? q : q.id;
+                return id === droppedItem.id;
+            });
+            
+            if (!qualityExists) {
+                const newQuality = droppedItem.system.value 
+                    ? { id: droppedItem.id, value: droppedItem.system.value }
+                    : droppedItem.id;
+                const newQualities = [...currentQualities, newQuality];
+                
+                await this.item.update({ 
+                    "system.attachedQualities": newQualities
+                });
+                ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
+            } else {
+                ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
+            }
+            return false;
+        }
+
         return super._onDrop?.(event);
     }
 
@@ -343,5 +398,30 @@ export class DeathwatchItemSheet extends ItemSheet {
         const attachedHistories = (this.item.system.attachedHistories || []).filter(id => id !== historyId);
         await this.item.update({ "system.attachedHistories": attachedHistories });
         this.render(false);
+    }
+
+    async _onQualityRemove(event) {
+        event.preventDefault();
+        const qualityId = $(event.currentTarget).data('qualityId');
+        const attachedQualities = (this.item.system.attachedQualities || []).filter(q => {
+            const id = typeof q === 'string' ? q : q.id;
+            return id !== qualityId;
+        });
+        await this.item.update({ "system.attachedQualities": attachedQualities });
+        this.render(false);
+    }
+
+    async _onQualityValueChange(event) {
+        event.preventDefault();
+        const qualityId = $(event.currentTarget).data('qualityId');
+        const newValue = $(event.currentTarget).val();
+        const attachedQualities = (this.item.system.attachedQualities || []).map(q => {
+            const id = typeof q === 'string' ? q : q.id;
+            if (id === qualityId) {
+                return { id: qualityId, value: newValue };
+            }
+            return q;
+        });
+        await this.item.update({ "system.attachedQualities": attachedQualities });
     }
 }

@@ -4,18 +4,27 @@ import { RATE_OF_FIRE_MODIFIERS } from '../src/module/helpers/constants.mjs';
 describe('CombatDialogHelper', () => {
   describe('buildAttackModifiers', () => {
     it('calculates total modifiers', () => {
-      const result = CombatDialogHelper.buildAttackModifiers(40, 5, 10, 10, -20, 10, -20, 5);
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        bsAdv: 5,
+        aim: 10,
+        autoFire: 10,
+        calledShot: -20,
+        rangeMod: 10,
+        runningTarget: -20,
+        miscModifier: 5
+      });
       expect(result.modifiers).toBe(0);
       expect(result.targetNumber).toBe(40);
     });
 
     it('clamps modifiers to -60', () => {
-      const result = CombatDialogHelper.buildAttackModifiers(40, -100, 0, 0, 0, 0, 0, 0);
+      const result = CombatDialogHelper.buildAttackModifiers({ bs: 40, bsAdv: -100 });
       expect(result.clampedModifiers).toBe(-60);
     });
 
     it('clamps modifiers to +60', () => {
-      const result = CombatDialogHelper.buildAttackModifiers(40, 100, 0, 0, 0, 0, 0, 0);
+      const result = CombatDialogHelper.buildAttackModifiers({ bs: 40, bsAdv: 100 });
       expect(result.clampedModifiers).toBe(60);
     });
   });
@@ -41,14 +50,28 @@ describe('CombatDialogHelper', () => {
   });
 
   describe('calculateHits', () => {
-    it('calculates hits based on degrees of success', () => {
-      expect(CombatDialogHelper.calculateHits(30, 50, 10)).toBe(3);
-      expect(CombatDialogHelper.calculateHits(45, 50, 10)).toBe(1);
-      expect(CombatDialogHelper.calculateHits(60, 50, 10)).toBe(0);
+    it('calculates hits for single shot (1 hit only)', () => {
+      expect(CombatDialogHelper.calculateHits(30, 50, 10, RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(45, 50, 10, RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(60, 50, 10, RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(0);
+    });
+
+    it('calculates hits for full-auto (1 + 1 per degree)', () => {
+      expect(CombatDialogHelper.calculateHits(30, 50, 10, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(3);
+      expect(CombatDialogHelper.calculateHits(45, 50, 10, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(10, 50, 10, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(5);
+    });
+
+    it('calculates hits for semi-auto (1 + 1 per 2 degrees)', () => {
+      expect(CombatDialogHelper.calculateHits(30, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(2);
+      expect(CombatDialogHelper.calculateHits(45, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(1);
+      expect(CombatDialogHelper.calculateHits(10, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(3);
+      expect(CombatDialogHelper.calculateHits(20, 50, 10, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(2);
     });
 
     it('caps hits at maxHits', () => {
-      expect(CombatDialogHelper.calculateHits(10, 50, 2)).toBe(2);
+      expect(CombatDialogHelper.calculateHits(10, 50, 2, RATE_OF_FIRE_MODIFIERS.FULL_AUTO)).toBe(2);
+      expect(CombatDialogHelper.calculateHits(10, 50, 2, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO)).toBe(2);
     });
   });
 
@@ -248,32 +271,32 @@ describe('validateWeaponForAttack', () => {
 
 describe('buildDamageFormula', () => {
   it('returns base damage for hit index > 0', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 1);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 3, isMelee: false, strBonus: 0, hitIndex: 1 });
     expect(result).toBe('2d10+5');
   });
 
   it('applies degrees of success to first hit', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 3, false, 0, 0);
-    expect(result).toBe('(1d10 + 1d10min3)+5');
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 3, isMelee: false, strBonus: 0, hitIndex: 0 });
+    expect(result).toBe('2d10min3+5');
   });
 
   it('applies degrees of success to single die', () => {
-    const result = CombatDialogHelper.buildDamageFormula('1d10+5', 2, false, 0, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10+5', degreesOfSuccess: 2, isMelee: false, strBonus: 0, hitIndex: 0 });
     expect(result).toBe('1d10min2+5');
   });
 
   it('adds strength bonus for melee', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 0, true, 8, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 0, isMelee: true, strBonus: 8, hitIndex: 0 });
     expect(result).toBe('2d10+5 + 8');
   });
 
   it('applies both DoS and strength bonus', () => {
-    const result = CombatDialogHelper.buildDamageFormula('2d10+5', 2, true, 6, 0);
-    expect(result).toBe('(1d10 + 1d10min2)+5 + 6');
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '2d10+5', degreesOfSuccess: 2, isMelee: true, strBonus: 6, hitIndex: 0 });
+    expect(result).toBe('2d10min2+5 + 6');
   });
 
   it('handles negative strength bonus', () => {
-    const result = CombatDialogHelper.buildDamageFormula('1d10', 0, true, -2, 0);
+    const result = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 0, isMelee: true, strBonus: -2, hitIndex: 0 });
     expect(result).toBe('1d10 + -2');
   });
 });
@@ -303,31 +326,31 @@ describe('calculateDegreesOfSuccess', () => {
 
 describe('calculateDamageResult', () => {
   it('calculates wounds taken with no armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 0, 0);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 0, penetration: 0 });
     expect(result.effectiveArmor).toBe(0);
     expect(result.woundsTaken).toBe(15);
   });
 
   it('calculates wounds taken with armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 8, 0);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 8, penetration: 0 });
     expect(result.effectiveArmor).toBe(8);
     expect(result.woundsTaken).toBe(7);
   });
 
   it('applies penetration to armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 8, 4);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 8, penetration: 4 });
     expect(result.effectiveArmor).toBe(4);
     expect(result.woundsTaken).toBe(11);
   });
 
   it('prevents negative effective armor', () => {
-    const result = CombatDialogHelper.calculateDamageResult(15, 5, 10);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 15, armorValue: 5, penetration: 10 });
     expect(result.effectiveArmor).toBe(0);
     expect(result.woundsTaken).toBe(15);
   });
 
   it('prevents negative wounds taken', () => {
-    const result = CombatDialogHelper.calculateDamageResult(5, 10, 0);
+    const result = CombatDialogHelper.calculateDamageResult({ damage: 5, armorValue: 10, penetration: 0 });
     expect(result.effectiveArmor).toBe(10);
     expect(result.woundsTaken).toBe(0);
   });
@@ -366,36 +389,39 @@ describe('calculateCriticalDamage', () => {
 describe('buildDamageMessage', () => {
   it('builds basic damage message', () => {
     const msg = CombatDialogHelper.buildDamageMessage(
-      'Marine', 5, 'Body', 10, 5, 0, 5, false, 0, 'actor1', 'Impact'
+      'Marine', 5, 'Body', 10, 5, 0, 5, 4, false, 0, 'actor1', 'Impact'
     );
     expect(msg).toContain('Marine');
     expect(msg).toContain('5 wounds');
     expect(msg).toContain('Body');
     expect(msg).toContain('Damage: 10');
     expect(msg).toContain('Armor: 5');
+    expect(msg).toContain('TB: 4');
     expect(msg).not.toContain('CRITICAL');
   });
 
   it('includes critical damage section', () => {
     const msg = CombatDialogHelper.buildDamageMessage(
-      'Marine', 8, 'Head', 15, 5, 2, 3, true, 3, 'actor1', 'Energy'
+      'Marine', 8, 'Head', 15, 5, 2, 3, 4, true, 3, 'actor1', 'Energy'
     );
     expect(msg).toContain('CRITICAL DAMAGE: 3');
     expect(msg).toContain('roll-critical-btn');
     expect(msg).toContain('data-actor-id="actor1"');
     expect(msg).toContain('data-location="Head"');
     expect(msg).toContain('data-damage-type="Energy"');
+    expect(msg).toContain('TB: 4');
   });
 });
 
 describe('buildArmorAbsorbMessage', () => {
   it('builds armor absorb message', () => {
-    const msg = CombatDialogHelper.buildArmorAbsorbMessage('Marine', 'Body', 8, 10, 0);
+    const msg = CombatDialogHelper.buildArmorAbsorbMessage('Marine', 'Body', 8, 10, 0, 5);
     expect(msg).toContain('Marine');
-    expect(msg).toContain('armor absorbs all damage');
+    expect(msg).toContain('armor and toughness absorb all damage');
     expect(msg).toContain('Body');
     expect(msg).toContain('Damage: 8');
     expect(msg).toContain('Armor: 10');
+    expect(msg).toContain('TB: 5');
   });
 });
 
