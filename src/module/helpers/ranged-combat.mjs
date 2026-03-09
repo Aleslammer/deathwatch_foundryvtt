@@ -4,6 +4,19 @@ import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class RangedCombatHelper {
+  static calculateThrownWeaponRange(weapon, actor) {
+    if (weapon.system.class?.toLowerCase() !== 'thrown') {
+      return null;
+    }
+    const match = weapon.system.range?.match(/sb\s*x\s*(\d+)/i);
+    if (!match) {
+      return null;
+    }
+    const multiplier = parseInt(match[1]);
+    const strBonus = actor.system.characteristics.str?.mod || 0;
+    return strBonus * multiplier;
+  }
+
   /* istanbul ignore next */
   static async attackDialog(actor, weapon) {
     const validation = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
@@ -28,7 +41,15 @@ export class RangedCombatHelper {
     let distanceText = "";
     
     if (attackerToken && targetToken) {
-      const weaponRange = parseInt(weapon.system.range) || 0;
+      let weaponRange = 0;
+      if (weapon.system.class?.toLowerCase() === 'thrown') {
+        const thrownRange = this.calculateThrownWeaponRange(weapon, actor);
+        weaponRange = thrownRange || 0;
+      }
+      else {
+        weaponRange = parseInt(weapon.system.range) || 0;
+      }
+      
       if (weaponRange > 0) {
         const distance = CombatHelper.getTokenDistance(attackerToken, targetToken);
         if (distance !== null) {
@@ -44,13 +65,15 @@ export class RangedCombatHelper {
 
     const rof = weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
-    const loadedAmmo = weapon.system.loadedAmmo ? actor.items.get(weapon.system.loadedAmmo) : null;
+    const clip = weapon.system.clip;
+    const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
+    const loadedAmmo = hasAmmoManagement && weapon.system.loadedAmmo ? actor.items.get(weapon.system.loadedAmmo) : null;
     const currentAmmo = loadedAmmo?.system.capacity.value || 0;
     const hasSingle = rofParts[0] && rofParts[0] !== '-';
     const semiAutoRounds = parseInt(rofParts[1]) || 0;
     const fullAutoRounds = parseInt(rofParts[2]) || 0;
-    const hasSemiAuto = rofParts[1] && rofParts[1] !== '-' && currentAmmo >= semiAutoRounds;
-    const hasFullAuto = rofParts[2] && rofParts[2] !== '-' && currentAmmo >= fullAutoRounds;
+    const hasSemiAuto = rofParts[1] && rofParts[1] !== '-' && (!hasAmmoManagement || currentAmmo >= semiAutoRounds);
+    const hasFullAuto = rofParts[2] && rofParts[2] !== '-' && (!hasAmmoManagement || currentAmmo >= fullAutoRounds);
 
     let rofOptions = '';
     if (hasSingle) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SINGLE}" data-rounds="1">Single (1 round)</option>`;
@@ -133,6 +156,7 @@ export class RangedCombatHelper {
             const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
             const isStorm = await WeaponQualityHelper.hasQuality(weapon, 'storm');
             const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
+            const hasLivingAmmo = await WeaponQualityHelper.hasQuality(weapon, 'living-ammunition');
             const isPointBlank = rangeLabel === "Point Blank";
             const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
@@ -153,7 +177,7 @@ export class RangedCombatHelper {
             const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
-            let isJammed = hitValue >= jamThreshold;
+            let isJammed = !hasLivingAmmo && hitValue >= jamThreshold;
             const hasReliable = await WeaponQualityHelper.hasQuality(weapon, 'reliable');
             
             if (isJammed && hasReliable) {
@@ -188,7 +212,7 @@ export class RangedCombatHelper {
               rollMode: game.settings.get('core', 'rollMode')
             });
 
-            if (weapon.system.loadedAmmo) {
+            if (hasAmmoManagement && weapon.system.loadedAmmo) {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;

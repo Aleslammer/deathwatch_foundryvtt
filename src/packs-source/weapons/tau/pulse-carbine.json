@@ -1,0 +1,33 @@
+{
+  "_id": "tau000000005",
+  "img": "systems/deathwatch/icons/weapons/tau-pulse-carbine.webp",
+  "name": "Pulse Carbine",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Basic",
+    "clip": "24",
+    "description": "<p>Tau Pulse Carbine</p>",
+    "dmg": "1d10+12",
+    "dmgType": "Energy",
+    "attachedQualities": [
+      {
+        "id": "quality000000006",
+        "value": "1"
+      },
+      {
+        "id": "gyrostabilised001"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "",
+    "penetration": "4",
+    "range": "60",
+    "reload": "Full",
+    "renown": "",
+    "req": 0,
+    "rof": "S/-/-",
+    "wt": 0
+  },
+  "type": "weapon"
+}

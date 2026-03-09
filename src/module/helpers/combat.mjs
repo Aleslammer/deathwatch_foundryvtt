@@ -143,47 +143,70 @@ export class CombatHelper {
     return armorField ? (equippedArmor.system[armorField] || 0) : 0;
   }
 
-  static async applyDamage(targetActor, damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false, isShocking = false, isToxic = false) {
+  static _getTargetDefenses(targetActor, location) {
+    return {
+      armorValue: this.getArmorValue(targetActor, location),
+      toughnessBonus: targetActor.system.characteristics?.tg?.baseMod || 0,
+      unnaturalToughnessMultiplier: targetActor.system.characteristics?.tg?.unnaturalMultiplier || 1
+    };
+  }
+
+  static _buildDrainLifeButton(hasDrainLife, attackerActor, targetActor) {
+    if (!hasDrainLife || !attackerActor) return '';
+    return `<button class="drain-life-test-btn" data-attacker-id="${attackerActor.id}" data-target-id="${targetActor.id}">Drain Life: Opposed Willpower Test</button>`;
+  }
+
+  static async _applyWoundDamage(targetActor, woundsTaken, location, options, damageResult) {
+    const { damage, penetration, damageType, isShocking, isToxic, hasDrainLife, attackerActor } = options;
+    const { effectiveArmor, effectiveTB } = damageResult;
     const armorValue = this.getArmorValue(targetActor, location);
-    const toughnessBonus = targetActor.system.characteristics?.tg?.baseMod || 0;
-    const unnaturalToughnessMultiplier = targetActor.system.characteristics?.tg?.unnaturalMultiplier || 1;
-    const { effectiveArmor, woundsTaken, effectiveTB } = CombatDialogHelper.calculateDamageResult({
-      damage,
-      armorValue,
-      penetration,
-      toughnessBonus,
-      unnaturalToughnessMultiplier,
-      felling,
-      isPrimitive,
-      isRazorSharp,
-      degreesOfSuccess,
-      isScatter,
-      isLongOrExtremeRange
+    
+    const { newWounds, isCritical, criticalDamage } = CombatDialogHelper.calculateCriticalDamage(
+      targetActor.system.wounds.value || 0,
+      woundsTaken,
+      targetActor.system.wounds.max || 0
+    );
+
+    await FoundryAdapter.updateDocument(targetActor, { "system.wounds.value": newWounds });
+    
+    const drainLifeMessage = this._buildDrainLifeButton(hasDrainLife, attackerActor, targetActor);
+    const message = CombatDialogHelper.buildDamageMessage(
+      targetActor.name, woundsTaken, location, damage, armorValue, penetration,
+      effectiveArmor, effectiveTB, isCritical, criticalDamage, targetActor.id,
+      damageType, isShocking, isToxic, drainLifeMessage
+    );
+    
+    FoundryAdapter.showNotification(
+      isCritical ? 'warn' : 'info',
+      isCritical ? `${targetActor.name} is taking CRITICAL DAMAGE!` : `${targetActor.name} takes ${woundsTaken} wounds!`
+    );
+
+    await FoundryAdapter.createChatMessage(message);
+  }
+
+  static async _applyArmorAbsorb(targetActor, location, damage, penetration, effectiveTB) {
+    const armorValue = this.getArmorValue(targetActor, location);
+    FoundryAdapter.showNotification('info', `${targetActor.name}'s armor absorbs all damage!`);
+    const message = CombatDialogHelper.buildArmorAbsorbMessage(targetActor.name, location, damage, armorValue, penetration, effectiveTB);
+    await FoundryAdapter.createChatMessage(message);
+  }
+
+  static async applyDamage(targetActor, options) {
+    const { damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false,
+      isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false,
+      isShocking = false, isToxic = false, hasDrainLife = false, attackerActor = null } = options;
+
+    const defenses = this._getTargetDefenses(targetActor, location);
+    const damageResult = CombatDialogHelper.calculateDamageResult({
+      damage, penetration, felling, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange,
+      armorValue: defenses.armorValue, toughnessBonus: defenses.toughnessBonus,
+      unnaturalToughnessMultiplier: defenses.unnaturalToughnessMultiplier
     });
 
-    if (woundsTaken > 0) {
-      const currentDamage = targetActor.system.wounds.value || 0;
-      const maxWounds = targetActor.system.wounds.max || 0;
-      const { newWounds, isCritical, criticalDamage } = CombatDialogHelper.calculateCriticalDamage(currentDamage, woundsTaken, maxWounds);
-
-      await FoundryAdapter.updateDocument(targetActor, { "system.wounds.value": newWounds });
-      
-      const message = CombatDialogHelper.buildDamageMessage(
-        targetActor.name, woundsTaken, location, damage, armorValue, penetration, 
-        effectiveArmor, effectiveTB, isCritical, criticalDamage, targetActor.id, damageType, isShocking, isToxic
-      );
-      
-      if (isCritical) {
-        FoundryAdapter.showNotification('warn', `${targetActor.name} is taking CRITICAL DAMAGE!`);
-      } else {
-        FoundryAdapter.showNotification('info', `${targetActor.name} takes ${woundsTaken} wounds!`);
-      }
-
-      await FoundryAdapter.createChatMessage(message);
+    if (damageResult.woundsTaken > 0) {
+      await this._applyWoundDamage(targetActor, damageResult.woundsTaken, location, options, damageResult);
     } else {
-      FoundryAdapter.showNotification('info', `${targetActor.name}'s armor absorbs all damage!`);
-      const message = CombatDialogHelper.buildArmorAbsorbMessage(targetActor.name, location, damage, armorValue, penetration, effectiveTB);
-      await FoundryAdapter.createChatMessage(message);
+      await this._applyArmorAbsorb(targetActor, location, damage, penetration, damageResult.effectiveTB);
     }
   }
 

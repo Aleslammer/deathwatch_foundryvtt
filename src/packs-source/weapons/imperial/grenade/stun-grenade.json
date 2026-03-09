@@ -1,0 +1,30 @@
+{
+  "_id": "grenade000000014",
+  "img": "systems/deathwatch/icons/weapons/stun-grenade.webp",
+  "name": "Astartes Stun Grenade",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Thrown",
+    "clip": "1",
+    "description": "<p>Stun grenades use a combination of a loud explosive and a flash of light to momentarily incapacitate targets without causing lasting injury before an assault is launched, making them an excellent opener in non-lethal engagements. Anyone caught in a stun grenade’s blast must pass a <b>Challenging (+0) Toughness Test or become Stunned for 1d10 rounds</b>. Photo-visors and sealed armour provide a +20 bonus to this Test, while input filtering renders one completely immune.</p>",
+    "dmg": "-",
+    "dmgType": "Explosive",
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "5"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "150",
+    "penetration": "0",
+    "range": "SBx3",
+    "reload": "-",
+    "renown": "",
+    "req": 10,
+    "rof": "S/-/-",
+    "wt": 0.8
+  },
+  "type": "weapon"
+}

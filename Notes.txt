@@ -4,7 +4,7 @@ file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/gear/adamantine_mantle.png.png" -o "./src/icons/gear/adamantine_mantle.webp"
+C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
 
  cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
@@ -21,8 +21,18 @@ TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-
 
 
 TODO: Weaspon Upgrades 156
+tyranid upgrade 
+    Brain Leech Worms: (Devourer) A Devourer may be host to these 
+    more voracious and deadly variety of creatures. A Devourer 
+    with Brain Leech Worms does 2d10+6 R damage, and if it 
+    inflicts any damage on a squad of Battle-Brothers, the squad 
+    suffers one additional point of Cohesion damage.
+
+    
+
 TODO: Ammmunition 158
  TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
+ TODO: also need to find out if we can alter things with ammo (like change damage numbers, add bonuses etc.)
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 TODO: Psychic Powers (180)
 

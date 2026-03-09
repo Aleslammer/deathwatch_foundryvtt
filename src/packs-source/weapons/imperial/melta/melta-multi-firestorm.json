@@ -1,0 +1,36 @@
+{
+  "_id": "melt00000000002",
+  "img": "systems/deathwatch/icons/weapons/melta-multi-firestorm.webp",
+  "name": "Astartes Multi-Melta (Firestorm)",
+  "system": {
+    "book": "Rites of Battle",
+    "class": "Heavy",
+    "clip": "6",
+    "description": "<p></p>",
+    "dmg": "2d10+20",
+    "dmgType": "Energy",
+    "equipped": false,
+    "modifiers": [],
+    "page": "135",
+    "penetration": "14",
+    "range": "60",
+    "reload": "2 Full",
+    "renown": "Distinguished",
+    "req": 65,
+    "rof": "S/2/-",
+    "wt": 70,
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "2"
+      },
+      {
+        "id": "quality000000018"
+      },
+      {
+        "id": "quality000000028"
+      }
+    ]
+  },
+  "type": "weapon"
+}

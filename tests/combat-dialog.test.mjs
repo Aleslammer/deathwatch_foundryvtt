@@ -207,7 +207,8 @@ describe('validateWeaponForAttack', () => {
     const weapon = { 
       name: 'Bolter', 
       system: { 
-        jammed: false, 
+        jammed: false,
+        clip: '30',
         capacity: { max: 30 }, 
         loadedAmmo: null 
       } 
@@ -224,7 +225,8 @@ describe('validateWeaponForAttack', () => {
     const weapon = { 
       name: 'Bolter', 
       system: { 
-        jammed: false, 
+        jammed: false,
+        clip: '30',
         capacity: { max: 30 }, 
         loadedAmmo: 'ammo1' 
       } 

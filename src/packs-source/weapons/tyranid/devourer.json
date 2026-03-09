@@ -1,0 +1,35 @@
+{
+  "_id": "tyranid000000004",
+  "img": "systems/deathwatch/icons/weapons/tyranid-devourer.webp",
+  "name": "Devourer",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Basic",
+    "clip": "—",
+    "description": "<p>A Devourer is a conical lump of flesh that showers its target with a mass of worm-like parasites that burrow through flesh and armour, thus eating the target alive.</p>",
+    "dmg": "1d10+9",
+    "dmgType": "Rending",
+    "attachedQualities": [
+      {
+        "id": "quality000000029"
+      },
+      {
+        "id": "quality000000022"
+      },
+      {
+        "id": "quality000000023"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "",
+    "penetration": "0",
+    "range": "30",
+    "reload": "—",
+    "renown": "",
+    "req": 0,
+    "rof": "-/-/6",
+    "wt": 0
+  },
+  "type": "weapon"
+}

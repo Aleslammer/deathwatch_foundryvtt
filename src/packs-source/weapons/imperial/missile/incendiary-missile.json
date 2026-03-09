@@ -1,0 +1,30 @@
+{
+  "_id": "missile000000002",
+  "img": "systems/deathwatch/icons/weapons/missiles.webp",
+  "name": "Astartes Incendiary Missile",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Missile",
+    "clip": "1",
+    "description": "<p>Incendiary explosives are commonly employed to flush out enemies entrenched behind cover. These projectiles contain slow-burning promethium distillate that ignites when the grenade explodes. Any target within the Blast radius must succeed on an Agility Test or catch fire. Furthermore, the area remains on fire for another 1d5 Rounds as the promethium continues to burn. Anyone remaining within that area must continue to take Agility Tests or catch fire until the flames die.</p>",
+    "dmg": "1d10+3",
+    "dmgType": "Energy",
+    "attachedQualities": [
+      {
+        "id": "quality000000004",
+        "value": "5"
+      }
+    ],
+    "equipped": false,
+    "modifiers": [],
+    "page": "150",
+    "penetration": "0",
+    "range": "-",
+    "reload": "-",
+    "renown": "",
+    "req": 15,
+    "rof": "-",
+    "wt": 2
+  },
+  "type": "weapon"
+}

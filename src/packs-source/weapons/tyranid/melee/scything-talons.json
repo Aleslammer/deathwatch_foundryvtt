@@ -1,0 +1,25 @@
+{
+  "_id": "tyranid000000010",
+  "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
+  "name": "Scything Talons",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "class": "Melee",
+    "clip": "",
+    "description": "<p>Scything Talons are razor-edged claws of fused chitin and serrated bone used to stab and slash.</p>",
+    "dmg": "1d10+2",
+    "dmgType": "Rending",
+    "attachedQualities": [],
+    "equipped": false,
+    "modifiers": [],
+    "page": "",
+    "penetration": "3",
+    "range": "",
+    "reload": "",
+    "renown": "",
+    "req": 0,
+    "rof": "",
+    "wt": 0
+  },
+  "type": "weapon"
+}

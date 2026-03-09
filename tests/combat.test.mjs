@@ -232,7 +232,7 @@ describe('CombatHelper', () => {
 
     it('applies damage after armor reduction', async () => {
       CombatHelper.getArmorValue = jest.fn(() => 8);
-      await CombatHelper.applyDamage(mockActor, 15, 2, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 15, penetration: 2, location: 'Body', damageType: 'Impact' });
 
       expect(mockActor.update).toHaveBeenCalledWith({
         'system.wounds.value': 14
@@ -241,14 +241,14 @@ describe('CombatHelper', () => {
 
     it('does not apply damage if armor absorbs all', async () => {
       CombatHelper.getArmorValue = jest.fn(() => 8);
-      await CombatHelper.applyDamage(mockActor, 5, 0, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 5, penetration: 0, location: 'Body', damageType: 'Impact' });
 
       expect(mockActor.update).not.toHaveBeenCalled();
     });
 
     it('creates chat message for damage', async () => {
       CombatHelper.getArmorValue = jest.fn(() => 8);
-      await CombatHelper.applyDamage(mockActor, 15, 2, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 15, penetration: 2, location: 'Body', damageType: 'Impact' });
 
       expect(global.ChatMessage.create).toHaveBeenCalled();
     });
@@ -257,7 +257,7 @@ describe('CombatHelper', () => {
       jest.clearAllMocks();
       CombatHelper.getArmorValue = jest.fn(() => 8);
       mockActor.system.wounds.value = 18;
-      await CombatHelper.applyDamage(mockActor, 20, 2, 'Body', 'Energy');
+      await CombatHelper.applyDamage(mockActor, { damage: 20, penetration: 2, location: 'Body', damageType: 'Energy' });
 
       const chatCall = global.ChatMessage.create.mock.calls[0][0];
       expect(chatCall.content).toContain('CRITICAL DAMAGE');
@@ -266,7 +266,7 @@ describe('CombatHelper', () => {
 
     it('handles penetration correctly', async () => {
       CombatHelper.getArmorValue = jest.fn(() => 10);
-      await CombatHelper.applyDamage(mockActor, 15, 5, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 15, penetration: 5, location: 'Body', damageType: 'Impact' });
 
       expect(mockActor.update).toHaveBeenCalledWith({
         'system.wounds.value': 15
@@ -533,7 +533,7 @@ describe('CombatHelper', () => {
         items: { find: jest.fn(() => null) }
       };
       
-      await CombatHelper.applyDamage(mockActor, 5, 0, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 5, penetration: 0, location: 'Body', damageType: 'Impact' });
       expect(mockActor.update).not.toHaveBeenCalled();
     });
 
@@ -546,7 +546,7 @@ describe('CombatHelper', () => {
         items: { find: jest.fn(() => null) }
       };
       
-      await CombatHelper.applyDamage(mockActor, 10, 0, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 10, penetration: 0, location: 'Body', damageType: 'Impact' });
       expect(mockActor.update).toHaveBeenCalledWith({ 'system.wounds.value': 15 });
     });
 
@@ -559,7 +559,7 @@ describe('CombatHelper', () => {
         items: { find: jest.fn(() => null) }
       };
       
-      await CombatHelper.applyDamage(mockActor, 10, 10, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 10, penetration: 10, location: 'Body', damageType: 'Impact' });
       expect(mockActor.update).toHaveBeenCalledWith({ 'system.wounds.value': 15 });
     });
 
@@ -574,7 +574,7 @@ describe('CombatHelper', () => {
         items: { find: jest.fn(() => null) }
       };
       
-      await CombatHelper.applyDamage(mockActor, 5, 0, 'Body', 'Impact');
+      await CombatHelper.applyDamage(mockActor, { damage: 5, penetration: 0, location: 'Body', damageType: 'Impact' });
       const chatCall = global.ChatMessage.create.mock.calls[0][0];
       expect(chatCall.content).not.toContain('CRITICAL DAMAGE');
     });

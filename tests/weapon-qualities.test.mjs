@@ -48,47 +48,47 @@ describe('Weapon Qualities', () => {
 
     describe('buildDamageFormula - Accurate bonus damage', () => {
       it('adds 1d10 for 2 degrees of success (single shot, aiming, accurate)', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 2, false, 0, 0, true, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 2, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: true, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10min2 + 1d10');
       });
 
       it('adds 2d10 for 4 degrees of success (single shot, aiming, accurate)', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, false, 0, 0, true, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 4, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: true, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10min4 + 2d10');
       });
 
       it('caps at 2d10 for 6 degrees of success (single shot, aiming, accurate)', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 6, false, 0, 0, true, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 6, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: true, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10min6 + 2d10');
       });
 
       it('adds no bonus for 1 degree of success (not enough)', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 1, false, 0, 0, true, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 1, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: true, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10min1');
       });
 
       it('adds no bonus when not aiming', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, false, 0, 0, true, false, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 4, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: true, isAiming: false, isSingleShot: true });
         expect(formula).toBe('1d10min4');
       });
 
       it('adds no bonus when not accurate', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, false, 0, 0, false, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 4, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: false, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10min4');
       });
 
       it('adds no bonus when not single shot', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, false, 0, 0, true, true, false);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 4, isMelee: false, strBonus: 0, hitIndex: 0, isAccurate: true, isAiming: true, isSingleShot: false });
         expect(formula).toBe('1d10min4');
       });
 
       it('adds no bonus for melee weapons', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, true, 5, 0, true, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 4, isMelee: true, strBonus: 5, hitIndex: 0, isAccurate: true, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10min4 + 5');
       });
 
       it('adds no bonus for subsequent hits', () => {
-        const formula = CombatDialogHelper.buildDamageFormula('1d10', 4, false, 0, 1, true, true, true);
+        const formula = CombatDialogHelper.buildDamageFormula({ baseDmg: '1d10', degreesOfSuccess: 4, isMelee: false, strBonus: 0, hitIndex: 1, isAccurate: true, isAiming: true, isSingleShot: true });
         expect(formula).toBe('1d10');
       });
     });
