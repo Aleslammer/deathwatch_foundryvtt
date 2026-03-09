@@ -1,0 +1,16 @@
+{
+  "_id": "clip00000000016",
+  "img": "systems/deathwatch/icons/ammo/shells.webp",
+  "name": "Shells",
+  "system": {
+    "capacity": {
+      "max": 18,
+      "value": 18
+    },
+    "description": "<p>Shells contain dozens of tiny balls and are designed to scatter over a wide area when fired, making them ideal for close-in work where accuracy is less important.</p><p><b>Used With</b>: Shotguns.</p>",
+    "quantity": 1,
+    "renown": "",
+    "req": 0
+  },
+  "type": "ammunition"
+}
