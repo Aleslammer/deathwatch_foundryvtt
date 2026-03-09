@@ -54,39 +54,3 @@ Running
 PowerLevel (for powerswords)
 
 TODO: Melee Weapons 153 (Force and Other)
-
-
-
-
-
-
-
-## Flame Weapons
-
-| Weapon | Type | Range | RoF | Damage | Pen | Clip | Reload | Special | Wt | Availability | Craftsmanship |
-|-------|------|-------|-----|--------|-----|------|--------|---------|----|--------------|----------------|
-| Balefire Gun | Basic | 20m | S/–/– | 1d10+9 E | 4 | 6 | 2 Full | Flame, Toxic | 7 kg | 16 | Respected |
-| Immolation Rifle | Basic | 25m | S/–/– | 1d10+12 E † | 2 | 5 | Full | Flame | 5 kg | 15 | — |
-
-## Solid Projectile Weapons
-
-| Weapon | Type | Range | RoF | Damage | Pen | Clip | Reload | Special | Wt | Availability | Craftsmanship |
-|-------|------|-------|-----|--------|-----|------|--------|---------|----|--------------|----------------|
-| Astartes Assault Shotgun | Basic | 30m | S/3/5 | 1d10+10 I | 4 | 20 | Full | Reliable, Scatter | 10 kg | 7 | — |
-
-## Launchers
-
-| Weapon | Type | Range | RoF | Damage | Pen | Clip | Reload | Special | Wt | Availability | Craftsmanship |
-|-------|------|-------|-----|--------|-----|------|--------|---------|----|--------------|----------------|
-| Astartes Armoursbane Missile-Launcher | Heavy | 200m | S/–/– | ††† | ††† | 1 | 2 Full | — | 12 kg | 15 | — |
-
-## Exotic Weapons
-
-| Weapon | Type | Range | RoF | Damage | Pen | Clip | Reload | Special | Wt | Availability | Craftsmanship |
-|-------|------|-------|-----|--------|-----|------|--------|---------|----|--------------|----------------|
-| Astartes Webber | Basic | 80m | S/–/– | — | 0 | 5 | Full | Blast (5), Snare | 8 kg | 10 | Distinguished |
-| Atomizer Cannon | Heavy | 50m | S/–/– | 2d10+14 E | 8 | 25 | 3 Full | Blast (5), Devastating (4), Volatile | 80 kg | 50 | Famed |
-| Deathwatch Graviton Cannon | Heavy | 45m | S/–/– | Special | — | 5 | 3 Full | Blast (5) | 65 kg | 45 | Distinguished |
-| Seismic Escalation Detonator | Heavy | 100m | S/–/– | 3d10+14 I per round | Special | 3 | Full | Blast (10) | 40 kg | 40 | — |
-| Techxorcism Gun | Basic | 80m | S/3/– | 1d10+4 E | 4 | 30 | Full | Shocking, Special | 30 kg | — | Respected |
-| Mk.IX Ultra-Pattern Sharpshooter’s Rifle | Basic | 250m | S/–/– | 1d10+4 R | 2 | 5 | Full | Accurate, Felling (1), Toxic | 4 kg | 25 | — |
