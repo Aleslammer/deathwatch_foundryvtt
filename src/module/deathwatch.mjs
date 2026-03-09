@@ -121,6 +121,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const isLongOrExtremeRange = button.data('isLongOrExtremeRange') === 'true' || button.data('isLongOrExtremeRange') === true;
         const isShocking = button.data('isShocking') === 'true' || button.data('isShocking') === true;
         const isToxic = button.data('isToxic') === 'true' || button.data('isToxic') === true;
+        const isMeltaRange = button.data('isMeltaRange') === 'true' || button.data('isMeltaRange') === true;
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -128,7 +129,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic);
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {

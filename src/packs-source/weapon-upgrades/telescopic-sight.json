@@ -1,0 +1,13 @@
+{
+  "name": "Telescopic Sight",
+  "type": "weapon-upgrade",
+  "img": "icons/svg/upgrade.svg",
+  "system": {
+    "description": "<p>Telescopic sights magnify the target's image, making it easy to see. This is especially useful for long-range shots that need to hit a very specific target location. A weapon with a telescopic sight ignores penalties for long and extreme range as long as the shooter takes a Full Action to Aim.</p><p><strong>Upgrades:</strong> Any Basic Las, Solid Projectile, Bolt, or Plasma weapon. A telescopic sight counts as a sight, and a gun may only have one sight.</p>",
+    "key": "telescopic-sight",
+    "singleShotOnly": false,
+    "book": "Deathwatch Core Rulebook",
+    "page": "157",
+    "modifiers": []
+  }
+}

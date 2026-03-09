@@ -166,13 +166,21 @@ export class RangedCombatHelper {
               .filter(m => m.effectType === 'characteristic' && m.valueAffected === 'bs')
               .reduce((sum, m) => sum + (parseInt(m.modifier) || 0), 0);
             
+            const hasTelescopicSight = await WeaponUpgradeHelper.hasUpgrade(weapon, 'telescopic-sight');
+            const isFullAim = aim === AIM_MODIFIERS.FULL;
+            const isLongOrExtreme = rangeLabel === "Long" || rangeLabel === "Extreme";
+            let telescopicRangeMod = autoRangeMod;
+            if (hasTelescopicSight && isFullAim && isLongOrExtreme) {
+              telescopicRangeMod = 0;
+            }
+            
             const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv,
               aim,
               autoFire,
               calledShot,
-              rangeMod: autoRangeMod,
+              rangeMod: telescopicRangeMod,
               runningTarget,
               miscModifier: miscModifier + upgradeBSBonus,
               isAccurate,
@@ -209,6 +217,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
             CombatHelper.lastAttackRangeLabel = rangeLabel;
+            CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
 
             const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);

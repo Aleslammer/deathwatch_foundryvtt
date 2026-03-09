@@ -14,6 +14,11 @@ export class WeaponUpgradeHelper {
     return upgrades;
   }
 
+  static async hasUpgrade(weapon, upgradeKey) {
+    const upgrades = await this.getUpgrades(weapon);
+    return upgrades.some(u => u.system.key === upgradeKey);
+  }
+
   static async getModifiers(weapon, isSingleShot = false) {
     const upgrades = await this.getUpgrades(weapon);
     const modifiers = [];

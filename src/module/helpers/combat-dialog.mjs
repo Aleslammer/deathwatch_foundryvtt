@@ -221,12 +221,18 @@ export class CombatDialogHelper {
       isRazorSharp = false,
       degreesOfSuccess = 0,
       isScatter = false,
-      isLongOrExtremeRange = false
+      isLongOrExtremeRange = false,
+      isMeltaRange = false
     } = options;
 
     const effectiveMultiplier = Math.max(1, unnaturalToughnessMultiplier - felling);
     const effectiveTB = toughnessBonus * effectiveMultiplier;
-    const effectivePenetration = (isRazorSharp && degreesOfSuccess >= 2) ? penetration * 2 : penetration;
+    let effectivePenetration = penetration;
+    if (isRazorSharp && degreesOfSuccess >= 2) {
+      effectivePenetration = penetration * 2;
+    } else if (isMeltaRange) {
+      effectivePenetration = penetration * 2;
+    }
     let baseArmor = armorValue;
     if (isScatter && isLongOrExtremeRange) {
       baseArmor = armorValue * 2;

@@ -114,6 +114,36 @@ describe('WeaponUpgradeHelper', () => {
       expect(result[1].source).toBe('Upgrade 2');
     });
   });
+  describe('hasUpgrade', () => {
+    it('returns true when weapon has upgrade with matching key', async () => {
+      const mockUpgrade = { name: 'Telescopic Sight', system: { key: 'telescopic-sight' } };
+      jest.spyOn(WeaponUpgradeHelper, 'getUpgrades').mockResolvedValue([mockUpgrade]);
+      
+      const weapon = { system: { attachedUpgrades: [{ id: 'upgrade001' }] } };
+      const result = await WeaponUpgradeHelper.hasUpgrade(weapon, 'telescopic-sight');
+      
+      expect(result).toBe(true);
+    });
+
+    it('returns false when weapon does not have upgrade with matching key', async () => {
+      const mockUpgrade = { name: 'Red-Dot Laser Sight', system: { key: 'red-dot-laser-sight' } };
+      jest.spyOn(WeaponUpgradeHelper, 'getUpgrades').mockResolvedValue([mockUpgrade]);
+      
+      const weapon = { system: { attachedUpgrades: [{ id: 'upgrade001' }] } };
+      const result = await WeaponUpgradeHelper.hasUpgrade(weapon, 'telescopic-sight');
+      
+      expect(result).toBe(false);
+    });
+
+    it('returns false when weapon has no upgrades', async () => {
+      jest.spyOn(WeaponUpgradeHelper, 'getUpgrades').mockResolvedValue([]);
+      
+      const weapon = { system: { attachedUpgrades: [] } };
+      const result = await WeaponUpgradeHelper.hasUpgrade(weapon, 'telescopic-sight');
+      
+      expect(result).toBe(false);
+    });
+  });
 });
 
   describe('getModifiers', () => {

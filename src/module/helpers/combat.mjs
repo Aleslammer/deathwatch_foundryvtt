@@ -14,6 +14,7 @@ export class CombatHelper {
   static lastAttackHits = 1;
   static lastAttackAim = 0;
   static lastAttackRangeLabel = null;
+  static lastAttackDistance = null;
 
   static calculateRangeModifier(distance, weaponRange) {
     debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
@@ -194,13 +195,13 @@ export class CombatHelper {
   static async applyDamage(targetActor, options) {
     const { damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false,
       isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false,
-      isShocking = false, isToxic = false, hasDrainLife = false, attackerActor = null } = options;
+      isShocking = false, isToxic = false, hasDrainLife = false, attackerActor = null, isMeltaRange = false } = options;
 
     const defenses = this._getTargetDefenses(targetActor, location);
     const damageResult = CombatDialogHelper.calculateDamageResult({
       damage, penetration, felling, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange,
       armorValue: defenses.armorValue, toughnessBonus: defenses.toughnessBonus,
-      unnaturalToughnessMultiplier: defenses.unnaturalToughnessMultiplier
+      unnaturalToughnessMultiplier: defenses.unnaturalToughnessMultiplier, isMeltaRange
     });
 
     if (damageResult.woundsTaken > 0) {
@@ -290,6 +291,10 @@ export class CombatHelper {
             const isPowerFist = await WeaponQualityHelper.hasQuality(weapon, 'power-fist');
             const isLightningClaw = await WeaponQualityHelper.isLightningClaw(weapon);
             const hasLightningClawPair = await WeaponQualityHelper.hasLightningClawPair(actor);
+            const isMelta = await WeaponQualityHelper.isMelta(weapon);
+            const distance = this.lastAttackDistance;
+            const weaponRange = parseInt(weapon.system.range) || 0;
+            const isMeltaRange = isMelta && distance !== null && weaponRange > 0 && distance < (weaponRange * 0.5);
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
@@ -313,7 +318,7 @@ export class CombatHelper {
               const roll = await new Roll(damageFormula).evaluate();
               totalDamage += roll.total;
               
-              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic) : '';
+              const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange) : '';
               const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
               await roll.toMessage({
@@ -328,7 +333,7 @@ export class CombatHelper {
                 
                 totalDamage += furyDamage;
                 
-                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic) : '';
+                const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange) : '';
                 const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 
                 await ChatMessage.create({

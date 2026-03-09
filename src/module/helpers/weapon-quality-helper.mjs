@@ -49,4 +49,8 @@ export class WeaponQualityHelper {
     }
     return equippedClaws.length >= 2;
   }
+
+  static async isMelta(weapon) {
+    return await this.hasQuality(weapon, 'melta');
+  }
 }
