@@ -161,7 +161,8 @@ export class RangedCombatHelper {
             const isPointBlank = rangeLabel === "Point Blank";
             
             const isSingleShot = roundsFired === 1;
-            const upgradeModifiers = await WeaponUpgradeHelper.getModifiers(weapon, isSingleShot);
+            const isAutoFire = autoFire !== RATE_OF_FIRE_MODIFIERS.SINGLE;
+            const upgradeModifiers = await WeaponUpgradeHelper.getModifiers(weapon, isSingleShot, isAutoFire);
             const upgradeBSBonus = upgradeModifiers
               .filter(m => m.effectType === 'characteristic' && m.valueAffected === 'bs')
               .reduce((sum, m) => sum + (parseInt(m.modifier) || 0), 0);

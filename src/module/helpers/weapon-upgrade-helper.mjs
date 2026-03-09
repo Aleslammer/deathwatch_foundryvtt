@@ -19,12 +19,15 @@ export class WeaponUpgradeHelper {
     return upgrades.some(u => u.system.key === upgradeKey);
   }
 
-  static async getModifiers(weapon, isSingleShot = false) {
+  static async getModifiers(weapon, isSingleShot = false, isAutoFire = false) {
     const upgrades = await this.getUpgrades(weapon);
     const modifiers = [];
 
     for (const upgrade of upgrades) {
       if (upgrade.system.singleShotOnly && !isSingleShot) continue;
+      
+      // Motion Predictor only works on semi-auto or full-auto
+      if (upgrade.system.key === 'motion-predictor' && !isAutoFire) continue;
       
       if (upgrade.system.modifiers) {
         for (const mod of upgrade.system.modifiers) {
