@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import './setup.mjs';
 import { RighteousFuryHelper } from '../src/module/helpers/righteous-fury-helper.mjs';
+import { FoundryAdapter } from '../src/module/helpers/foundry-adapter.mjs';
 
 describe('RighteousFuryHelper', () => {
   beforeEach(() => {
@@ -56,6 +57,102 @@ describe('RighteousFuryHelper', () => {
         ]
       };
       expect(RighteousFuryHelper.hasNaturalTen(roll)).toBe(true);
+    });
+  });
+
+  describe('rollConfirmation', () => {
+    it('confirms fury on successful roll', async () => {
+      const mockRoll = { total: 45 };
+      jest.spyOn(FoundryAdapter, 'evaluateRoll').mockResolvedValue(mockRoll);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
+      jest.spyOn(FoundryAdapter, 'sendRollToChat').mockResolvedValue();
+
+      const result = await RighteousFuryHelper.rollConfirmation({}, 50, 'Body');
+
+      expect(result).toBe(true);
+      expect(FoundryAdapter.evaluateRoll).toHaveBeenCalledWith('1d100');
+      expect(FoundryAdapter.sendRollToChat).toHaveBeenCalled();
+    });
+
+    it('fails confirmation on unsuccessful roll', async () => {
+      const mockRoll = { total: 75 };
+      jest.spyOn(FoundryAdapter, 'evaluateRoll').mockResolvedValue(mockRoll);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
+      jest.spyOn(FoundryAdapter, 'sendRollToChat').mockResolvedValue();
+
+      const result = await RighteousFuryHelper.rollConfirmation({}, 50, 'Body');
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('processFuryChain', () => {
+    it('processes single fury with confirmation', async () => {
+      const mockRoll = { total: 15, dice: [{ faces: 10, results: [{ result: 5 }] }], toMessage: jest.fn() };
+      global.Roll = jest.fn().mockImplementation(() => ({
+        evaluate: jest.fn().mockResolvedValue(mockRoll)
+      }));
+      jest.spyOn(RighteousFuryHelper, 'rollConfirmation').mockResolvedValue(true);
+
+      const result = await RighteousFuryHelper.processFuryChain({}, {}, '1d10+5', 50, 'Body', false);
+
+      expect(result.furyCount).toBe(1);
+      expect(result.totalDamage).toBe(15);
+      expect(RighteousFuryHelper.rollConfirmation).toHaveBeenCalledTimes(1);
+    });
+
+    it('chains multiple furies with natural 10s', async () => {
+      const mockRoll1 = { total: 20, dice: [{ faces: 10, results: [{ result: 10 }] }], toMessage: jest.fn() };
+      const mockRoll2 = { total: 15, dice: [{ faces: 10, results: [{ result: 5 }] }], toMessage: jest.fn() };
+      global.Roll = jest.fn()
+        .mockImplementationOnce(() => ({ evaluate: jest.fn().mockResolvedValue(mockRoll1) }))
+        .mockImplementationOnce(() => ({ evaluate: jest.fn().mockResolvedValue(mockRoll2) }));
+      jest.spyOn(RighteousFuryHelper, 'rollConfirmation').mockResolvedValue(true);
+
+      const result = await RighteousFuryHelper.processFuryChain({}, {}, '1d10+10', 50, 'Body', false);
+
+      expect(result.furyCount).toBe(2);
+      expect(result.totalDamage).toBe(35);
+    });
+
+    it('stops chain when confirmation fails', async () => {
+      const mockRoll = { total: 20, dice: [{ faces: 10, results: [{ result: 10 }] }], toMessage: jest.fn() };
+      global.Roll = jest.fn().mockImplementation(() => ({
+        evaluate: jest.fn().mockResolvedValue(mockRoll)
+      }));
+      jest.spyOn(RighteousFuryHelper, 'rollConfirmation')
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+
+      const result = await RighteousFuryHelper.processFuryChain({}, {}, '1d10+10', 50, 'Body', false);
+
+      expect(result.furyCount).toBe(1);
+    });
+
+    it('processes volatile fury without confirmation', async () => {
+      const mockRoll = { total: 15, dice: [{ faces: 10, results: [{ result: 5 }] }], toMessage: jest.fn() };
+      global.Roll = jest.fn().mockImplementation(() => ({
+        evaluate: jest.fn().mockResolvedValue(mockRoll)
+      }));
+      jest.spyOn(RighteousFuryHelper, 'rollConfirmation');
+
+      const result = await RighteousFuryHelper.processFuryChain({}, {}, '1d10+5', 50, 'Body', true);
+
+      expect(result.furyCount).toBe(1);
+      expect(RighteousFuryHelper.rollConfirmation).not.toHaveBeenCalled();
+    });
+
+    it('chains volatile furies automatically on natural 10', async () => {
+      const mockRoll1 = { total: 20, dice: [{ faces: 10, results: [{ result: 10 }] }], toMessage: jest.fn() };
+      const mockRoll2 = { total: 15, dice: [{ faces: 10, results: [{ result: 5 }] }], toMessage: jest.fn() };
+      global.Roll = jest.fn()
+        .mockImplementationOnce(() => ({ evaluate: jest.fn().mockResolvedValue(mockRoll1) }))
+        .mockImplementationOnce(() => ({ evaluate: jest.fn().mockResolvedValue(mockRoll2) }));
+
+      const result = await RighteousFuryHelper.processFuryChain({}, {}, '1d10+10', 50, 'Body', true);
+
+      expect(result.furyCount).toBe(2);
+      expect(result.totalDamage).toBe(35);
     });
   });
 });

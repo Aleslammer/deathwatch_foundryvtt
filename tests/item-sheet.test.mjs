@@ -325,4 +325,302 @@ describe('DeathwatchItemSheet', () => {
       expect(mockSheet.render).toHaveBeenCalledWith(false);
     });
   });
+
+  describe('_onQualityRemove', () => {
+    it('removes quality from attached qualities (string format)', async () => {
+      const event = {
+        preventDefault: jest.fn(),
+        currentTarget: {}
+      };
+      const mockJQuery = {
+        data: jest.fn(() => 'qual-1')
+      };
+      global.$ = jest.fn(() => mockJQuery);
+
+      mockItem.system.attachedQualities = ['qual-1', 'qual-2'];
+      mockSheet.render = jest.fn();
+
+      await mockSheet._onQualityRemove(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockItem.update).toHaveBeenCalledWith({
+        'system.attachedQualities': ['qual-2']
+      });
+      expect(mockSheet.render).toHaveBeenCalledWith(false);
+    });
+
+    it('removes quality from attached qualities (object format)', async () => {
+      const event = {
+        preventDefault: jest.fn(),
+        currentTarget: {}
+      };
+      const mockJQuery = {
+        data: jest.fn(() => 'qual-1')
+      };
+      global.$ = jest.fn(() => mockJQuery);
+
+      mockItem.system.attachedQualities = [
+        { id: 'qual-1', value: '4' },
+        { id: 'qual-2', value: '2' }
+      ];
+      mockSheet.render = jest.fn();
+
+      await mockSheet._onQualityRemove(event);
+
+      expect(mockItem.update).toHaveBeenCalledWith({
+        'system.attachedQualities': [{ id: 'qual-2', value: '2' }]
+      });
+    });
+  });
+
+  describe('_onQualityValueChange', () => {
+    it('updates quality value', async () => {
+      const event = {
+        preventDefault: jest.fn(),
+        currentTarget: {}
+      };
+      const mockJQuery = {
+        data: jest.fn(() => 'qual-1'),
+        val: jest.fn(() => '5')
+      };
+      global.$ = jest.fn(() => mockJQuery);
+
+      mockItem.system.attachedQualities = [
+        { id: 'qual-1', value: '4' },
+        'qual-2'
+      ];
+
+      await mockSheet._onQualityValueChange(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockItem.update).toHaveBeenCalledWith({
+        'system.attachedQualities': [
+          { id: 'qual-1', value: '5' },
+          'qual-2'
+        ]
+      });
+    });
+  });
+
+  describe('getData - specialty', () => {
+    it('adds characteristic labels for specialty items', () => {
+      mockItem.type = 'specialty';
+      const result = mockSheet.getData();
+      
+      expect(result.characteristics).toBeDefined();
+      expect(result.characteristics.ws).toBe('Weapon Skill');
+      expect(result.characteristics.bs).toBe('Ballistic Skill');
+    });
+  });
+
+  describe('getData - weapon qualities', () => {
+    it('populates attached qualities from pack', () => {
+      mockItem.type = 'weapon';
+      mockItem.system.attachedQualities = ['qual-1'];
+      
+      const mockQuality = {
+        _id: 'qual-1',
+        name: 'Accurate',
+        system: { key: 'accurate', value: '' }
+      };
+      
+      global.game.packs = new Map([
+        ['deathwatch.weapon-qualities', {
+          index: new Map([['qual-1', mockQuality]])
+        }]
+      ]);
+
+      const result = mockSheet.getData();
+      
+      expect(result.attachedQualities).toHaveLength(1);
+      expect(result.attachedQualities[0].name).toBe('Accurate');
+    });
+
+    it('handles quality with value', () => {
+      mockItem.type = 'weapon';
+      mockItem.system.attachedQualities = [{ id: 'qual-1', value: '4' }];
+      
+      const mockQuality = {
+        _id: 'qual-1',
+        name: 'Proven',
+        system: { key: 'proven', value: '3' }
+      };
+      
+      global.game.packs = new Map([
+        ['deathwatch.weapon-qualities', {
+          index: new Map([['qual-1', mockQuality]])
+        }]
+      ]);
+
+      const result = mockSheet.getData();
+      
+      expect(result.attachedQualities[0].system.value).toBe('4');
+    });
+  });
+
+  describe('_onDrop', () => {
+    it('attaches armor history to armor', async () => {
+      mockItem.type = 'armor';
+      mockItem.system.attachedHistories = [];
+      
+      const droppedItem = {
+        id: 'hist-1',
+        name: 'Battle History',
+        type: 'armor-history'
+      };
+      
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn()
+      };
+      
+      global.foundry = {
+        applications: {
+          ux: {
+            TextEditor: {
+              implementation: {
+                getDragEventData: jest.fn(() => ({ type: 'Item' }))
+              }
+            }
+          }
+        }
+      };
+      
+      global.Item = {
+        implementation: {
+          fromDropData: jest.fn(async () => droppedItem)
+        }
+      };
+
+      const result = await mockSheet._onDrop(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockItem.update).toHaveBeenCalledWith({
+        'system.attachedHistories': ['hist-1']
+      });
+      expect(global.ui.notifications.info).toHaveBeenCalled();
+      expect(result).toBe(false);
+    });
+
+    it('warns if history already attached', async () => {
+      mockItem.type = 'armor';
+      mockItem.system.attachedHistories = ['hist-1'];
+      
+      const droppedItem = {
+        id: 'hist-1',
+        name: 'Battle History',
+        type: 'armor-history'
+      };
+      
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn()
+      };
+      
+      global.foundry = {
+        applications: {
+          ux: {
+            TextEditor: {
+              implementation: {
+                getDragEventData: jest.fn(() => ({ type: 'Item' }))
+              }
+            }
+          }
+        }
+      };
+      
+      global.Item = {
+        implementation: {
+          fromDropData: jest.fn(async () => droppedItem)
+        }
+      };
+
+      await mockSheet._onDrop(event);
+
+      expect(global.ui.notifications.warn).toHaveBeenCalled();
+    });
+
+    it('attaches weapon quality to weapon', async () => {
+      mockItem.type = 'weapon';
+      mockItem.system.attachedQualities = [];
+      
+      const droppedItem = {
+        id: 'qual-1',
+        name: 'Accurate',
+        type: 'weapon-quality',
+        system: { value: '' }
+      };
+      
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn()
+      };
+      
+      global.foundry = {
+        applications: {
+          ux: {
+            TextEditor: {
+              implementation: {
+                getDragEventData: jest.fn(() => ({ type: 'Item' }))
+              }
+            }
+          }
+        }
+      };
+      
+      global.Item = {
+        implementation: {
+          fromDropData: jest.fn(async () => droppedItem)
+        }
+      };
+
+      const result = await mockSheet._onDrop(event);
+
+      expect(mockItem.update).toHaveBeenCalledWith({
+        'system.attachedQualities': ['qual-1']
+      });
+      expect(result).toBe(false);
+    });
+
+    it('attaches quality with value', async () => {
+      mockItem.type = 'weapon';
+      mockItem.system.attachedQualities = [];
+      
+      const droppedItem = {
+        id: 'qual-1',
+        name: 'Proven',
+        type: 'weapon-quality',
+        system: { value: '4' }
+      };
+      
+      const event = {
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn()
+      };
+      
+      global.foundry = {
+        applications: {
+          ux: {
+            TextEditor: {
+              implementation: {
+                getDragEventData: jest.fn(() => ({ type: 'Item' }))
+              }
+            }
+          }
+        }
+      };
+      
+      global.Item = {
+        implementation: {
+          fromDropData: jest.fn(async () => droppedItem)
+        }
+      };
+
+      await mockSheet._onDrop(event);
+
+      expect(mockItem.update).toHaveBeenCalledWith({
+        'system.attachedQualities': [{ id: 'qual-1', value: '4' }]
+      });
+    });
+  });
 });

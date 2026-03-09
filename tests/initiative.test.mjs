@@ -64,5 +64,91 @@ describe('InitiativeHelper', () => {
 
       InitiativeHelper.rollInitiativeDialog(mockCombatant);
     });
+
+    it('returns formula with bonus when roll button clicked', async () => {
+      const mockActor = {
+        name: 'Test Marine',
+        getRollData: jest.fn().mockReturnValue({ agBonus: 4, initiativeBonus: 2 })
+      };
+      const mockCombatant = { actor: mockActor };
+
+      let rollCallback;
+      global.Dialog = jest.fn().mockImplementation(function(config) {
+        rollCallback = config.buttons.roll.callback;
+        this.render = jest.fn();
+      });
+
+      const promise = InitiativeHelper.rollInitiativeDialog(mockCombatant);
+      
+      const mockHtml = {
+        find: jest.fn((selector) => ({
+          val: () => selector.includes('formula') ? '1d10' : '6'
+        }))
+      };
+      
+      const result = rollCallback(mockHtml);
+      expect(await promise).toBe('1d10 + 6');
+    });
+
+    it('returns formula without bonus when bonus is zero', async () => {
+      const mockActor = {
+        name: 'Test Marine',
+        getRollData: jest.fn().mockReturnValue({ agBonus: 0, initiativeBonus: 0 })
+      };
+      const mockCombatant = { actor: mockActor };
+
+      let rollCallback;
+      global.Dialog = jest.fn().mockImplementation(function(config) {
+        rollCallback = config.buttons.roll.callback;
+        this.render = jest.fn();
+      });
+
+      const promise = InitiativeHelper.rollInitiativeDialog(mockCombatant);
+      
+      const mockHtml = {
+        find: jest.fn((selector) => ({
+          val: () => selector.includes('formula') ? '1d10' : '0'
+        }))
+      };
+      
+      const result = rollCallback(mockHtml);
+      expect(await promise).toBe('1d10');
+    });
+
+    it('returns null when cancel button clicked', async () => {
+      const mockActor = {
+        name: 'Test Marine',
+        getRollData: jest.fn().mockReturnValue({ agBonus: 4, initiativeBonus: 2 })
+      };
+      const mockCombatant = { actor: mockActor };
+
+      let cancelCallback;
+      global.Dialog = jest.fn().mockImplementation(function(config) {
+        cancelCallback = config.buttons.cancel.callback;
+        this.render = jest.fn();
+      });
+
+      const promise = InitiativeHelper.rollInitiativeDialog(mockCombatant);
+      cancelCallback();
+      expect(await promise).toBe(null);
+    });
+
+    it('returns null when dialog closed', async () => {
+      const mockActor = {
+        name: 'Test Marine',
+        getRollData: jest.fn().mockReturnValue({ agBonus: 4, initiativeBonus: 2 })
+      };
+      const mockCombatant = { actor: mockActor };
+
+      let closeCallback;
+      global.Dialog = jest.fn().mockImplementation(function(config) {
+        closeCallback = config.close;
+        this.render = jest.fn();
+      });
+
+      const promise = InitiativeHelper.rollInitiativeDialog(mockCombatant);
+      closeCallback();
+      expect(await promise).toBe(null);
+    });
   });
 });

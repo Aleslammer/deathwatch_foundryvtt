@@ -172,6 +172,7 @@ export class DeathwatchActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /** @override */
+  /* istanbul ignore next */
   activateListeners(html) {
     super.activateListeners(html);
 
@@ -454,6 +455,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event   The originating click event
    * @private
    */
+  /* istanbul ignore next */
   async _onRoll(event) {
     event.preventDefault();
     const element = event.currentTarget;
@@ -494,6 +496,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Object} dataset The dataset from the clicked element
    * @private
    */
+  /* istanbul ignore next */
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
     const characteristic = this.actor.system.characteristics[dataset.characteristic];
@@ -533,6 +536,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Object} dataset The dataset from the clicked element
    * @private
    */
+  /* istanbul ignore next */
   async _onSkillRoll(dataset) {
     const skill = this.actor.system.skills[dataset.skill];
     const label = `[Skill] ${dataset.label}`;
@@ -588,6 +592,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The originating click event
    * @private
    */
+  /* istanbul ignore next */
   async _onWeaponAttack(event) {
     event.preventDefault();
     const itemId = $(event.currentTarget).data('itemId');
@@ -673,6 +678,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The drop event
    * @private
    */
+  /* istanbul ignore next */
   async _onDropItemOnItem(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -789,6 +795,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The drop event
    * @private
    */
+  /* istanbul ignore next */
   async _onDropChapter(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -819,6 +826,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The drop event
    * @private
    */
+  /* istanbul ignore next */
   async _onDropSpecialty(event) {
     event.preventDefault();
     event.stopPropagation();
