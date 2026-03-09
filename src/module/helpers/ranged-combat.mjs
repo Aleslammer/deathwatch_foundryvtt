@@ -48,7 +48,7 @@ export class RangedCombatHelper {
         weaponRange = thrownRange || 0;
       }
       else {
-        weaponRange = parseInt(weapon.system.range) || 0;
+        weaponRange = parseInt(weapon.system.effectiveRange || weapon.system.range) || 0;
       }
       
       if (weaponRange > 0) {

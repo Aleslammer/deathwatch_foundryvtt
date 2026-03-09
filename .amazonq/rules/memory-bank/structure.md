@@ -65,6 +65,7 @@ src/
 - **item.mjs**: Defines Item document behavior (weapons, armor, gear, etc.)
   - Item data preparation
   - Equipment state management
+  - Weapon upgrade modifier application (effectiveRange calculation)
   - Item-specific methods
 
 ### 3. Helper Modules (`module/helpers/`)
@@ -74,6 +75,7 @@ src/
 - **chat-message-builder.mjs**: Chat message formatting and creation
 - **item-handlers.mjs**: Item categorization and processing
 - **weapon-quality-helper.mjs**: Weapon quality detection and lookup
+- **weapon-upgrade-helper.mjs**: Weapon upgrade detection and modifier collection
 - **combat.mjs**: Core combat logic (hit locations, damage application, routing)
 - **ranged-combat.mjs**: Ranged weapon attack dialog and logic
 - **melee-combat.mjs**: Melee weapon attack dialog and logic
@@ -108,9 +110,10 @@ Defines the data structure for:
 - **Actor Types**: character, npc
   - Base template with wounds and fatigue
   - Character-specific data (characteristics, skills, modifiers)
-- **Item Types**: weapon, armor, armor-history, gear, ammunition, characteristic
+- **Item Types**: weapon, armor, armor-history, gear, ammunition, characteristic, weapon-upgrade
   - Base template with description
   - Type-specific properties
+  - Weapon upgrades with modifiers array
 
 ### 6. Compendium System
 - **packs-source/**: Human-readable source data (JSON/YAML)

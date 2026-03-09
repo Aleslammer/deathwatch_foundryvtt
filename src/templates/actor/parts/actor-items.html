@@ -30,7 +30,11 @@
           {{item.system.dmg}}
         </div>
         <div class="item-type">
-          {{item.system.range}}
+          {{#if item.system.effectiveRange}}
+            {{item.system.effectiveRange}}
+          {{else}}
+            {{item.system.range}}
+          {{/if}}
           {{#if item.system.equipped}}
           <div class="item-buttons">
             {{#if item.system.jammed}}

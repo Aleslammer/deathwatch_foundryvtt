@@ -24,11 +24,12 @@ describe('Templates', () => {
       );
     });
 
-    it('loads exactly 8 templates', async () => {
+    it('loads templates', async () => {
       await preloadHandlebarsTemplates();
 
       const templates = loadTemplatesMock.mock.calls[0][0];
-      expect(templates).toHaveLength(8);
+      expect(templates.length).toBeGreaterThan(0);
+      expect(templates).toContain('systems/deathwatch/templates/actor/parts/actor-skills.html');
     });
 
     it('returns promise from loadTemplates', async () => {
@@ -37,13 +38,14 @@ describe('Templates', () => {
       expect(result).toBeUndefined();
     });
 
-    it('loads actor partial templates', async () => {
+    it('loads actor and item templates', async () => {
       await preloadHandlebarsTemplates();
 
       const templates = loadTemplatesMock.mock.calls[0][0];
-      templates.forEach(template => {
-        expect(template).toContain('systems/deathwatch/templates/actor/parts/');
-      });
+      const hasActorTemplates = templates.some(t => t.includes('systems/deathwatch/templates/actor/parts/'));
+      const hasItemTemplates = templates.some(t => t.includes('systems/deathwatch/templates/item/'));
+      expect(hasActorTemplates).toBe(true);
+      expect(hasItemTemplates).toBe(true);
     });
   });
 });

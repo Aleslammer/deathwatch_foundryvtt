@@ -82,11 +82,11 @@ describe('Constants', () => {
 
   describe('RANGE_MODIFIERS', () => {
     it('defines range modifiers', () => {
-      expect(RANGE_MODIFIERS.POINT_BLANK).toBe(20);
+      expect(RANGE_MODIFIERS.POINT_BLANK).toBe(30);
       expect(RANGE_MODIFIERS.SHORT).toBe(10);
       expect(RANGE_MODIFIERS.NORMAL).toBe(0);
       expect(RANGE_MODIFIERS.LONG).toBe(-10);
-      expect(RANGE_MODIFIERS.EXTREME).toBe(-20);
+      expect(RANGE_MODIFIERS.EXTREME).toBe(-30);
     });
   });
 

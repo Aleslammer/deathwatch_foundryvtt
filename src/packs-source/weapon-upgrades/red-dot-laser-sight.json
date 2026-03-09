@@ -8,6 +8,9 @@
     "singleShotOnly": true,
     "book": "Deathwatch Core Rulebook",
     "page": "157",
+    "renown": "",
+    "req": 10,
+    "wt": 0.5,
     "modifiers": [
       {
         "name": "Red-Dot Laser Sight",

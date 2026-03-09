@@ -182,7 +182,7 @@ describe('ModifierCollector', () => {
       expect(modifiers.find(m => m.source === 'Power Armor')).toBeDefined();
     });
 
-    it('collects modifiers from weapon upgrades', () => {
+    it('does not collect modifiers from weapon upgrades in ModifierCollector', () => {
       const itemsMap = new Map();
       const upgrade = {
         _id: 'upgrade001',
@@ -208,14 +208,9 @@ describe('ModifierCollector', () => {
 
       const modifiers = ModifierCollector.collectItemModifiers(itemsMap);
 
-      expect(modifiers).toHaveLength(1);
-      expect(modifiers[0]).toMatchObject({
-        name: 'BS Bonus',
-        modifier: '10',
-        effectType: 'characteristic',
-        valueAffected: 'bs',
-        source: 'Red-Dot Laser Sight (Bolter)'
-      });
+      // Weapon upgrades are not collected by ModifierCollector
+      // They are applied during combat via WeaponUpgradeHelper
+      expect(modifiers).toHaveLength(0);
     });
   });
 
