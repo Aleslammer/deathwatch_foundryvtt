@@ -43,34 +43,60 @@ export class DeathwatchItem extends Item {
   
   _applyWeaponUpgradeModifiers() {
     const baseRange = parseInt(this.system.range) || 0;
+    const baseWeight = parseFloat(this.system.wt) || 0;
     
     if (baseRange === 0) {
       this.system.effectiveRange = this.system.range;
-      return;
-    }
-    
-    let rangeAdditive = 0;
-    let rangeMultiplier = 1;
-    
-    for (const upgradeRef of this.system.attachedUpgrades) {
-      const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
-      const upgrade = this.actor.items.get(upgradeId);
+    } else {
+      let rangeAdditive = 0;
+      let rangeMultiplier = 1;
       
-      if (upgrade && Array.isArray(upgrade.system.modifiers)) {
-        for (const mod of upgrade.system.modifiers) {
-          if (mod.enabled !== false && mod.effectType === 'weapon-range') {
-            const modStr = String(mod.modifier);
-            if (modStr.startsWith('x')) {
-              rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
-            } else {
-              rangeAdditive += parseInt(mod.modifier) || 0;
+      for (const upgradeRef of this.system.attachedUpgrades) {
+        const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
+        const upgrade = this.actor.items.get(upgradeId);
+        
+        if (upgrade && Array.isArray(upgrade.system.modifiers)) {
+          for (const mod of upgrade.system.modifiers) {
+            if (mod.enabled !== false && mod.effectType === 'weapon-range') {
+              const modStr = String(mod.modifier);
+              if (modStr.startsWith('x')) {
+                rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
+              } else {
+                rangeAdditive += parseInt(mod.modifier) || 0;
+              }
             }
           }
         }
       }
+      
+      this.system.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
     }
     
-    this.system.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
+    // Apply weight modifiers
+    if (baseWeight > 0) {
+      let weightAdditive = 0;
+      let weightMultiplier = 1;
+      
+      for (const upgradeRef of this.system.attachedUpgrades) {
+        const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
+        const upgrade = this.actor.items.get(upgradeId);
+        
+        if (upgrade && Array.isArray(upgrade.system.modifiers)) {
+          for (const mod of upgrade.system.modifiers) {
+            if (mod.enabled !== false && mod.effectType === 'weapon-weight') {
+              const modStr = String(mod.modifier);
+              if (modStr.startsWith('x')) {
+                weightMultiplier *= parseFloat(modStr.substring(1)) || 1;
+              } else {
+                weightAdditive += parseFloat(mod.modifier) || 0;
+              }
+            }
+          }
+        }
+      }
+      
+      this.system.effectiveWeight = Math.max(0, (baseWeight + weightAdditive) * weightMultiplier);
+    }
   }
 
   /**
