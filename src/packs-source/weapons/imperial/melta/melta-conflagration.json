@@ -1,0 +1,24 @@
+{
+  "_id": "melt00000000003",
+  "img": "systems/deathwatch/icons/weapons/melta-conflagration.webp",
+  "name": "Astartes Meltagun (Conflagration)",
+  "system": {
+    "book": "Rites of Battle",
+    "class": "Basic",
+    "clip": "4",
+    "description": "<p>Crafted in very limited numbers by Enthos Calibos, a Techmarine of the Salamanders Chapter garrisoned aboards Watch Station Erioch, these compact, high-output meltaguns ahve gained favor among those Battle-Brothers of the Deathwatch luck enough to have wielded them.  Reflecting the fine workmanship and deep love for cleansing flame of their creator, these powerful weapons have higher penetration and damage output at the expense of energy consumption.</p>",
+    "dmg": "2d10+14",
+    "dmgType": "Energy",
+    "equipped": false,
+    "modifiers": [],
+    "page": "135",
+    "penetration": "14",
+    "range": "20",
+    "reload": "2 Full",
+    "renown": "Distinguised",
+    "req": 235,
+    "rof": "S/-/-",
+    "wt": 14
+  },
+  "type": "weapon"
+}
