@@ -55,3 +55,5 @@ Running
 PowerLevel (for powerswords)
 
 TODO: Melee Weapons 153 (Force and Other)
+TODO: Rites of Battle
+    There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors

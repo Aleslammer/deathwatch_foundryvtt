@@ -94,6 +94,33 @@ export class ModifierCollector {
     return modifiers;
   }
 
+  static collectWeaponUpgradeModifiers(weapon, allItems) {
+    const modifiers = [];
+    
+    debug('MODIFIERS', `  Weapon ${weapon.name} has ${weapon.system.attachedUpgrades.length} attached upgrades`);
+    
+    for (const upgradeRef of weapon.system.attachedUpgrades) {
+      const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
+      const upgrade = allItems.get(upgradeId);
+      debug('MODIFIERS', `    Upgrade ID: ${upgradeId}, found: ${!!upgrade}`);
+      
+      if (upgrade) {
+        debug('MODIFIERS', `    Upgrade: ${upgrade.name}, modifiers: ${upgrade.system.modifiers?.length || 0}`);
+      }
+      
+      if (upgrade && Array.isArray(upgrade.system.modifiers)) {
+        for (const mod of upgrade.system.modifiers) {
+          debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
+          if (mod.enabled !== false) {
+            modifiers.push({ ...mod, source: `${upgrade.name} (${weapon.name})` });
+          }
+        }
+      }
+    }
+    
+    return modifiers;
+  }
+
   static applyCharacteristicModifiers(characteristics, modifiers) {
     for (const [key, characteristic] of Object.entries(characteristics)) {
       if (characteristic.base === undefined) {

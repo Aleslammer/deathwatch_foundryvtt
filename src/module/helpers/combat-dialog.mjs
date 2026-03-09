@@ -29,7 +29,7 @@ export class CombatDialogHelper {
     return Math.max(rangeMod, -10);
   }
 
-  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0) {
+  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0, upgradeModifiers = []) {
     const parts = [];
     parts.push(`${bs} Base BS`);
     if (bsAdv !== 0) parts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
@@ -41,6 +41,10 @@ export class CombatDialogHelper {
     if (autoRangeMod !== 0) parts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
     if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
     if (miscModifier !== 0) parts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+    for (const mod of upgradeModifiers) {
+      const value = parseInt(mod.modifier) || 0;
+      if (value !== 0) parts.push(`${value >= 0 ? '+' : ''}${value} ${mod.source}`);
+    }
     return parts;
   }
 

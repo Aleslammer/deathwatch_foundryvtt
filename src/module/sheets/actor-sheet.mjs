@@ -352,6 +352,21 @@ export class DeathwatchActorSheet extends ActorSheet {
       ui.notifications.info('Ammunition removed.');
     });
 
+    // Remove upgrade from weapon
+    html.find('.upgrade-remove').click(async ev => {
+      const upgradeId = $(ev.currentTarget).data('upgradeId');
+      const weaponId = $(ev.currentTarget).data('weaponId');
+      const weapon = this.actor.items.get(weaponId);
+      
+      if (!weapon) return;
+      
+      const currentUpgrades = weapon.system.attachedUpgrades || [];
+      const updatedUpgrades = currentUpgrades.filter(u => u.id !== upgradeId);
+      
+      await weapon.update({ "system.attachedUpgrades": updatedUpgrades });
+      ui.notifications.info('Weapon upgrade removed.');
+    });
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -741,6 +756,31 @@ export class DeathwatchActorSheet extends ActorSheet {
 
       await targetItem.update({ "system.loadedAmmo": ammoItem.id });
       ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
+    }
+    // Handle weapon upgrade drops
+    else if (droppedItem.type === 'weapon-upgrade') {
+      let upgradeItem = droppedItem;
+      if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
+        const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
+        upgradeItem = imported;
+      }
+
+      let targetItemId = $(event.currentTarget).data('itemId');
+      let targetItem = this.actor.items.get(targetItemId);
+      
+      if (!targetItem || targetItem.type !== 'weapon') {
+        ui.notifications.warn('Weapon upgrades can only be attached to weapons.');
+        return;
+      }
+
+      const currentUpgrades = targetItem.system.attachedUpgrades || [];
+      if (currentUpgrades.find(u => u.id === upgradeItem.id)) {
+        ui.notifications.warn(`${upgradeItem.name} is already attached to ${targetItem.name}.`);
+        return;
+      }
+      
+      await targetItem.update({ "system.attachedUpgrades": [...currentUpgrades, { id: upgradeItem.id }] });
+      ui.notifications.info(`${upgradeItem.name} attached to ${targetItem.name}.`);
     }
   }
 

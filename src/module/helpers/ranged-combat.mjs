@@ -2,6 +2,7 @@ import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./const
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
+import { WeaponUpgradeHelper } from "./weapon-upgrade-helper.mjs";
 
 export class RangedCombatHelper {
   static calculateThrownWeaponRange(weapon, actor) {
@@ -158,6 +159,13 @@ export class RangedCombatHelper {
             const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
             const hasLivingAmmo = await WeaponQualityHelper.hasQuality(weapon, 'living-ammunition');
             const isPointBlank = rangeLabel === "Point Blank";
+            
+            const isSingleShot = roundsFired === 1;
+            const upgradeModifiers = await WeaponUpgradeHelper.getModifiers(weapon, isSingleShot);
+            const upgradeBSBonus = upgradeModifiers
+              .filter(m => m.effectType === 'characteristic' && m.valueAffected === 'bs')
+              .reduce((sum, m) => sum + (parseInt(m.modifier) || 0), 0);
+            
             const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv,
@@ -166,7 +174,7 @@ export class RangedCombatHelper {
               calledShot,
               rangeMod: autoRangeMod,
               runningTarget,
-              miscModifier,
+              miscModifier: miscModifier + upgradeBSBonus,
               isAccurate,
               isGyroStabilised,
               isTwinLinked
@@ -202,7 +210,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackAim = aim;
             CombatHelper.lastAttackRangeLabel = rangeLabel;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 

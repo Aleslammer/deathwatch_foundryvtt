@@ -122,7 +122,8 @@
             "chapter",
             "implant",
             "cybernetic",
-            "weapon-quality"
+            "weapon-quality",
+            "weapon-upgrade"
         ],
         "templates": {
             "base": {
@@ -150,6 +151,7 @@
             "loadedAmmo": null,
             "modifiers": [],
             "attachedQualities": [],
+            "attachedUpgrades": [],
             "doublesStrengthBonus": false
         },
         "armor": {
@@ -303,6 +305,16 @@
             "key": "",
             "book": "",
             "page": ""
+        },
+        "weapon-upgrade": {
+            "templates": [
+                "base"
+            ],
+            "key": "",
+            "singleShotOnly": false,
+            "book": "",
+            "page": "",
+            "modifiers": []
         }
     }
 }

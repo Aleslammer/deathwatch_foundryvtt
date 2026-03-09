@@ -181,6 +181,42 @@ describe('ModifierCollector', () => {
       expect(modifiers.find(m => m.source === 'Black Templars')).toBeDefined();
       expect(modifiers.find(m => m.source === 'Power Armor')).toBeDefined();
     });
+
+    it('collects modifiers from weapon upgrades', () => {
+      const itemsMap = new Map();
+      const upgrade = {
+        _id: 'upgrade001',
+        name: 'Red-Dot Laser Sight',
+        type: 'weapon-upgrade',
+        system: {
+          modifiers: [
+            { name: 'BS Bonus', modifier: '10', effectType: 'characteristic', valueAffected: 'bs', enabled: true }
+          ]
+        }
+      };
+      const weapon = {
+        name: 'Bolter',
+        type: 'weapon',
+        system: {
+          equipped: true,
+          modifiers: [],
+          attachedUpgrades: [{ id: 'upgrade001' }]
+        }
+      };
+      itemsMap.set('upgrade001', upgrade);
+      itemsMap.set('weapon001', weapon);
+
+      const modifiers = ModifierCollector.collectItemModifiers(itemsMap);
+
+      expect(modifiers).toHaveLength(1);
+      expect(modifiers[0]).toMatchObject({
+        name: 'BS Bonus',
+        modifier: '10',
+        effectType: 'characteristic',
+        valueAffected: 'bs',
+        source: 'Red-Dot Laser Sight (Bolter)'
+      });
+    });
   });
 
   describe('applyCharacteristicModifiers', () => {
