@@ -221,7 +221,7 @@ export class CombatHelper {
 
   /* istanbul ignore next */
   static async weaponDamageRoll(actor, weapon) {
-    const dmg = weapon.system.dmg;
+    const dmg = weapon.system.effectiveDamage || weapon.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
 
     const defaultRoll = this.lastAttackRoll || '';

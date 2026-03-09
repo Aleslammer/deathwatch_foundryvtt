@@ -27,7 +27,11 @@
           <h4>{{item.name}}</h4>
         </div>
         <div class="item-damage">
-          {{item.system.dmg}}
+          {{#if item.system.effectiveDamage}}
+            {{item.system.effectiveDamage}}
+          {{else}}
+            {{item.system.dmg}}
+          {{/if}}
         </div>
         <div class="item-type">
           {{#if item.system.effectiveRange}}

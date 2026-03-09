@@ -39,6 +39,11 @@ export class DeathwatchItem extends Item {
     if (this.type === 'weapon' && this.actor && Array.isArray(this.system.attachedUpgrades)) {
       this._applyWeaponUpgradeModifiers();
     }
+    
+    // Apply ammunition modifiers to weapon stats
+    if (this.type === 'weapon' && this.actor && this.system.loadedAmmo) {
+      this._applyAmmunitionModifiers();
+    }
   }
   
   _applyWeaponUpgradeModifiers() {
@@ -96,6 +101,35 @@ export class DeathwatchItem extends Item {
       }
       
       this.system.effectiveWeight = Math.max(0, (baseWeight + weightAdditive) * weightMultiplier);
+    }
+  }
+  
+  _applyAmmunitionModifiers() {
+    if (!this.actor) return;
+    
+    const ammo = this.actor.items.get(this.system.loadedAmmo);
+    if (!ammo || !Array.isArray(ammo.system.modifiers)) {
+      delete this.system.effectiveDamage;
+      return;
+    }
+    
+    const baseDmg = this.system.dmg || this.system.damage;
+    if (!baseDmg) {
+      delete this.system.effectiveDamage;
+      return;
+    }
+    
+    let damageModifier = 0;
+    for (const mod of ammo.system.modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'weapon-damage') {
+        damageModifier += parseInt(mod.modifier) || 0;
+      }
+    }
+    
+    if (damageModifier !== 0) {
+      this.system.effectiveDamage = `${baseDmg} ${damageModifier >= 0 ? '+' : ''}${damageModifier}`;
+    } else {
+      delete this.system.effectiveDamage;
     }
   }
 

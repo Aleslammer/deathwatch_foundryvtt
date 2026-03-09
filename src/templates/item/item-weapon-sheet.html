@@ -55,8 +55,14 @@
                 </div>
                 <div class="resource">
                     <label class="resource-label">Damage</label>
-                    <input type="text" value="{{system.dmg}}" readonly />
+                    <input type="text" name="system.dmg" value="{{system.dmg}}" />
                 </div>
+                {{#if system.effectiveDamage}}
+                <div class="resource">
+                    <label class="resource-label">Effective Damage</label>
+                    <input type="text" value="{{system.effectiveDamage}}" readonly style="background: #f0f0f0;" />
+                </div>
+                {{/if}}
                 <div class="resource">
                     <label class="resource-label">Damage Type</label>
                     <input type="text" value="{{system.dmgType}}" readonly />

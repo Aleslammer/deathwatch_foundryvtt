@@ -201,7 +201,11 @@
             "capacity": {
                 "value": 0,
                 "max": 0
-            }
+            },
+            "quantity": 1,
+            "req": 0,
+            "renown": "",
+            "modifiers": []
         },
         "characteristic": {
             "templates": [
