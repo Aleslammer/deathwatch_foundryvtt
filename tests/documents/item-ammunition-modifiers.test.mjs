@@ -239,5 +239,116 @@ describe('DeathwatchItem - Ammunition Modifiers', () => {
       
       expect(mockWeapon.system.effectiveDamage).toBe('1d10+5 -2');
     });
+
+    it('should apply weapon-rof modifier from loaded ammo to heavy weapons', () => {
+      mockAmmo = {
+        system: {
+          modifiers: [
+            { name: 'Hellfire RoF', modifier: 'S/-/-', effectType: 'weapon-rof', enabled: true, weaponClass: 'heavy' }
+          ]
+        }
+      };
+      
+      mockWeapon = new DeathwatchItem({
+        name: 'Heavy Bolter',
+        type: 'weapon',
+        system: {
+          class: 'Heavy',
+          rof: 'S/3/10',
+          loadedAmmo: 'ammo123'
+        }
+      });
+      mockWeapon.actor = mockActor;
+      
+      mockActor.items.get.mockReturnValue(mockAmmo);
+      
+      mockWeapon._applyAmmunitionModifiers();
+      
+      expect(mockWeapon.system.effectiveRof).toBe('S/-/-');
+    });
+
+    it('should not apply weapon-rof modifier to non-heavy weapons', () => {
+      mockAmmo = {
+        system: {
+          modifiers: [
+            { name: 'Hellfire RoF', modifier: 'S/-/-', effectType: 'weapon-rof', enabled: true, weaponClass: 'heavy' }
+          ]
+        }
+      };
+      
+      mockWeapon = new DeathwatchItem({
+        name: 'Bolter',
+        type: 'weapon',
+        system: {
+          class: 'Basic',
+          rof: 'S/3/-',
+          loadedAmmo: 'ammo123'
+        }
+      });
+      mockWeapon.actor = mockActor;
+      
+      mockActor.items.get.mockReturnValue(mockAmmo);
+      
+      mockWeapon._applyAmmunitionModifiers();
+      
+      expect(mockWeapon.system.effectiveRof).toBeUndefined();
+    });
+
+    it('should not set effectiveRof when no rof modifier', () => {
+      mockAmmo = {
+        system: {
+          modifiers: [
+            { name: 'Damage Mod', modifier: '-2', effectType: 'weapon-damage', enabled: true }
+          ]
+        }
+      };
+      
+      mockWeapon = new DeathwatchItem({
+        name: 'Bolter',
+        type: 'weapon',
+        system: {
+          dmg: '1d10+5',
+          rof: 'S/3/-',
+          loadedAmmo: 'ammo123'
+        }
+      });
+      mockWeapon.actor = mockActor;
+      
+      mockActor.items.get.mockReturnValue(mockAmmo);
+      
+      mockWeapon._applyAmmunitionModifiers();
+      
+      expect(mockWeapon.system.effectiveRof).toBeUndefined();
+    });
+
+    it('should apply both damage and rof modifiers to heavy weapons', () => {
+      mockAmmo = {
+        system: {
+          modifiers: [
+            { name: 'Damage Mod', modifier: '-2', effectType: 'weapon-damage', enabled: true },
+            { name: 'RoF Mod', modifier: 'S/-/-', effectType: 'weapon-rof', enabled: true, weaponClass: 'heavy' }
+          ]
+        }
+      };
+      
+      mockWeapon = new DeathwatchItem({
+        name: 'Heavy Bolter',
+        type: 'weapon',
+        system: {
+          class: 'Heavy',
+          dmg: '1d10+10',
+          rof: 'S/3/10',
+          loadedAmmo: 'ammo123'
+        }
+      });
+      mockWeapon.actor = mockActor;
+      
+      mockActor.items.get.mockReturnValue(mockAmmo);
+      
+      mockWeapon._applyAmmunitionModifiers();
+      
+      expect(mockWeapon.system.effectiveDamage).toBe('1d10+10 -2');
+      expect(mockWeapon.system.effectiveRof).toBe('S/-/-');
+    });
   });
 });

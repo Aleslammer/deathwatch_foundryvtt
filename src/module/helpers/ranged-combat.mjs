@@ -64,7 +64,7 @@ export class RangedCombatHelper {
       }
     }
 
-    const rof = weapon.system.rof || "S/-/-";
+    const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
     const clip = weapon.system.clip;
     const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';

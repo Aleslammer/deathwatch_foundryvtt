@@ -110,26 +110,46 @@ export class DeathwatchItem extends Item {
     const ammo = this.actor.items.get(this.system.loadedAmmo);
     if (!ammo || !Array.isArray(ammo.system.modifiers)) {
       delete this.system.effectiveDamage;
+      delete this.system.effectiveRof;
       return;
     }
     
     const baseDmg = this.system.dmg || this.system.damage;
-    if (!baseDmg) {
+    const baseRof = this.system.rof;
+    const weaponClass = (this.system.class || '').toLowerCase();
+    
+    if (!baseDmg && !baseRof) {
       delete this.system.effectiveDamage;
+      delete this.system.effectiveRof;
       return;
     }
     
     let damageModifier = 0;
+    let rofOverride = null;
+    
     for (const mod of ammo.system.modifiers) {
-      if (mod.enabled !== false && mod.effectType === 'weapon-damage') {
-        damageModifier += parseInt(mod.modifier) || 0;
+      if (mod.enabled !== false) {
+        if (mod.effectType === 'weapon-damage') {
+          damageModifier += parseInt(mod.modifier) || 0;
+        } else if (mod.effectType === 'weapon-rof') {
+          const requiredClass = (mod.weaponClass || '').toLowerCase();
+          if (!requiredClass || weaponClass.includes(requiredClass)) {
+            rofOverride = mod.modifier;
+          }
+        }
       }
     }
     
-    if (damageModifier !== 0) {
+    if (damageModifier !== 0 && baseDmg) {
       this.system.effectiveDamage = `${baseDmg} ${damageModifier >= 0 ? '+' : ''}${damageModifier}`;
     } else {
       delete this.system.effectiveDamage;
+    }
+    
+    if (rofOverride && baseRof) {
+      this.system.effectiveRof = rofOverride;
+    } else {
+      delete this.system.effectiveRof;
     }
   }
 
