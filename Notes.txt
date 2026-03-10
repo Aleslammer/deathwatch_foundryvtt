@@ -34,6 +34,8 @@ TODO: Ammmunition 158
     TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
     TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
 
+TODO: Add label for renown based on the table 5-2 on page 140.  We track the value as a number.   We need to map it to these values.
+
     
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 TODO: Psychic Powers (180)

@@ -249,8 +249,12 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '') {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null) {
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
+    
+    if (charDamageEffect && woundsTaken > 0) {
+      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}" data-formula="${charDamageEffect.formula}" data-characteristic="${charDamageEffect.characteristic}">${charDamageEffect.name}: Roll ${charDamageEffect.formula}</button>`;
+    }
     
     if (isShocking && woundsTaken > 0) {
       const stunRounds = Math.floor(woundsTaken / 2);

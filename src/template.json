@@ -57,46 +57,55 @@
                 "ws": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "bs": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "str": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "tg": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "ag": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "int": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "per": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "wil": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 },
                 "fs": {
                     "value": 0,
                     "bonus": 0,
+                    "damage": 0,
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 }
             },

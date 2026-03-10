@@ -146,6 +146,13 @@ export class ModifierCollector {
         }
       }
       
+      // Subtract characteristic damage
+      const damage = parseInt(characteristic.damage) || 0;
+      if (damage > 0) {
+        total -= damage;
+        appliedMods.push({ name: 'Damage', value: -damage, source: 'Characteristic Damage' });
+      }
+      
       characteristic.value = total;
       characteristic.modifiers = appliedMods;
       characteristic.mod = Math.floor(total / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);

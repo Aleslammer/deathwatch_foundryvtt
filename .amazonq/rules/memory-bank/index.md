@@ -37,6 +37,10 @@ Documentation for the Deathwatch Foundry VTT system, including architecture, gui
 **Purpose**: Weapon qualities system documentation  
 **Contents**: Quality implementations (Accurate, Primitive, Tearing, etc.), detection methods, combat integration, test coverage
 
+### 9. ammunition-modifiers.md
+**Purpose**: Ammunition modifier system documentation  
+**Contents**: Modifier types (weapon-damage, weapon-rof, weapon-blast, righteous-fury-threshold, characteristic-damage), weaponClass restrictions, characteristic damage system, UI integration
+
 ## Quick Reference
 
 ### File Locations
@@ -81,7 +85,7 @@ npm run build:packs       # Compile compendium packs
 ### Metrics
 - **Total Lines**: ~2,618
 - **Test Coverage**: 68%
-- **Tests**: 372 passing
+- **Tests**: 719 passing
 - **Helper Classes**: 5 (XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
 - **CSS Files**: 9 modular files
 - **CSS Variables**: 60
