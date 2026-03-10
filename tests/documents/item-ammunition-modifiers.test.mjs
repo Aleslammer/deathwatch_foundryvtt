@@ -350,5 +350,59 @@ describe('DeathwatchItem - Ammunition Modifiers', () => {
       expect(mockWeapon.system.effectiveDamage).toBe('1d10+10 -2');
       expect(mockWeapon.system.effectiveRof).toBe('S/-/-');
     });
+
+    it('should apply blast modifier to heavy weapons', () => {
+      mockAmmo = {
+        system: {
+          modifiers: [
+            { name: 'Blast', modifier: '3', effectType: 'weapon-blast', enabled: true, weaponClass: 'heavy' }
+          ]
+        }
+      };
+      
+      mockWeapon = new DeathwatchItem({
+        name: 'Heavy Bolter',
+        type: 'weapon',
+        system: {
+          class: 'Heavy',
+          dmg: '1d10+10',
+          loadedAmmo: 'ammo123'
+        }
+      });
+      mockWeapon.actor = mockActor;
+      
+      mockActor.items.get.mockReturnValue(mockAmmo);
+      
+      mockWeapon._applyAmmunitionModifiers();
+      
+      expect(mockWeapon.system.effectiveBlast).toBe(3);
+    });
+
+    it('should not apply blast modifier to non-heavy weapons', () => {
+      mockAmmo = {
+        system: {
+          modifiers: [
+            { name: 'Blast', modifier: '3', effectType: 'weapon-blast', enabled: true, weaponClass: 'heavy' }
+          ]
+        }
+      };
+      
+      mockWeapon = new DeathwatchItem({
+        name: 'Bolter',
+        type: 'weapon',
+        system: {
+          class: 'Basic',
+          dmg: '1d10+5',
+          loadedAmmo: 'ammo123'
+        }
+      });
+      mockWeapon.actor = mockActor;
+      
+      mockActor.items.get.mockReturnValue(mockAmmo);
+      
+      mockWeapon._applyAmmunitionModifiers();
+      
+      expect(mockWeapon.system.effectiveBlast).toBeUndefined();
+    });
   });
 });

@@ -32,6 +32,7 @@ tyranid upgrade
 
 TODO: Ammmunition 158
     TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
+    TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
 
     
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)

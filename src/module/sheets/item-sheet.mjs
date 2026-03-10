@@ -104,6 +104,19 @@ export class DeathwatchItemSheet extends ItemSheet {
                     }
                 };
             }).filter(q => q);
+            
+            // Add Blast quality if effectiveBlast is set
+            if (itemData.system.effectiveBlast) {
+                context.attachedQualities.push({
+                    _id: 'effective-blast',
+                    name: 'Blast',
+                    system: {
+                        key: 'blast',
+                        value: itemData.system.effectiveBlast
+                    },
+                    isEffective: true
+                });
+            }
         }
 
         return context;

@@ -24,6 +24,13 @@
         "modifier": "9",
         "effectType": "righteous-fury-threshold",
         "enabled": true
+      },
+      {
+        "name": "Hellfire Blast",
+        "modifier": "3",
+        "effectType": "weapon-blast",
+        "enabled": true,
+        "weaponClass": "heavy"
       }
     ]
   },

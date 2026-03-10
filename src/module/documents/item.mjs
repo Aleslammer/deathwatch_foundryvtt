@@ -111,6 +111,7 @@ export class DeathwatchItem extends Item {
     if (!ammo || !Array.isArray(ammo.system.modifiers)) {
       delete this.system.effectiveDamage;
       delete this.system.effectiveRof;
+      delete this.system.effectiveBlast;
       return;
     }
     
@@ -121,11 +122,13 @@ export class DeathwatchItem extends Item {
     if (!baseDmg && !baseRof) {
       delete this.system.effectiveDamage;
       delete this.system.effectiveRof;
+      delete this.system.effectiveBlast;
       return;
     }
     
     let damageModifier = 0;
     let rofOverride = null;
+    let blastValue = null;
     
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false) {
@@ -135,6 +138,11 @@ export class DeathwatchItem extends Item {
           const requiredClass = (mod.weaponClass || '').toLowerCase();
           if (!requiredClass || weaponClass.includes(requiredClass)) {
             rofOverride = mod.modifier;
+          }
+        } else if (mod.effectType === 'weapon-blast') {
+          const requiredClass = (mod.weaponClass || '').toLowerCase();
+          if (!requiredClass || weaponClass.includes(requiredClass)) {
+            blastValue = parseInt(mod.modifier) || 0;
           }
         }
       }
@@ -150,6 +158,12 @@ export class DeathwatchItem extends Item {
       this.system.effectiveRof = rofOverride;
     } else {
       delete this.system.effectiveRof;
+    }
+    
+    if (blastValue !== null) {
+      this.system.effectiveBlast = blastValue;
+    } else {
+      delete this.system.effectiveBlast;
     }
   }
 

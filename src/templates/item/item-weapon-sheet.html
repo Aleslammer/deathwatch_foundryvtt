@@ -105,9 +105,11 @@
             <h3>Qualities</h3>
             <ol class="items-list" style="list-style: none; margin: 0; padding: 0;">
               {{#each attachedQualities}}
-              <li class="item flexrow" style="display: flex; align-items: center; padding: 4px; border-bottom: 1px solid #ccc;">
-                <div class="item-name" style="flex: 1;">{{this.name}}{{#if this.system.value}}({{this.system.value}}){{/if}}</div>
+              <li class="item flexrow" style="display: flex; align-items: center; padding: 4px; border-bottom: 1px solid #ccc;{{#if this.isEffective}} background: #f0f0f0;{{/if}}">
+                <div class="item-name" style="flex: 1;{{#if this.isEffective}} font-style: italic;{{/if}}">{{this.name}}{{#if this.system.value}}({{this.system.value}}){{/if}}</div>
+                {{#unless this.isEffective}}
                 <a class="quality-remove" data-quality-id="{{this._id}}" title="Remove Quality" style="flex: 0 0 30px; text-align: center; cursor: pointer;"><i class="fas fa-times"></i></a>
+                {{/unless}}
               </li>
               {{/each}}
             </ol>
