@@ -139,6 +139,7 @@ export class DeathwatchItem extends Item {
     let penModifier = 0;
     let rangeAdditive = 0;
     let rangeMultiplier = 1;
+    let fellingValue = null;
     
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false) {
@@ -159,6 +160,8 @@ export class DeathwatchItem extends Item {
           if (!requiredClass || weaponClass.includes(requiredClass)) {
             blastValue = parseInt(mod.modifier) || 0;
           }
+        } else if (mod.effectType === 'weapon-felling') {
+          fellingValue = parseInt(mod.modifier) || 0;
         } else if (mod.effectType === 'weapon-penetration') {
           penOverride = parseInt(mod.modifier) || 0;
         } else if (mod.effectType === 'weapon-penetration-modifier') {
@@ -204,6 +207,12 @@ export class DeathwatchItem extends Item {
       this.system.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
     } else {
       delete this.system.effectiveRange;
+    }
+    
+    if (fellingValue !== null) {
+      this.system.effectiveFelling = fellingValue;
+    } else {
+      delete this.system.effectiveFelling;
     }
   }
 

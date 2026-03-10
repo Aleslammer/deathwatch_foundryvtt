@@ -12,7 +12,7 @@ describe('Living Ammunition Weapon Quality', () => {
       const weapon = {
         system: {
           attachedQualities: [
-            { id: 'quality000000029' }
+            { id: 'living-ammunition' }
           ]
         }
       };

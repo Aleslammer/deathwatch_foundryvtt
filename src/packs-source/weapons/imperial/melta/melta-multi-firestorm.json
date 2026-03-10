@@ -21,14 +21,14 @@
     "wt": 70,
     "attachedQualities": [
       {
-        "id": "quality000000004",
+        "id": "blast",
         "value": "2"
       },
       {
-        "id": "quality000000018"
+        "id": "scatter"
       },
       {
-        "id": "quality000000028"
+        "id": "volatile"
       }
     ]
   },

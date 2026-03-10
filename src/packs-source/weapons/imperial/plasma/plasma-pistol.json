@@ -19,7 +19,7 @@
     "req": 25,
     "rof": "S/2/-",
     "wt": 6,
-    "attachedQualities": ["quality000000028"]
+    "attachedQualities": ["volatile"]
   },
   "type": "weapon"
 }

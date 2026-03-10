@@ -11,18 +11,18 @@
     "dmgType": "Impact",
     "attachedQualities": [
       {
-        "id": "quality000000004",
+        "id": "blast",
         "value": "5"
       },
       {
-        "id": "quality000000029"
+        "id": "proven"
       },
       {
-        "id": "quality000000016",
+        "id": "reliable",
         "value": "3"
       },
       {
-        "id": "quality000000024"
+        "id": "toxic"
       }
     ],
     "equipped": false,

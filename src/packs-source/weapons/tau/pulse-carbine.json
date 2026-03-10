@@ -11,11 +11,11 @@
     "dmgType": "Energy",
     "attachedQualities": [
       {
-        "id": "quality000000006",
+        "id": "devastating",
         "value": "1"
       },
       {
-        "id": "gyrostabilised001"
+        "id": "gyro-stabilised"
       }
     ],
     "equipped": false,

@@ -117,6 +117,19 @@ export class DeathwatchItemSheet extends ItemSheet {
                     isEffective: true
                 });
             }
+            
+            // Add Felling quality if effectiveFelling is set
+            if (itemData.system.effectiveFelling) {
+                context.attachedQualities.push({
+                    _id: 'effective-felling',
+                    name: 'Felling',
+                    system: {
+                        key: 'felling',
+                        value: itemData.system.effectiveFelling
+                    },
+                    isEffective: true
+                });
+            }
         }
 
         return context;

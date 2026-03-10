@@ -11,10 +11,10 @@
     "dmgType": "Energy",
     "attachedQualities": [
       {
-        "id": "quality000000008"
+        "id": "flame"
       },
       {
-        "id": "quality000000024"
+        "id": "toxic"
       }
     ],
     "equipped": false,

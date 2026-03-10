@@ -10,13 +10,13 @@ describe('Weapon Quality Lookup', () => {
     const mockPack = {
       getDocument: jest.fn(async (id) => {
         const docs = {
-          'quality000000023': { 
-            _id: 'quality000000023',
+          'tearing': { 
+            _id: 'tearing',
             name: 'Tearing',
             system: { key: 'tearing' }
           },
-          'quality000000001': { 
-            _id: 'quality000000001',
+          'accurate': { 
+            _id: 'accurate',
             name: 'Accurate',
             system: { key: 'accurate' }
           }
@@ -32,7 +32,7 @@ describe('Weapon Quality Lookup', () => {
 
   describe('getQualityKey', () => {
     it('returns quality key from compendium', async () => {
-      const key = await WeaponQualityHelper.getQualityKey('quality000000023');
+      const key = await WeaponQualityHelper.getQualityKey('tearing');
       expect(key).toBe('tearing');
     });
 
@@ -43,7 +43,7 @@ describe('Weapon Quality Lookup', () => {
 
     it('returns null when pack not found', async () => {
       global.game.packs = new Map();
-      const key = await WeaponQualityHelper.getQualityKey('quality000000023');
+      const key = await WeaponQualityHelper.getQualityKey('tearing');
       expect(key).toBe(null);
     });
   });
@@ -52,7 +52,7 @@ describe('Weapon Quality Lookup', () => {
     it('returns true when weapon has quality (string ID)', async () => {
       const weapon = {
         system: {
-          attachedQualities: ['quality000000023']
+          attachedQualities: ['tearing']
         }
       };
       const result = await WeaponQualityHelper.hasQuality(weapon, 'tearing');
@@ -62,7 +62,7 @@ describe('Weapon Quality Lookup', () => {
     it('returns true when weapon has quality (object with id)', async () => {
       const weapon = {
         system: {
-          attachedQualities: [{ id: 'quality000000023', value: '' }]
+          attachedQualities: [{ id: 'tearing', value: '' }]
         }
       };
       const result = await WeaponQualityHelper.hasQuality(weapon, 'tearing');
@@ -72,7 +72,7 @@ describe('Weapon Quality Lookup', () => {
     it('returns false when weapon does not have quality', async () => {
       const weapon = {
         system: {
-          attachedQualities: ['quality000000001']
+          attachedQualities: ['accurate']
         }
       };
       const result = await WeaponQualityHelper.hasQuality(weapon, 'tearing');
@@ -100,7 +100,7 @@ describe('Weapon Quality Lookup', () => {
     it('handles multiple qualities correctly', async () => {
       const weapon = {
         system: {
-          attachedQualities: ['quality000000001', 'quality000000023']
+          attachedQualities: ['accurate', 'tearing']
         }
       };
       const hasTearing = await WeaponQualityHelper.hasQuality(weapon, 'tearing');

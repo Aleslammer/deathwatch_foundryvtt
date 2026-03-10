@@ -20,7 +20,7 @@
     "rof": "S/-/-",
     "wt": 75,
     "attachedQualities": [
-      {"id": "quality000000029", "value": "3"}
+      {"id": "proven", "value": "3"}
     ]
   },
   "type": "weapon"

@@ -11,10 +11,10 @@
     "dmgType": "Energy",
     "attachedQualities": [
       {
-        "id": "quality000000029"
+        "id": "proven"
       },
       {
-        "id": "quality000000023"
+        "id": "tearing"
       }
     ],
     "equipped": false,

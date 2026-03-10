@@ -191,6 +191,23 @@ export class RangedCombatHelper {
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
+            
+            // Check for premature detonation from ammunition
+            let hasPrematureDetonation = false;
+            let detonationThreshold = 101;
+            if (weapon.system.loadedAmmo) {
+              const ammo = actor.items.get(weapon.system.loadedAmmo);
+              if (ammo?.system.modifiers) {
+                for (const mod of ammo.system.modifiers) {
+                  if (mod.enabled !== false && mod.effectType === 'premature-detonation') {
+                    detonationThreshold = parseInt(mod.modifier) || 101;
+                    break;
+                  }
+                }
+              }
+            }
+            hasPrematureDetonation = hitValue >= detonationThreshold;
+            
             const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
@@ -212,6 +229,33 @@ export class RangedCombatHelper {
             if (isJammed) {
               await weapon.update({ "system.jammed": true });
             }
+            
+            if (hasPrematureDetonation) {
+              await weapon.update({ "system.jammed": true });
+              ui.notifications.error(`${weapon.name} detonated prematurely!`);
+              
+              // Apply damage to firer's arm
+              const armLocation = Math.random() < 0.5 ? "Right Arm" : "Left Arm";
+              const weaponDamage = weapon.system.effectiveDamage || weapon.system.dmg;
+              
+              // Roll damage
+              const damageRoll = await new Roll(weaponDamage).evaluate();
+              const totalDamage = damageRoll.total;
+              
+              // Apply damage with penetration 5
+              await CombatHelper.applyDamage(actor, {
+                damage: totalDamage,
+                penetration: 5,
+                location: armLocation,
+                damageType: 'Explosive'
+              });
+              
+              // Show damage roll in chat
+              await damageRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `<h3>Premature Detonation!</h3><p><strong>${weapon.name}</strong> exploded in ${actor.name}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
+              });
+            }
 
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
@@ -221,7 +265,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
 
             const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
-            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
+            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
             hitRoll.toMessage({

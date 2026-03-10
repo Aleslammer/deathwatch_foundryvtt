@@ -11,10 +11,10 @@
     "dmgType": "Impact",
     "attachedQualities": [
       {
-        "id": "quality000000019"
+        "id": "shocking"
       },
       {
-        "id": "quality000000020"
+        "id": "smoke"
       }
     ],
     "equipped": false,
