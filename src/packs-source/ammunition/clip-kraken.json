@@ -7,7 +7,7 @@
       "max": 12,
       "value": 12
     },
-    "description": "<p>The superior propellants in kraken rounds provide increased range without sacrificing armour penetration, while their ultra-dense adamantine composition and improved explosive charge provide a final burst of force for puncturing the heaviest armours.<p></p><b>Effects</b>: The weapon's Penetration increases to 8, and its Range increases by 50%. </p><p><b>Used With</b>: All bolt weapons.</p>",
+    "description": "<p>The superior propellants in kraken rounds provide increased range without sacrificing armour penetration, while their ultra-dense adamantine composition and improved explosive charge provide a final burst of force for puncturing the heaviest armours.<p></p><b>Effects</b>: The weapon's Penetration is set to a minimum of 8, and its Range increases by 50%. </p><p><b>Used With</b>: All bolt weapons.</p>",
     "quantity": 1,
     "renown": "",
     "req": 5,

@@ -119,7 +119,7 @@ export class DeathwatchItem extends Item {
     
     const baseDmg = this.system.dmg || this.system.damage;
     const baseRof = this.system.rof;
-    const basePen = parseInt(this.system.pen) || 0;
+    const basePen = parseInt(this.system.pen || this.system.penetration) || 0;
     const baseRange = parseInt(this.system.range) || 0;
     const weaponClass = (this.system.class || '').toLowerCase();
     
@@ -136,6 +136,7 @@ export class DeathwatchItem extends Item {
     let rofOverride = null;
     let blastValue = null;
     let penOverride = null;
+    let penModifier = 0;
     let rangeAdditive = 0;
     let rangeMultiplier = 1;
     
@@ -155,6 +156,8 @@ export class DeathwatchItem extends Item {
           }
         } else if (mod.effectType === 'weapon-penetration') {
           penOverride = parseInt(mod.modifier) || 0;
+        } else if (mod.effectType === 'weapon-penetration-modifier') {
+          penModifier += parseInt(mod.modifier) || 0;
         } else if (mod.effectType === 'weapon-range') {
           const modStr = String(mod.modifier);
           if (modStr.startsWith('x')) {
@@ -185,7 +188,9 @@ export class DeathwatchItem extends Item {
     }
     
     if (penOverride !== null) {
-      this.system.effectivePenetration = penOverride;
+      this.system.effectivePenetration = Math.max(basePen, penOverride);
+    } else if (penModifier !== 0) {
+      this.system.effectivePenetration = Math.max(0, basePen + penModifier);
     } else {
       delete this.system.effectivePenetration;
     }
