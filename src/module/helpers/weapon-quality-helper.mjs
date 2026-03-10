@@ -53,4 +53,8 @@ export class WeaponQualityHelper {
   static async isMelta(weapon) {
     return await this.hasQuality(weapon, 'melta');
   }
+
+  static async isStalkerPattern(weapon) {
+    return await this.hasQuality(weapon, 'stalker-pattern');
+  }
 }

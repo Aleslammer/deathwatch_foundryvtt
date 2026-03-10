@@ -13,14 +13,11 @@ The weapon qualities system implements special weapon properties from the Deathw
 
 ### Data Structure
 
-#### Weapon Schema
+#### Weapon Schema (Current)
 ```json
 {
   "weapon": {
-    "attachedQualities": [
-      {"id": "quality000000012"},
-      {"id": "quality000000029", "value": "4"}
-    ]
+    "attachedQualities": ["accurate", "tearing", "stalker-pattern"]
   }
 }
 ```
@@ -28,12 +25,49 @@ The weapon qualities system implements special weapon properties from the Deathw
 #### Quality Schema
 ```json
 {
-  "weapon-quality": {
-    "key": "accurate",
+  "_id": "stalker-pattern",
+  "name": "Stalker Pattern",
+  "type": "weapon-quality",
+  "system": {
+    "key": "stalker-pattern",
     "value": "",
     "description": "...",
     "book": "Deathwatch Core Rulebook",
-    "page": "142"
+    "page": "160"
+  }
+}
+```
+
+## Weapon Qualities System
+
+### Quality ID Structure
+**IMPORTANT:** Weapon qualities use their `key` as the `_id` field for simplicity and synchronous access.
+
+**Example:**
+```json
+{
+  "_id": "stalker-pattern",
+  "name": "Stalker Pattern",
+  "type": "weapon-quality",
+  "system": {
+    "key": "stalker-pattern",
+    "description": "..."
+  }
+}
+```
+
+**Benefits:**
+- No async lookups needed
+- Simple synchronous checks: `weapon.system.attachedQualities?.includes('stalker-pattern')`
+- Human-readable data
+- Portable across systems
+
+### Weapon Schema
+Weapons store quality keys directly in `attachedQualities` array:
+```json
+{
+  "weapon": {
+    "attachedQualities": ["accurate", "tearing", "stalker-pattern"]
   }
 }
 ```
@@ -275,25 +309,36 @@ if (isMelee && strBonus !== 0) {
 
 ## Quality Detection
 
-### WeaponQualityHelper Methods
+### Simple Synchronous Checks (Preferred)
+Since quality `_id` values are their keys, checking for qualities is simple:
 
 ```javascript
-// Check if weapon has quality
+// Check if weapon has a quality
+const hasAccurate = weapon.system.attachedQualities?.includes('accurate');
+
+// Check for quality exception in ammunition modifiers
+if (mod.qualityException && weapon.system.attachedQualities?.includes(mod.qualityException)) {
+  continue; // Skip modifier
+}
+```
+
+### WeaponQualityHelper Methods (Legacy)
+These async methods still exist for compendium lookups but are rarely needed:
+
+```javascript
+// Check if weapon has quality (async)
 const hasAccurate = await WeaponQualityHelper.hasQuality(weapon, 'accurate');
 
 // Get quality value (for Proven, Felling, etc.)
 const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
-
-// Get quality key from ID
-const key = await WeaponQualityHelper.getQualityKey(qualityId);
 ```
 
 ## Usage Patterns
 
 ### Adding Quality to Weapon
 1. Open weapon item sheet
-2. Add quality ID to `attachedQualities` array
-3. Include `value` field if quality has rating (Proven, Felling)
+2. Add quality key to `attachedQualities` array (e.g., `"stalker-pattern"`)
+3. Quality keys match the `_id` and `key` fields in the compendium
 
 ### Combat Flow
 1. **Attack Dialog**: Qualities affect modifiers (Accurate, Twin-Linked, Gyro-Stabilised)
@@ -341,7 +386,9 @@ const key = await WeaponQualityHelper.getQualityKey(qualityId);
 
 ## Notes
 
-- Qualities are stored as references to compendium items
+- **Quality IDs are keys** - Weapon qualities use their key as the `_id` (e.g., `_id: "stalker-pattern"`)
+- **Synchronous checks** - Use `attachedQualities.includes(key)` for simple, fast quality detection
+- **No async needed** - Quality checks work in synchronous functions like `prepareData()`
 - Quality effects are applied dynamically during combat
 - Some qualities require UI buttons (Shocking, Toxic)
 - Quality values (Proven, Felling) stored in `value` field

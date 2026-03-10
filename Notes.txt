@@ -61,3 +61,9 @@ PowerLevel (for powerswords)
 TODO: Melee Weapons 153 (Force and Other)
 TODO: Rites of Battle
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
+
+
+Stalker Rounds are not 
+
+1. displaying on the item sheet correctly 
+2. not removing the -2 on a stalker bolter (missing quality)

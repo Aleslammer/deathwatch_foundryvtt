@@ -143,7 +143,12 @@ export class DeathwatchItem extends Item {
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false) {
         if (mod.effectType === 'weapon-damage') {
-          damageModifier += parseInt(mod.modifier) || 0;
+          const modValue = parseInt(mod.modifier) || 0;
+          // Check qualityException - skip if weapon has the quality
+          if (mod.qualityException && this.system.attachedQualities?.includes(mod.qualityException)) {
+            continue;
+          }
+          damageModifier += modValue;
         } else if (mod.effectType === 'weapon-rof') {
           const requiredClass = (mod.weaponClass || '').toLowerCase();
           if (!requiredClass || weaponClass.includes(requiredClass)) {

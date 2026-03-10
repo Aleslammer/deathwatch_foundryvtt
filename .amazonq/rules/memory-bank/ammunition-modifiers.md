@@ -359,6 +359,38 @@ html.find('.char-damage-btn').click(async (ev) => {
 
 **Effect:** Deals 1d5 Agility damage when target takes wounds
 
+### Stalker Rounds
+```json
+{
+  "name": "Stalker Rounds",
+  "type": "ammunition",
+  "system": {
+    "modifiers": [
+      {
+        "name": "Stalker Rounds",
+        "modifier": "-2",
+        "effectType": "weapon-damage",
+        "qualityException": "stalker-pattern",
+        "enabled": true
+      }
+    ]
+  }
+}
+```
+
+**Effect:** Reduces weapon damage by 2 (stealth effects are narrative)
+
+**Special:** When used with a weapon that has the Stalker Pattern quality, the damage penalty does not apply
+
+**qualityException Field:** Specifies a weapon quality key that exempts the weapon from this modifier
+
+**Implementation:**
+```javascript
+if (mod.qualityException && this.system.attachedQualities?.includes(mod.qualityException)) {
+  continue; // Skip modifier
+}
+```
+
 ## Test Coverage
 
 ### Test Files
@@ -388,3 +420,4 @@ html.find('.char-damage-btn').click(async (ev) => {
 - weaponClass field restricts modifiers to specific weapon types
 - Characteristic damage is cumulative and persistent
 - Damage buttons appear only when wounds are taken
+- **qualityException uses weapon quality keys** - Weapon qualities use their key as the `_id` (e.g., `_id: "stalker-pattern"`), allowing simple synchronous checks with `attachedQualities.includes(key)`
