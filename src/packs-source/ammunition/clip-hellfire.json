@@ -18,6 +18,12 @@
         "effectType": "weapon-rof",
         "enabled": true,
         "weaponClass": "heavy"
+      },
+      {
+        "name": "Hellfire Righteous Fury",
+        "modifier": "9",
+        "effectType": "righteous-fury-threshold",
+        "enabled": true
       }
     ]
   },

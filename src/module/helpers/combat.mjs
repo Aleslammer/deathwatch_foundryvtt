@@ -212,7 +212,20 @@ export class CombatHelper {
   }
 
   static hasNaturalTen(roll) {
-    return RighteousFuryHelper.hasNaturalTen(roll);
+    return RighteousFuryHelper.hasNaturalTen(roll, 10);
+  }
+
+  static _getFuryThreshold(weapon, actor) {
+    if (!weapon.system.loadedAmmo || !actor) return 10;
+    const ammo = actor.items.get(weapon.system.loadedAmmo);
+    if (!ammo || !Array.isArray(ammo.system.modifiers)) return 10;
+    
+    for (const mod of ammo.system.modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'righteous-fury-threshold') {
+        return parseInt(mod.modifier) || 10;
+      }
+    }
+    return 10;
   }
 
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
@@ -295,6 +308,7 @@ export class CombatHelper {
             const distance = this.lastAttackDistance;
             const weaponRange = parseInt(weapon.system.range) || 0;
             const isMeltaRange = isMelta && distance !== null && weaponRange > 0 && distance < (weaponRange * 0.5);
+            const furyThreshold = this._getFuryThreshold(weapon, actor);
             
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
@@ -326,9 +340,9 @@ export class CombatHelper {
                 flavor
               });
               
-              if (this.hasNaturalTen(roll) && targetNumber > 0) {
+              if (RighteousFuryHelper.hasNaturalTen(roll, furyThreshold) && targetNumber > 0) {
                 const { totalDamage: furyDamage, furyCount } = await RighteousFuryHelper.processFuryChain(
-                  actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile
+                  actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold
                 );
                 
                 totalDamage += furyDamage;
