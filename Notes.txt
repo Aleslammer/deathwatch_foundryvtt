@@ -31,8 +31,9 @@ tyranid upgrade
     
 
 TODO: Ammmunition 158
- TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
- TODO: also need to find out if we can alter things with ammo (like change damage numbers, add bonuses etc.)
+    TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
+
+    
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 TODO: Psychic Powers (180)
 

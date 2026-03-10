@@ -24,15 +24,26 @@ Run tests with coverage:
 npm run test:coverage
 ```
 
+## Test Organization
+
+Tests are organized into subdirectories by category:
+
+- **combat/** - Combat system tests (attack, damage, critical effects)
+- **documents/** - Actor and Item document tests
+- **helpers/** - Helper class tests (calculators, builders, utilities)
+- **modifiers/** - Modifier system tests
+- **sheets/** - Sheet UI tests
+- **weapon-qualities/** - Weapon quality tests
+
 ## Writing Tests
 
-Tests use Jest with ES modules. Place test files in `tests/` directory with `.test.mjs` extension.
+Tests use Jest with ES modules. Place test files in appropriate subdirectory with `.test.mjs` extension.
 
 Example:
 ```javascript
 import { jest } from '@jest/globals';
-import './setup.mjs';
-import { YourClass } from '../src/module/path/to/file.mjs';
+import '../setup.mjs'; // Note: Use '../setup.mjs' from subdirectories
+import { YourClass } from '../../src/module/path/to/file.mjs';
 
 describe('YourClass', () => {
   it('does something', () => {
