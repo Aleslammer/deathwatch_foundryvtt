@@ -2,7 +2,7 @@
   "_id": "upgrade000000003",
   "name": "Silencer",
   "type": "weapon-upgrade",
-  "img": "icons/svg/item-bag.svg",
+  "img": "systems/deathwatch/icons/generic/weapon-upgrade.webp",
   "system": {
     "key": "silencer",
     "singleShotOnly": false,

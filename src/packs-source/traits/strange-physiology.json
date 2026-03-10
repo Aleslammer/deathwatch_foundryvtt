@@ -1,7 +1,7 @@
 {
   "name": "Strange Physiology",
   "type": "trait",
-  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
     "description": "<p>A creature with this trait has an unusual, alien, or altogether bizarre anatomy. All hits count as Body hits and death results when damage equals or exceeds the creature's Wounds.</p>",
     "book": "Core Rulebook",

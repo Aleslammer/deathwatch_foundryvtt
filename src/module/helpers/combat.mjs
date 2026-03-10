@@ -304,7 +304,7 @@ export class CombatHelper {
             }
 
             const hitLocations = this.determineMultipleHitLocations(firstHitLocation, numHits);
-            const penetration = weapon.system.penetration || 0;
+            const penetration = weapon.system.effectivePenetration ?? weapon.system.penetration ?? weapon.system.pen ?? 0;
             const isAccurate = weapon.system.isAccurate || false;
             const isAiming = aimUsed > 0;
             const isSingleShot = numHits === 1;

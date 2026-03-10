@@ -559,6 +559,21 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
 - Creates folders from subdirectories
 - Supports both Item and RollTable types
 
+### Compendium ID Requirements
+- **CRITICAL**: All `_id` fields must be unique across ALL compendium packs
+- Duplicate IDs will cause data corruption and unpredictable behavior
+- Use consistent ID prefixes per pack type:
+  - Ammunition: `clip00000000###`
+  - Weapons: `weap00000000###`
+  - Armor: `armr00000000###`
+  - Talents: `tal000000000###`
+  - Traits: `trt000000000###`
+- Validate IDs before committing:
+  ```powershell
+  # Check for duplicates in a folder
+  powershell -Command "$ids = @{}; Get-ChildItem -Filter *.json | ForEach-Object { $content = Get-Content $_.FullName | ConvertFrom-Json; $id = $content._id; if ($ids.ContainsKey($id)) { Write-Output \"Duplicate: $id\" } else { $ids[$id] = $_.Name } }"
+  ```
+
 ## Data Schema Patterns
 
 ### Template Inheritance

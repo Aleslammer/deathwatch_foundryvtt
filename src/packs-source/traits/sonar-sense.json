@@ -1,7 +1,7 @@
 {
   "name": "Sonar Sense",
   "type": "trait",
-  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
     "description": "<p>A creature with this trait perceives its surroundings by emitting a frequency noise, allowing the creature to locate the position of any solid object within 30 metres. Other creatures within range, and that succeed on a Difficult (–10) Awareness Test, may detect the curious keening.</p>",
     "book": "Core Rulebook",

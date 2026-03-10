@@ -1,7 +1,7 @@
 {
   "name": "Sturdy",
   "type": "trait",
-  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
     "description": "<p>Sturdy creatures are hard to move and thus gain a +20 bonus to tests made to resist grappling and uses of the Takedown Talent.</p>",
     "book": "Core Rulebook",

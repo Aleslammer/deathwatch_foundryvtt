@@ -2,7 +2,7 @@
   "_id": "upgrade000000002",
   "name": "Motion Predictor",
   "type": "weapon-upgrade",
-  "img": "icons/svg/item-bag.svg",
+  "img": "systems/deathwatch/icons/generic/weapon-upgrade.webp",
   "system": {
     "key": "motion-predictor",
     "singleShotOnly": false,

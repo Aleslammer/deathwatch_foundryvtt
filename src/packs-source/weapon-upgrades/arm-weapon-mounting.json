@@ -1,7 +1,7 @@
 {
   "name": "Arm Weapon Mounting",
   "type": "weapon-upgrade",
-  "img": "icons/svg/upgrade.svg",
+  "img": "systems/deathwatch/icons/generic/weapon-upgrade.webp",
   "system": {
     "description": "<p>This heavy bracing allows a single ranged weapon to be mounted along the arm, with specific hand movements or MIU input triggering the weapon. This allows the user to keep both hands free, and can have a strong visual impression as the Battle-Brother brings forth a storm of destruction with the sweep of his hand. This upgrade reduces the weapon's Range by 30%. It is also possible to mount a weapon at the shoulder instead of on the forearm, with the same effects.</p><p><strong>Upgrades:</strong> Las, Solid Projectile, Bolt, or Melta Pistol, or Auxiliary Grenade Launcher</p>",
     "key": "arm-weapon-mounting",

@@ -112,23 +112,32 @@ export class DeathwatchItem extends Item {
       delete this.system.effectiveDamage;
       delete this.system.effectiveRof;
       delete this.system.effectiveBlast;
+      delete this.system.effectivePenetration;
+      delete this.system.effectiveRange;
       return;
     }
     
     const baseDmg = this.system.dmg || this.system.damage;
     const baseRof = this.system.rof;
+    const basePen = parseInt(this.system.pen) || 0;
+    const baseRange = parseInt(this.system.range) || 0;
     const weaponClass = (this.system.class || '').toLowerCase();
     
     if (!baseDmg && !baseRof) {
       delete this.system.effectiveDamage;
       delete this.system.effectiveRof;
       delete this.system.effectiveBlast;
+      delete this.system.effectivePenetration;
+      delete this.system.effectiveRange;
       return;
     }
     
     let damageModifier = 0;
     let rofOverride = null;
     let blastValue = null;
+    let penOverride = null;
+    let rangeAdditive = 0;
+    let rangeMultiplier = 1;
     
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false) {
@@ -143,6 +152,15 @@ export class DeathwatchItem extends Item {
           const requiredClass = (mod.weaponClass || '').toLowerCase();
           if (!requiredClass || weaponClass.includes(requiredClass)) {
             blastValue = parseInt(mod.modifier) || 0;
+          }
+        } else if (mod.effectType === 'weapon-penetration') {
+          penOverride = parseInt(mod.modifier) || 0;
+        } else if (mod.effectType === 'weapon-range') {
+          const modStr = String(mod.modifier);
+          if (modStr.startsWith('x')) {
+            rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
+          } else {
+            rangeAdditive += parseInt(mod.modifier) || 0;
           }
         }
       }
@@ -164,6 +182,18 @@ export class DeathwatchItem extends Item {
       this.system.effectiveBlast = blastValue;
     } else {
       delete this.system.effectiveBlast;
+    }
+    
+    if (penOverride !== null) {
+      this.system.effectivePenetration = penOverride;
+    } else {
+      delete this.system.effectivePenetration;
+    }
+    
+    if (baseRange > 0 && (rangeAdditive !== 0 || rangeMultiplier !== 1)) {
+      this.system.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
+    } else {
+      delete this.system.effectiveRange;
     }
   }
 

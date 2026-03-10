@@ -77,6 +77,12 @@
                     <label class="resource-label">Penetration</label>
                     <input type="text" name="system.penetration" value="{{system.penetration}}" />
                 </div>
+                {{#if system.effectivePenetration}}
+                <div class="resource">
+                    <label class="resource-label">Effective Penetration</label>
+                    <input type="text" value="{{system.effectivePenetration}}" readonly style="background: #f0f0f0;" />
+                </div>
+                {{/if}}
                 <div class="resource">
                     <label class="resource-label">Clip Size</label>
                     <input type="number" name="system.capacity.max" value="{{system.capacity.max}}" data-dtype="Number" />

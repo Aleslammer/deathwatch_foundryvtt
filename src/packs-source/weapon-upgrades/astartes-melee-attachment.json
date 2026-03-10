@@ -1,7 +1,7 @@
 {
   "name": "Astartes Melee Attachment (Mono)",
   "type": "weapon-upgrade",
-  "img": "icons/svg/upgrade.svg",
+  "img": "systems/deathwatch/icons/generic/weapon-upgrade.webp",
   "system": {
     "description": "<p>A fine, mono-edged blade attachment that allows the weapon to count as a Combat Knife in close combat.</p><p><strong>Upgrades:</strong> Any Basic ranged weapon</p>",
     "key": "astartes-melee-attachment-mono",
