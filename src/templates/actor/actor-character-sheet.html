@@ -7,7 +7,8 @@
         <h1 class="charname" style="flex: 1; margin: 0;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
         <div style="display: flex; align-items: center; gap: 8px; flex: 0 0 200px;">
           <label style="font-weight: bold;">Renown:</label>
-          <input name="system.renown" type="text" value="{{system.renown}}" data-dtype="Number" style="width: 80px; text-align: center;" />
+          <input name="system.renown" type="text" value="{{system.renown}}" data-dtype="Number" style="width: 40px; text-align: center;" />
+          <span style="font-size: 0.85em; color: #666;">{{renownRank}}</span>
         </div>
       </div>
       <div style="display: flex; gap: 10px; align-items: flex-start;">

@@ -155,6 +155,23 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Calculate wound color class
     const wounds = context.system.wounds;
     context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+
+    // Calculate renown rank
+    context.renownRank = this._getRenownRank(context.system.renown || 0);
+  }
+
+  /**
+   * Get renown rank based on renown value
+   * @param {number} renown The renown value
+   * @returns {string} The renown rank
+   * @private
+   */
+  _getRenownRank(renown) {
+    if (renown >= 80) return 'Hero';
+    if (renown >= 60) return 'Famed';
+    if (renown >= 40) return 'Distinguished';
+    if (renown >= 20) return 'Respected';
+    return 'Initiated';
   }
 
   /**
