@@ -19,11 +19,12 @@ jobs:
       run: npm ci
     
     - name: Run tests with coverage
-      run: npm run test:coverage
+      run: npm run test:coverage 2>&1 | tee coverage-output.txt
     
     - name: Coverage Report
       if: always()
-      uses: codecov/codecov-action@v4
-      with:
-        files: ./coverage/lcov.info
-        fail_ci_if_error: false
+      run: |
+        echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        cat coverage-output.txt >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
