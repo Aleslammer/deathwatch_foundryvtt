@@ -62,6 +62,7 @@ src/
   - Character data preparation
   - Derived value calculations (bonuses, totals)
   - Actor-specific methods
+- **actor-conditions.mjs**: Actor condition tracking and management
 - **item.mjs**: Defines Item document behavior (weapons, armor, gear, etc.)
   - Item data preparation
   - Equipment state management
@@ -80,6 +81,10 @@ src/
 - **ranged-combat.mjs**: Ranged weapon attack dialog and logic
 - **melee-combat.mjs**: Melee weapon attack dialog and logic
 - **combat-dialog.mjs**: Combat dialog utilities (pure functions)
+- **righteous-fury-helper.mjs**: Righteous Fury mechanics
+- **wound-helper.mjs**: Wound calculation utilities
+- **rank-helper.mjs**: Rank progression utilities
+- **skill-loader.mjs**: Skill data loading
 - **config.mjs**: System configuration (DWConfig object)
 - **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers)
 - **critical-effects.mjs**: Critical damage effects
@@ -90,10 +95,6 @@ src/
 - **initiative.mjs**: Initiative rolling
 - **modifiers.mjs**: Modifier CRUD operations
 - **templates.mjs**: Template preloading
-- **righteous-fury-helper.mjs**: Righteous Fury mechanics
-- **wound-helper.mjs**: Wound calculation utilities
-- **rank-helper.mjs**: Rank progression utilities
-- **skill-loader.mjs**: Skill data loading
 - **status-effects.mjs**: Status effect management
 
 ### 4. Sheet Classes (`module/sheets/`)

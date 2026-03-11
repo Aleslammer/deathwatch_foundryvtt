@@ -35,18 +35,82 @@ npm run test:coverage
 ### Test Files Structure
 ```
 tests/
-├── setup.mjs                    # Foundry VTT mocks
-├── xp-calculator.test.mjs       # XP calculator tests ✅ NEW
-├── combat.test.mjs              # Combat helper tests
-├── combat-dialog.test.mjs       # Combat dialog helper tests
-├── constants.test.mjs           # Constants tests
-├── critical-effects.test.mjs    # Critical effects tests
-├── debug.test.mjs               # Debug utility tests
-├── effects.test.mjs             # Active effects tests
-├── item.test.mjs                # Item document tests
-├── modifiers.test.mjs           # Modifier helper tests
-├── templates.test.mjs           # Template preload tests
-└── README.md                    # Testing documentation
+├── setup.mjs                           # Foundry VTT mocks
+├── combat/                            # Combat system tests
+│   ├── combat.test.mjs
+│   ├── combat-dialog.test.mjs
+│   ├── ranged-combat.test.mjs
+│   ├── melee-combat.test.mjs
+│   ├── critical-effects.test.mjs
+│   ├── gyro-stabilised.test.mjs
+│   ├── lightning-claws.test.mjs
+│   ├── melta.test.mjs
+│   ├── overheats.test.mjs
+│   ├── power-fist.test.mjs
+│   └── reliable.test.mjs
+├── documents/                         # Document tests
+│   ├── actor.test.mjs
+│   ├── actor-conditions.test.mjs
+│   ├── item.test.mjs
+│   ├── item-ammunition-modifiers.test.mjs
+│   ├── item-effective-range.test.mjs
+│   ├── item-effective-weight.test.mjs
+│   ├── item-weapon-upgrade-damage.test.mjs
+│   ├── chapter-skill-costs.test.mjs
+│   ├── chapter-talent-costs.test.mjs
+│   ├── stackable-talents.test.mjs
+│   ├── talent-xp.test.mjs
+│   └── fatigue.test.mjs
+├── helpers/                           # Helper tests
+│   ├── xp-calculator.test.mjs
+│   ├── chat-message-builder.test.mjs
+│   ├── roll-dialog-builder.test.mjs
+│   ├── righteous-fury-helper.test.mjs
+│   ├── righteous-fury-threshold.test.mjs
+│   ├── weapon-upgrade-helper.test.mjs
+│   ├── wound-helper.test.mjs
+│   ├── skill-loader.test.mjs
+│   ├── constants.test.mjs
+│   ├── debug.test.mjs
+│   ├── foundry-adapter.test.mjs
+│   ├── initiative.test.mjs
+│   ├── item-handlers.test.mjs
+│   ├── status-effects.test.mjs
+│   └── templates.test.mjs
+├── modifiers/                         # Modifier system tests
+│   ├── modifier-collector.test.mjs
+│   ├── modifier-collector-wounds.test.mjs
+│   ├── modifier-collector-armor.test.mjs
+│   ├── modifier-collector-damage.test.mjs
+│   ├── modifiers.test.mjs
+│   └── effects.test.mjs
+├── weapon-qualities/                  # Weapon quality tests
+│   ├── weapon-qualities.test.mjs
+│   ├── weapon-quality-lookup.test.mjs
+│   ├── weapon-quality-proven.test.mjs
+│   ├── weapon-quality-razor-sharp.test.mjs
+│   ├── weapon-quality-scatter.test.mjs
+│   ├── weapon-quality-shocking.test.mjs
+│   ├── weapon-quality-storm.test.mjs
+│   ├── weapon-quality-tearing.test.mjs
+│   ├── weapon-quality-toxic.test.mjs
+│   ├── weapon-quality-twin-linked.test.mjs
+│   ├── weapon-quality-drain-life.test.mjs
+│   ├── weapon-quality-living-ammunition.test.mjs
+│   └── weapon-quality-volatile.test.mjs
+├── sheets/                            # Sheet tests
+│   ├── actor-sheet.test.mjs
+│   ├── actor-sheet-renown.test.mjs
+│   ├── actor-sheet-talents-traits.test.mjs
+│   ├── item-sheet.test.mjs
+│   └── talents-traits-chat.test.mjs
+├── integration/                       # Integration tests
+│   └── characteristic-damage-integration.test.mjs
+├── kraken-rounds.test.mjs             # Ammunition tests
+├── stalker-rounds.test.mjs
+├── vengeance-rounds.test.mjs
+├── deathwatch.test.mjs                # Main entry point test
+└── README.md                          # Testing documentation
 ```
 
 ## Programming Languages

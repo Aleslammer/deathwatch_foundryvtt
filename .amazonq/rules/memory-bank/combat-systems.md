@@ -243,6 +243,10 @@ export const RANGE_MODIFIERS = {
 - Core combat logic: Well tested
 - Dialog methods: Marked with `/* istanbul ignore next */` (UI-heavy)
 - Routing logic: Tested for melee/ranged detection
+- Weapon qualities: 23+ qualities tested
+- Ammunition modifiers: Fully tested
+- Modifier system: Comprehensive coverage
+- Overall: 79.31% coverage, 747 tests passing
 
 ## Future Enhancements
 

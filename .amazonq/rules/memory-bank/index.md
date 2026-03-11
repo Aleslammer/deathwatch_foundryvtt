@@ -30,47 +30,43 @@ Start with **QUICK-REFERENCE.md** for essential commands, patterns, and troubles
 ```
 Memory Bank:
   .amazonq/rules/memory-bank/
-    ├── product.md
-    ├── structure.md
-    ├── tech.md
-    ├── guidelines.md
-    ├── refactoring-summary.md
-    └── index.md
+    ├── QUICK-REFERENCE.md (start here!)
+    ├── index.md
+    ├── Foundation: product.md, structure.md, tech.md, guidelines.md
+    ├── Game Systems: modifiers.md, combat-systems.md, weapon-qualities.md,
+    │   weapon-upgrades.md, ammunition-modifiers.md, specialty-chapter-costs.md
+    └── Archive: ARCHIVE-NOTE.md, OPTIMIZATION-SUMMARY.md, refactoring-summary.md
 
 Source Code:
   src/module/
-    ├── documents/
-    ├── sheets/
-    └── helpers/
-        ├── xp-calculator.mjs
-        ├── modifier-collector.mjs
-        ├── roll-dialog-builder.mjs
-        ├── chat-message-builder.mjs
-        ├── item-handlers.mjs
-        └── constants.mjs
+    ├── documents/ (actor.mjs, item.mjs, actor-conditions.mjs)
+    ├── sheets/ (actor-sheet.mjs, item-sheet.mjs)
+    ├── helpers/ (24 helper modules)
+    └── data/ (skills.json)
 
 Tests:
   tests/
     ├── setup.mjs
-    └── *.test.mjs (372 tests, 68% coverage)
+    └── *.test.mjs (747 tests, 79.31% coverage)
 ```
 
 ### Common Commands
 ```bash
-npm test                  # Run all tests
-npm run test:watch        # Watch mode
-npm run test:coverage     # Coverage report
-npm run build:packs       # Compile compendium packs
+npm test                                                    # Run all tests
+npm run test:watch                                          # Watch mode
+npm run test:coverage                                       # Coverage report
+npm run build:packs                                         # Compile compendium packs
+cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1     # Full build + deploy
 ```
 
 ## Current State
 
 ### Metrics
-- **Test Coverage**: 68%
-- **Tests**: 719 passing
-- **Helper Classes**: XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers, WeaponQualityHelper, WeaponUpgradeHelper, CombatHelper, RangedCombatHelper, MeleeCombatHelper
+- **Test Coverage**: 79.31%
+- **Tests**: 747 passing
+- **Helper Classes**: 24 helpers (XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers, WeaponQualityHelper, WeaponUpgradeHelper, CombatHelper, RangedCombatHelper, MeleeCombatHelper, RighteousFuryHelper, WoundHelper, RankHelper, SkillLoader, StatusEffects, CriticalEffects, FoundryAdapter, and more)
 - **CSS**: Modular component-based architecture
-- **Compendium Packs**: Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Augmentations
+- **Compendium Packs**: 15 packs (Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Implants, Cybernetics, Weapon Qualities, Weapon Upgrades, Demeanours, Critical Effects, Tables)
 
 ### Architecture
 - Clean separation of concerns
