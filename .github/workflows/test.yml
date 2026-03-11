@@ -19,12 +19,12 @@ jobs:
       run: npm ci
     
     - name: Run tests with coverage
-      run: npm run test:coverage 2>&1 | tee coverage-output.txt
+      run: npm run test:coverage
     
     - name: Coverage Report
       if: always()
       run: |
         echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        cat coverage-output.txt >> $GITHUB_STEP_SUMMARY
+        npm run test:coverage 2>&1 | sed -n '/^-*|/,$p' >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
