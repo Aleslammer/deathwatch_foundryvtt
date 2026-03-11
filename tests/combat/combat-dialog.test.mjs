@@ -47,6 +47,23 @@ describe('CombatDialogHelper', () => {
       expect(parts).toHaveLength(1);
       expect(parts[0]).toBe('40 Base BS');
     });
+
+    it('includes BS upgrade modifiers', () => {
+      const upgradeModifiers = [
+        { name: 'Red-Dot Laser Sight', modifier: '10', effectType: 'characteristic', valueAffected: 'bs', source: 'Red-Dot Laser Sight' }
+      ];
+      const parts = CombatDialogHelper.buildModifierParts(40, 0, 0, 0, 0, 0, 0, 0, 0, 0, upgradeModifiers);
+      expect(parts).toContain('+10 Red-Dot Laser Sight');
+    });
+
+    it('excludes non-BS upgrade modifiers', () => {
+      const upgradeModifiers = [
+        { name: 'Brain Leech Worms', modifier: '2d10+6', effectType: 'weapon-damage', source: 'Brain Leech Worms' }
+      ];
+      const parts = CombatDialogHelper.buildModifierParts(40, 0, 0, 0, 0, 0, 0, 0, 0, 0, upgradeModifiers);
+      expect(parts).not.toContain('Brain Leech Worms');
+      expect(parts).toHaveLength(1);
+    });
   });
 
   describe('calculateHits', () => {

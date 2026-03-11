@@ -42,8 +42,10 @@ export class CombatDialogHelper {
     if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
     if (miscModifier !== 0) parts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
     for (const mod of upgradeModifiers) {
-      const value = parseInt(mod.modifier) || 0;
-      if (value !== 0) parts.push(`${value >= 0 ? '+' : ''}${value} ${mod.source}`);
+      if (mod.effectType === 'characteristic' && mod.valueAffected === 'bs') {
+        const value = parseInt(mod.modifier) || 0;
+        if (value !== 0) parts.push(`${value >= 0 ? '+' : ''}${value} ${mod.source}`);
+      }
     }
     return parts;
   }

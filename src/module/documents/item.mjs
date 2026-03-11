@@ -47,22 +47,24 @@ export class DeathwatchItem extends Item {
   }
   
   _applyWeaponUpgradeModifiers() {
+    const baseDmg = this.system.dmg || this.system.damage;
     const baseRange = parseInt(this.system.range) || 0;
     const baseWeight = parseFloat(this.system.wt) || 0;
     
-    if (baseRange === 0) {
-      this.system.effectiveRange = this.system.range;
-    } else {
-      let rangeAdditive = 0;
-      let rangeMultiplier = 1;
+    let damageOverride = null;
+    let rangeAdditive = 0;
+    let rangeMultiplier = 1;
+    
+    for (const upgradeRef of this.system.attachedUpgrades) {
+      const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
+      const upgrade = this.actor.items.get(upgradeId);
       
-      for (const upgradeRef of this.system.attachedUpgrades) {
-        const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
-        const upgrade = this.actor.items.get(upgradeId);
-        
-        if (upgrade && Array.isArray(upgrade.system.modifiers)) {
-          for (const mod of upgrade.system.modifiers) {
-            if (mod.enabled !== false && mod.effectType === 'weapon-range') {
+      if (upgrade && Array.isArray(upgrade.system.modifiers)) {
+        for (const mod of upgrade.system.modifiers) {
+          if (mod.enabled !== false) {
+            if (mod.effectType === 'weapon-damage') {
+              damageOverride = mod.modifier;
+            } else if (mod.effectType === 'weapon-range') {
               const modStr = String(mod.modifier);
               if (modStr.startsWith('x')) {
                 rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
@@ -73,8 +75,20 @@ export class DeathwatchItem extends Item {
           }
         }
       }
-      
+    }
+    
+    if (damageOverride && baseDmg) {
+      this.system.effectiveDamage = damageOverride;
+    } else {
+      delete this.system.effectiveDamage;
+    }
+    
+    if (baseRange === 0) {
+      this.system.effectiveRange = this.system.range;
+    } else if (rangeAdditive !== 0 || rangeMultiplier !== 1) {
       this.system.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
+    } else {
+      delete this.system.effectiveRange;
     }
     
     // Apply weight modifiers
