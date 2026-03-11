@@ -8,5 +8,5 @@ export default {
     '!src/module/helpers/foundry-adapter.mjs'
   ],
   coveragePathIgnorePatterns: ['/node_modules/'],
-  coverageReporters: ['text', 'text-summary', 'lcov', 'clover']
+  coverageReporters: ['text', 'text-summary', 'json']
 };
