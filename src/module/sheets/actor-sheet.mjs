@@ -121,6 +121,22 @@ export class DeathwatchActorSheet extends ActorSheet {
       Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
     }
 
+    // Get specialty rank-based skill cost overrides
+    const specialtySkillCosts = {};
+    const specialtyTalentCosts = {};
+    if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
+      const currentRank = context.system.rank || 1;
+      const rankData = context.specialtyItem.system.rankCosts[currentRank.toString()];
+      if (rankData) {
+        if (rankData.skills) Object.assign(specialtySkillCosts, rankData.skills);
+        if (rankData.talents) Object.assign(specialtyTalentCosts, rankData.talents);
+      }
+    }
+
+    // Store talent cost overrides for later use
+    context.specialtyTalentCosts = specialtyTalentCosts;
+    context.chapterTalentCosts = context.chapterItem?.system.talentCosts || {};
+
     // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
       const sortedSkills = Object.entries(context.system.skills)
@@ -142,6 +158,18 @@ export class DeathwatchActorSheet extends ActorSheet {
           if (chapterSkillCosts[k].costTrain !== undefined) v.costTrain = chapterSkillCosts[k].costTrain;
           if (chapterSkillCosts[k].costMaster !== undefined) v.costMaster = chapterSkillCosts[k].costMaster;
           if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
+        }
+        
+        // Apply specialty rank-based skill cost overrides (takes precedence over chapter)
+        if (specialtySkillCosts[k] !== undefined) {
+          // Support both simple number format and full object format
+          if (typeof specialtySkillCosts[k] === 'number') {
+            v.costTrain = specialtySkillCosts[k];
+          } else if (typeof specialtySkillCosts[k] === 'object') {
+            if (specialtySkillCosts[k].costTrain !== undefined) v.costTrain = specialtySkillCosts[k].costTrain;
+            if (specialtySkillCosts[k].costMaster !== undefined) v.costMaster = specialtySkillCosts[k].costMaster;
+            if (specialtySkillCosts[k].costExpert !== undefined) v.costExpert = specialtySkillCosts[k].costExpert;
+          }
         }
       }
     }
@@ -184,6 +212,28 @@ export class DeathwatchActorSheet extends ActorSheet {
   _prepareItems(context) {
     const categories = ItemHandlers.processItems(context.items);
     Object.assign(context, categories);
+    
+    // Apply talent cost overrides
+    if (context.talents && context.talents.length > 0) {
+      const chapterTalentCosts = context.chapterTalentCosts || {};
+      const specialtyTalentCosts = context.specialtyTalentCosts || {};
+      
+      for (const talent of context.talents) {
+        let effectiveCost = talent.system.cost;
+        
+        // Apply chapter override
+        if (chapterTalentCosts[talent._id] !== undefined) {
+          effectiveCost = chapterTalentCosts[talent._id];
+        }
+        
+        // Apply specialty rank override (takes precedence)
+        if (specialtyTalentCosts[talent._id] !== undefined) {
+          effectiveCost = specialtyTalentCosts[talent._id];
+        }
+        
+        talent.system.effectiveCost = effectiveCost;
+      }
+    }
   }
 
   /* -------------------------------------------- */

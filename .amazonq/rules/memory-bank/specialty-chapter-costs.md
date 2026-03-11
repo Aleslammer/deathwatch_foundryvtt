@@ -54,6 +54,28 @@ The system includes a cost override mechanism where chapters can reduce XP costs
     "characteristicCosts": {
       "ws": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
       "bs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 }
+    },
+    "rankCosts": {
+      "1": {
+        "skills": { 
+          "medicae": { "costTrain": 400 },
+          "chem_use": { "costTrain": 400 }
+        },
+        "talents": { "tal00000000012": 500, "tal00000000092": 500 }
+      },
+      "2": {
+        "skills": {
+          "medicae": { "costMaster": 400 }
+        },
+        "talents": {}
+      },
+      "2": { "skills": {}, "talents": {} },
+      "3": { "skills": {}, "talents": {} },
+      "4": { "skills": {}, "talents": {} },
+      "5": { "skills": {}, "talents": {} },
+      "6": { "skills": {}, "talents": {} },
+      "7": { "skills": {}, "talents": {} },
+      "8": { "skills": {}, "talents": {} }
     }
   }
 }
@@ -62,7 +84,7 @@ The system includes a cost override mechanism where chapters can reduce XP costs
 ## Implementation
 
 ### Skill Cost Override (IMPLEMENTED)
-**Location:** `actor-sheet.mjs` in `_prepareCharacterData()` method (lines 119-128)
+**Location:** `actor-sheet.mjs` in `_prepareCharacterData()` method (lines 119-135)
 
 ```javascript
 // Get chapter skill cost overrides
@@ -71,11 +93,33 @@ if (context.chapterItem && context.chapterItem.system.skillCosts) {
   Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
 }
 
-// Apply chapter skill cost overrides to each skill
+// Get specialty rank-based skill cost overrides
+const specialtySkillCosts = {};
+if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
+  const currentRank = context.system.rank || 1;
+  const rankData = context.specialtyItem.system.rankCosts[currentRank.toString()];
+  if (rankData && rankData.skills) {
+    Object.assign(specialtySkillCosts, rankData.skills);
+  }
+}
+
+// Apply chapter skill cost overrides
 if (chapterSkillCosts[k]) {
   if (chapterSkillCosts[k].costTrain !== undefined) v.costTrain = chapterSkillCosts[k].costTrain;
   if (chapterSkillCosts[k].costMaster !== undefined) v.costMaster = chapterSkillCosts[k].costMaster;
   if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
+}
+
+// Apply specialty rank-based skill cost overrides (takes precedence over chapter)
+if (specialtySkillCosts[k] !== undefined) {
+  // Support both simple number format and full object format
+  if (typeof specialtySkillCosts[k] === 'number') {
+    v.costTrain = specialtySkillCosts[k];
+  } else if (typeof specialtySkillCosts[k] === 'object') {
+    if (specialtySkillCosts[k].costTrain !== undefined) v.costTrain = specialtySkillCosts[k].costTrain;
+    if (specialtySkillCosts[k].costMaster !== undefined) v.costMaster = specialtySkillCosts[k].costMaster;
+    if (specialtySkillCosts[k].costExpert !== undefined) v.costExpert = specialtySkillCosts[k].costExpert;
+  }
 }
 ```
 
@@ -83,12 +127,51 @@ if (chapterSkillCosts[k]) {
 1. Base skill costs loaded from `skills.json` via SkillLoader
 2. Actor sheet checks if chapter is assigned (`context.chapterItem`)
 3. If chapter has `skillCosts` defined, those override the base costs
-4. Overridden costs available on skill object as `v.costTrain`, `v.costMaster`, `v.costExpert`
+4. Actor sheet checks if specialty is assigned and gets current rank
+5. If specialty has rank-specific `skillCosts`, those override chapter costs
+6. Specialty rank costs support flexible format:
+   - Single level: `"medicae": { "costTrain": 400 }` (only overrides Train)
+   - Multiple levels: `"medicae": { "costTrain": 400, "costMaster": 500 }`
+   - Simple number (legacy): `"medicae": 400` (only overrides costTrain)
+7. Each rank typically overrides one skill level:
+   - Rank 1: "Chem-Use" → costTrain override
+   - Rank 2: "Chem-Use+10" → costMaster override
+   - Rank 3: "Chem-Use+20" → costExpert override
+8. Overridden costs available on skill object as `v.costTrain`, `v.costMaster`, `v.costExpert`
 
-### Talent Cost Override (NOT IMPLEMENTED)
-**Data Structure:** Exists in chapter items as `talentCosts` object
-**Format:** `{ "talentId": xpCost }`
-**Status:** Data structure defined but no code applies these overrides yet
+### Talent Cost Override (IMPLEMENTED)
+**Location:** `actor-sheet.mjs` in `_prepareItems()` method
+
+```javascript
+// Apply talent cost overrides
+if (context.talents && context.talents.length > 0) {
+  const chapterTalentCosts = context.chapterTalentCosts || {};
+  const specialtyTalentCosts = context.specialtyTalentCosts || {};
+  
+  for (const talent of context.talents) {
+    let effectiveCost = talent.system.cost;
+    
+    // Apply chapter override
+    if (chapterTalentCosts[talent._id] !== undefined) {
+      effectiveCost = chapterTalentCosts[talent._id];
+    }
+    
+    // Apply specialty rank override (takes precedence)
+    if (specialtyTalentCosts[talent._id] !== undefined) {
+      effectiveCost = specialtyTalentCosts[talent._id];
+    }
+    
+    talent.system.effectiveCost = effectiveCost;
+  }
+}
+```
+
+**How It Works:**
+1. Base talent costs from talent item's `cost` field
+2. Chapter talent cost overrides applied from `chapter.system.talentCosts`
+3. Specialty rank-based talent cost overrides applied from `specialty.system.rankCosts[rank].talents`
+4. Specialty rank costs take precedence over chapter costs
+5. Effective cost stored in `talent.system.effectiveCost` for display
 
 ### Characteristic Advance Costs (NOT IMPLEMENTED)
 **Data Structure:** Exists in specialty items as `characteristicCosts` object
@@ -121,6 +204,49 @@ if (chapterSkillCosts[k]) {
 ```
 
 **Status:** Not yet applied in code.
+
+## Example: Apothecary Specialty Rank 1
+
+### Rank-Based Cost Overrides
+```json
+{
+  "rankCosts": {
+    "1": {
+      "skills": {
+        "chem_use": { "costTrain": 400 },
+        "interrogation": { "costTrain": 200 },
+        "medicae": { "costTrain": 400 }
+      },
+      "talents": {
+        "tal00000000012": 500,
+        "tal00000000092": 500,
+        "tal00000000189": 500,
+        "tal00000000190": 500,
+        "tal00000000191": 500
+      }
+    },
+    "2": {
+      "skills": {
+        "chem_use": { "costMaster": 400 },
+        "interrogation": { "costMaster": 200 }
+      },
+      "talents": {}
+    }
+  }
+}
+```
+
+**Result:** 
+- **Rank 1**: Apothecary pays 400 XP to **train** Chem-Use (costTrain override)
+- **Rank 2**: Apothecary pays 400 XP to **master** Chem-Use (costMaster override)
+- **Rank 3**: Would have Chem-Use+20 for costExpert override
+- Each rank only overrides one skill level at a time
+
+**Skill Cost Format:**
+- Rank 1 (base skill): `"skill_name": { "costTrain": 400 }`
+- Rank 2 (skill+10): `"skill_name": { "costMaster": 400 }`
+- Rank 3 (skill+20): `"skill_name": { "costExpert": 400 }`
+- Can specify any combination: `{ "costTrain": 400, "costMaster": 500 }`
 
 ## Example: Tactical Marine Specialty
 
@@ -203,8 +329,11 @@ When calculating XP spent, use:
 
 ## Notes
 
-- Skill cost override system is fully functional
-- Talent and characteristic cost systems have data but no implementation
+- Skill cost override system is fully functional (chapter + specialty rank-based)
+- Talent cost override system is fully functional (chapter + specialty rank-based)
+- Specialty rank-based costs take precedence over chapter costs
+- Characteristic advance costs from specialty are defined but not yet used in code
 - All cost data is already populated in compendium packs
-- Cost overrides are chapter/specialty-specific, not global
-- Base costs remain in skills.json as fallback
+- Cost overrides are chapter/specialty/rank-specific, not global
+- Base costs remain in skills.json and talent items as fallback
+- Rank-based costs allow different XP costs at each of the 8 ranks

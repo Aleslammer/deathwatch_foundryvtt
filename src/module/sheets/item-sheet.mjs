@@ -59,6 +59,42 @@ export class DeathwatchItemSheet extends ItemSheet {
                 wil: 'Willpower',
                 fs: 'Fellowship'
             };
+            
+            // Ensure rankCosts exists and is properly structured
+            if (!context.system.rankCosts) {
+                context.system.rankCosts = {};
+                for (let i = 1; i <= 8; i++) {
+                    context.system.rankCosts[i.toString()] = { skills: {}, talents: {} };
+                }
+            }
+            
+            // Add skill and talent name lookups for display
+            context.skillNames = {};
+            context.talentNames = {};
+            
+            // Get skill names from config
+            if (game.deathwatch?.config?.Skills) {
+                context.skillNames = game.deathwatch.config.Skills;
+            }
+            
+            // Get talent names from actor's items or compendium
+            const talentIds = new Set();
+            for (const rankData of Object.values(context.system.rankCosts)) {
+                if (rankData.talents) {
+                    Object.keys(rankData.talents).forEach(id => talentIds.add(id));
+                }
+            }
+            
+            // Look up talent names from compendium
+            const talentPack = game.packs.get('deathwatch.talents');
+            if (talentPack) {
+                for (const talentId of talentIds) {
+                    const talent = talentPack.index.get(talentId);
+                    if (talent) {
+                        context.talentNames[talentId] = talent.name;
+                    }
+                }
+            }
         }
 
         // Initialize capacity.max from clip field for weapons if not set

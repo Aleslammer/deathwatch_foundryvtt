@@ -279,7 +279,16 @@
                 "wil": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
                 "fs": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 }
             },
-            "ranks": []
+            "rankCosts": {
+                "1": { "skills": {}, "talents": {} },
+                "2": { "skills": {}, "talents": {} },
+                "3": { "skills": {}, "talents": {} },
+                "4": { "skills": {}, "talents": {} },
+                "5": { "skills": {}, "talents": {} },
+                "6": { "skills": {}, "talents": {} },
+                "7": { "skills": {}, "talents": {} },
+                "8": { "skills": {}, "talents": {} }
+            }
         },
         "chapter": {
             "templates": [

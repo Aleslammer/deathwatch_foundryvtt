@@ -8,10 +8,10 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
 
+1. Update\Organize and Optimize the memory bank.
 
-TODO: Finish Chapters
 TODO: Finish specialties
-
+    TODO: Need to review the talent ids on apothecary.
 
 TODO: Review all talents to determine if effects can be applied to anythig
 
@@ -61,4 +61,5 @@ TODO: Melee Weapons 153 (Force and Other)
 TODO: Rites of Battle
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 TODO: Armor provides benefits to the space marine.   We need to work on that.
+
 
