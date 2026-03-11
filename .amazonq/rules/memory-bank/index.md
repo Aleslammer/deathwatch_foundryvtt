@@ -41,6 +41,10 @@ Documentation for the Deathwatch Foundry VTT system, including architecture, gui
 **Purpose**: Ammunition modifier system documentation  
 **Contents**: Modifier types (weapon-damage, weapon-rof, weapon-blast, righteous-fury-threshold, characteristic-damage), weaponClass restrictions, characteristic damage system, UI integration
 
+### 10. specialty-chapter-costs.md
+**Purpose**: Specialty and chapter cost override system  
+**Contents**: Skill cost overrides (implemented), talent cost overrides (data only), characteristic advance costs (data only), chapter/specialty assignment, XP cost calculation
+
 ## Quick Reference
 
 ### File Locations

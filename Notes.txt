@@ -9,6 +9,8 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
 
 
+TODO: Finish Chapters
+TODO: Finish specialties
 
 
 TODO: Review all talents to determine if effects can be applied to anythig
@@ -22,14 +24,8 @@ TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-
 
 
 
-TODO: Weaspon Upgrades 156
-tyranid upgrade 
-    Brain Leech Worms: (Devourer) A Devourer may be host to these 
-    more voracious and deadly variety of creatures. A Devourer 
-    with Brain Leech Worms does 2d10+6 R damage, and if it 
-    inflicts any damage on a squad of Battle-Brothers, the squad 
-    suffers one additional point of Cohesion damage.
-
+TODO: Gear
+    TODO: Add gear from Rites of battle.   Done up to Camo-CLoak
     
 
 TODO: Ammmunition 158
