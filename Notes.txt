@@ -1,18 +1,15 @@
 
 file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 
-
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
+cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
- cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
+TODO: Create build that runs tests
 
- TODO: exclude tests from copy
- TODO: Create build that runs tests
-
-TODO: Review all talens to determine if effects can be applied to anythig
+TODO: Review all talents to determine if effects can be applied to anythig
 
 TODO: Need to handle called shot mechanic
 TODO: weapon damage does not appear to be modifyable on the gear page.
@@ -62,9 +59,5 @@ PowerLevel (for powerswords)
 TODO: Melee Weapons 153 (Force and Other)
 TODO: Rites of Battle
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
+TODO: Armor provides benefits to the space marine.   We need to work on that.
 
-
-Stalker Rounds are not 
-
-1. displaying on the item sheet correctly 
-2. not removing the -2 on a stalker bolter (missing quality)
