@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: '20'
         cache: 'npm'
@@ -21,10 +21,6 @@ jobs:
     - name: Run tests with coverage
       run: npm run test:coverage
     
-    - name: Coverage Summary
+    - name: Coverage Report
       if: always()
-      run: |
-        echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        npx jest --coverage --coverageReporters="text-summary" | tail -n 10 >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      uses: ArtiomTr/jest-coverage-report-action@v2
