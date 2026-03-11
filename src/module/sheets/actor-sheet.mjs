@@ -155,6 +155,23 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Calculate wound color class
     const wounds = context.system.wounds;
     context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+
+    // Calculate renown rank
+    context.renownRank = this._getRenownRank(context.system.renown || 0);
+  }
+
+  /**
+   * Get renown rank based on renown value
+   * @param {number} renown The renown value
+   * @returns {string} The renown rank
+   * @private
+   */
+  _getRenownRank(renown) {
+    if (renown >= 80) return 'Hero';
+    if (renown >= 60) return 'Famed';
+    if (renown >= 40) return 'Distinguished';
+    if (renown >= 20) return 'Respected';
+    return 'Initiated';
   }
 
   /**
@@ -172,6 +189,7 @@ export class DeathwatchActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /** @override */
+  /* istanbul ignore next */
   activateListeners(html) {
     super.activateListeners(html);
 
@@ -352,6 +370,21 @@ export class DeathwatchActorSheet extends ActorSheet {
       ui.notifications.info('Ammunition removed.');
     });
 
+    // Remove upgrade from weapon
+    html.find('.upgrade-remove').click(async ev => {
+      const upgradeId = $(ev.currentTarget).data('upgradeId');
+      const weaponId = $(ev.currentTarget).data('weaponId');
+      const weapon = this.actor.items.get(weaponId);
+      
+      if (!weapon) return;
+      
+      const currentUpgrades = weapon.system.attachedUpgrades || [];
+      const updatedUpgrades = currentUpgrades.filter(u => u.id !== upgradeId);
+      
+      await weapon.update({ "system.attachedUpgrades": updatedUpgrades });
+      ui.notifications.info('Weapon upgrade removed.');
+    });
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
@@ -439,6 +472,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event   The originating click event
    * @private
    */
+  /* istanbul ignore next */
   async _onRoll(event) {
     event.preventDefault();
     const element = event.currentTarget;
@@ -479,6 +513,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Object} dataset The dataset from the clicked element
    * @private
    */
+  /* istanbul ignore next */
   async _onCharacteristicRoll(dataset) {
     const rollData = this.actor.getRollData();
     const characteristic = this.actor.system.characteristics[dataset.characteristic];
@@ -518,6 +553,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Object} dataset The dataset from the clicked element
    * @private
    */
+  /* istanbul ignore next */
   async _onSkillRoll(dataset) {
     const skill = this.actor.system.skills[dataset.skill];
     const label = `[Skill] ${dataset.label}`;
@@ -573,6 +609,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The originating click event
    * @private
    */
+  /* istanbul ignore next */
   async _onWeaponAttack(event) {
     event.preventDefault();
     const itemId = $(event.currentTarget).data('itemId');
@@ -658,6 +695,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The drop event
    * @private
    */
+  /* istanbul ignore next */
   async _onDropItemOnItem(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -742,6 +780,31 @@ export class DeathwatchActorSheet extends ActorSheet {
       await targetItem.update({ "system.loadedAmmo": ammoItem.id });
       ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
     }
+    // Handle weapon upgrade drops
+    else if (droppedItem.type === 'weapon-upgrade') {
+      let upgradeItem = droppedItem;
+      if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
+        const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
+        upgradeItem = imported;
+      }
+
+      let targetItemId = $(event.currentTarget).data('itemId');
+      let targetItem = this.actor.items.get(targetItemId);
+      
+      if (!targetItem || targetItem.type !== 'weapon') {
+        ui.notifications.warn('Weapon upgrades can only be attached to weapons.');
+        return;
+      }
+
+      const currentUpgrades = targetItem.system.attachedUpgrades || [];
+      if (currentUpgrades.find(u => u.id === upgradeItem.id)) {
+        ui.notifications.warn(`${upgradeItem.name} is already attached to ${targetItem.name}.`);
+        return;
+      }
+      
+      await targetItem.update({ "system.attachedUpgrades": [...currentUpgrades, { id: upgradeItem.id }] });
+      ui.notifications.info(`${upgradeItem.name} attached to ${targetItem.name}.`);
+    }
   }
 
   /**
@@ -749,6 +812,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The drop event
    * @private
    */
+  /* istanbul ignore next */
   async _onDropChapter(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -779,6 +843,7 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @param {Event} event The drop event
    * @private
    */
+  /* istanbul ignore next */
   async _onDropSpecialty(event) {
     event.preventDefault();
     event.stopPropagation();

@@ -121,6 +121,12 @@ Hooks.on('renderChatMessage', (message, html) => {
         const isLongOrExtremeRange = button.data('isLongOrExtremeRange') === 'true' || button.data('isLongOrExtremeRange') === true;
         const isShocking = button.data('isShocking') === 'true' || button.data('isShocking') === true;
         const isToxic = button.data('isToxic') === 'true' || button.data('isToxic') === true;
+        const isMeltaRange = button.data('isMeltaRange') === 'true' || button.data('isMeltaRange') === true;
+        
+        const charDamageFormula = button.data('charDamageFormula');
+        const charDamageChar = button.data('charDamageChar');
+        const charDamageName = button.data('charDamageName');
+        const charDamageEffect = charDamageFormula ? { formula: charDamageFormula, characteristic: charDamageChar, name: charDamageName } : null;
         
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
@@ -128,7 +134,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType, 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic);
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {
@@ -198,6 +204,36 @@ Hooks.on('renderChatMessage', (message, html) => {
                 rollMode: game.settings.get('core', 'rollMode')
             });
         }
+        
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor,
+            rollMode: game.settings.get('core', 'rollMode')
+        });
+    });
+    
+    html.find('.char-damage-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actorId = button.data('actorId');
+        const formula = button.data('formula');
+        const characteristic = button.data('characteristic');
+        
+        const actor = game.actors.get(actorId);
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+        
+        const roll = await new Roll(formula).evaluate();
+        const charDamage = roll.total;
+        
+        const currentDamage = actor.system.characteristics[characteristic]?.damage || 0;
+        const newDamage = currentDamage + charDamage;
+        
+        await actor.update({ [`system.characteristics.${characteristic}.damage`]: newDamage });
+        
+        const charName = characteristic.toUpperCase();
+        const flavor = `<strong>Characteristic Damage</strong><br><strong style="color: red;">${charName} takes ${charDamage} damage</strong><br>Total ${charName} Damage: ${newDamage}`;
         
         await roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor }),

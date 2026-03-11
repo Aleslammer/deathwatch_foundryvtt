@@ -19,7 +19,7 @@
     "req": 35,
     "rof": "S/-/-",
     "wt": 72,
-    "attachedQualities": [{"id": "quality000000004", "value": "1"}]
+    "attachedQualities": [{"id": "blast", "value": "1"}]
   },
   "type": "weapon"
 }

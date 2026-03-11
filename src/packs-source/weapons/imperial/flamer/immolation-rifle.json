@@ -11,7 +11,7 @@
     "dmgType": "Energy",
     "attachedQualities": [
       {
-        "id": "quality000000008"
+        "id": "flame"
       }
     ],
     "equipped": false,

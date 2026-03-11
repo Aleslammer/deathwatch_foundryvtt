@@ -117,6 +117,13 @@
             "path": "packs/weapon-qualities",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "weapon-upgrades",
+            "label": "Weapon Upgrades",
+            "path": "packs/weapon-upgrades",
+            "type": "Item",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

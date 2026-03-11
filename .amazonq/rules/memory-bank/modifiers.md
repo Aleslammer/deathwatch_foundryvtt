@@ -44,8 +44,8 @@ The modifier system allows items, talents, chapters, and other effects to modify
 
 ## Effect Types
 
-### 1. Characteristic Modifiers
-Modify character characteristics (WS, BS, STR, TG, AG, INT, PER, WIL, FS).
+### 6. Characteristic Modifiers
+Modify character characteristics with damage tracking.
 
 **Structure:**
 ```json
@@ -63,11 +63,20 @@ Modify character characteristics (WS, BS, STR, TG, AG, INT, PER, WIL, FS).
 - Stored in `characteristic.base` before modification
 - Characteristic bonus (`mod`) recalculated from modified value
 - Tracked in `characteristic.modifiers` array with source
+- Characteristic damage subtracts from final value
+
+**Characteristic Damage:**
+- Each characteristic has `damage` field (default 0)
+- Damage subtracts from effective value after advances and modifiers
+- Applied by ammunition (e.g., Implosion Shells deal 1d5 AG damage)
+- Displayed in characteristic tooltip
+- Persistent until healed
 
 **Example Use Cases:**
 - Chapter bonuses (e.g., Storm Wardens +5 STR)
 - Armor bonuses
 - Temporary buffs/debuffs
+- Characteristic damage from special ammunition
 
 ### 2. Skill Modifiers
 Modify skill totals.
@@ -454,7 +463,7 @@ static applyWoundModifiers(wounds, modifiers) {
 - Multiple modifier stacking: ✓
 
 ### Test Count
-- Total: 368 tests
+- Total: 719 tests
 - Modifier-specific: ~50 tests
 - All passing ✓
 

@@ -20,8 +20,8 @@
     "rof": "",
     "wt": 30,
     "attachedQualities": [
-      {"id": "quality000000012"},
-      {"id": "quality000000029", "value": "4"}
+      {"id": "power-field"},
+      {"id": "proven", "value": "4"}
     ],
     "provenRating": 4
   },

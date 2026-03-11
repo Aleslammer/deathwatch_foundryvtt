@@ -11,11 +11,11 @@
     "dmgType": "Impact",
     "attachedQualities": [
       {
-        "id": "quality000000004",
+        "id": "blast",
         "value": "5"
       },
       {
-        "id": "quality000000021"
+        "id": "snare"
       }
     ],
     "equipped": false,

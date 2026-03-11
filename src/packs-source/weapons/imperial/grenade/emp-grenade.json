@@ -11,7 +11,7 @@
     "dmgType": "Explosive",
     "attachedQualities": [
       {
-        "id": "quality000000010",
+        "id": "haywire",
         "value": "3"
       }
     ],

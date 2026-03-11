@@ -1,7 +1,7 @@
 {
   "name": "Undying",
   "type": "trait",
-  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
     "description": "<p>This creature has a strange and ill understood physiology. It cannot be harmed by diseases, poisons, or toxic effects. It has no need to breathe and can survive unaided in a vacuum.</p>",
     "book": "Core Rulebook",

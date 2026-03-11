@@ -11,14 +11,14 @@
     "dmgType": "Rending",
     "attachedQualities": [
       {
-        "id": "quality000000001"
+        "id": "accurate"
       },
       {
-        "id": "quality000000003",
+        "id": "felling",
         "value": "1"
       },
       {
-        "id": "quality000000024"
+        "id": "toxic"
       }
     ],
     "equipped": false,

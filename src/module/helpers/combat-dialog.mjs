@@ -29,7 +29,7 @@ export class CombatDialogHelper {
     return Math.max(rangeMod, -10);
   }
 
-  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0) {
+  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0, upgradeModifiers = []) {
     const parts = [];
     parts.push(`${bs} Base BS`);
     if (bsAdv !== 0) parts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
@@ -41,6 +41,12 @@ export class CombatDialogHelper {
     if (autoRangeMod !== 0) parts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
     if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
     if (miscModifier !== 0) parts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+    for (const mod of upgradeModifiers) {
+      if (mod.effectType === 'characteristic' && mod.valueAffected === 'bs') {
+        const value = parseInt(mod.modifier) || 0;
+        if (value !== 0) parts.push(`${value >= 0 ? '+' : ''}${value} ${mod.source}`);
+      }
+    }
     return parts;
   }
 
@@ -217,12 +223,18 @@ export class CombatDialogHelper {
       isRazorSharp = false,
       degreesOfSuccess = 0,
       isScatter = false,
-      isLongOrExtremeRange = false
+      isLongOrExtremeRange = false,
+      isMeltaRange = false
     } = options;
 
     const effectiveMultiplier = Math.max(1, unnaturalToughnessMultiplier - felling);
     const effectiveTB = toughnessBonus * effectiveMultiplier;
-    const effectivePenetration = (isRazorSharp && degreesOfSuccess >= 2) ? penetration * 2 : penetration;
+    let effectivePenetration = penetration;
+    if (isRazorSharp && degreesOfSuccess >= 2) {
+      effectivePenetration = penetration * 2;
+    } else if (isMeltaRange) {
+      effectivePenetration = penetration * 2;
+    }
     let baseArmor = armorValue;
     if (isScatter && isLongOrExtremeRange) {
       baseArmor = armorValue * 2;
@@ -239,8 +251,12 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '') {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null) {
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
+    
+    if (charDamageEffect && woundsTaken > 0) {
+      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}" data-formula="${charDamageEffect.formula}" data-characteristic="${charDamageEffect.characteristic}">${charDamageEffect.name}: Roll ${charDamageEffect.formula}</button>`;
+    }
     
     if (isShocking && woundsTaken > 0) {
       const stunRounds = Math.floor(woundsTaken / 2);

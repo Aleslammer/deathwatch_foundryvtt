@@ -11,18 +11,18 @@
     "dmgType": "Energy",
     "attachedQualities": [
       {
-        "id": "quality000000004",
+        "id": "blast",
         "value": "5"
       },
       {
-        "id": "quality000000006",
+        "id": "devastating",
         "value": "4"
       },
       {
-        "id": "quality000000028"
+        "id": "volatile"
       },
       {
-        "id": "quality000000024"
+        "id": "toxic"
       }
     ],
     "equipped": false,

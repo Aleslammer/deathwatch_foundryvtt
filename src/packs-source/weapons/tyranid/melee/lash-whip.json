@@ -11,10 +11,10 @@
     "dmgType": "Rending",
     "attachedQualities": [
       {
-        "id": "quality000000032"
+        "id": "flexible"
       },
       {
-        "id": "quality000000021"
+        "id": "snare"
       }
     ],
     "equipped": false,

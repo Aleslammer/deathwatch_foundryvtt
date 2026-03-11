@@ -19,7 +19,7 @@
     "req": 0,
     "rof": "S/-/-",
     "wt": 1.5,
-    "attachedQualities": ["quality000000016"]
+    "attachedQualities": ["reliable"]
   },
   "type": "weapon"
 }

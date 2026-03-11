@@ -1,0 +1,17 @@
+{
+  "_id": "gear00000000006",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
+  "name": "Knife Sheath",
+  "system": {
+    "book": "Rites of Battle",
+    "description": "<p>Carries one Astartes Combat Knife.</p><p>Attaches to Astartes Combat Webbing.</p>",
+    "equipped": false,
+    "modifiers": [],
+    "page": "144",
+    "renown": "",
+    "req": 3,
+    "shortDescription": "Equipment",
+    "wt": 0.5
+  },
+  "type": "gear"
+}

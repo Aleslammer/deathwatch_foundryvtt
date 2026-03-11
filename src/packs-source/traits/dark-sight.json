@@ -1,7 +1,7 @@
 {
   "name": "Dark Sight",
   "type": "trait",
-  "img": "systems/deathwatch/icons/traits/traits.webp",
+  "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
     "description": "<p>A creature with this trait sees normally even in areas of total darkness, and never takes a penalty for fighting in areas of dim or no lighting.</p>",
     "book": "Core Rulebook",

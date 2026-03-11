@@ -11,7 +11,7 @@
     "dmgType": "Explosive",
     "attachedQualities": [
       {
-        "id": "quality000000004",
+        "id": "blast",
         "value": "5"
       }
     ],

@@ -1,18 +1,22 @@
 
 file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
 
-
 to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
+cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
- cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
- TODO: exclude tests from copy
- TODO: Create build that runs tests
 
-TODO: Review all talens to determine if effects can be applied to anythig
+TODO: Finish Chapters
+TODO: Finish specialties
+
+
+TODO: Review all talents to determine if effects can be applied to anythig
+
+
+
 
 TODO: Need to handle called shot mechanic
 TODO: weapon damage does not appear to be modifyable on the gear page.
@@ -20,19 +24,18 @@ TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-
 
 
 
-TODO: Weaspon Upgrades 156
-tyranid upgrade 
-    Brain Leech Worms: (Devourer) A Devourer may be host to these 
-    more voracious and deadly variety of creatures. A Devourer 
-    with Brain Leech Worms does 2d10+6 R damage, and if it 
-    inflicts any damage on a squad of Battle-Brothers, the squad 
-    suffers one additional point of Cohesion damage.
-
+TODO: Gear
+    TODO: Add gear from Rites of battle.   Done up to Camo-CLoak
     
 
 TODO: Ammmunition 158
- TODO: work out damage type and ammunition.   Meaning plama flash cannot load into a bolter and bolts cannot load into plasma
- TODO: also need to find out if we can alter things with ammo (like change damage numbers, add bonuses etc.)
+    TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
+    TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
+    TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
+    TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
+    TODO: We need to revisit the Devastation upgrade for cohesion damage
+
+    
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 TODO: Psychic Powers (180)
 
@@ -55,3 +58,7 @@ Running
 PowerLevel (for powerswords)
 
 TODO: Melee Weapons 153 (Force and Other)
+TODO: Rites of Battle
+    There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
+TODO: Armor provides benefits to the space marine.   We need to work on that.
+

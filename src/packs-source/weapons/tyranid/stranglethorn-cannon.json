@@ -11,14 +11,14 @@
     "dmgType": "Impact",
     "attachedQualities": [
       {
-        "id": "quality000000004",
+        "id": "blast",
         "value": "10"
       },
       {
-        "id": "quality000000030"
+        "id": "power-fist"
       },
       {
-        "id": "quality000000006",
+        "id": "devastating",
         "value": "2"
       }
     ],

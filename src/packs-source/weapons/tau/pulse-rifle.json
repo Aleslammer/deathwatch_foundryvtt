@@ -11,7 +11,7 @@
     "dmgType": "Energy",
     "attachedQualities": [
       {
-        "id": "gyrostabilised001"
+        "id": "gyro-stabilised"
       }
     ],
     "equipped": false,

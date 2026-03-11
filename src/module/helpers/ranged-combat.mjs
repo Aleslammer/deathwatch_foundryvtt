@@ -2,6 +2,7 @@ import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./const
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
+import { WeaponUpgradeHelper } from "./weapon-upgrade-helper.mjs";
 
 export class RangedCombatHelper {
   static calculateThrownWeaponRange(weapon, actor) {
@@ -47,7 +48,7 @@ export class RangedCombatHelper {
         weaponRange = thrownRange || 0;
       }
       else {
-        weaponRange = parseInt(weapon.system.range) || 0;
+        weaponRange = parseInt(weapon.system.effectiveRange || weapon.system.range) || 0;
       }
       
       if (weaponRange > 0) {
@@ -63,7 +64,7 @@ export class RangedCombatHelper {
       }
     }
 
-    const rof = weapon.system.rof || "S/-/-";
+    const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
     const clip = weapon.system.clip;
     const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
@@ -158,15 +159,31 @@ export class RangedCombatHelper {
             const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
             const hasLivingAmmo = await WeaponQualityHelper.hasQuality(weapon, 'living-ammunition');
             const isPointBlank = rangeLabel === "Point Blank";
+            
+            const isSingleShot = roundsFired === 1;
+            const isAutoFire = autoFire !== RATE_OF_FIRE_MODIFIERS.SINGLE;
+            const upgradeModifiers = await WeaponUpgradeHelper.getModifiers(weapon, isSingleShot, isAutoFire);
+            const upgradeBSBonus = upgradeModifiers
+              .filter(m => m.effectType === 'characteristic' && m.valueAffected === 'bs')
+              .reduce((sum, m) => sum + (parseInt(m.modifier) || 0), 0);
+            
+            const hasTelescopicSight = await WeaponUpgradeHelper.hasUpgrade(weapon, 'telescopic-sight');
+            const isFullAim = aim === AIM_MODIFIERS.FULL;
+            const isLongOrExtreme = rangeLabel === "Long" || rangeLabel === "Extreme";
+            let telescopicRangeMod = autoRangeMod;
+            if (hasTelescopicSight && isFullAim && isLongOrExtreme) {
+              telescopicRangeMod = 0;
+            }
+            
             const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv,
               aim,
               autoFire,
               calledShot,
-              rangeMod: autoRangeMod,
+              rangeMod: telescopicRangeMod,
               runningTarget,
-              miscModifier,
+              miscModifier: miscModifier + upgradeBSBonus,
               isAccurate,
               isGyroStabilised,
               isTwinLinked
@@ -174,6 +191,23 @@ export class RangedCombatHelper {
             
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
+            
+            // Check for premature detonation from ammunition
+            let hasPrematureDetonation = false;
+            let detonationThreshold = 101;
+            if (weapon.system.loadedAmmo) {
+              const ammo = actor.items.get(weapon.system.loadedAmmo);
+              if (ammo?.system.modifiers) {
+                for (const mod of ammo.system.modifiers) {
+                  if (mod.enabled !== false && mod.effectType === 'premature-detonation') {
+                    detonationThreshold = parseInt(mod.modifier) || 101;
+                    break;
+                  }
+                }
+              }
+            }
+            hasPrematureDetonation = hitValue >= detonationThreshold;
+            
             const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
@@ -195,15 +229,43 @@ export class RangedCombatHelper {
             if (isJammed) {
               await weapon.update({ "system.jammed": true });
             }
+            
+            if (hasPrematureDetonation) {
+              await weapon.update({ "system.jammed": true });
+              ui.notifications.error(`${weapon.name} detonated prematurely!`);
+              
+              // Apply damage to firer's arm
+              const armLocation = Math.random() < 0.5 ? "Right Arm" : "Left Arm";
+              const weaponDamage = weapon.system.effectiveDamage || weapon.system.dmg;
+              
+              // Roll damage
+              const damageRoll = await new Roll(weaponDamage).evaluate();
+              const totalDamage = damageRoll.total;
+              
+              // Apply damage with penetration 5
+              await CombatHelper.applyDamage(actor, {
+                damage: totalDamage,
+                penetration: 5,
+                location: armLocation,
+                damageType: 'Explosive'
+              });
+              
+              // Show damage roll in chat
+              await damageRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: `<h3>Premature Detonation!</h3><p><strong>${weapon.name}</strong> exploded in ${actor.name}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
+              });
+            }
 
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
             CombatHelper.lastAttackRangeLabel = rangeLabel;
+            CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus);
-            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed, isOverheated);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
+            const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
             hitRoll.toMessage({

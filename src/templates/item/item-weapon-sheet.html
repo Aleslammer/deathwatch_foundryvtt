@@ -43,14 +43,32 @@
                     <label class="resource-label">Range</label>
                     <input type="text" name="system.range" value="{{system.range}}" />
                 </div>
+                {{#if system.effectiveRange}}
+                <div class="resource">
+                    <label class="resource-label">Effective Range</label>
+                    <input type="text" value="{{system.effectiveRange}}" readonly style="background: #f0f0f0;" />
+                </div>
+                {{/if}}
                 <div class="resource">
                     <label class="resource-label">RoF</label>
                     <input type="text" name="system.rof" value="{{system.rof}}" />
                 </div>
+                {{#if system.effectiveRof}}
+                <div class="resource">
+                    <label class="resource-label">Effective RoF</label>
+                    <input type="text" value="{{system.effectiveRof}}" readonly style="background: #f0f0f0;" />
+                </div>
+                {{/if}}
                 <div class="resource">
                     <label class="resource-label">Damage</label>
-                    <input type="text" value="{{system.dmg}}" readonly />
+                    <input type="text" name="system.dmg" value="{{system.dmg}}" />
                 </div>
+                {{#if system.effectiveDamage}}
+                <div class="resource">
+                    <label class="resource-label">Effective Damage</label>
+                    <input type="text" value="{{system.effectiveDamage}}" readonly style="background: #f0f0f0;" />
+                </div>
+                {{/if}}
                 <div class="resource">
                     <label class="resource-label">Damage Type</label>
                     <input type="text" value="{{system.dmgType}}" readonly />
@@ -59,6 +77,12 @@
                     <label class="resource-label">Penetration</label>
                     <input type="text" name="system.penetration" value="{{system.penetration}}" />
                 </div>
+                {{#if system.effectivePenetration}}
+                <div class="resource">
+                    <label class="resource-label">Effective Penetration</label>
+                    <input type="text" value="{{system.effectivePenetration}}" readonly style="background: #f0f0f0;" />
+                </div>
+                {{/if}}
                 <div class="resource">
                     <label class="resource-label">Clip Size</label>
                     <input type="number" name="system.capacity.max" value="{{system.capacity.max}}" data-dtype="Number" />
@@ -87,9 +111,11 @@
             <h3>Qualities</h3>
             <ol class="items-list" style="list-style: none; margin: 0; padding: 0;">
               {{#each attachedQualities}}
-              <li class="item flexrow" style="display: flex; align-items: center; padding: 4px; border-bottom: 1px solid #ccc;">
-                <div class="item-name" style="flex: 1;">{{this.name}}{{#if this.system.value}}({{this.system.value}}){{/if}}</div>
+              <li class="item flexrow" style="display: flex; align-items: center; padding: 4px; border-bottom: 1px solid #ccc;{{#if this.isEffective}} background: #f0f0f0;{{/if}}">
+                <div class="item-name" style="flex: 1;{{#if this.isEffective}} font-style: italic;{{/if}}">{{this.name}}{{#if this.system.value}}({{this.system.value}}){{/if}}</div>
+                {{#unless this.isEffective}}
                 <a class="quality-remove" data-quality-id="{{this._id}}" title="Remove Quality" style="flex: 0 0 30px; text-align: center; cursor: pointer;"><i class="fas fa-times"></i></a>
+                {{/unless}}
               </li>
               {{/each}}
             </ol>

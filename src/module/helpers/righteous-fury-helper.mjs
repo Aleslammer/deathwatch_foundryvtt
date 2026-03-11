@@ -2,8 +2,8 @@ import { FoundryAdapter } from "./foundry-adapter.mjs";
 import { ChatMessageBuilder } from "./chat-message-builder.mjs";
 
 export class RighteousFuryHelper {
-  static hasNaturalTen(roll) {
-    return roll.dice.some(d => d.results.some(r => r.result === 10 || (d.faces === 5 && r.result === 5)));
+  static hasNaturalTen(roll, furyThreshold = 10) {
+    return roll.dice.some(d => d.results.some(r => r.result >= furyThreshold || (d.faces === 5 && r.result === 5)));
   }
 
   static async rollConfirmation(actor, targetNumber, hitLocation) {
@@ -17,7 +17,7 @@ export class RighteousFuryHelper {
     return confirmed;
   }
 
-  static async processFuryChain(actor, weapon, damageFormula, targetNumber, hitLocation, isVolatile) {
+  static async processFuryChain(actor, weapon, damageFormula, targetNumber, hitLocation, isVolatile, furyThreshold = 10) {
     let totalDamage = 0;
     let furyCount = 0;
     const allRolls = [];
@@ -36,7 +36,7 @@ export class RighteousFuryHelper {
         flavor: furyFlavor
       });
       
-      keepChecking = this.hasNaturalTen(furyRoll) && (isVolatile ? true : await this.rollConfirmation(actor, targetNumber, hitLocation));
+      keepChecking = this.hasNaturalTen(furyRoll, furyThreshold) && (isVolatile ? true : await this.rollConfirmation(actor, targetNumber, hitLocation));
     }
     
     return { totalDamage, furyCount, allRolls };

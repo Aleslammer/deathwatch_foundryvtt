@@ -27,6 +27,12 @@ export class ItemHandlers {
         };
       })
       .filter(q => q);
+    item.attachedUpgrades = (item.system.attachedUpgrades || [])
+      .map(u => {
+        const upgradeId = typeof u === 'string' ? u : u.id;
+        return context.items.find(i => i._id === upgradeId);
+      })
+      .filter(u => u);
     return item;
   }
 
@@ -81,6 +87,9 @@ export class ItemHandlers {
           categories.armor.push(this.armor(item, context));
           break;
         case 'gear':
+          categories.gear.push(item);
+          break;
+        case 'weapon-upgrade':
           categories.gear.push(item);
           break;
         case 'characteristic':

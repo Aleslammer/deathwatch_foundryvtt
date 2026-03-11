@@ -1,0 +1,17 @@
+{
+  "_id": "gear00000000008",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
+  "name": "Sidearm Holster",
+  "system": {
+    "book": "Rites of Battle",
+    "description": "<p>Strapped to the thigh and attached to the belt via a quick-release strap, each holster is specifically tailored to fit a specific Deathwatch issue sidearm.</p><p>Attaches to Astartes Combat Webbing.</p>",
+    "equipped": false,
+    "modifiers": [],
+    "page": "144",
+    "renown": "",
+    "req": 3,
+    "shortDescription": "Equipment",
+    "wt": 0.5
+  },
+  "type": "gear"
+}

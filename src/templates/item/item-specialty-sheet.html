@@ -20,15 +20,37 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="characteristics">
-      <h3>Characteristic Advance Costs</h3>
-      <div class="form-group">
-        {{#each system.characteristicCosts as |cost key|}}
-        <div class="flexrow" style="margin-bottom: 5px;">
-          <label style="flex: 1;">{{lookup ../characteristics key}}</label>
-          <input type="number" name="system.characteristicCosts.{{key}}" value="{{cost}}" data-dtype="Number" style="width: 80px;"/>
-        </div>
-        {{/each}}
-      </div>
+      <h3 class="section-header">Characteristic Advance Costs</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 2px solid #999;">Characteristic</th>
+            <th style="text-align: center; padding: 8px; border-bottom: 2px solid #999;">Simple</th>
+            <th style="text-align: center; padding: 8px; border-bottom: 2px solid #999;">Intermediate</th>
+            <th style="text-align: center; padding: 8px; border-bottom: 2px solid #999;">Trained</th>
+            <th style="text-align: center; padding: 8px; border-bottom: 2px solid #999;">Expert</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.characteristicCosts as |costs key|}}
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">{{lookup ../characteristics key}}</td>
+            <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ccc;">
+              <input type="number" name="system.characteristicCosts.{{key}}.simple" value="{{costs.simple}}" data-dtype="Number" style="width: 80px; text-align: center;"/>
+            </td>
+            <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ccc;">
+              <input type="number" name="system.characteristicCosts.{{key}}.intermediate" value="{{costs.intermediate}}" data-dtype="Number" style="width: 80px; text-align: center;"/>
+            </td>
+            <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ccc;">
+              <input type="number" name="system.characteristicCosts.{{key}}.trained" value="{{costs.trained}}" data-dtype="Number" style="width: 80px; text-align: center;"/>
+            </td>
+            <td style="text-align: center; padding: 8px; border-bottom: 1px solid #ccc;">
+              <input type="number" name="system.characteristicCosts.{{key}}.expert" value="{{costs.expert}}" data-dtype="Number" style="width: 80px; text-align: center;"/>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
     </div>
 
     <div class="tab" data-group="primary" data-tab="ranks">

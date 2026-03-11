@@ -67,11 +67,11 @@ export const MELEE_MODIFIERS = {
 
 // Range Modifiers
 export const RANGE_MODIFIERS = {
-  POINT_BLANK: 20,  // <= 2m
+  POINT_BLANK: 30,  // <= 2m
   SHORT: 10,         // < half weapon range
   NORMAL: 0,         // half to 2x weapon range
   LONG: -10,         // 2x to 3x weapon range
-  EXTREME: -20       // >= 3x weapon range
+  EXTREME: -30       // >= 3x weapon range
 };
 
 // XP Constants
