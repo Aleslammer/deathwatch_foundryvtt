@@ -24,9 +24,13 @@ jobs:
       run: npm run test:coverage
     
     - name: Coverage Report
-      if: always()
-      run: |
-        echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-        npm run test:coverage 2>&1 | sed -n '/^-*|/,$p' >> $GITHUB_STEP_SUMMARY
-        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        coverage-file: coverage/coverage-final.json
+        
+      # if: always()
+      # run: |
+      #   echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+      #   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      #   npm run test:coverage 2>&1 | sed -n '/^-*|/,$p' >> $GITHUB_STEP_SUMMARY
+      #   echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
