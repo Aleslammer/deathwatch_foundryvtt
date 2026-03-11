@@ -7,9 +7,14 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 
 cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
-TODO: Create build that runs tests
+
+
+
 
 TODO: Review all talents to determine if effects can be applied to anythig
+
+
+
 
 TODO: Need to handle called shot mechanic
 TODO: weapon damage does not appear to be modifyable on the gear page.

@@ -54,6 +54,8 @@ export class DeathwatchItem extends Item {
     let damageOverride = null;
     let rangeAdditive = 0;
     let rangeMultiplier = 1;
+    let weightAdditive = 0;
+    let weightMultiplier = 1;
     
     for (const upgradeRef of this.system.attachedUpgrades) {
       const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
@@ -70,6 +72,13 @@ export class DeathwatchItem extends Item {
                 rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
               } else {
                 rangeAdditive += parseInt(mod.modifier) || 0;
+              }
+            } else if (mod.effectType === 'weapon-weight') {
+              const modStr = String(mod.modifier);
+              if (modStr.startsWith('x')) {
+                weightMultiplier *= parseFloat(modStr.substring(1)) || 1;
+              } else {
+                weightAdditive += parseFloat(mod.modifier) || 0;
               }
             }
           }
@@ -88,33 +97,15 @@ export class DeathwatchItem extends Item {
     } else if (rangeAdditive !== 0 || rangeMultiplier !== 1) {
       this.system.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
     } else {
-      delete this.system.effectiveRange;
+      this.system.effectiveRange = baseRange;
     }
     
-    // Apply weight modifiers
-    if (baseWeight > 0) {
-      let weightAdditive = 0;
-      let weightMultiplier = 1;
-      
-      for (const upgradeRef of this.system.attachedUpgrades) {
-        const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
-        const upgrade = this.actor.items.get(upgradeId);
-        
-        if (upgrade && Array.isArray(upgrade.system.modifiers)) {
-          for (const mod of upgrade.system.modifiers) {
-            if (mod.enabled !== false && mod.effectType === 'weapon-weight') {
-              const modStr = String(mod.modifier);
-              if (modStr.startsWith('x')) {
-                weightMultiplier *= parseFloat(modStr.substring(1)) || 1;
-              } else {
-                weightAdditive += parseFloat(mod.modifier) || 0;
-              }
-            }
-          }
-        }
-      }
-      
+    if (baseWeight > 0 && (weightAdditive !== 0 || weightMultiplier !== 1)) {
       this.system.effectiveWeight = Math.max(0, (baseWeight + weightAdditive) * weightMultiplier);
+    } else if (baseWeight > 0) {
+      this.system.effectiveWeight = baseWeight;
+    } else {
+      delete this.system.effectiveWeight;
     }
   }
   
