@@ -3,47 +3,26 @@
 ## Overview
 Documentation for the Deathwatch Foundry VTT system, including architecture, guidelines, and development patterns.
 
-## Core Documents
+## Quick Access
 
-### 1. product.md
-**Purpose**: System overview and features  
-**Contents**: Purpose, key features, target users, use cases
+### New to the Project?
+Start with **QUICK-REFERENCE.md** for essential commands, patterns, and troubleshooting.
 
-### 2. structure.md
-**Purpose**: Codebase organization  
-**Contents**: Directory structure, core components, architectural patterns, component relationships
+### Core Documents
 
-### 3. tech.md
-**Purpose**: Technology stack  
-**Contents**: Testing (Jest), languages (JavaScript ES modules), framework (Foundry VTT v13), build system
+### Foundation
+1. **product.md** - System overview, features, and use cases
+2. **structure.md** - Codebase organization and architecture
+3. **tech.md** - Technology stack and tooling
+4. **guidelines.md** - Coding standards and best practices
 
-### 4. guidelines.md
-**Purpose**: Coding standards and best practices  
-**Contents**: Testing standards, code quality, architectural patterns, common implementations, refactoring patterns
-
-### 5. refactoring-summary.md
-**Purpose**: Summary of 2024 refactoring improvements  
-**Contents**: Key achievements, new helper classes, patterns established
-
-### 6. modifiers.md
-**Purpose**: Modifier system documentation  
-**Contents**: Modifier architecture, effect types, sources, implementation details, examples
-
-### 7. combat-systems.md
-**Purpose**: Combat system architecture and implementation  
-**Contents**: Ranged/melee combat separation, attack dialogs, damage application, hit locations, constants
-
-### 8. weapon-qualities.md
-**Purpose**: Weapon qualities system documentation  
-**Contents**: Quality implementations (Accurate, Primitive, Tearing, etc.), detection methods, combat integration, test coverage
-
-### 9. ammunition-modifiers.md
-**Purpose**: Ammunition modifier system documentation  
-**Contents**: Modifier types (weapon-damage, weapon-rof, weapon-blast, righteous-fury-threshold, characteristic-damage), weaponClass restrictions, characteristic damage system, UI integration
-
-### 10. specialty-chapter-costs.md
-**Purpose**: Specialty and chapter cost override system  
-**Contents**: Skill cost overrides (implemented), talent cost overrides (data only), characteristic advance costs (data only), chapter/specialty assignment, XP cost calculation
+### Game Systems
+5. **modifiers.md** - Modifier system (characteristics, skills, wounds, armor)
+6. **combat-systems.md** - Combat mechanics (ranged/melee, damage, hit locations)
+7. **weapon-qualities.md** - Weapon qualities (Accurate, Tearing, Melta, Lightning Claws, etc.)
+8. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
+9. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
+10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 
 ## Quick Reference
 
@@ -87,13 +66,11 @@ npm run build:packs       # Compile compendium packs
 ## Current State
 
 ### Metrics
-- **Total Lines**: ~2,618
 - **Test Coverage**: 68%
 - **Tests**: 719 passing
-- **Helper Classes**: 5 (XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
-- **CSS Files**: 9 modular files
-- **CSS Variables**: 60
-- **Handlebars Partials**: 3
+- **Helper Classes**: XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers, WeaponQualityHelper, WeaponUpgradeHelper, CombatHelper, RangedCombatHelper, MeleeCombatHelper
+- **CSS**: Modular component-based architecture
+- **Compendium Packs**: Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Augmentations
 
 ### Architecture
 - Clean separation of concerns
@@ -131,6 +108,18 @@ Create partials for repeated HTML patterns.
 ### External
 - [Foundry VTT Documentation](https://foundryvtt.com/api/)
 - [Jest Documentation](https://jestjs.io/)
+
+## Document Status
+
+### Complete
+- Foundation documents (product, structure, tech, guidelines)
+- Core systems (modifiers, combat, weapon qualities/upgrades)
+- Ammunition and specialty systems
+
+### Maintenance Notes
+- weapon-quality-accurate.md and weapon-quality-melta.md are legacy - content merged into weapon-qualities.md
+- lightning-claws.md is legacy - content merged into weapon-qualities.md
+- refactoring-summary.md is historical reference only
 
 ---
 

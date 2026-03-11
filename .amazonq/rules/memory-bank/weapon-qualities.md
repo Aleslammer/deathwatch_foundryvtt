@@ -307,6 +307,54 @@ if (isMelee && strBonus !== 0) {
 }
 ```
 
+### 15. Melta (p. 144)
+Astartes melta weapons with enhanced close-range penetration.
+
+**Effect:**
+- Doubles penetration at Short Range or closer (< 50% weapon range)
+- Point Blank (≤ 2m) also qualifies
+- Does not stack with Razor Sharp (Razor Sharp takes precedence)
+
+**Implementation:**
+```javascript
+let effectivePenetration = penetration;
+if (isRazorSharp && degreesOfSuccess >= 2) {
+  effectivePenetration = penetration * 2;
+} else if (isMeltaRange) {
+  effectivePenetration = penetration * 2;
+}
+```
+
+**Range Detection:**
+- Distance stored during attack in `CombatHelper.lastAttackDistance`
+- Melta range check: `distance < (weaponRange * 0.5)`
+- Flag passed through damage application
+
+### 16. Lightning Claws (p. 153)
+Paired melee weapons with bonus damage.
+
+**Single Claw:**
+- +1 damage per degree of success
+- Applied to all hits from the attack
+
+**Paired Claws:**
+- +2 damage per degree of success (requires 2+ equipped lightning claws)
+- Applied to all hits from the attack
+
+**Implementation:**
+```javascript
+if (isLightningClaw && degreesOfSuccess > 0) {
+  const bonusPerDegree = hasLightningClawPair ? 2 : 1;
+  formula += ` + ${degreesOfSuccess * bonusPerDegree}`;
+}
+```
+
+**Detection:**
+```javascript
+const isLightningClaw = await WeaponQualityHelper.isLightningClaw(weapon);
+const hasLightningClawPair = await WeaponQualityHelper.hasLightningClawPair(actor);
+```
+
 ## Quality Detection
 
 ### Simple Synchronous Checks (Preferred)
@@ -365,7 +413,20 @@ const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
 - ✅ Handles high penetration
 - ✅ Combines with toughness bonus
 
-**Total: 15+ tests, all passing**
+**Melta Quality:**
+- ✅ Detection methods
+- ✅ Penetration doubling at Short Range
+- ✅ No doubling outside melta range
+- ✅ Interaction with Razor Sharp
+- ✅ Interaction with Primitive weapons
+
+**Lightning Claws:**
+- ✅ Single claw detection
+- ✅ Pair detection
+- ✅ Damage bonus calculations (single/paired)
+- ✅ High degrees of success handling
+
+**Total: 27+ tests, all passing**
 
 ## Future Enhancements
 
