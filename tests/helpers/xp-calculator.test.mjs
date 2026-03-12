@@ -343,6 +343,68 @@ describe('XPCalculator', () => {
       
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12500); // 12000 + 500 (specialty override)
     });
+
+    it('specialty rank talent costs take precedence over chapter talent costs', () => {
+      const mockChapter = {
+        system: {
+          talentCosts: { 'talent1': 300 }
+        }
+      };
+      const mockSpecialty = {
+        system: {
+          rankCosts: {
+            '1': {
+              skills: {},
+              talents: { 'talent1': 200 }
+            }
+          }
+        }
+      };
+      mockActor.system.chapterId = 'chapter1';
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn((id) => id === 'chapter1' ? mockChapter : mockSpecialty),
+        [Symbol.iterator]: function* () {
+          yield { type: 'talent', name: 'Talent1', system: { cost: 1000, compendiumId: 'talent1' }, _id: 'id1' };
+        }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12200); // 12000 + 200 (specialty takes precedence over chapter)
+    });
+
+    it('cumulative talent costs: rank 3 includes talents from ranks 1, 2, and 3', () => {
+      const mockSpecialty = {
+        system: {
+          rankCosts: {
+            '1': {
+              skills: {},
+              talents: { 'talent1': 500, 'talent2': 300 }
+            },
+            '2': {
+              skills: {},
+              talents: { 'talent3': 400 }
+            },
+            '3': {
+              skills: {},
+              talents: { 'talent1': 200 } // Override talent1 from rank 1
+            }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 3;
+      mockActor.items = {
+        get: jest.fn(() => mockSpecialty),
+        [Symbol.iterator]: function* () {
+          yield { type: 'talent', name: 'Talent1', system: { cost: 1000, compendiumId: 'talent1' }, _id: 'id1' };
+          yield { type: 'talent', name: 'Talent2', system: { cost: 1000, compendiumId: 'talent2' }, _id: 'id2' };
+          yield { type: 'talent', name: 'Talent3', system: { cost: 1000, compendiumId: 'talent3' }, _id: 'id3' };
+        }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12900); // 12000 + 200 (talent1 rank 3) + 300 (talent2) + 400 (talent3)
+    });
   });
 
   describe('_getTalentSourceId', () => {
@@ -372,6 +434,14 @@ describe('XPCalculator', () => {
     it('falls back to _id', () => {
       const item = { system: {}, _id: 'fallback123' };
       expect(XPCalculator._getTalentSourceId(item)).toBe('fallback123');
+    });
+
+    it('uses compendiumId even when actor _id is different (drag from compendium scenario)', () => {
+      const item = { 
+        system: { compendiumId: 'tal00000000001' }, 
+        _id: 'randomActorItemId123' 
+      };
+      expect(XPCalculator._getTalentSourceId(item)).toBe('tal00000000001');
     });
   });
 });
