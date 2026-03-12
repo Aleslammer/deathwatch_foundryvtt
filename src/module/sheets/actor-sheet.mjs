@@ -65,8 +65,8 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Prepare character data and items.
     if (actorData.type == 'character') {
-      this._prepareItems(context);
       this._prepareCharacterData(context);
+      this._prepareItems(context);
     }
 
     // Prepare NPC data and items.
@@ -244,14 +244,17 @@ export class DeathwatchActorSheet extends ActorSheet {
       for (const talent of context.talents) {
         let effectiveCost = talent.system.cost;
         
+        // Get talent ID for matching (prefer compendiumId for dragged talents)
+        const talentId = talent.system.compendiumId || talent._id;
+        
         // Apply chapter override
-        if (chapterTalentCosts[talent._id] !== undefined) {
-          effectiveCost = chapterTalentCosts[talent._id];
+        if (chapterTalentCosts[talentId] !== undefined) {
+          effectiveCost = chapterTalentCosts[talentId];
         }
         
         // Apply specialty rank override (takes precedence)
-        if (specialtyTalentCosts[talent._id] !== undefined) {
-          effectiveCost = specialtyTalentCosts[talent._id];
+        if (specialtyTalentCosts[talentId] !== undefined) {
+          effectiveCost = specialtyTalentCosts[talentId];
         }
         
         talent.system.effectiveCost = effectiveCost;
