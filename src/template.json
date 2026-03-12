@@ -268,6 +268,7 @@
             ],
             "book": "",
             "page": "",
+            "skillCosts": {},
             "characteristicCosts": {
                 "ws": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
                 "bs": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },

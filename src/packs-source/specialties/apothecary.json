@@ -17,6 +17,9 @@
       "wil": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
       "fs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 }
     },
+    "skillCosts":{
+      "medicae": { "costTrain": 0 }
+    },
     "rankCosts": {
       "1": {
         "skills": {
@@ -25,11 +28,11 @@
           "medicae": { "costTrain": 400 }
         },
         "talents": {
-          "tal00000000012": 500,
-          "tal00000000092": 500,
-          "tal00000000189": 500,
-          "tal00000000190": 500,
-          "tal00000000191": 500
+          "tal00000000016": 500,
+          "tal00000000116": 500,
+          "tal00000000209": 500,
+          "tal00000000211": 500,
+          "tal00000000212": 500
         }
       },
       "2": { 
@@ -60,7 +63,7 @@
           "lore_forbidden_mutants": { "costTrain": 400 }
         },
         "talents": {
-          "tal00000000238": 600
+          "tal00000000251": 600
         }
       },
       "5": { 

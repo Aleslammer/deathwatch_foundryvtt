@@ -11,7 +11,8 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 1. Update\Organize and Optimize the memory bank.
 
 TODO: Finish specialties
-    TODO: Need to review the talent ids on apothecary.
+    TODO: test the cost
+    TODO: need to come back to librarian after psychic support are added
 
 TODO: Review all talents to determine if effects can be applied to anythig
 

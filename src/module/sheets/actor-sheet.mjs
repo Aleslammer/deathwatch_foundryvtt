@@ -121,6 +121,12 @@ export class DeathwatchActorSheet extends ActorSheet {
       Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
     }
 
+    // Get specialty base skill cost overrides
+    const specialtyBaseSkillCosts = {};
+    if (context.specialtyItem && context.specialtyItem.system.skillCosts) {
+      Object.assign(specialtyBaseSkillCosts, context.specialtyItem.system.skillCosts);
+    }
+
     // Get specialty rank-based skill cost overrides
     const specialtySkillCosts = {};
     const specialtyTalentCosts = {};
@@ -160,7 +166,14 @@ export class DeathwatchActorSheet extends ActorSheet {
           if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
         }
         
-        // Apply specialty rank-based skill cost overrides (takes precedence over chapter)
+        // Apply specialty base skill cost overrides (takes precedence over chapter)
+        if (specialtyBaseSkillCosts[k]) {
+          if (specialtyBaseSkillCosts[k].costTrain !== undefined) v.costTrain = specialtyBaseSkillCosts[k].costTrain;
+          if (specialtyBaseSkillCosts[k].costMaster !== undefined) v.costMaster = specialtyBaseSkillCosts[k].costMaster;
+          if (specialtyBaseSkillCosts[k].costExpert !== undefined) v.costExpert = specialtyBaseSkillCosts[k].costExpert;
+        }
+        
+        // Apply specialty rank-based skill cost overrides (takes precedence over base specialty)
         if (specialtySkillCosts[k] !== undefined) {
           // Support both simple number format and full object format
           if (typeof specialtySkillCosts[k] === 'number') {
