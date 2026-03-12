@@ -58,12 +58,34 @@ export class XPCalculator {
     if (!specialty) return { skills: {}, talents: {}, baseSkills: {} };
     
     const currentRank = actor.system.rank || 1;
-    const rankData = specialty.system.rankCosts?.[currentRank.toString()];
+    
+    // Accumulate costs from rank 1 up to current rank
+    const accumulatedSkills = {};
+    const accumulatedTalents = {};
+    
+    if (specialty.system.rankCosts) {
+      for (let rank = 1; rank <= currentRank; rank++) {
+        const rankData = specialty.system.rankCosts[rank.toString()];
+        if (rankData) {
+          // Merge skills (later ranks override earlier ranks)
+          if (rankData.skills) {
+            for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
+              if (!accumulatedSkills[skillKey]) accumulatedSkills[skillKey] = {};
+              Object.assign(accumulatedSkills[skillKey], skillCost);
+            }
+          }
+          // Merge talents (later ranks override earlier ranks)
+          if (rankData.talents) {
+            Object.assign(accumulatedTalents, rankData.talents);
+          }
+        }
+      }
+    }
     
     return {
       baseSkills: specialty.system.skillCosts || {},
-      skills: rankData?.skills || {},
-      talents: rankData?.talents || {}
+      skills: accumulatedSkills,
+      talents: accumulatedTalents
     };
   }
 

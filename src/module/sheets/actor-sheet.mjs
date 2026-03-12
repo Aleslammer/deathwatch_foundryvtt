@@ -127,15 +127,25 @@ export class DeathwatchActorSheet extends ActorSheet {
       Object.assign(specialtyBaseSkillCosts, context.specialtyItem.system.skillCosts);
     }
 
-    // Get specialty rank-based skill cost overrides
+    // Get specialty rank-based skill cost overrides (cumulative from rank 1 to current rank)
     const specialtySkillCosts = {};
     const specialtyTalentCosts = {};
     if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
       const currentRank = context.system.rank || 1;
-      const rankData = context.specialtyItem.system.rankCosts[currentRank.toString()];
-      if (rankData) {
-        if (rankData.skills) Object.assign(specialtySkillCosts, rankData.skills);
-        if (rankData.talents) Object.assign(specialtyTalentCosts, rankData.talents);
+      // Accumulate costs from rank 1 up to current rank
+      for (let rank = 1; rank <= currentRank; rank++) {
+        const rankData = context.specialtyItem.system.rankCosts[rank.toString()];
+        if (rankData) {
+          // Merge skills (later ranks override earlier ranks for same skill level)
+          if (rankData.skills) {
+            for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
+              if (!specialtySkillCosts[skillKey]) specialtySkillCosts[skillKey] = {};
+              Object.assign(specialtySkillCosts[skillKey], skillCost);
+            }
+          }
+          // Merge talents (later ranks override earlier ranks)
+          if (rankData.talents) Object.assign(specialtyTalentCosts, rankData.talents);
+        }
       }
     }
 

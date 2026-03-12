@@ -259,6 +259,68 @@ describe('XPCalculator', () => {
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 (free for apothecary)
     });
 
+    it('cumulative rank costs: rank 3 includes costs from ranks 1, 2, and 3', () => {
+      const mockSpecialty = {
+        system: {
+          skillCosts: {},
+          rankCosts: {
+            '1': {
+              skills: { medicae: { costTrain: 100 } },
+              talents: {}
+            },
+            '2': {
+              skills: { medicae: { costMaster: 200 } },
+              talents: {}
+            },
+            '3': {
+              skills: { medicae: { costExpert: 300 } },
+              talents: {}
+            }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 3;
+      mockActor.items = {
+        get: jest.fn(() => mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        medicae: { trained: true, mastered: true, expert: true, costTrain: 800, costMaster: 800, costExpert: 800 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12600); // 12000 + 100 + 200 + 300
+    });
+
+    it('cumulative rank costs: later ranks override earlier ranks for same skill level', () => {
+      const mockSpecialty = {
+        system: {
+          skillCosts: {},
+          rankCosts: {
+            '1': {
+              skills: { medicae: { costTrain: 100 } },
+              talents: {}
+            },
+            '2': {
+              skills: { medicae: { costTrain: 50 } }, // Override rank 1 costTrain
+              talents: {}
+            }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 2;
+      mockActor.items = {
+        get: jest.fn(() => mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        medicae: { trained: true, costTrain: 800 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12050); // 12000 + 50 (rank 2 overrides rank 1)
+    });
+
     it('applies specialty rank-based talent cost overrides', () => {
       const mockSpecialty = {
         system: {
