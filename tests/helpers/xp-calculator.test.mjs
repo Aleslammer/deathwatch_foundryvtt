@@ -151,6 +151,136 @@ describe('XPCalculator', () => {
       
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 + 0
     });
+
+    it('applies specialty rank-based skill cost overrides', () => {
+      const mockSpecialty = {
+        system: {
+          skillCosts: {},
+          rankCosts: {
+            '1': {
+              skills: { medicae: { costTrain: 400 } },
+              talents: {}
+            }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn(() => mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        medicae: { trained: true, costTrain: 800 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12400); // 12000 + 400 (specialty rank override)
+    });
+
+    it('specialty rank costs take precedence over chapter costs', () => {
+      const mockChapter = {
+        system: {
+          skillCosts: { medicae: { costTrain: 600 } }
+        }
+      };
+      const mockSpecialty = {
+        system: {
+          skillCosts: {},
+          rankCosts: {
+            '1': {
+              skills: { medicae: { costTrain: 400 } },
+              talents: {}
+            }
+          }
+        }
+      };
+      mockActor.system.chapterId = 'chapter1';
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn((id) => id === 'chapter1' ? mockChapter : mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        medicae: { trained: true, costTrain: 800 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12400); // 12000 + 400 (specialty rank takes precedence)
+    });
+
+    it('specialty base costs take precedence over chapter costs', () => {
+      const mockChapter = {
+        system: {
+          skillCosts: { medicae: { costTrain: 600 } }
+        }
+      };
+      const mockSpecialty = {
+        system: {
+          skillCosts: { medicae: { costTrain: 0 } },
+          rankCosts: {}
+        }
+      };
+      mockActor.system.chapterId = 'chapter1';
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn((id) => id === 'chapter1' ? mockChapter : mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        medicae: { trained: true, costTrain: 800 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 (specialty base takes precedence)
+    });
+
+    it('apothecary medicae at rank 1 costs 0 XP', () => {
+      const mockSpecialty = {
+        system: {
+          skillCosts: { medicae: { costTrain: 0 } },
+          rankCosts: {
+            '1': {
+              skills: { chem_use: { costTrain: 400 } },
+              talents: {}
+            }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn(() => mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        medicae: { trained: true, costTrain: 800 }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 (free for apothecary)
+    });
+
+    it('applies specialty rank-based talent cost overrides', () => {
+      const mockSpecialty = {
+        system: {
+          rankCosts: {
+            '1': {
+              skills: {},
+              talents: { 'talent1': 500 }
+            }
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn(() => mockSpecialty),
+        [Symbol.iterator]: function* () {
+          yield { type: 'talent', name: 'Talent1', system: { cost: 1000, compendiumId: 'talent1' }, _id: 'id1' };
+        }
+      };
+      
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12500); // 12000 + 500 (specialty override)
+    });
   });
 
   describe('_getTalentSourceId', () => {

@@ -24,8 +24,7 @@
       "1": {
         "skills": {
           "chem_use": { "costTrain": 400 },
-          "interrogation": { "costTrain": 200 },
-          "medicae": { "costTrain": 400 }
+          "interrogation": { "costTrain": 200 }
         },
         "talents": {
           "tal00000000016": 500,
