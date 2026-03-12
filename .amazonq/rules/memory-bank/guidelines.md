@@ -600,6 +600,10 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
   - Armor: `armr00000000###`
   - Talents: `tal000000000###`
   - Traits: `trt000000000###`
+- **Talents MUST have compendiumId**: All talent items must have `system.compendiumId` set to match their `_id`
+  - Used by XPCalculator and chapter/specialty cost overrides
+  - Run `node builds/scripts/sortTalentJsons.mjs` to ensure compendiumId is set
+  - Run `node builds/scripts/validateTalentIds.mjs` to verify all talents have matching IDs
 - Validate IDs before committing:
   ```powershell
   # Check for duplicates in a folder
