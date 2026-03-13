@@ -65,8 +65,8 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Prepare character data and items.
     if (actorData.type == 'character') {
-      this._prepareItems(context);
       this._prepareCharacterData(context);
+      this._prepareItems(context);
     }
 
     // Prepare NPC data and items.
@@ -121,6 +121,43 @@ export class DeathwatchActorSheet extends ActorSheet {
       Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
     }
 
+    // Get specialty base skill cost overrides
+    const specialtyBaseSkillCosts = {};
+    if (context.specialtyItem && context.specialtyItem.system.skillCosts) {
+      Object.assign(specialtyBaseSkillCosts, context.specialtyItem.system.skillCosts);
+    }
+
+    // Get specialty rank-based skill cost overrides (cumulative from rank 1 to current rank)
+    const specialtySkillCosts = {};
+    const specialtyTalentCosts = {}; // Maps talent ID to array of costs
+    if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
+      const currentRank = context.system.rank || 1;
+      // Accumulate costs from rank 1 up to current rank
+      for (let rank = 1; rank <= currentRank; rank++) {
+        const rankData = context.specialtyItem.system.rankCosts[rank.toString()];
+        if (rankData) {
+          // Merge skills (later ranks override earlier ranks for same skill level)
+          if (rankData.skills) {
+            for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
+              if (!specialtySkillCosts[skillKey]) specialtySkillCosts[skillKey] = {};
+              Object.assign(specialtySkillCosts[skillKey], skillCost);
+            }
+          }
+          // Accumulate talents as arrays (for stackable talents)
+          if (rankData.talents) {
+            for (const [talentId, cost] of Object.entries(rankData.talents)) {
+              if (!specialtyTalentCosts[talentId]) specialtyTalentCosts[talentId] = [];
+              specialtyTalentCosts[talentId].push(cost);
+            }
+          }
+        }
+      }
+    }
+
+    // Store talent cost overrides for later use
+    context.specialtyTalentCosts = specialtyTalentCosts;
+    context.chapterTalentCosts = context.chapterItem?.system.talentCosts || {};
+
     // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
       const sortedSkills = Object.entries(context.system.skills)
@@ -142,6 +179,25 @@ export class DeathwatchActorSheet extends ActorSheet {
           if (chapterSkillCosts[k].costTrain !== undefined) v.costTrain = chapterSkillCosts[k].costTrain;
           if (chapterSkillCosts[k].costMaster !== undefined) v.costMaster = chapterSkillCosts[k].costMaster;
           if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
+        }
+        
+        // Apply specialty base skill cost overrides (takes precedence over chapter)
+        if (specialtyBaseSkillCosts[k]) {
+          if (specialtyBaseSkillCosts[k].costTrain !== undefined) v.costTrain = specialtyBaseSkillCosts[k].costTrain;
+          if (specialtyBaseSkillCosts[k].costMaster !== undefined) v.costMaster = specialtyBaseSkillCosts[k].costMaster;
+          if (specialtyBaseSkillCosts[k].costExpert !== undefined) v.costExpert = specialtyBaseSkillCosts[k].costExpert;
+        }
+        
+        // Apply specialty rank-based skill cost overrides (takes precedence over base specialty)
+        if (specialtySkillCosts[k] !== undefined) {
+          // Support both simple number format and full object format
+          if (typeof specialtySkillCosts[k] === 'number') {
+            v.costTrain = specialtySkillCosts[k];
+          } else if (typeof specialtySkillCosts[k] === 'object') {
+            if (specialtySkillCosts[k].costTrain !== undefined) v.costTrain = specialtySkillCosts[k].costTrain;
+            if (specialtySkillCosts[k].costMaster !== undefined) v.costMaster = specialtySkillCosts[k].costMaster;
+            if (specialtySkillCosts[k].costExpert !== undefined) v.costExpert = specialtySkillCosts[k].costExpert;
+          }
         }
       }
     }
@@ -184,6 +240,54 @@ export class DeathwatchActorSheet extends ActorSheet {
   _prepareItems(context) {
     const categories = ItemHandlers.processItems(context.items);
     Object.assign(context, categories);
+    
+    // Apply talent cost overrides
+    if (context.talents && context.talents.length > 0) {
+      const chapterTalentCosts = context.chapterTalentCosts || {};
+      const specialtyTalentCosts = context.specialtyTalentCosts || {};
+      
+      // Count instances of each talent by compendiumId
+      const talentCounts = {};
+      
+      for (const talent of context.talents) {
+        let effectiveCost = talent.system.cost;
+        
+        // Get talent ID for matching (prefer compendiumId for dragged talents)
+        const talentId = talent.system.compendiumId || talent._id;
+        
+        // Track instance count for this talent
+        if (!talentCounts[talentId]) {
+          talentCounts[talentId] = { count: 0, stackable: talent.system.stackable };
+        }
+        talentCounts[talentId].count++;
+        const instanceCount = talentCounts[talentId].count;
+        
+        // Apply chapter override
+        if (chapterTalentCosts[talentId] !== undefined) {
+          effectiveCost = chapterTalentCosts[talentId];
+        }
+        
+        // Apply specialty rank override (takes precedence)
+        const specialtyOverrides = specialtyTalentCosts[talentId];
+        if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
+          if (talentCounts[talentId].stackable) {
+            // For stackable talents, use the array index for this instance (if available)
+            if (specialtyOverrides.length >= instanceCount) {
+              effectiveCost = specialtyOverrides[instanceCount - 1];
+            }
+            // If no override for this instance, use subsequentCost or base cost
+            else if (instanceCount > 1 && talent.system.subsequentCost) {
+              effectiveCost = talent.system.subsequentCost;
+            }
+          } else {
+            // For non-stackable talents, use the last (most recent rank) override
+            effectiveCost = specialtyOverrides[specialtyOverrides.length - 1];
+          }
+        }
+        
+        talent.system.effectiveCost = effectiveCost;
+      }
+    }
   }
 
   /* -------------------------------------------- */

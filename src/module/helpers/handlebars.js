@@ -57,4 +57,8 @@ function registerHandlebarsHelpers() {
         }
         return formatted;
     })
+
+    Handlebars.registerHelper("hasKeys", function (obj) {
+        return obj && typeof obj === 'object' && Object.keys(obj).length > 0;
+    })
 }

@@ -36,9 +36,20 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 
 ### Compendium Packs
 - Pre-configured ammunition types
-- Weapon catalog
-- Armor sets
+- Weapon catalog (Imperial, Tau, Tyranid)
+- Armor sets with histories
 - General gear and equipment
+- Talents (200+ talents)
+- Traits (50+ traits)
+- Chapters (9 Space Marine chapters)
+- Specialties (6 specialties: Tactical, Assault, Devastator, Apothecary, Librarian, Techmarine)
+- Implants (19 Space Marine implants)
+- Cybernetics (mechanical augmentations)
+- Weapon Qualities (35+ qualities)
+- Weapon Upgrades (attachments and modifications)
+- Demeanours (19 personality traits)
+- Critical Effects (by damage type)
+- Roll Tables (scatter, haywire effects)
 - All items include book references and page numbers
 
 ### Lore and Knowledge System

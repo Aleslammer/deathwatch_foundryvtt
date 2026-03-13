@@ -16,6 +16,38 @@
 - Mock Foundry VTT globals in `tests/setup.mjs`
 - Use `jest.clearAllMocks()` in tests to avoid mock pollution between tests
 
+### Test Modification Warning
+**CRITICAL**: When tests fail, investigate the root cause before modifying test expectations.
+
+- **DO NOT** simply change test expectations to make tests pass
+- **DO** verify that the expected value is correct based on requirements
+- **DO** check if the implementation has a bug rather than the test
+
+**Example Scenario:**
+```javascript
+// Test expects 12800 but gets 13200
+expect(spent).toBe(12800); // FAILS
+
+// WRONG: Change test to match buggy behavior
+expect(spent).toBe(13200); // Now passes, but hides bug
+
+// RIGHT: Fix the implementation bug, keep correct expectation
+expect(spent).toBe(12800); // Now passes with correct code
+```
+
+**Red Flags:**
+- Test was passing, now fails after code change
+- Changing expectation makes test pass without understanding why
+- Multiple related tests need expectation changes
+- Expected value doesn't match documented requirements
+
+**Proper Process:**
+1. Understand what the test is validating
+2. Verify the expected value is correct per requirements
+3. Debug why actual value differs from expected
+4. Fix implementation bug if found
+5. Only change test if requirements changed or test was wrong
+
 ### Test Structure
 ```javascript
 import { jest } from '@jest/globals';
@@ -568,6 +600,10 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
   - Armor: `armr00000000###`
   - Talents: `tal000000000###`
   - Traits: `trt000000000###`
+- **Talents MUST have compendiumId**: All talent items must have `system.compendiumId` set to match their `_id`
+  - Used by XPCalculator and chapter/specialty cost overrides
+  - Run `node builds/scripts/sortTalentJsons.mjs` to ensure compendiumId is set
+  - Run `node builds/scripts/validateTalentIds.mjs` to verify all talents have matching IDs
 - Validate IDs before committing:
   ```powershell
   # Check for duplicates in a folder

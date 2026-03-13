@@ -28,10 +28,11 @@ export class XPCalculator {
   static calculateSpentXP(actor) {
     let spent = this.STARTING_XP;
     const chapterCosts = this._getChapterCosts(actor);
+    const specialtyCosts = this._getSpecialtyCosts(actor);
     
     spent += this._calculateCharacteristicAdvanceCosts(actor);
-    spent += this._calculateTalentCosts(actor, chapterCosts.talents);
-    spent += this._calculateSkillCosts(actor, chapterCosts.skills);
+    spent += this._calculateTalentCosts(actor, chapterCosts.talents, specialtyCosts.talents);
+    spent += this._calculateSkillCosts(actor, chapterCosts.skills, specialtyCosts);
     
     return spent;
   }
@@ -45,6 +46,49 @@ export class XPCalculator {
     return {
       skills: chapter?.system.skillCosts || {},
       talents: chapter?.system.talentCosts || {}
+    };
+  }
+
+  /**
+   * Get specialty rank-specific cost overrides
+   * @private
+   */
+  static _getSpecialtyCosts(actor) {
+    const specialty = actor.system.specialtyId ? actor.items.get(actor.system.specialtyId) : null;
+    if (!specialty) return { skills: {}, talents: {}, baseSkills: {} };
+    
+    const currentRank = actor.system.rank || 1;
+    
+    // Accumulate costs from rank 1 up to current rank
+    const accumulatedSkills = {};
+    const accumulatedTalents = {}; // Maps talent ID to array of costs (for stackable) or single cost (for non-stackable)
+    
+    if (specialty.system.rankCosts) {
+      for (let rank = 1; rank <= currentRank; rank++) {
+        const rankData = specialty.system.rankCosts[rank.toString()];
+        if (rankData) {
+          // Merge skills (later ranks override earlier ranks)
+          if (rankData.skills) {
+            for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
+              if (!accumulatedSkills[skillKey]) accumulatedSkills[skillKey] = {};
+              Object.assign(accumulatedSkills[skillKey], skillCost);
+            }
+          }
+          // Accumulate talents - we'll determine if they're stackable later
+          if (rankData.talents) {
+            for (const [talentId, cost] of Object.entries(rankData.talents)) {
+              if (!accumulatedTalents[talentId]) accumulatedTalents[talentId] = [];
+              accumulatedTalents[talentId].push(cost);
+            }
+          }
+        }
+      }
+    }
+    
+    return {
+      baseSkills: specialty.system.skillCosts || {},
+      skills: accumulatedSkills,
+      talents: accumulatedTalents
     };
   }
 
@@ -71,7 +115,7 @@ export class XPCalculator {
    * Calculate XP spent on talents
    * @private
    */
-  static _calculateTalentCosts(actor, chapterTalentCosts) {
+  static _calculateTalentCosts(actor, chapterTalentCosts, specialtyTalentCosts) {
     const talentCounts = {};
     let total = 0;
     
@@ -79,12 +123,15 @@ export class XPCalculator {
       if (item.type !== 'talent') continue;
       
       const sourceId = this._getTalentSourceId(item);
-      const cost = chapterTalentCosts[sourceId] ?? item.system.cost ?? 0;
+      let cost = item.system.cost ?? 0;
+      
+      // Apply chapter override
+      if (chapterTalentCosts[sourceId] !== undefined) cost = chapterTalentCosts[sourceId];
       
       if (!talentCounts[item.name]) {
         talentCounts[item.name] = { 
           count: 0, 
-          firstCost: cost, 
+          sourceId: sourceId,
           subsequentCost: item.system.subsequentCost ?? 0,
           stackable: item.system.stackable 
         };
@@ -92,6 +139,21 @@ export class XPCalculator {
       
       const talent = talentCounts[item.name];
       talent.count++;
+      
+      // Check if specialty has a cost override
+      const specialtyOverrides = specialtyTalentCosts[sourceId];
+      if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
+        if (talent.stackable) {
+          // For stackable talents, use the array index for this instance (if available)
+          if (specialtyOverrides.length >= talent.count) {
+            cost = specialtyOverrides[talent.count - 1];
+          }
+          // If no override for this instance, fall through to use subsequentCost
+        } else {
+          // For non-stackable talents, use the last (most recent rank) override
+          cost = specialtyOverrides[specialtyOverrides.length - 1];
+        }
+      }
       
       if (talent.count === 1) {
         total += Math.max(0, cost);
@@ -124,14 +186,41 @@ export class XPCalculator {
    * Calculate XP spent on skills
    * @private
    */
-  static _calculateSkillCosts(actor, chapterSkillCosts) {
+  static _calculateSkillCosts(actor, chapterSkillCosts, specialtyCosts) {
     let total = 0;
     
     for (const [key, skill] of Object.entries(actor.system.skills || {})) {
-      const costs = chapterSkillCosts[key] || {};
-      const trainCost = costs.costTrain ?? skill.costTrain ?? 0;
-      const masterCost = costs.costMaster ?? skill.costMaster ?? 0;
-      const expertCost = costs.costExpert ?? skill.costExpert ?? 0;
+      let trainCost = skill.costTrain ?? 0;
+      let masterCost = skill.costMaster ?? 0;
+      let expertCost = skill.costExpert ?? 0;
+      
+      // Apply chapter overrides
+      const chapterCosts = chapterSkillCosts[key];
+      if (chapterCosts) {
+        if (chapterCosts.costTrain !== undefined) trainCost = chapterCosts.costTrain;
+        if (chapterCosts.costMaster !== undefined) masterCost = chapterCosts.costMaster;
+        if (chapterCosts.costExpert !== undefined) expertCost = chapterCosts.costExpert;
+      }
+      
+      // Apply specialty base overrides (takes precedence over chapter)
+      const specialtyBaseCosts = specialtyCosts.baseSkills[key];
+      if (specialtyBaseCosts) {
+        if (specialtyBaseCosts.costTrain !== undefined) trainCost = specialtyBaseCosts.costTrain;
+        if (specialtyBaseCosts.costMaster !== undefined) masterCost = specialtyBaseCosts.costMaster;
+        if (specialtyBaseCosts.costExpert !== undefined) expertCost = specialtyBaseCosts.costExpert;
+      }
+      
+      // Apply specialty rank overrides (takes precedence over base specialty)
+      const specialtyRankCosts = specialtyCosts.skills[key];
+      if (specialtyRankCosts !== undefined) {
+        if (typeof specialtyRankCosts === 'number') {
+          trainCost = specialtyRankCosts;
+        } else if (typeof specialtyRankCosts === 'object') {
+          if (specialtyRankCosts.costTrain !== undefined) trainCost = specialtyRankCosts.costTrain;
+          if (specialtyRankCosts.costMaster !== undefined) masterCost = specialtyRankCosts.costMaster;
+          if (specialtyRankCosts.costExpert !== undefined) expertCost = specialtyRankCosts.costExpert;
+        }
+      }
       
       if (skill.trained) total += Math.max(0, trainCost);
       if (skill.mastered) total += Math.max(0, masterCost);

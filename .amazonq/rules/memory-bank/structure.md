@@ -62,6 +62,7 @@ src/
   - Character data preparation
   - Derived value calculations (bonuses, totals)
   - Actor-specific methods
+- **actor-conditions.mjs**: Actor condition tracking and management
 - **item.mjs**: Defines Item document behavior (weapons, armor, gear, etc.)
   - Item data preparation
   - Equipment state management
@@ -80,6 +81,10 @@ src/
 - **ranged-combat.mjs**: Ranged weapon attack dialog and logic
 - **melee-combat.mjs**: Melee weapon attack dialog and logic
 - **combat-dialog.mjs**: Combat dialog utilities (pure functions)
+- **righteous-fury-helper.mjs**: Righteous Fury mechanics
+- **wound-helper.mjs**: Wound calculation utilities
+- **rank-helper.mjs**: Rank progression utilities
+- **skill-loader.mjs**: Skill data loading
 - **config.mjs**: System configuration (DWConfig object)
 - **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers)
 - **critical-effects.mjs**: Critical damage effects
@@ -90,10 +95,6 @@ src/
 - **initiative.mjs**: Initiative rolling
 - **modifiers.mjs**: Modifier CRUD operations
 - **templates.mjs**: Template preloading
-- **righteous-fury-helper.mjs**: Righteous Fury mechanics
-- **wound-helper.mjs**: Wound calculation utilities
-- **rank-helper.mjs**: Rank progression utilities
-- **skill-loader.mjs**: Skill data loading
 - **status-effects.mjs**: Status effect management
 
 ### 4. Sheet Classes (`module/sheets/`)
@@ -119,6 +120,37 @@ Defines the data structure for:
 - **packs-source/**: Human-readable source data (JSON/YAML)
 - **packs/**: Compiled LevelDB format for Foundry
 - **builds/scripts/compilePacks.mjs**: Converts source to compiled format
+
+#### Talent Compendium Requirements
+- **compendiumId Field**: All talents MUST have `system.compendiumId` set to match their `_id`
+- **Purpose**: Used by XPCalculator and chapter/specialty cost overrides to identify talents
+- **Validation**: 
+  - Automatically runs during `npm run build:packs` - build will fail if validation fails
+  - Automatically runs in GitHub Actions before tests - CI will fail if validation fails
+- **Manual Validation**: Run `node builds/scripts/validateTalentIds.mjs` to verify all talents have matching IDs
+- **Sorting**: Run `node builds/scripts/sortTalentJsons.mjs` to sort properties and ensure compendiumId is set
+- **Property Order**: 
+  - Top level: `_id`, `name`, `type`, `img`, `system`, `effects`, `flags`, `folder`, `sort`, `ownership`
+  - System level: `book`, `page`, `prerequisite`, `benefit`, `description`, `cost`, `subsequentCost`, `stackable`, `compendiumId`
+
+**Example Talent Structure:**
+```json
+{
+  "_id": "tal00000000001",
+  "name": "Abhor the Witch",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "book": "DeathWatch Core Rulebook",
+    "page": "113",
+    "prerequisite": "Adeptus Astartes",
+    "benefit": "Resistance to Psychic Powers",
+    "description": "<p>Full description...</p>",
+    "cost": 500,
+    "compendiumId": "tal00000000001"
+  }
+}
+```
 
 ### 7. UI Templates (`templates/`)
 Handlebars templates for rendering:
