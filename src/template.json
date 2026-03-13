@@ -132,7 +132,8 @@
             "implant",
             "cybernetic",
             "weapon-quality",
-            "weapon-upgrade"
+            "weapon-upgrade",
+            "psychic-power"
         ],
         "templates": {
             "base": {
@@ -338,6 +339,20 @@
             "book": "",
             "page": "",
             "modifiers": []
+        },
+        "psychic-power": {
+            "templates": [
+                "base"
+            ],
+            "action": "",
+            "opposed": "",
+            "range": "",
+            "sustained": "",
+            "cost": 0,
+            "class": "",
+            "key": "",
+            "book": "",
+            "page": ""
         }
     }
 }

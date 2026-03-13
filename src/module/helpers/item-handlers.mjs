@@ -69,7 +69,7 @@ export class ItemHandlers {
       chapters: [],
       implants: [],
       cybernetics: [],
-      spells: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] }
+      psychicPowers: []
     };
 
     const loadedAmmoIds = new Set();
@@ -119,10 +119,8 @@ export class ItemHandlers {
         case 'cybernetic':
           categories.cybernetics.push(item);
           break;
-        case 'spell':
-          if (item.system.spellLevel !== undefined) {
-            categories.spells[item.system.spellLevel].push(item);
-          }
+        case 'psychic-power':
+          categories.psychicPowers.push(item);
           break;
       }
     }

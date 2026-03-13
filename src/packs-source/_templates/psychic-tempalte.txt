@@ -1,0 +1,20 @@
+folder:Telepath
+Name: Short-Range Telepath
+Action: Free 
+Opposed: No 
+Range: 50 metres x PR 
+Sustained: Yes 
+Description: The psyker can send his thoughts into the 
+minds of those around him, touching a number of targets 
+equal to his PR. The targets can be a select group, either 
+individuals the psyker can see or minds he is familiar with 
+within the power’s range. Alternatively, the psyker can choose 
+to make a generalised broadcast to every mind within range 
+indiscriminately. An affected mind’s processes are still affected 
+by the structure of language, and if telepathy is attempted 
+without a shared language, the power suffers a –20 penalty. 
+Targets who do not wish to be open to such a communication 
+can resist with an Opposed Willpower test. Sustaining this 
+power is a Free Action.
+Book: Core Rulebook
+Page 191

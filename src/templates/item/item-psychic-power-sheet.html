@@ -1,0 +1,59 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64" />
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">Action:</label>
+        <input type="text" name="system.action" value="{{system.action}}" placeholder="e.g., Full, Half, Free" style="margin-top: 2px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">Opposed:</label>
+        <input type="text" name="system.opposed" value="{{system.opposed}}" placeholder="Yes or No" style="margin-top: 2px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">Range:</label>
+        <input type="text" name="system.range" value="{{system.range}}" placeholder="e.g., 30m, 5 metres x PR" style="margin-top: 2px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">Sustained:</label>
+        <input type="text" name="system.sustained" value="{{system.sustained}}" placeholder="Yes or No" style="margin-top: 2px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">Class:</label>
+        <input type="text" name="system.class" value="{{system.class}}" placeholder="e.g., Telepathy, Codex" style="margin-top: 2px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">Key:</label>
+        <input type="text" name="system.key" value="{{system.key}}" placeholder="e.g., avenger, mind-probe" style="margin-top: 2px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: normal; font-size: 0.9em;">XP Cost:</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" placeholder="0" data-dtype="Number" style="margin-top: 2px; width: 100px;" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">Description</a>
+    <a class="item" data-tab="source">Source</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="description">
+      {{editor system.description target="system.description" button=true owner=owner editable=editable engine="prosemirror"}}
+    </div>
+    <div class="tab" data-group="primary" data-tab="source">
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Book:</label>
+          <input type="text" name="system.book" value="{{system.book}}" placeholder="e.g., Core Rulebook" />
+        </div>
+        <div class="flex1">
+          <label>Page:</label>
+          <input type="text" name="system.page" value="{{system.page}}" placeholder="e.g., 194" />
+        </div>
+      </div>
+    </div>
+  </section>
+</form>
