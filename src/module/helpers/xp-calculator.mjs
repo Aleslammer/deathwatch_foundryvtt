@@ -61,7 +61,7 @@ export class XPCalculator {
     
     // Accumulate costs from rank 1 up to current rank
     const accumulatedSkills = {};
-    const accumulatedTalents = {};
+    const accumulatedTalents = {}; // Maps talent ID to array of costs (for stackable) or single cost (for non-stackable)
     
     if (specialty.system.rankCosts) {
       for (let rank = 1; rank <= currentRank; rank++) {
@@ -74,9 +74,12 @@ export class XPCalculator {
               Object.assign(accumulatedSkills[skillKey], skillCost);
             }
           }
-          // Merge talents (later ranks override earlier ranks)
+          // Accumulate talents - we'll determine if they're stackable later
           if (rankData.talents) {
-            Object.assign(accumulatedTalents, rankData.talents);
+            for (const [talentId, cost] of Object.entries(rankData.talents)) {
+              if (!accumulatedTalents[talentId]) accumulatedTalents[talentId] = [];
+              accumulatedTalents[talentId].push(cost);
+            }
           }
         }
       }
@@ -121,13 +124,14 @@ export class XPCalculator {
       
       const sourceId = this._getTalentSourceId(item);
       let cost = item.system.cost ?? 0;
+      
+      // Apply chapter override
       if (chapterTalentCosts[sourceId] !== undefined) cost = chapterTalentCosts[sourceId];
-      if (specialtyTalentCosts[sourceId] !== undefined) cost = specialtyTalentCosts[sourceId];
       
       if (!talentCounts[item.name]) {
         talentCounts[item.name] = { 
           count: 0, 
-          firstCost: cost, 
+          sourceId: sourceId,
           subsequentCost: item.system.subsequentCost ?? 0,
           stackable: item.system.stackable 
         };
@@ -135,6 +139,21 @@ export class XPCalculator {
       
       const talent = talentCounts[item.name];
       talent.count++;
+      
+      // Check if specialty has a cost override
+      const specialtyOverrides = specialtyTalentCosts[sourceId];
+      if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
+        if (talent.stackable) {
+          // For stackable talents, use the array index for this instance (if available)
+          if (specialtyOverrides.length >= talent.count) {
+            cost = specialtyOverrides[talent.count - 1];
+          }
+          // If no override for this instance, fall through to use subsequentCost
+        } else {
+          // For non-stackable talents, use the last (most recent rank) override
+          cost = specialtyOverrides[specialtyOverrides.length - 1];
+        }
+      }
       
       if (talent.count === 1) {
         total += Math.max(0, cost);

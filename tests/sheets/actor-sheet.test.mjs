@@ -233,10 +233,10 @@ describe('DeathwatchActorSheet', () => {
     it('applies specialty talent cost overrides (takes precedence over chapter)', () => {
       const context = {
         items: [
-          { _id: 'tal1', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000, compendiumId: 'tal00000000001' } }
+          { _id: 'tal1', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000, compendiumId: 'tal00000000001', stackable: false } }
         ],
         chapterTalentCosts: { 'tal00000000001': 500 },
-        specialtyTalentCosts: { 'tal00000000001': 300 }
+        specialtyTalentCosts: { 'tal00000000001': [300] } // Array format for non-stackable
       };
 
       sheet._prepareItems(context);
@@ -247,10 +247,10 @@ describe('DeathwatchActorSheet', () => {
     it('uses compendiumId for matching talent costs (drag from compendium scenario)', () => {
       const context = {
         items: [
-          { _id: 'newRandomId123', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000, compendiumId: 'tal00000000001' } }
+          { _id: 'newRandomId123', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000, compendiumId: 'tal00000000001', stackable: false } }
         ],
         chapterTalentCosts: {},
-        specialtyTalentCosts: { 'tal00000000001': 500 }
+        specialtyTalentCosts: { 'tal00000000001': [500] } // Array format
       };
 
       sheet._prepareItems(context);
@@ -261,10 +261,10 @@ describe('DeathwatchActorSheet', () => {
     it('falls back to _id when compendiumId is not set', () => {
       const context = {
         items: [
-          { _id: 'tal00000000001', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000 } }
+          { _id: 'tal00000000001', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000, stackable: false } }
         ],
         chapterTalentCosts: {},
-        specialtyTalentCosts: { 'tal00000000001': 500 }
+        specialtyTalentCosts: { 'tal00000000001': [500] } // Array format
       };
 
       sheet._prepareItems(context);

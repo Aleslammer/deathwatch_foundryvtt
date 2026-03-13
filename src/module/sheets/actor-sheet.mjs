@@ -129,7 +129,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Get specialty rank-based skill cost overrides (cumulative from rank 1 to current rank)
     const specialtySkillCosts = {};
-    const specialtyTalentCosts = {};
+    const specialtyTalentCosts = {}; // Maps talent ID to array of costs
     if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
       const currentRank = context.system.rank || 1;
       // Accumulate costs from rank 1 up to current rank
@@ -143,8 +143,13 @@ export class DeathwatchActorSheet extends ActorSheet {
               Object.assign(specialtySkillCosts[skillKey], skillCost);
             }
           }
-          // Merge talents (later ranks override earlier ranks)
-          if (rankData.talents) Object.assign(specialtyTalentCosts, rankData.talents);
+          // Accumulate talents as arrays (for stackable talents)
+          if (rankData.talents) {
+            for (const [talentId, cost] of Object.entries(rankData.talents)) {
+              if (!specialtyTalentCosts[talentId]) specialtyTalentCosts[talentId] = [];
+              specialtyTalentCosts[talentId].push(cost);
+            }
+          }
         }
       }
     }
@@ -241,11 +246,21 @@ export class DeathwatchActorSheet extends ActorSheet {
       const chapterTalentCosts = context.chapterTalentCosts || {};
       const specialtyTalentCosts = context.specialtyTalentCosts || {};
       
+      // Count instances of each talent by compendiumId
+      const talentCounts = {};
+      
       for (const talent of context.talents) {
         let effectiveCost = talent.system.cost;
         
         // Get talent ID for matching (prefer compendiumId for dragged talents)
         const talentId = talent.system.compendiumId || talent._id;
+        
+        // Track instance count for this talent
+        if (!talentCounts[talentId]) {
+          talentCounts[talentId] = { count: 0, stackable: talent.system.stackable };
+        }
+        talentCounts[talentId].count++;
+        const instanceCount = talentCounts[talentId].count;
         
         // Apply chapter override
         if (chapterTalentCosts[talentId] !== undefined) {
@@ -253,8 +268,21 @@ export class DeathwatchActorSheet extends ActorSheet {
         }
         
         // Apply specialty rank override (takes precedence)
-        if (specialtyTalentCosts[talentId] !== undefined) {
-          effectiveCost = specialtyTalentCosts[talentId];
+        const specialtyOverrides = specialtyTalentCosts[talentId];
+        if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
+          if (talentCounts[talentId].stackable) {
+            // For stackable talents, use the array index for this instance (if available)
+            if (specialtyOverrides.length >= instanceCount) {
+              effectiveCost = specialtyOverrides[instanceCount - 1];
+            }
+            // If no override for this instance, use subsequentCost or base cost
+            else if (instanceCount > 1 && talent.system.subsequentCost) {
+              effectiveCost = talent.system.subsequentCost;
+            }
+          } else {
+            // For non-stackable talents, use the last (most recent rank) override
+            effectiveCost = specialtyOverrides[specialtyOverrides.length - 1];
+          }
         }
         
         talent.system.effectiveCost = effectiveCost;
