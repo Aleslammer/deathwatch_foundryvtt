@@ -294,6 +294,28 @@ export class DeathwatchActorSheet extends ActorSheet {
 
   /** @override */
   /* istanbul ignore next */
+  async _render(force, options = {}) {
+    // Store scroll position before render
+    if (this.element.length) {
+      const skillsContainer = this.element.find('.tab.characteristics > div > div[style*="overflow-y"]');
+      if (skillsContainer.length) {
+        this._skillsScrollTop = skillsContainer[0].scrollTop;
+      }
+    }
+    
+    await super._render(force, options);
+    
+    // Restore scroll position after render
+    if (this._skillsScrollTop !== undefined) {
+      const skillsContainer = this.element.find('.tab.characteristics > div > div[style*="overflow-y"]');
+      if (skillsContainer.length) {
+        skillsContainer[0].scrollTop = this._skillsScrollTop;
+      }
+    }
+  }
+
+  /** @override */
+  /* istanbul ignore next */
   activateListeners(html) {
     super.activateListeners(html);
 
