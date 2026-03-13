@@ -12,9 +12,8 @@ game.actors.getName("YourActorName").items.find(i => i.type === "specialty").sys
 1. Update\Organize and Optimize the memory bank.
 
 TODO: Finish specialties
-    TODO: test the costing for Skills and talents
-            Convert the talent to lookup based on key (like qualities?)
     TODO: need to come back to librarian after psychic support are added
+    TODO: Add Special Abilities for Specialties??
 
 TODO: Review all talents to determine if effects can be applied to anythig
 

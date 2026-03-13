@@ -17,6 +17,11 @@
       "wil": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
       "fs": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 }
     },
-    "ranks": []
+    "skillCosts":{
+      "psyniscience": { "costTrain": 0 }
+    },
+    "rankCosts": {
+    }
   }
 }
+
