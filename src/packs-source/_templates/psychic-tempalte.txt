@@ -1,23 +1,22 @@
 folder:Chapter
-Chapter: ThunDercLaP
-Action: Full 
-Opposed: No 
-Range: 10 metre radius x PR 
-Sustained: No 
-Cost: 500
-Description: With a word of power and a clap of his mighty
-hands, the Rune Priest creates a deafening crack of thunder
-that rolls across the battlefield. All those within range of this
-power (friends or foes, though not including the Rune Priest)
-suffer 1d5 x PR Impact damage. This damage is reduced by
-Toughness as normal. However, only armour worn on the
-head protects against it. In addition, anyone suffering damage
-from this attack must make a Toughness Test with a penalty
-of –5 x PR or be deafened for 1d10 rounds (see page 260
-for the effects of being deafened). Finally, fragile objects such
-as mundane glass, crystal or fine ceramics within the power’s
-range are shattered (though the GM has the final say on
-whether an object is affected).
-Book: Core Rulebook
-Page 198
+Chapter: Imperial Fists
+Name: WAVE OF PENANCE
+Action: Half
+Opposed: No
+Range: 10 x PR
+Sustained: x
+Cost: 1500
+Description: The Librarian reaches into the ether and draws 
+forth all of the pain suffered by his ancestors in the self
+imposed atonement of the pain-glove and a hundred other 
+such rituals. In an instant, ten thousand years of penance 
+is unleashed upon his foes, every iota of pain ever felt by 
+the Chapter turned back upon its foes in an unstoppable 
+blast wave. Every enemy within range of the Imperial Fists 
+Librarian suffers 1d10 x PR Explosive damage. Enemies may 
+make a Dodge Test against the effects of this power (note that 
+this power is an area effect attack, see pages 238–239 in the 
+DEATHWATCH Rulebook).
+Book: Rites of Battle
+Page 51
 

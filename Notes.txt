@@ -11,7 +11,7 @@ game.actors.getName("YourActorName").items.find(i => i.type === "specialty").sys
 
 1. Update\Organize and Optimize the memory bank.
 TODO: I have issues still with first load of html files.
-TODO: add More psychic powers Storm Wardens
+TODO: Check the erratta on the psychic powers
 
 
 TODO: Finish specialties

@@ -1,0 +1,19 @@
+{
+  "_id": "psy00000000049",
+  "name": "Inspiring Word",
+  "type": "psychic-power",
+  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "system": {
+    "action": "Half",
+    "opposed": "No",
+    "range": "10 metre radius x PR",
+    "sustained": "Yes",
+    "cost": 1000,
+    "class": "Chapter",
+    "key": "inspiring-word",
+    "chapterImg": "systems/deathwatch/icons/chapters/ultramarines.webp",
+    "description": "<p>The Librarian calms the minds of nearby allies and completely dispels their fear and doubt. While this power is active, a number of allies equal to PR, and within range, are immune to the effects of Fear.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "200"
+  }
+}
