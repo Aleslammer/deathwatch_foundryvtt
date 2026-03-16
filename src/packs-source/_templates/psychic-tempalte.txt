@@ -1,25 +1,23 @@
-folder:Divination
-Name: PossibiLiTy shieLD
-Action: Half 
+folder:Chapter
+Chapter: ThunDercLaP
+Action: Full 
 Opposed: No 
-Range: 5 metre radius x PR 
-Sustained: Yes 
-Description: Using his understanding of future events and 
-his perception of the flow of time, the psyker surrounds 
-himself and nearby allies in a possibility shield. While this 
-power is active, the psyker and a number of allies equal to 
-his PR within range of the psyker gain a +10 bonus to one 
-roll each Round. In addition, due to his ability to see attacks 
-before they are coming the psyker himself adds +5 x PR to 
-all Dodge and Parry Tests.Book: Core Rulebook
-Page 193
+Range: 10 metre radius x PR 
+Sustained: No 
+Cost: 500
+Description: With a word of power and a clap of his mighty
+hands, the Rune Priest creates a deafening crack of thunder
+that rolls across the battlefield. All those within range of this
+power (friends or foes, though not including the Rune Priest)
+suffer 1d5 x PR Impact damage. This damage is reduced by
+Toughness as normal. However, only armour worn on the
+head protects against it. In addition, anyone suffering damage
+from this attack must make a Toughness Test with a penalty
+of –5 x PR or be deafened for 1d10 rounds (see page 260
+for the effects of being deafened). Finally, fragile objects such
+as mundane glass, crystal or fine ceramics within the power’s
+range are shattered (though the GM has the final say on
+whether an object is affected).
+Book: Core Rulebook
+Page 198
 
-Then add this HTML table to the descirption
-
-Table 6–9: Lifting the Veil
-PR|Results
-1–3|The psyker detects the strongest emotion associated ith the area or object.
-4–5|As above, plus the psyker sees the general features of the people who experienced the emotion, and a rough impression of the events that transpired.
-6–7|As all of the above, plus the psyker gets a clear image of the events from the area that left the strongest psychic impressions.
-8–9|As all of the above, plus the psyker can identify all participants from that strongest event, including their careers, ranks, and names.
-10+|As all of the above, plus the psyker determines other events that may have occurred in the area, in order of the relative strength of their psychic impressions, and gets a clear image of each event.

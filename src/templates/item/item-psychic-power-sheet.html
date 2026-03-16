@@ -1,37 +1,31 @@
 <form class="{{cssClass}}" autocomplete="off">
-  <header class="sheet-header">
-    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64" />
-    <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
+  <header class="sheet-header" style="background-image: url('{{item.img}}'); background-size: cover; background-position: top left; padding: 10px; padding-bottom: 50px; border-radius: 4px; position: relative;">
+    <div class="header-fields" style="position: relative; z-index: 1;">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" style="background: rgba(0,0,0,0.49); color: #fff; padding: 2px 6px; border-radius: 3px;" /></h1>
       <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">Action:</label>
-        <input type="text" name="system.action" value="{{system.action}}" placeholder="e.g., Full, Half, Free" style="margin-top: 2px;" />
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Action:</label>
+        <input type="text" name="system.action" value="{{system.action}}" placeholder="e.g., Full, Half, Free" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
       <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">Opposed:</label>
-        <input type="text" name="system.opposed" value="{{system.opposed}}" placeholder="Yes or No" style="margin-top: 2px;" />
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Opposed:</label>
+        <input type="text" name="system.opposed" value="{{system.opposed}}" placeholder="Yes or No" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
       <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">Range:</label>
-        <input type="text" name="system.range" value="{{system.range}}" placeholder="e.g., 30m, 5 metres x PR" style="margin-top: 2px;" />
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Range:</label>
+        <input type="text" name="system.range" value="{{system.range}}" placeholder="e.g., 30m, 5 metres x PR" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
       <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">Sustained:</label>
-        <input type="text" name="system.sustained" value="{{system.sustained}}" placeholder="Yes or No" style="margin-top: 2px;" />
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Sustained:</label>
+        <input type="text" name="system.sustained" value="{{system.sustained}}" placeholder="Yes or No" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
       <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">Class:</label>
-        <input type="text" name="system.class" value="{{system.class}}" placeholder="e.g., Telepathy, Codex" style="margin-top: 2px;" />
-      </div>
-      <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">Key:</label>
-        <input type="text" name="system.key" value="{{system.key}}" placeholder="e.g., avenger, mind-probe" style="margin-top: 2px;" />
-      </div>
-      <div class="form-group" style="margin-top: 5px;">
-        <label style="font-weight: normal; font-size: 0.9em;">XP Cost:</label>
-        <input type="number" name="system.cost" value="{{system.cost}}" placeholder="0" data-dtype="Number" style="margin-top: 2px; width: 100px;" />
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">XP Cost:</label>
+        <input type="number" name="system.cost" value="{{system.cost}}" placeholder="0" data-dtype="Number" style="margin-top: 2px; width: 100px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
     </div>
+    {{#if system.chapterImg}}
+    <img class="chapter-img" src="{{system.chapterImg}}" title="Chapter" height="60" width="60" style="position: absolute; bottom: 8px; left: 8px; border: 2px solid rgba(255,255,255,0.5); border-radius: 4px;" />
+    {{/if}}
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
