@@ -2,7 +2,7 @@
   "_id": "psy00000000009",
   "name": "Short-Range Telepathy",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/generic.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/telepathy.webp",
   "system": {
     "action": "Free",
     "opposed": "No",

@@ -2,7 +2,7 @@
   "_id": "psy00000000001",
   "name": "Avenger",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/generic.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/codex.webp",
   "system": {
     "action": "Full",
     "opposed": "No",
