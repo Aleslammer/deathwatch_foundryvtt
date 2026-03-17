@@ -17,12 +17,12 @@ Start with **QUICK-REFERENCE.md** for essential commands, patterns, and troubles
 4. **guidelines.md** - Coding standards and best practices
 
 ### Game Systems
-5. **modifiers.md** - Modifier system (characteristics, skills, wounds, armor)
+5. **modifiers.md** - Modifier system (characteristics, skills, wounds, armor, psy-rating)
 6. **combat-systems.md** - Combat mechanics (ranged/melee, damage, hit locations)
 7. **weapon-qualities.md** - Weapon qualities (Accurate, Tearing, Melta, Lightning Claws, etc.)
 8. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
 9. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
-10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
+10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses, talentCosts)
 
 ## Quick Reference
 
@@ -47,7 +47,7 @@ Source Code:
 Tests:
   tests/
     ├── setup.mjs
-    └── *.test.mjs (747 tests, 79.31% coverage)
+    └── *.test.mjs (781 tests passing)
 ```
 
 ### Common Commands
@@ -63,7 +63,7 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1     # Full build + deploy
 
 ### Metrics
 - **Test Coverage**: 79.31%
-- **Tests**: 747 passing
+- **Tests**: 781 passing
 - **Helper Classes**: 24 helpers (XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers, WeaponQualityHelper, WeaponUpgradeHelper, CombatHelper, RangedCombatHelper, MeleeCombatHelper, RighteousFuryHelper, WoundHelper, RankHelper, SkillLoader, StatusEffects, CriticalEffects, FoundryAdapter, and more)
 - **CSS**: Modular component-based architecture
 - **Compendium Packs**: 15 packs (Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Implants, Cybernetics, Weapon Qualities, Weapon Upgrades, Demeanours, Critical Effects, Tables)

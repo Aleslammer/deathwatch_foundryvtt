@@ -17,7 +17,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
    - Equipped items
    - Chapter items (always active)
    - Armor histories (on equipped armor)
-3. Modifiers applied to characteristics, skills, initiative, wounds, and armor
+3. Modifiers applied to characteristics, skills, initiative, wounds, armor, and psy rating
 4. Modified values used throughout system
 
 ## Modifier Structure
@@ -27,7 +27,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
 {
   "name": "Modifier Name",
   "modifier": 5,
-  "effectType": "characteristic|skill|initiative|wounds|armor",
+  "effectType": "characteristic|skill|initiative|wounds|armor|psy-rating",
   "valueAffected": "ws|bs|str|tg|ag|int|per|wil|fs|skillName",
   "enabled": true,
   "source": "Item Name"
@@ -44,7 +44,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
 
 ## Effect Types
 
-### 6. Characteristic Modifiers
+### 1. Characteristic Modifiers
 Modify character characteristics with damage tracking.
 
 **Structure:**
@@ -174,6 +174,37 @@ Modify armor values on all locations of equipped armor.
 - Temporary armor bonuses from abilities
 - Armor degradation (negative modifiers)
 
+### 6. Psy Rating Modifiers
+Modify Psy Rating for Librarian characters.
+
+**Structure:**
+```json
+{
+  "name": "Psy Rating 3",
+  "modifier": 3,
+  "effectType": "psy-rating",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Applied to `psyRating.value` field
+- Base value stored in `psyRating.base`
+- Modified value in `psyRating.value`
+- Tracked in `psyRating.modifiers` array with source (for tooltip display)
+- No `valueAffected` needed (like wounds/initiative/armor)
+- Psy Rating box only visible when specialty has `hasPsyRating: true` (Librarian)
+
+**Example Use Cases:**
+- Psy Rating talents (Psy Rating 3 through 10)
+- Temporary psychic buffs/debuffs
+- Equipment that enhances psychic ability
+
+**Psy Rating Talents:**
+- Psy Rating 3 (tal00000000275): +3 modifier, cost -1 (overridden to 0 for Librarians)
+- Psy Rating 4-10 (tal00000000276-282): +1 modifier each, escalating costs
+- Each requires the previous level as prerequisite
+
 ## Modifier Sources
 
 ### 1. Actor Modifiers
@@ -274,6 +305,7 @@ ModifierCollector.applyCharacteristicModifiers(characteristics, allModifiers);
 ModifierCollector.applySkillModifiers(skills, allModifiers);
 ModifierCollector.applyInitiativeModifiers(allModifiers);
 ModifierCollector.applyWoundModifiers(wounds, allModifiers);
+ModifierCollector.applyPsyRatingModifiers(psyRating, allModifiers);
 ```
 
 ### Characteristic Application
@@ -447,15 +479,17 @@ static applyWoundModifiers(wounds, modifiers) {
 ## Testing
 
 ### Test Files
-- `tests/modifier-collector.test.mjs`: Core modifier collection tests
-- `tests/modifier-collector-wounds.test.mjs`: Wound modifier tests
-- `tests/actor.test.mjs`: Integration tests
+- `tests/modifiers/modifier-collector.test.mjs`: Core modifier collection tests
+- `tests/modifiers/modifier-collector-wounds.test.mjs`: Wound modifier tests
+- `tests/modifiers/modifier-collector-psy-rating.test.mjs`: Psy Rating modifier tests
+- `tests/documents/actor.test.mjs`: Integration tests
 
 ### Coverage
 - Characteristic modifiers: ✓
 - Skill modifiers: ✓
 - Initiative modifiers: ✓
 - Wound modifiers: ✓
+- Psy Rating modifiers: ✓
 - Equipped item filtering: ✓
 - Chapter item handling: ✓
 - Armor history modifiers: ✓
@@ -463,8 +497,8 @@ static applyWoundModifiers(wounds, modifiers) {
 - Multiple modifier stacking: ✓
 
 ### Test Count
-- Total: 719 tests
-- Modifier-specific: ~50 tests
+- Total: 781 tests
+- Modifier-specific: ~60 tests
 - All passing ✓
 
 ## Best Practices
@@ -513,10 +547,11 @@ static applyWoundModifiers(wounds, modifiers) {
 - No manual migration required
 
 ### Adding New Effect Types
-1. Add new effectType to modifier structure
+1. Add new effectType constant to `EFFECT_TYPES` in constants.mjs
 2. Create `apply[Type]Modifiers()` method in ModifierCollector
 3. Call from `_prepareCharacterData()` in actor.mjs
-4. Add tests for new type
+4. Add option to edit modifier dialog in modifiers.mjs
+5. Add tests for new type
 
 ## Debug Support
 

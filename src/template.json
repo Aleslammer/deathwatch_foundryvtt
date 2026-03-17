@@ -274,6 +274,7 @@
             "book": "",
             "page": "",
             "hasPsyRating": false,
+            "talentCosts": {},
             "skillCosts": {},
             "characteristicCosts": {
                 "ws": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },

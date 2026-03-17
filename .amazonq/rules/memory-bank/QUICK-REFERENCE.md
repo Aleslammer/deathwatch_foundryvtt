@@ -9,7 +9,7 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1  # Full build + deploy
 ```
 
 ## Key Metrics
-- **Test Coverage**: 79.31% (747 tests passing)
+- **Test Coverage**: 79.31% (781 tests passing)
 - **Target Coverage**: 90%+ for helpers, 70%+ for documents
 - **Helper Classes**: 24 specialized helpers
 - **Compendium Packs**: 15 packs (Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Implants, Cybernetics, Weapon Qualities, Weapon Upgrades, Demeanours, Critical Effects, Tables)
@@ -18,7 +18,7 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1  # Full build + deploy
 
 ### Modifiers
 - **File**: modifiers.md
-- **Types**: characteristic, skill, initiative, wounds, armor, weapon-damage, weapon-rof, weapon-blast
+- **Types**: characteristic, skill, initiative, wounds, armor, psy-rating, weapon-damage, weapon-rof, weapon-blast
 - **Sources**: Actor, equipped items, chapters, armor histories, ammunition
 
 ### Combat
@@ -61,6 +61,7 @@ export class HelperName {
 const modifiers = ModifierCollector.collectAllModifiers(actor);
 // Apply to systems
 ModifierCollector.applyCharacteristicModifiers(characteristics, modifiers);
+ModifierCollector.applyPsyRatingModifiers(psyRating, modifiers);
 ```
 
 ### Quality Detection

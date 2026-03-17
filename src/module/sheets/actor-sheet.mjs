@@ -157,6 +157,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Store talent cost overrides for later use
     context.specialtyTalentCosts = specialtyTalentCosts;
     context.chapterTalentCosts = context.chapterItem?.system.talentCosts || {};
+    context.specialtyBaseTalentCosts = context.specialtyItem?.system.talentCosts || {};
 
     // Handle skills - use live actor data which has modifierTotal calculated
     if (context.system.skills) {
@@ -247,6 +248,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     // Apply talent cost overrides
     if (context.talents && context.talents.length > 0) {
       const chapterTalentCosts = context.chapterTalentCosts || {};
+      const specialtyBaseTalentCosts = context.specialtyBaseTalentCosts || {};
       const specialtyTalentCosts = context.specialtyTalentCosts || {};
       
       // Count instances of each talent by compendiumId
@@ -268,6 +270,11 @@ export class DeathwatchActorSheet extends ActorSheet {
         // Apply chapter override
         if (chapterTalentCosts[talentId] !== undefined) {
           effectiveCost = chapterTalentCosts[talentId];
+        }
+        
+        // Apply specialty base talent cost override (takes precedence over chapter)
+        if (specialtyBaseTalentCosts[talentId] !== undefined) {
+          effectiveCost = specialtyBaseTalentCosts[talentId];
         }
         
         // Apply specialty rank override (takes precedence)

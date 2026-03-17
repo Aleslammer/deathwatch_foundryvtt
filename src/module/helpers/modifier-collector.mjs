@@ -44,8 +44,8 @@ export class ModifierCollector {
     for (const item of itemsArray) {
       if (!item?.system) continue;
       
-      // Chapter items and traits are always active (no equipped check)
-      const isActive = item.type === 'chapter' || item.type === 'trait' || item.system.equipped;
+      // Chapter, trait, and talent items are always active (no equipped check)
+      const isActive = item.type === 'chapter' || item.type === 'trait' || item.type === 'talent' || item.system.equipped;
       if (!isActive) continue;
       
       debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);

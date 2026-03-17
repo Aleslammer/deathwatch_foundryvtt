@@ -1,14 +1,14 @@
 # Memory Bank Verification Summary
 
 ## Verification Date
-January 2025
+January 2025 (Updated: Psy Rating feature addition)
 
 ## Changes Made
 
 ### 1. Updated Test Metrics
-**Previous:** 719 tests, 68% coverage  
-**Actual:** 747 tests, 79.31% coverage  
-**Status:** ✅ Updated in index.md, QUICK-REFERENCE.md, tech.md, combat-systems.md
+**Previous:** 747 tests, 79.31% coverage  
+**Current:** 781 tests passing  
+**Status:** ✅ Updated in index.md, QUICK-REFERENCE.md, tech.md, modifiers.md
 
 ### 2. Updated Helper Class Count
 **Previous:** Listed 10 helpers  
@@ -112,6 +112,25 @@ January 2025
 - 19 implants
 - 35+ weapon qualities
 - Weapon categories (Imperial, Tau, Tyranid)
+
+### 8. Psy Rating System Added
+**New Feature:** Psy Rating modifier system for Librarian characters
+**Status:** ✅ Documented in modifiers.md, product.md, structure.md, specialty-chapter-costs.md
+
+**Changes:**
+- Added `psy-rating` effectType to modifier system (modifiers.md)
+- Added Psychic Powers system to product features (product.md)
+- Added Psy Rating data model and UI details (structure.md)
+- Added specialty `talentCosts` field and 3-tier talent cost precedence (specialty-chapter-costs.md)
+- Added `modifier-collector-psy-rating.test.mjs` to test structure (tech.md)
+- Updated test count from 747 to 779 across all documents
+- Added psy-rating to modifier types in QUICK-REFERENCE.md
+
+**New Files Documented:**
+- `tests/modifiers/modifier-collector-psy-rating.test.mjs` (8 tests)
+- `src/packs-source/talents/psy-rating-3.json` through `psy-rating-10.json` (8 talents)
+- Specialty `talentCosts` field in template.json
+- Specialty `hasPsyRating` field in template.json
 
 ## Verification Method
 

@@ -132,8 +132,8 @@ export class ItemHandlers {
       }
     }
 
-    // Sort talents by name
-    categories.talents.sort((a, b) => a.name.localeCompare(b.name));
+    // Sort talents by name (numeric option handles "Psy Rating 3" vs "Psy Rating 10")
+    categories.talents.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
     // Group duplicate traits and add count/multiplier
     categories.traits = this.groupTraits(categories.traits);

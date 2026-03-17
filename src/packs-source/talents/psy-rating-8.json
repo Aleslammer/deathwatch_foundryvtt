@@ -1,0 +1,23 @@
+{
+  "_id": "tal00000000280",
+  "name": "Psy Rating 8",
+  "type": "talent",
+  "img": "systems/deathwatch/icons/talents/generic.webp",
+  "system": {
+    "book": "DeathWatch Core Rulebook",
+    "page": "124",
+    "prerequisite": "Psy Rating 7",
+    "benefit": "Psy Rating 8",
+    "description": "<p>The character increases their Psy Rating to 8. See Chapter VI: Psychic Powers for detailed rules on the game mechanics of this ability.</p>",
+    "cost": -1,
+    "compendiumId": "tal00000000280",
+    "modifiers": [
+      {
+        "name": "Psy Rating 8",
+        "modifier": "1",
+        "effectType": "psy-rating",
+        "enabled": true
+      }
+    ]
+  }
+}

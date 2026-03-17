@@ -3,7 +3,7 @@
   "type": "specialty",
   "img": "systems/deathwatch/icons/specialty/librarian.webp",
   "system": {
-    "description": "<p>Librarians are psykers who have been trained to harness the power of the Warp. They serve as the Chapter's psychic warriors and keepers of lore, wielding devastating psychic powers in battle.</p>",
+    "description": "<p>Librarians are psykers who have been trained to harness the power of the Warp. They serve as the Chapter's psychic warriors and keepers of lore, wielding devastating psychic powers in battle.</p><h3>Deathwatch Librarian Psychic Power Advances</h3><table><thead><tr><th>Rank</th><th>Values</th></tr></thead><tbody><tr><td>1</td><td>Psychic Power (x2)</td></tr><tr><td>2</td><td>Psychic Power</td></tr><tr><td>4</td><td>Psychic Power</td></tr><tr><td>6</td><td>Psychic Power</td></tr><tr><td>8</td><td>Psychic Power</td></tr></tbody></table>",
     "book": "Deathwatch Core Rulebook",
     "page": "50",
     "hasPsyRating": true,
@@ -20,6 +20,9 @@
     },
     "skillCosts":{
       "psyniscience": { "costTrain": 0 }
+    },
+    "talentCosts": {
+      "tal00000000275": 0
     },
     "rankCosts": {
     }

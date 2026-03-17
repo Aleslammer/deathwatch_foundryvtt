@@ -182,6 +182,57 @@ describe('ModifierCollector', () => {
       expect(modifiers.find(m => m.source === 'Power Armor')).toBeDefined();
     });
 
+    it('collects modifiers from talent items without requiring equipped status', () => {
+      const items = [
+        {
+          name: 'Psy Rating 3',
+          type: 'talent',
+          system: {
+            modifiers: [
+              { name: 'Psy Rating 3', modifier: '3', effectType: 'psy-rating', enabled: true }
+            ]
+          }
+        }
+      ];
+
+      const modifiers = ModifierCollector.collectItemModifiers(items);
+
+      expect(modifiers).toHaveLength(1);
+      expect(modifiers[0]).toMatchObject({
+        name: 'Psy Rating 3',
+        modifier: '3',
+        effectType: 'psy-rating',
+        source: 'Psy Rating 3'
+      });
+    });
+
+    it('collects modifiers from multiple talent items', () => {
+      const items = [
+        {
+          name: 'Psy Rating 3',
+          type: 'talent',
+          system: {
+            modifiers: [
+              { name: 'Psy Rating 3', modifier: '3', effectType: 'psy-rating', enabled: true }
+            ]
+          }
+        },
+        {
+          name: 'Psy Rating 4',
+          type: 'talent',
+          system: {
+            modifiers: [
+              { name: 'Psy Rating 4', modifier: '1', effectType: 'psy-rating', enabled: true }
+            ]
+          }
+        }
+      ];
+
+      const modifiers = ModifierCollector.collectItemModifiers(items);
+
+      expect(modifiers).toHaveLength(2);
+    });
+
     it('does not collect modifiers from weapon upgrades in ModifierCollector', () => {
       const itemsMap = new Map();
       const upgrade = {
