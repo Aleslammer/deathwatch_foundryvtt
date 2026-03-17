@@ -154,3 +154,52 @@
   border-left: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
   border-radius: 0;
 }
+
+/* Psy Rating Box Styles */
+.deathwatch .psy-rating-box {
+  width: 106px;
+  height: 100px;
+  text-align: center;
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  border-radius: var(--dw-border-radius-sm);
+  position: relative;
+}
+
+.deathwatch .psy-rating-box h4.box-title {
+  line-height: var(--dw-font-size-lg);
+  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-md);
+  font-size: var(--dw-font-size-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
+}
+
+.deathwatch .psy-rating-box .psy-rating-center {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: var(--dw-font-size-xxl);
+  font-weight: bold;
+}
+
+.deathwatch .psy-rating-box .psy-rating-modifiers {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.deathwatch .psy-rating-box .psy-rating-modifiers input[type="text"].psy-rating-base {
+  flex: 1;
+  height: 30px;
+  overflow: hidden;
+  border-top: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  font-size: var(--dw-font-size-sm);
+  border-radius: 0;
+  text-align: center;
+}

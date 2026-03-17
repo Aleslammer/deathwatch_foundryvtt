@@ -101,6 +101,7 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
     ModifierCollector.applyWoundModifiers(systemData.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(systemData.fatigue, systemData.characteristics?.tg?.mod || 0);
     ModifierCollector.applyArmorModifiers(this.items, allModifiers);
+    ModifierCollector.applyPsyRatingModifiers(systemData.psyRating, allModifiers);
 
     // Calculate movement based on Agility Bonus
     const agBonus = systemData.characteristics?.ag?.mod || 0;

@@ -1,5 +1,10 @@
 <div class="psychic-powers-section">
-  <h3 class="section-header">Psychic Powers</h3>
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <h3 class="section-header" style="margin-bottom: 0;">Psychic Powers</h3>
+    {{#if showPsyRating}}
+    <span style="font-size: 0.9em; font-weight: bold;" title="{{#if system.psyRating.modifiers.length}}Base: {{system.psyRating.base}}&#10;{{#each system.psyRating.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}} ({{this.source}})&#10;{{/each}}Total: {{system.psyRating.value}}{{/if}}">Current Psy Rating: {{system.psyRating.value}}</span>
+    {{/if}}
+  </div>
   <ol class="items-list psychic-powers-list">
     <li class="item flexrow items-header">
       <div class="item-name" style="text-align: left;">Name</div>

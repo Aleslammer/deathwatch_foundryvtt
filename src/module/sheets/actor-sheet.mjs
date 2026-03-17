@@ -214,6 +214,9 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Calculate renown rank
     context.renownRank = this._getRenownRank(context.system.renown || 0);
+
+    // Show Psy Rating box if specialty has hasPsyRating
+    context.showPsyRating = context.specialtyItem?.system?.hasPsyRating || false;
   }
 
   /**

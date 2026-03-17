@@ -257,6 +257,24 @@ export class ModifierCollector {
     fatigue.penalty = fatigue.value > 0 ? -10 : 0;
   }
 
+  static applyPsyRatingModifiers(psyRating, modifiers) {
+    if (!psyRating) return;
+
+    let total = psyRating.base || 0;
+    const appliedMods = [];
+
+    for (const mod of modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'psy-rating') {
+        const modValue = parseInt(mod.modifier) || 0;
+        total += modValue;
+        appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
+      }
+    }
+
+    psyRating.value = total;
+    psyRating.modifiers = appliedMods;
+  }
+
   static applyArmorModifiers(items, modifiers) {
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
     

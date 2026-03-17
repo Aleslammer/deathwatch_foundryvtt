@@ -109,6 +109,10 @@
                     "advances": { "simple": false, "intermediate": false, "trained": false, "expert": false }
                 }
             },
+            "psyRating": {
+                "value": 0,
+                "base": 0
+            },
             "skills": {}
         },
         "npc": {
@@ -269,6 +273,7 @@
             ],
             "book": "",
             "page": "",
+            "hasPsyRating": false,
             "skillCosts": {},
             "characteristicCosts": {
                 "ws": { "simple": 0, "intermediate": 0, "trained": 0, "expert": 0 },
