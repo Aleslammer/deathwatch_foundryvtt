@@ -5,45 +5,28 @@ to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
-cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
+cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
-game.actors.getName("YourActorName").items.find(i => i.type === "specialty").system
-
-1. Update\Organize and Optimize the memory bank.
 TODO: I have issues still with first load of html files.
 
 
 TODO: Finish specialties
-    TODO: need to come back to librarian after psychic support are added
     TODO: Add Special Abilities for Specialties??
 
 TODO: Review all talents to determine if effects can be applied to anythig
 
-
-
-
 TODO: Need to handle called shot mechanic
 TODO: weapon damage does not appear to be modifyable on the gear page.
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
-
-
-
 TODO: Gear
     TODO: Add gear from Rites of battle.   Done up to Camo-CLoak
-    
-
 TODO: Ammmunition 158
     TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
     TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
     TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
     TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
     TODO: We need to revisit the Devastation upgrade for cohesion damage
-
-    
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
-TODO: Psychic Powers (180)
-
-
 
 Relics
 Deathwatch Relics
