@@ -101,5 +101,19 @@ describe('ItemHandlers', () => {
       expect(result.cybernetics).toHaveLength(0);
       expect(result.weapons).toHaveLength(1);
     });
+
+    it('should sort talents numerically so Psy Rating 3 comes before Psy Rating 10', () => {
+      const items = [
+        { _id: 't1', name: 'Psy Rating 10', type: 'talent', system: { modifiers: [] } },
+        { _id: 't2', name: 'Psy Rating 3', type: 'talent', system: { modifiers: [] } },
+        { _id: 't3', name: 'Psy Rating 4', type: 'talent', system: { modifiers: [] } }
+      ];
+
+      const result = ItemHandlers.processItems(items);
+
+      expect(result.talents[0].name).toBe('Psy Rating 3');
+      expect(result.talents[1].name).toBe('Psy Rating 4');
+      expect(result.talents[2].name).toBe('Psy Rating 10');
+    });
   });
 });

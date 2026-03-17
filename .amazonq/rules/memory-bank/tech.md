@@ -82,6 +82,7 @@ tests/
 │   ├── modifier-collector-wounds.test.mjs
 │   ├── modifier-collector-armor.test.mjs
 │   ├── modifier-collector-damage.test.mjs
+│   ├── modifier-collector-psy-rating.test.mjs
 │   ├── modifiers.test.mjs
 │   └── effects.test.mjs
 ├── weapon-qualities/                  # Weapon quality tests

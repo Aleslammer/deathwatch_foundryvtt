@@ -110,3 +110,17 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Each advance adds +5 to characteristic value
 - Visual feedback directly on characteristic display
 - No separate items needed for tracking advances
+
+### Psychic Powers System
+- **Psy Rating**: Derived value (base + modifiers) displayed on Attributes tab
+  - Psy Rating box shown conditionally based on specialty (`hasPsyRating: true`)
+  - Currently only Librarian specialty enables Psy Rating
+  - Editable base value, computed total with modifier tooltip
+  - Modifier support via `psy-rating` effectType
+- **Psy Rating Talents**: 8 talents (Psy Rating 3-10, IDs tal00000000275-282)
+  - Each adds to Psy Rating via modifier system
+  - Escalating XP costs (0 for Librarians at rank 3, up to 2500 for rank 10)
+  - Librarian specialty overrides Psy Rating 3 cost to 0 via `talentCosts`
+- **Psychic Powers Tab**: Dedicated tab on character sheet
+  - Shows current Psy Rating in header with modifier tooltip
+  - Conditionally visible based on specialty

@@ -285,6 +285,125 @@ describe('DeathwatchActorSheet', () => {
 
       expect(context.talents[0].system.effectiveCost).toBe(1000);
     });
+
+    it('applies specialty base talent cost overrides', () => {
+      const context = {
+        items: [
+          { _id: 'tal1', type: 'talent', name: 'Psy Rating 3', img: 'icon.png', system: { cost: -1, compendiumId: 'tal00000000275' } }
+        ],
+        chapterTalentCosts: {},
+        specialtyBaseTalentCosts: { 'tal00000000275': 0 },
+        specialtyTalentCosts: {}
+      };
+
+      sheet._prepareItems(context);
+
+      expect(context.talents[0].system.effectiveCost).toBe(0);
+    });
+
+    it('specialty base talent costs take precedence over chapter costs', () => {
+      const context = {
+        items: [
+          { _id: 'tal1', type: 'talent', name: 'Psy Rating 3', img: 'icon.png', system: { cost: -1, compendiumId: 'tal00000000275' } }
+        ],
+        chapterTalentCosts: { 'tal00000000275': 200 },
+        specialtyBaseTalentCosts: { 'tal00000000275': 0 },
+        specialtyTalentCosts: {}
+      };
+
+      sheet._prepareItems(context);
+
+      expect(context.talents[0].system.effectiveCost).toBe(0);
+    });
+
+    it('specialty rank talent costs take precedence over specialty base costs', () => {
+      const context = {
+        items: [
+          { _id: 'tal1', type: 'talent', name: 'Test Talent', img: 'icon.png', system: { cost: 1000, compendiumId: 'tal00000000001', stackable: false } }
+        ],
+        chapterTalentCosts: {},
+        specialtyBaseTalentCosts: { 'tal00000000001': 500 },
+        specialtyTalentCosts: { 'tal00000000001': [300] }
+      };
+
+      sheet._prepareItems(context);
+
+      expect(context.talents[0].system.effectiveCost).toBe(300);
+    });
+  });
+
+  describe('_prepareCharacterData - showPsyRating', () => {
+    beforeEach(() => {
+      global.game.deathwatch = { config: { CharacteristicWords: {}, Skills: {} } };
+    });
+
+    it('sets showPsyRating true when specialty has hasPsyRating', () => {
+      const context = {
+        system: {
+          characteristics: {},
+          skills: {},
+          chapterId: '',
+          specialtyId: 'spec1',
+          rank: 1,
+          xp: { total: 13000, spent: 0 },
+          wounds: { value: 0, max: 20 },
+          renown: 0
+        },
+        items: []
+      };
+      mockActor.items.get.mockImplementation((id) => {
+        if (id === 'spec1') return { _id: 'spec1', system: { hasPsyRating: true, talentCosts: {} } };
+        return null;
+      });
+
+      sheet._prepareCharacterData(context);
+
+      expect(context.showPsyRating).toBe(true);
+    });
+
+    it('sets showPsyRating false when specialty does not have hasPsyRating', () => {
+      const context = {
+        system: {
+          characteristics: {},
+          skills: {},
+          chapterId: '',
+          specialtyId: 'spec1',
+          rank: 1,
+          xp: { total: 13000, spent: 0 },
+          wounds: { value: 0, max: 20 },
+          renown: 0
+        },
+        items: []
+      };
+      mockActor.items.get.mockImplementation((id) => {
+        if (id === 'spec1') return { _id: 'spec1', system: { hasPsyRating: false, talentCosts: {} } };
+        return null;
+      });
+
+      sheet._prepareCharacterData(context);
+
+      expect(context.showPsyRating).toBe(false);
+    });
+
+    it('sets showPsyRating false when no specialty assigned', () => {
+      const context = {
+        system: {
+          characteristics: {},
+          skills: {},
+          chapterId: '',
+          specialtyId: '',
+          rank: 1,
+          xp: { total: 13000, spent: 0 },
+          wounds: { value: 0, max: 20 },
+          renown: 0
+        },
+        items: []
+      };
+
+      sheet._prepareCharacterData(context);
+
+      expect(context.showPsyRating).toBe(false);
+    });
   });
 
   describe('calculateSkillTotal', () => {

@@ -110,11 +110,12 @@ src/
 Defines the data structure for:
 - **Actor Types**: character, npc
   - Base template with wounds and fatigue
-  - Character-specific data (characteristics, skills, modifiers)
+  - Character-specific data (characteristics, skills, modifiers, psyRating)
 - **Item Types**: weapon, armor, armor-history, gear, ammunition, characteristic, weapon-upgrade
   - Base template with description
   - Type-specific properties
   - Weapon upgrades with modifiers array
+  - Specialty items with `hasPsyRating`, `talentCosts`, `characteristicCosts`, `rankCosts`
 
 ### 6. Compendium System
 - **packs-source/**: Human-readable source data (JSON/YAML)
@@ -294,6 +295,16 @@ deathwatch.mjs (Entry Point)
   - Modifier support (applied when equipped)
   - Create/edit/delete controls
 - **Item Sheets**: Separate templates for implant-sheet.html and cybernetic-sheet.html
+
+### Psy Rating System
+- **Location**: Attributes tab (next to Movement box), conditionally visible
+- **Visibility**: Controlled by `specialtyItem.system.hasPsyRating` (Librarian only)
+- **Data Model**: `psyRating: { value: 0, base: 0 }` on character schema
+  - `base`: Editable input at bottom of box
+  - `value`: Derived (base + modifiers), displayed in center with tooltip
+- **Modifier Support**: `psy-rating` effectType in modifier system
+- **Psychic Powers Tab**: Shows "Current Psy Rating: #" in header, conditionally visible
+- **CSS**: `.psy-rating-box` styles in `styles/components/wounds.css`
 
 ### Section Header Styling
 - **Unified Style**: All section headers use `.section-header` class

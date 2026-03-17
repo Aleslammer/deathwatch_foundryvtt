@@ -10,7 +10,7 @@ The system includes a cost override mechanism where chapters can reduce XP costs
 - **SkillLoader** (`module/helpers/skill-loader.mjs`): Loads skill definitions
 - **Actor Sheet** (`module/sheets/actor-sheet.mjs`): Applies chapter cost overrides
 - **Chapter Items** (`template.json`): Store skill and talent cost overrides
-- **Specialty Items** (`template.json`): Store characteristic advance costs
+- **Specialty Items** (`template.json`): Store characteristic advance costs, talent cost overrides, and psy rating flag
 
 ## Data Structure
 
@@ -51,6 +51,8 @@ The system includes a cost override mechanism where chapters can reduce XP costs
 ```json
 {
   "specialty": {
+    "hasPsyRating": false,
+    "talentCosts": {},
     "characteristicCosts": {
       "ws": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
       "bs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 }
@@ -146,6 +148,7 @@ if (specialtySkillCosts[k] !== undefined) {
 // Apply talent cost overrides
 if (context.talents && context.talents.length > 0) {
   const chapterTalentCosts = context.chapterTalentCosts || {};
+  const specialtyBaseTalentCosts = context.specialtyBaseTalentCosts || {};
   const specialtyTalentCosts = context.specialtyTalentCosts || {};
   
   for (const talent of context.talents) {
@@ -156,7 +159,12 @@ if (context.talents && context.talents.length > 0) {
       effectiveCost = chapterTalentCosts[talent._id];
     }
     
-    // Apply specialty rank override (takes precedence)
+    // Apply specialty base talentCosts override (takes precedence over chapter)
+    if (specialtyBaseTalentCosts[talent._id] !== undefined) {
+      effectiveCost = specialtyBaseTalentCosts[talent._id];
+    }
+    
+    // Apply specialty rank override (highest precedence)
     if (specialtyTalentCosts[talent._id] !== undefined) {
       effectiveCost = specialtyTalentCosts[talent._id];
     }
@@ -169,9 +177,14 @@ if (context.talents && context.talents.length > 0) {
 **How It Works:**
 1. Base talent costs from talent item's `cost` field
 2. Chapter talent cost overrides applied from `chapter.system.talentCosts`
-3. Specialty rank-based talent cost overrides applied from `specialty.system.rankCosts[rank].talents`
-4. Specialty rank costs take precedence over chapter costs
-5. Effective cost stored in `talent.system.effectiveCost` for display
+3. Specialty base talent cost overrides applied from `specialty.system.talentCosts`
+4. Specialty rank-based talent cost overrides applied from `specialty.system.rankCosts[rank].talents`
+5. Precedence: chapter → specialty base talentCosts → specialty rankCosts (highest)
+6. Effective cost stored in `talent.system.effectiveCost` for display
+
+**Specialty talentCosts vs rankCosts:**
+- `specialty.system.talentCosts`: Base overrides that apply regardless of rank (e.g., Librarian Psy Rating 3 cost = 0)
+- `specialty.system.rankCosts[rank].talents`: Rank-specific overrides that change as character advances
 
 ### Characteristic Advance Costs (NOT IMPLEMENTED)
 **Data Structure:** Exists in specialty items as `characteristicCosts` object
@@ -204,6 +217,19 @@ if (context.talents && context.talents.length > 0) {
 ```
 
 **Status:** Not yet applied in code.
+
+## Example: Librarian Specialty
+
+### Base Talent Cost Overrides
+```json
+{
+  "talentCosts": {
+    "tal00000000275": 0
+  }
+}
+```
+
+**Result:** Librarian pays 0 XP for Psy Rating 3 (base cost is -1, meaning unavailable without override).
 
 ## Example: Apothecary Specialty Rank 1
 
@@ -299,19 +325,7 @@ if (context.talents && context.talents.length > 0) {
 
 ## Future Implementation Needed
 
-### 1. Talent Cost Override
-Create helper to apply chapter talent cost overrides:
-```javascript
-// In actor-sheet.mjs or talent display logic
-if (context.chapterItem && context.chapterItem.system.talentCosts) {
-  const overrideCost = context.chapterItem.system.talentCosts[talent._id];
-  if (overrideCost !== undefined) {
-    talent.cost = overrideCost;
-  }
-}
-```
-
-### 2. Characteristic Advance Cost Display
+### 1. Characteristic Advance Cost Display
 Display specialty characteristic costs in UI:
 ```javascript
 // In actor-sheet.mjs
@@ -321,7 +335,7 @@ if (context.specialtyItem && context.specialtyItem.system.characteristicCosts) {
 }
 ```
 
-### 3. XP Calculation Integration
+### 2. XP Calculation Integration
 When calculating XP spent, use:
 - Chapter-overridden skill costs
 - Chapter-overridden talent costs
@@ -330,10 +344,13 @@ When calculating XP spent, use:
 ## Notes
 
 - Skill cost override system is fully functional (chapter + specialty rank-based)
-- Talent cost override system is fully functional (chapter + specialty rank-based)
-- Specialty rank-based costs take precedence over chapter costs
+- Talent cost override system is fully functional (chapter + specialty base talentCosts + specialty rank-based)
+- Talent cost precedence: chapter → specialty base talentCosts → specialty rankCosts (highest)
+- Specialty `talentCosts` field provides rank-independent overrides (e.g., Librarian Psy Rating 3 = 0 XP)
+- Specialty `hasPsyRating` flag controls Psy Rating box and Psychic Powers tab visibility
 - Characteristic advance costs from specialty are defined but not yet used in code
 - All cost data is already populated in compendium packs
 - Cost overrides are chapter/specialty/rank-specific, not global
 - Base costs remain in skills.json and talent items as fallback
 - Rank-based costs allow different XP costs at each of the 8 ranks
+- Cost of -1 means "not normally available" (talent cannot be purchased without override)
