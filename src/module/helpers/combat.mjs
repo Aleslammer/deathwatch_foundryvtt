@@ -277,6 +277,10 @@ export class CombatHelper {
         <label>Number of Hits:</label>
         <input type="number" id="numHits" name="numHits" value="${defaultHits}" min="1" max="10" />
       </div>
+      <div class="form-group">
+        <label>Misc Damage Modifier:</label>
+        <input type="text" id="miscDamageModifier" name="miscDamageModifier" value="" placeholder="e.g., 5 or 1d10" />
+      </div>
       ${targetToken ? `<div class="form-group"><strong>Target:</strong> ${targetToken.actor.name}</div>` : ''}
     `;
 
@@ -290,6 +294,7 @@ export class CombatHelper {
             const attackRollInput = html.find('#attackRoll').val();
             const targetNumberInput = html.find('#targetNumber').val();
             const numHits = parseInt(html.find('#numHits').val()) || 1;
+            const miscDamageModifier = html.find('#miscDamageModifier').val()?.trim() || '';
             let firstHitLocation = "Unknown";
             let degreesOfSuccess = 0;
             let targetNumber = 0;
@@ -331,7 +336,7 @@ export class CombatHelper {
             for (let i = 0; i < numHits; i++) {
               let totalDamage = 0;
               
-              const damageFormula = CombatDialogHelper.buildDamageFormula({
+              let damageFormula = CombatDialogHelper.buildDamageFormula({
                 baseDmg: dmg,
                 degreesOfSuccess,
                 isMelee,
@@ -346,6 +351,10 @@ export class CombatHelper {
                 isLightningClaw,
                 hasLightningClawPair
               });
+
+              if (miscDamageModifier) {
+                damageFormula += ` + ${miscDamageModifier}`;
+              }
 
               const roll = await new Roll(damageFormula).evaluate();
               totalDamage += roll.total;

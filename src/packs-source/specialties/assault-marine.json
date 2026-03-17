@@ -20,6 +20,9 @@
     "skillCosts":{
       "pilot_personal": { "costTrain": 0 }
     },
+    "talentCosts": {
+      "tal00000000252": 0
+    },
     "rankCosts": {
       "1": {
         "skills": {},

@@ -1,8 +1,9 @@
-folder:Apothecary
-Specialty: Apothecary
-Name: enhance healing
-The Apothecary may restore 1d5 additional Wounds with 
-any successful Medicae Test for First Aid (see page 102).
+folder:TechMarine
+Specialty: TechMarine
+Name: Blessed by the omnissiah
+The Techmarine begins the game with the Mechanicus Implants 
+Trait and the Electro-Graft Use and Mechadendrite Use 
+(Servo-Arm) Talents.
 Book: Core Rulebook
-Page 69
+Page 89
 

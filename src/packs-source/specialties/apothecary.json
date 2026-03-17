@@ -24,6 +24,7 @@
       "1": {
         "skills": {
           "chem_use": { "costTrain": 400 },
+          "hardy": { "costTrain": 100 },
           "interrogation": { "costTrain": 200 }
         },
         "talents": {

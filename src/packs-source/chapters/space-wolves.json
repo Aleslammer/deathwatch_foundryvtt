@@ -16,6 +16,9 @@
       "wrangling": { "costTrain": 100, "costMaster": 100, "costExpert": 100 }
     },
     "talentCosts": {
+      "tal00000000041": 0,
+      "tal00000000128": 0,
+      "tal00000000088": 500,
       "tal00000000116": 400,
       "tal00000000117": 500,
       "tal00000000130": 500,
