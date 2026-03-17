@@ -1,0 +1,18 @@
+{
+  "_id": "psy00000000003",
+  "name": "Compel",
+  "type": "psychic-power",
+  "img": "systems/deathwatch/icons/psychic-powers/telepathy.webp",
+  "system": {
+    "action": "Full",
+    "opposed": "Yes",
+    "range": "5 metres x PR",
+    "sustained": "No",
+    "cost": 1000,
+    "class": "Telepathy",
+    "key": "compel",
+    "description": "<p>This power allows the psyker to force others to briefly act against their will. This power can affect a number of targets equal to the psyker's PR. Those affected must follow a simple command given by the psyker. Some examples include \"Flee\", \"Fall\", \"Attack your friend.\" If the command is a potentially suicidal act, the target gets a +20 to his Willpower Test. In all cases the command must be achievable in a single round.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "190"
+  }
+}
