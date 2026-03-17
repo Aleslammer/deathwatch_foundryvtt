@@ -2,7 +2,7 @@
   "_id": "psy00000000035",
   "name": "Weaken Resolve",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/dark-angels.webp",
   "system": {
     "action": "Half",
     "opposed": "Yes",

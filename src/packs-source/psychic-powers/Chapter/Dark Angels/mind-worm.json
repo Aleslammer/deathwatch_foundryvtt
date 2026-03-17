@@ -2,7 +2,7 @@
   "_id": "psy00000000033",
   "name": "Mind Worm",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/dark-angels.webp",
   "system": {
     "action": "Full",
     "opposed": "Yes",

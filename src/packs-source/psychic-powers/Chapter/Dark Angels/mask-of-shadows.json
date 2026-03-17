@@ -2,7 +2,7 @@
   "_id": "psy00000000032",
   "name": "Mask of Shadows",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/dark-angels.webp",
   "system": {
     "action": "Half or Reaction",
     "opposed": "No",

@@ -2,7 +2,7 @@
   "_id": "psy00000000041",
   "name": "Ancestors' Rage",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/storm-wardens.webp",
   "system": {
     "action": "Full",
     "opposed": "No",

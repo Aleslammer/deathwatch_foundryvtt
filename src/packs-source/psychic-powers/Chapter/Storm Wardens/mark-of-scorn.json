@@ -2,7 +2,7 @@
   "_id": "psy00000000045",
   "name": "Mark of Scorn",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/storm-wardens.webp",
   "system": {
     "action": "Half",
     "opposed": "Yes",

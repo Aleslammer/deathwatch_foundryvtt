@@ -2,7 +2,7 @@
   "_id": "psy00000000052",
   "name": "Word of the Emperor",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/ultramarines.webp",
   "system": {
     "action": "Full",
     "opposed": "Yes",

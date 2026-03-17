@@ -2,7 +2,7 @@
   "_id": "psy00000000054",
   "name": "Ultimate Sacrifice",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/imperial-fists.webp",
   "system": {
     "action": "Half or Reaction",
     "opposed": "No",
@@ -11,7 +11,7 @@
     "cost": 1500,
     "class": "Chapter",
     "key": "ultimate-sacrifice",
-    "chapterImg": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+    "chapterImg": "systems/deathwatch/icons/chapters/imperial-fists.webp",
     "description": "<p>The Imperial Fists are possessed of the most selfless spirit of any Chapter, willing to lay down their very lives for causes others would abandon as hopeless. The Librarian channels this spirit into himself, causing fate to deliver blows meant for his fellows to strike him instead. When this power is in effect and the Kill-team is fighting against a Horde (see page 360), the enemy must pass a Willpower Test in order to direct its ranged attacks at any other target that the Imperial Fists Librarian.</p>",
     "book": "Rites of Battle",
     "page": "50"

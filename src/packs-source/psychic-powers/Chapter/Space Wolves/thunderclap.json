@@ -2,7 +2,7 @@
   "_id": "psy00000000040",
   "name": "Thunderclap",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/space-wolves.webp",
   "system": {
     "action": "Full",
     "opposed": "No",

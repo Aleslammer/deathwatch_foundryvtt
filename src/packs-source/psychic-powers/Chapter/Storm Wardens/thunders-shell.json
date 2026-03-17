@@ -2,7 +2,7 @@
   "_id": "psy00000000046",
   "name": "Thunder's Shell",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/storm-wardens.webp",
   "system": {
     "action": "Half or Reaction",
     "opposed": "No",

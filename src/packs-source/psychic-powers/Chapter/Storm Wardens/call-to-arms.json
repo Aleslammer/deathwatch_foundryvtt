@@ -2,7 +2,7 @@
   "_id": "psy00000000042",
   "name": "Call to Arms",
   "type": "psychic-power",
-  "img": "systems/deathwatch/icons/psychic-powers/chapter.webp",
+  "img": "systems/deathwatch/icons/psychic-powers/storm-wardens.webp",
   "system": {
     "action": "Extended (2)",
     "opposed": "No",
