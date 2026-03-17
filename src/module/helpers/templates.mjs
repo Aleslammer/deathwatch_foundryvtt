@@ -9,7 +9,7 @@ export const preloadHandlebarsTemplates = async function () {
     // Actor partials.
     "systems/deathwatch/templates/actor/parts/actor-skills.html",
     "systems/deathwatch/templates/actor/parts/actor-items.html",
-    "systems/deathwatch/templates/actor/parts/actor-spells.html",
+    "systems/deathwatch/templates/actor/parts/actor-psychic-powers.html",
     "systems/deathwatch/templates/actor/parts/actor-effects.html",
     "systems/deathwatch/templates/actor/parts/actor-armor.html",
     "systems/deathwatch/templates/actor/parts/item-controls.html",
@@ -33,5 +33,6 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/deathwatch/templates/item/item-characteristic-sheet.html",
     "systems/deathwatch/templates/item/item-characteristic-advance-sheet.html",
     "systems/deathwatch/templates/item/item-critical-effect-sheet.html",
+    "systems/deathwatch/templates/item/item-psychic-power-sheet.html",
   ]);
 };

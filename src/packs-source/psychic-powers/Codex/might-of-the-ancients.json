@@ -1,0 +1,18 @@
+{
+  "_id": "psy00000000020",
+  "name": "Might of the Ancients",
+  "type": "psychic-power",
+  "img": "systems/deathwatch/icons/psychic-powers/codex.webp",
+  "system": {
+    "action": "Half",
+    "opposed": "No",
+    "range": "Self",
+    "sustained": "Yes",
+    "cost": 1000,
+    "class": "Codex",
+    "key": "might-of-the-ancients",
+    "description": "<p>Tapping into the deadly powers of the Immaterium, the Librarian infuses himself with psychic energy increasing his psychical prowess and strength of arms to exceptional levels. While this power is in effect, the Librarian's melee attacks all have their Damage and Penetration increased by a number equal to his PR.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "195"
+  }
+}

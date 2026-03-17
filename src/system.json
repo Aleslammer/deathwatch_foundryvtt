@@ -124,6 +124,13 @@
             "path": "packs/weapon-upgrades",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "psychic-powers",
+            "label": "Psychic Powers",
+            "path": "packs/psychic-powers",
+            "type": "Item",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

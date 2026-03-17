@@ -15,6 +15,15 @@ export class DeathwatchItemSheet extends ItemSheet {
     }
 
     /** @override */
+    async _renderOuter() {
+        const html = await super._renderOuter();
+        if (this.item.type === 'psychic-power') {
+            this.position.height = 624;
+        }
+        return html;
+    }
+
+    /** @override */
     get template() {
         const path = "systems/deathwatch/templates/item";
         // Return a single sheet for all item types.
