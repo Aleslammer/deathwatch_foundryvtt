@@ -49,6 +49,13 @@ export class ChatMessageBuilder {
           content: `${item.system.description}${book}`
         };
       
+      case 'special-ability':
+        const specialty = item.system.specialty ? `<p style="margin: 5px 0;"><strong>Specialty:</strong> ${item.system.specialty}</p>` : '';
+        return {
+          title: `<h3>${item.name}</h3>`,
+          content: `${specialty}${item.system.description}${book}`
+        };
+      
       default:
         return {
           title: `<h3>${item.name}</h3>`,

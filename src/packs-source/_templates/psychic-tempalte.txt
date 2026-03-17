@@ -1,9 +1,0 @@
-folder:TechMarine
-Specialty: TechMarine
-Name: Blessed by the omnissiah
-The Techmarine begins the game with the Mechanicus Implants 
-Trait and the Electro-Graft Use and Mechadendrite Use 
-(Servo-Arm) Talents.
-Book: Core Rulebook
-Page 89
-

@@ -69,7 +69,8 @@ export class ItemHandlers {
       chapters: [],
       implants: [],
       cybernetics: [],
-      psychicPowers: []
+      psychicPowers: [],
+      specialAbilities: []
     };
 
     const loadedAmmoIds = new Set();
@@ -121,6 +122,9 @@ export class ItemHandlers {
           break;
         case 'psychic-power':
           categories.psychicPowers.push(item);
+          break;
+        case 'special-ability':
+          categories.specialAbilities.push(item);
           break;
       }
     }

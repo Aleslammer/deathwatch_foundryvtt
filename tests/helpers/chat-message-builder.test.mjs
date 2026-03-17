@@ -110,6 +110,34 @@ describe('ChatMessageBuilder', () => {
         content: expect.stringContaining('trait-card')
       });
     });
+
+    it('creates special ability card with specialty', async () => {
+      const item = {
+        type: 'special-ability',
+        name: 'Bolter Mastery',
+        system: {
+          description: '<p>+10 BS with Bolt weapons</p>',
+          specialty: 'Tactical Marine',
+          book: 'Deathwatch Core Rulebook',
+          page: '85'
+        }
+      };
+
+      await ChatMessageBuilder.createItemCard(item, mockActor);
+
+      expect(global.ChatMessage.create).toHaveBeenCalledWith({
+        speaker: { alias: 'Test Actor' },
+        content: expect.stringContaining('special-ability-card')
+      });
+      expect(global.ChatMessage.create).toHaveBeenCalledWith({
+        speaker: { alias: 'Test Actor' },
+        content: expect.stringContaining('Tactical Marine')
+      });
+      expect(global.ChatMessage.create).toHaveBeenCalledWith({
+        speaker: { alias: 'Test Actor' },
+        content: expect.stringContaining('Bolter Mastery')
+      });
+    });
   });
 
   describe('createRollMessage', () => {
