@@ -11,7 +11,9 @@ TODO: I have issues still with first load of html files.
 
 
 TODO: Finish specialties
-    TODO: Add Special Abilities for Specialties??
+    TODO: Add Special Abilities for Specialties
+    TODO: Create an icon of some sort for them.
+    
 
 TODO: Review all talents to determine if effects can be applied to anythig
 

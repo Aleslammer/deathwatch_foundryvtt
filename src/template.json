@@ -137,7 +137,8 @@
             "cybernetic",
             "weapon-quality",
             "weapon-upgrade",
-            "psychic-power"
+            "psychic-power",
+            "special-ability"
         ],
         "templates": {
             "base": {
@@ -345,6 +346,15 @@
             "book": "",
             "page": "",
             "modifiers": []
+        },
+        "special-ability": {
+            "templates": [
+                "base"
+            ],
+            "key": "",
+            "specialty": "",
+            "book": "",
+            "page": ""
         },
         "psychic-power": {
             "templates": [
