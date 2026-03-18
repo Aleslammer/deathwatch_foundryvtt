@@ -8,7 +8,7 @@
     "clip": "",
     "description": "<p>Dark Angels frequently carry swords with winged hilts in echo of their Chapter symbol. These weapons are used more in ceremony than in combat, but they are perfectly functional weapons should the Battle-Brother have reason to draw one. They are carried either in addition to, or in lieu of, a combat knife depending on the individual's preferences.</p>",
     "dmg": "1d10+3",
-    "dmgType": "R",
+    "dmgType": "Rending",
     "equipped": false,
     "modifiers": [],
     "page": "156",

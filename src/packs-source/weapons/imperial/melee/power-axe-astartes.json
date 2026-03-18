@@ -8,7 +8,7 @@
     "clip": "",
     "description": "<p>Power axes allow for greater impact when striking than a power sword, but are less nimble in the hand. Their inferior defensive capabilities are often mitigated by pairing them with combat shields or even more sophisticated means of protection. Still, they have a reputation as a brutal and unsubtle weapon; the choice to employ one is often more personal than strategic.</p>",
     "dmg": "1d10+8",
-    "dmgType": "E",
+    "dmgType": "Energy",
     "equipped": false,
     "modifiers": [],
     "page": "20",

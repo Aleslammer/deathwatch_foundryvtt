@@ -8,7 +8,7 @@
     "clip": "",
     "description": "<p>A force staff houses its core psi-lattice inside a sturdy casing made from polished metal, bone, exotic wood, or any number of other materials. Usually topping a force staff is an elaborate, circuitry-laced concentration icon whose imagery coincides with the weapon’s origin. A force staff acts as an exceptional Psy-Focus, granting +15 to Invocation Tests. This bonus applies as long as the staff is held in at least one hand. However, striking with the weapon requires both hands.</p>",
     "dmg": "1d10+1",
-    "dmgType": "I",
+    "dmgType": "Impact",
     "equipped": false,
     "modifiers": [],
     "page": "155",
