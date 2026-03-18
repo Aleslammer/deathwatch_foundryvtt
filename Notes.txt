@@ -10,8 +10,9 @@ cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scrip
 TODO: I have issues still with first load of html files.
 
 
-TODO: Finish specialties
-    TODO: Add Special Abilities for Specialties??
+TODO: traits
+    TODO: if a target has a trait size can we auto apply modifier?
+    
 
 TODO: Review all talents to determine if effects can be applied to anythig
 

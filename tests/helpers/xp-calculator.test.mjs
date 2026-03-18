@@ -407,6 +407,65 @@ describe('XPCalculator', () => {
     });
   });
 
+  describe('_calculatePsychicPowerCosts', () => {
+    let mockActor;
+
+    beforeEach(() => {
+      mockActor = {
+        system: {
+          chapterId: null,
+          specialtyId: null,
+          characteristics: {},
+          skills: {}
+        },
+        items: {
+          get: jest.fn(),
+          [Symbol.iterator]: function* () {}
+        }
+      };
+    });
+
+    it('includes psychic power costs in spent XP', () => {
+      mockActor.items = [
+        { type: 'psychic-power', name: 'Smite', system: { cost: 500 }, _id: 'psy1' },
+        { type: 'psychic-power', name: 'Compel', system: { cost: 1000 }, _id: 'psy2' }
+      ];
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13500); // 12000 + 500 + 1000
+    });
+
+    it('treats 0 cost psychic powers as free', () => {
+      mockActor.items = [
+        { type: 'psychic-power', name: 'Free Power', system: { cost: 0 }, _id: 'psy1' }
+      ];
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000);
+    });
+
+    it('treats negative cost psychic powers as free', () => {
+      mockActor.items = [
+        { type: 'psychic-power', name: 'Negative Power', system: { cost: -1 }, _id: 'psy1' }
+      ];
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000);
+    });
+
+    it('handles missing cost field', () => {
+      mockActor.items = [
+        { type: 'psychic-power', name: 'No Cost', system: {}, _id: 'psy1' }
+      ];
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000);
+    });
+
+    it('combines psychic power costs with talent and skill costs', () => {
+      mockActor.items = [
+        { type: 'psychic-power', name: 'Smite', system: { cost: 500 }, _id: 'psy1' },
+        { type: 'talent', name: 'Talent1', system: { cost: 300 }, _id: 'tal1' }
+      ];
+      mockActor.system.skills = {
+        awareness: { trained: true, costTrain: 200 }
+      };
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(13000); // 12000 + 500 + 300 + 200
+    });
+  });
+
   describe('_getTalentSourceId', () => {
     it('returns compendiumId if present', () => {
       const item = { system: { compendiumId: 'comp123' }, _id: 'id1' };

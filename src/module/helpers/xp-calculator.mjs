@@ -33,6 +33,7 @@ export class XPCalculator {
     spent += this._calculateCharacteristicAdvanceCosts(actor);
     spent += this._calculateTalentCosts(actor, chapterCosts.talents, specialtyCosts.talents);
     spent += this._calculateSkillCosts(actor, chapterCosts.skills, specialtyCosts);
+    spent += this._calculatePsychicPowerCosts(actor);
     
     return spent;
   }
@@ -180,6 +181,19 @@ export class XPCalculator {
       return item._stats.compendiumSource.split('.').pop();
     }
     return item._id;
+  }
+
+  /**
+   * Calculate XP spent on psychic powers
+   * @private
+   */
+  static _calculatePsychicPowerCosts(actor) {
+    let total = 0;
+    for (const item of actor.items) {
+      if (item.type !== 'psychic-power') continue;
+      total += Math.max(0, item.system.cost ?? 0);
+    }
+    return total;
   }
 
   /**

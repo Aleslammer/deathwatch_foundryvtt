@@ -395,6 +395,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       if (power) ChatMessageBuilder.createItemCard(power, this.actor);
     });
 
+    // Show special ability in chat
+    html.find('.special-ability-show').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const ability = this.actor.items.get(itemId);
+      if (ability) ChatMessageBuilder.createItemCard(ability, this.actor);
+    });
+
     // Remove armor history from armor
     html.find('.history-remove').click(async ev => {
       const historyId = $(ev.currentTarget).data('historyId');

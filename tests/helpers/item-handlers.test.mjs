@@ -102,6 +102,23 @@ describe('ItemHandlers', () => {
       expect(result.weapons).toHaveLength(1);
     });
 
+    it('should categorize special abilities correctly', () => {
+      const items = [
+        {
+          _id: 'sabi1',
+          name: 'Bolter Mastery',
+          type: 'special-ability',
+          system: { key: 'bolter-mastery', specialty: 'Tactical Marine', book: 'Core', page: '85' }
+        }
+      ];
+
+      const result = ItemHandlers.processItems(items);
+
+      expect(result.specialAbilities).toHaveLength(1);
+      expect(result.specialAbilities[0].name).toBe('Bolter Mastery');
+      expect(result.specialAbilities[0].system.specialty).toBe('Tactical Marine');
+    });
+
     it('should sort talents numerically so Psy Rating 3 comes before Psy Rating 10', () => {
       const items = [
         { _id: 't1', name: 'Psy Rating 10', type: 'talent', system: { modifiers: [] } },
