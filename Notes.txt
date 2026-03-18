@@ -10,9 +10,6 @@ cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scrip
 TODO: I have issues still with first load of html files.
 
 
-TODO: Finish specialties
-    TODO: Blessed by the Omnissiah.   If this is taken it reduces the cost of those talents (traits do not cost XP)
-
 TODO: traits
     TODO: if a target has a trait size can we auto apply modifier?
     
