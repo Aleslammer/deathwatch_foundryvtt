@@ -14,13 +14,21 @@ The weapon qualities system implements special weapon properties from the Deathw
 ### Data Structure
 
 #### Weapon Schema (Current)
+Qualities stored in two formats:
 ```json
 {
   "weapon": {
-    "attachedQualities": ["accurate", "tearing", "stalker-pattern"]
+    "attachedQualities": [
+      "accurate",
+      "tearing",
+      {"id": "proven", "value": "3"},
+      {"id": "felling", "value": "2"}
+    ]
   }
 }
 ```
+- **String format**: Simple qualities without parameters (e.g., `"accurate"`, `"tearing"`)
+- **Object format**: Qualities with parameters (e.g., `{"id": "proven", "value": "3"}`)
 
 #### Quality Schema
 ```json
@@ -433,6 +441,67 @@ Unstable weapon that can explode.
 - Risk of catastrophic failure
 - Extra damage on critical success
 
+### 24. Force (p. 142)
+Psychically-attuned melee weapons for psykers.
+
+**Passive Bonus (Data Preparation):**
+- +1 Damage and +1 Penetration per point of Psy Rating
+- Applied during `item.mjs` `_applyForceWeaponModifiers()`
+- Creates `effectiveDamage` and `effectivePenetration`
+- Stacks with ammunition modifiers (applied after ammo)
+- No effect if wielder has no Psy Rating
+
+**Active Channeling (Post-Damage):**
+- When target takes wounds, psyker may channel psychic force as Free Action
+- Opposed Willpower test (attacker vs target, both roll 1d100)
+- Each side calculates DoS: `floor((WP - roll) / 10) + 1` for successes, 0 for failures
+- If attacker wins: deals Xd10 Energy Damage (X = net DoS)
+- Damage ignores Armour and Toughness Bonus (applied directly as wounds)
+- Button appears in damage message when wounds are taken
+
+**Implementation (Passive):**
+```javascript
+// In item.mjs _applyForceWeaponModifiers()
+if (!this.system.attachedQualities?.includes('force')) return;
+const psyRating = this.actor.system?.psyRating?.value || 0;
+if (psyRating <= 0) return;
+const baseDmg = this.system.effectiveDamage || this.system.dmg;
+const basePen = parseInt(this.system.effectivePenetration ?? this.system.penetration ?? 0);
+this.system.effectiveDamage = `${baseDmg} +${psyRating}`;
+this.system.effectivePenetration = basePen + psyRating;
+```
+
+**Implementation (Channeling):**
+```javascript
+// Button generated in combat-dialog.mjs buildDamageMessage()
+if (forceWeaponData && woundsTaken > 0) {
+  message += `<button class="force-channel-btn" ...>Force: Channel Psychic Energy</button>`;
+}
+
+// Handler in deathwatch.mjs
+// Opposed Willpower: attacker rolls vs target rolls
+// Net DoS = attacker DoS - target DoS
+// On success: roll (netDoS)d10, apply directly as wounds
+```
+
+**Data Flow:**
+1. `item.mjs`: Detects force quality + psy rating → sets effectiveDamage/effectivePenetration
+2. `combat.mjs`: Detects force quality + psy rating → creates `forceWeaponData` object
+3. `chat-message-builder.mjs`: Embeds force data in apply-damage button attributes
+4. `combat-dialog.mjs`: Generates force-channel button in damage message
+5. `deathwatch.mjs`: Handles button click → Opposed Willpower → applies force damage
+
+**Compendium Weapons:**
+- Astartes Force Staff (melee0000000012): 1d10+1 I, Pen 0, Balanced + Force
+- Astartes Force Sword (melee0000000013): 1d10+2 R, Pen 2, Balanced + Force
+
+**Example:**
+- Force Sword (1d10+2, Pen 2) with Psy Rating 3
+- Effective: 1d10+2 +3 damage, Pen 5
+- On hit dealing wounds: Force channel button appears
+- Attacker WP 55 rolls 22 (4 DoS), Target WP 40 rolls 35 (1 DoS)
+- Net DoS: 3 → rolls 3d10 Energy damage, ignoring armor and TB
+
 ## Quality Detection
 
 ### Simple Synchronous Checks (Preferred)
@@ -521,12 +590,23 @@ const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
 - ✅ Toxic: Toughness tests
 - ✅ Twin-Linked: BS bonus and extra hits
 
-**Total: 50+ tests across 23+ weapon qualities, all passing**
+**Force Quality:**
+- ✅ Passive: Psy Rating bonus to damage and penetration
+- ✅ Passive: No modification without force quality
+- ✅ Passive: No modification with zero psy rating
+- ✅ Passive: Stacking with ammunition modifiers
+- ✅ Passive: Missing psyRating handling
+- ✅ Channeling: Button appears when wounds taken
+- ✅ Channeling: No button when zero wounds
+- ✅ Channeling: No button when forceWeaponData null
+- ✅ Channeling: Coexists with Shocking/Toxic buttons
+- ✅ Apply button includes force data attributes
+
+**Total: 65+ tests across 24+ weapon qualities, all passing**
 
 ## Future Enhancements
 
 ### Planned Qualities
-- **Reliable**: Modify jam threshold (+10)
 - **Unreliable**: Modify jam threshold (-10)
 - **Unwieldy**: Penalties for certain actions
 - **Blast (X)**: Area damage radius
@@ -540,13 +620,28 @@ const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
 4. Add tests to weapon-qualities.test.mjs
 5. Update documentation
 
+## UI Display
+
+### Gear Tab Weapon Tooltip
+Hovering over a weapon name on the actor Gear tab shows a tooltip listing all attached qualities.
+- Implemented via `qualityList` Handlebars helper in `handlebars.js`
+- Handles both string and object quality formats
+- Object qualities with `value` show as `"Proven (3)"`
+- String qualities title-cased from kebab-case: `"power-field"` → `"Power Field"`
+- Uses `item.system.attachedQualities` (raw data, not resolved objects)
+
+### Gear Tab Columns
+Weapon rows display: Equipped, Name, Damage, Pen, Range, Ammo, Controls
+- Pen column shows `effectivePenetration` when available, falls back to `penetration`
+
 ## Notes
 
 - **Quality IDs are keys** - Weapon qualities use their key as the `_id` (e.g., `_id: "stalker-pattern"`)
-- **Synchronous checks** - Use `attachedQualities.includes(key)` for simple, fast quality detection
+- **Two storage formats** - Strings for simple qualities, objects with `id`/`value` for parameterized qualities
+- **Synchronous checks** - Use `attachedQualities.includes(key)` for simple string qualities
 - **No async needed** - Quality checks work in synchronous functions like `prepareData()`
 - Quality effects are applied dynamically during combat
-- Some qualities require UI buttons (Shocking, Toxic)
-- Quality values (Proven, Felling) stored in `value` field
+- Some qualities require UI buttons (Shocking, Toxic, Force)
 - All quality logic centralized in combat helpers
-- Fully unit tested with 15+ tests
+- Force quality has both passive (data prep) and active (post-damage) effects
+- Fully unit tested with 65+ tests

@@ -9,45 +9,38 @@ cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scrip
 
 TODO: I have issues still with first load of html files.
 
-
-TODO: traits
+Traits
     TODO: if a target has a trait size can we auto apply modifier?
-    
 
-TODO: Review all talents to determine if effects can be applied to anythig
+Talents
+    TODO: Review all talents to determine if effects can be applied to anythig
 
-TODO: Need to handle called shot mechanic
-TODO: weapon damage does not appear to be modifyable on the gear page.
-TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
-TODO: Gear
+Gear:
     TODO: Add gear from Rites of battle.   Done up to Camo-CLoak
-TODO: Ammmunition 158
+    Relics
+    Deathwatch Relics
+    Chapter Relics
+    Chapter Trappings
+    Cybernetics
+    Servitors
+
+Ammmunition 158
     TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
     TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
     TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
     TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
     TODO: We need to revisit the Devastation upgrade for cohesion damage
+
+
+TODO: Need to handle called shot mechanic
+TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 
-Relics
-Deathwatch Relics
-Chapter Relics
-Chapter Trappings
-Cybernetics
-Servitors
-
-
-Melee Attack 
-All Out
-Charge
-Aim
-Called shot
-Running
-PowerLevel (for powerswords)
-
-TODO: Melee Weapons 153 (Force and Other)
-TODO: Rites of Battle
+Rites of Battle
+    TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
-TODO: Armor provides benefits to the space marine.   We need to work on that.
+
+Armor:
+    TODO: Armor provides benefits to the space marine.   We need to work on that.
 
 

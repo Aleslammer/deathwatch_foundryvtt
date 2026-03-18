@@ -61,4 +61,16 @@ function registerHandlebarsHelpers() {
     Handlebars.registerHelper("hasKeys", function (obj) {
         return obj && typeof obj === 'object' && Object.keys(obj).length > 0;
     })
+
+    Handlebars.registerHelper("qualityList", function (qualities) {
+        if (!Array.isArray(qualities) || qualities.length === 0) return "";
+        return qualities.map(q => {
+            if (typeof q === 'object' && q !== null) {
+                const key = q.id || q._id || q.key || "";
+                const name = key.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                return q.value ? `${name} (${q.value})` : name;
+            }
+            return String(q).replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        }).filter(Boolean).join(", ");
+    })
 }

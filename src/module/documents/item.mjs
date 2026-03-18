@@ -44,6 +44,8 @@ export class DeathwatchItem extends Item {
     if (this.type === 'weapon' && this.actor && this.system.loadedAmmo) {
       this._applyAmmunitionModifiers();
     }
+    
+
   }
   
   _applyWeaponUpgradeModifiers() {
@@ -107,6 +109,21 @@ export class DeathwatchItem extends Item {
     } else {
       delete this.system.effectiveWeight;
     }
+  }
+  
+  _applyForceWeaponModifiers() {
+    if (!this.system.attachedQualities?.includes('force')) return;
+    
+    const psyRating = this.actor.system?.psyRating?.value || 0;
+    if (psyRating <= 0) return;
+    
+    const baseDmg = this.system.effectiveDamage || this.system.dmg;
+    const basePen = parseInt(this.system.effectivePenetration ?? this.system.penetration ?? this.system.pen ?? 0);
+    
+    if (baseDmg) {
+      this.system.effectiveDamage = `${baseDmg} +${psyRating}`;
+    }
+    this.system.effectivePenetration = basePen + psyRating;
   }
   
   _applyAmmunitionModifiers() {

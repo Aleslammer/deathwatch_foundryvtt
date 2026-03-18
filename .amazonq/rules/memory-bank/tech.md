@@ -42,6 +42,7 @@ tests/
 │   ├── ranged-combat.test.mjs
 │   ├── melee-combat.test.mjs
 │   ├── critical-effects.test.mjs
+│   ├── force-weapon-channeling.test.mjs
 │   ├── gyro-stabilised.test.mjs
 │   ├── lightning-claws.test.mjs
 │   ├── melta.test.mjs
@@ -53,6 +54,7 @@ tests/
 │   ├── actor-conditions.test.mjs
 │   ├── item.test.mjs
 │   ├── item-ammunition-modifiers.test.mjs
+│   ├── item-force-weapon.test.mjs
 │   ├── item-effective-range.test.mjs
 │   ├── item-effective-weight.test.mjs
 │   ├── item-weapon-upgrade-damage.test.mjs

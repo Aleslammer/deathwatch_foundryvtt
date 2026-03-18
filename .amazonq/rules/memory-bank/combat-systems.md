@@ -246,7 +246,7 @@ export const RANGE_MODIFIERS = {
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 79.31% coverage, 747 tests passing
+- Overall: 79.31% coverage, 804 tests passing
 
 ## Future Enhancements
 
@@ -265,6 +265,7 @@ See `weapon-qualities.md` for implemented qualities:
 - **Toxic**: Toughness test on damage
 - **Felling (X)**: Reduces Unnatural Toughness
 - **Power Field**: Doubles STR bonus when active
+- **Force**: +1 Damage/Pen per Psy Rating, Opposed Willpower channeling
 
 ### Planned Melee Features
 - Swift Attack (multiple melee attacks)
