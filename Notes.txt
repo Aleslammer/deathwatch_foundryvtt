@@ -7,7 +7,6 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 
 cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
-Critical Effect level 8 not found
 Lets add penetration to the weapon table on the gear sheet 
 
 TODO: I have issues still with first load of html files.

@@ -5,6 +5,7 @@
       <div class="item-equipped"></div>
       <div class="item-name">Name</div>
       <div class="item-damage">Damage</div>
+      <div class="item-pen">Pen</div>
       <div class="item-type">Range</div>
       <div class="item-ammo">Ammo</div>
       <div class="item-controls">
@@ -24,13 +25,20 @@
           <div class="item-image rollable" data-item-id="{{item._id}}" title="Attack with {{item.name}}">
             <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
           </div>
-          <h4>{{item.name}}</h4>
+          <h4 {{#if item.system.attachedQualities.length}}title="{{qualityList item.system.attachedQualities}}"{{/if}}>{{item.name}}</h4>
         </div>
         <div class="item-damage">
           {{#if item.system.effectiveDamage}}
             {{item.system.effectiveDamage}}
           {{else}}
             {{item.system.dmg}}
+          {{/if}}
+        </div>
+        <div class="item-pen">
+          {{#if item.system.effectivePenetration}}
+            {{item.system.effectivePenetration}}
+          {{else}}
+            {{item.system.penetration}}
           {{/if}}
         </div>
         <div class="item-type">
@@ -71,6 +79,7 @@
           <h4 style="font-size: 0.9em; font-style: italic;">{{item.loadedAmmoItem.name}}</h4>
         </div>
         <div class="item-damage"></div>
+        <div class="item-pen"></div>
         <div class="item-type"></div>
         <div class="item-ammo">{{item.loadedAmmoItem.system.capacity.value}} / {{item.loadedAmmoItem.system.capacity.max}}</div>
         <div class="item-controls">
@@ -89,6 +98,7 @@
           <h4 style="font-size: 0.9em; font-style: italic;">{{upgrade.name}}</h4>
         </div>
         <div class="item-damage"></div>
+        <div class="item-pen"></div>
         <div class="item-type"></div>
         <div class="item-ammo"></div>
         <div class="item-controls">
