@@ -11,8 +11,6 @@ TODO: I have issues still with first load of html files.
 
 
 TODO: Finish specialties
-    TODO: Create an icon of some sort for them.
-    TODO: How do we get the cost of the librarian free powers at start?
     TODO: Blessed by the Omnissiah.   If this is taken it reduces the cost of those talents (traits do not cost XP)
 
 TODO: traits
