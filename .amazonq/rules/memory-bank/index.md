@@ -1,123 +1,99 @@
 # Memory Bank Index
 
-## Overview
-Documentation for the Deathwatch Foundry VTT system, including architecture, guidelines, and development patterns.
-
-## Quick Access
-
-### New to the Project?
-Start with **QUICK-REFERENCE.md** for essential commands, patterns, and troubleshooting.
-
-### Core Documents
+## Core Documents
 
 ### Foundation
 1. **product.md** - System overview, features, and use cases
 2. **structure.md** - Codebase organization and architecture
 3. **tech.md** - Technology stack and tooling
-4. **guidelines.md** - Coding standards and best practices
+4. **guidelines.md** - Coding standards, testing, and best practices
 
 ### Game Systems
 5. **modifiers.md** - Modifier system (characteristics, skills, wounds, armor, psy-rating)
 6. **combat-systems.md** - Combat mechanics (ranged/melee, damage, hit locations)
-7. **weapon-qualities.md** - Weapon qualities (Accurate, Tearing, Melta, Lightning Claws, etc.)
+7. **weapon-qualities.md** - 24+ weapon qualities (Accurate, Tearing, Melta, Force, etc.)
 8. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
 9. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
-10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses, talentCosts)
+10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 
-## Quick Reference
+## Key Metrics
+- **Tests**: 804 passing, 71 suites
+- **Helper Classes**: 24+ modules
+- **Compendium Packs**: 15
 
-### File Locations
-```
-Memory Bank:
-  .amazonq/rules/memory-bank/
-    ├── QUICK-REFERENCE.md (start here!)
-    ├── index.md
-    ├── Foundation: product.md, structure.md, tech.md, guidelines.md
-    ├── Game Systems: modifiers.md, combat-systems.md, weapon-qualities.md,
-    │   weapon-upgrades.md, ammunition-modifiers.md, specialty-chapter-costs.md
-    └── Archive: ARCHIVE-NOTE.md, OPTIMIZATION-SUMMARY.md, refactoring-summary.md
-
-Source Code:
-  src/module/
-    ├── documents/ (actor.mjs, item.mjs, actor-conditions.mjs)
-    ├── sheets/ (actor-sheet.mjs, item-sheet.mjs)
-    ├── helpers/ (24 helper modules)
-    └── data/ (skills.json)
-
-Tests:
-  tests/
-    ├── setup.mjs
-    └── *.test.mjs (804 tests passing)
-```
-
-### Common Commands
+## Commands
 ```bash
 npm test                                                    # Run all tests
-npm run test:watch                                          # Watch mode
 npm run test:coverage                                       # Coverage report
 npm run build:packs                                         # Compile compendium packs
 cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1     # Full build + deploy
 ```
 
-## Current State
+## Core Systems Summary
 
-### Metrics
-- **Test Coverage**: 79.31%
-- **Tests**: 804 passing
-- **Helper Classes**: 24 helpers (XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers, WeaponQualityHelper, WeaponUpgradeHelper, CombatHelper, RangedCombatHelper, MeleeCombatHelper, RighteousFuryHelper, WoundHelper, RankHelper, SkillLoader, StatusEffects, CriticalEffects, FoundryAdapter, and more)
-- **CSS**: Modular component-based architecture
-- **Compendium Packs**: 15 packs (Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Implants, Cybernetics, Weapon Qualities, Weapon Upgrades, Demeanours, Critical Effects, Tables)
+### Modifiers
+- **Types**: characteristic, skill, initiative, wounds, armor, psy-rating
+- **Sources**: Actor, equipped items, chapters, armor histories, ammunition
+- **Pattern**: `ModifierCollector.collectAllModifiers(actor)` → apply methods
 
-### Architecture
-- Clean separation of concerns
-- Helper classes for business logic
-- Modular CSS with variables
-- Reusable template partials
-- Named constants
+### Combat
+- **Ranged**: BS-based, RoF (Single/Semi/Full), aim, range modifiers, jamming
+- **Melee**: WS-based, all-out attack, charge
+- **Shared**: Hit locations, damage application, Righteous Fury
 
-## Development Patterns
+### Weapon Qualities
+- **Detection**: `weapon.system.attachedQualities?.includes('key')`
+- **Storage**: Strings for simple qualities, objects `{id, value}` for parameterized
+- **Key**: Accurate, Tearing, Primitive, Melta, Lightning Claws, Power Field, Force
 
-### Helper Classes
-Extract complex logic into focused static classes with pure functions.
+### Ammunition Modifiers
+- **Types**: weapon-damage, weapon-rof, weapon-blast, righteous-fury-threshold, characteristic-damage
+- **Special**: weaponClass restrictions, qualityException field
 
-### CSS Organization
-- Use CSS variables (`:root { --dw-* }`)
-- Low specificity (`.dw-block__element`)
-- Component-based files
+## Common Tasks
 
-### Templates
-Create partials for repeated HTML patterns.
+### Add New Weapon Quality
+1. Implement detection in WeaponQualityHelper
+2. Add effect logic in CombatDialogHelper
+3. Write tests
+4. Add to compendium pack
+5. Document in weapon-qualities.md
 
-### Testing
-- Write tests for all helpers (target 90%+)
-- Mock Foundry globals in `tests/setup.mjs`
-- Use pure functions for testability
+### Add New Modifier Type
+1. Add to ModifierCollector apply methods
+2. Update template.json if needed
+3. Write tests
+4. Update UI and document in modifiers.md
 
-## Resources
+### Add Compendium Pack
+1. Add item type to template.json
+2. Register in system.json
+3. Create source directory in packs-source/
+4. Add JSON files with unique `_id` fields
+5. Run `npm run build:packs`
 
-### Internal
-- Memory bank documents (this folder)
-- Source code (`src/`)
-- Tests (`tests/`)
-- README.md
+## Troubleshooting
 
-### External
-- [Foundry VTT Documentation](https://foundryvtt.com/api/)
-- [Jest Documentation](https://jestjs.io/)
+### Tests Failing
+1. Check `jest.clearAllMocks()` in beforeEach
+2. Verify mock setup in tests/setup.mjs
+3. Run single test: `npm test -- path/to/test.mjs`
 
-## Document Status
+### Modifier Not Applying
+1. Check `enabled` field (must not be false)
+2. Verify `effectType` matches expected value
+3. Check item is equipped (except chapters)
+4. Enable debug: `DEBUG_FLAGS.MODIFIERS = true`
 
-### Complete
-- Foundation documents (product, structure, tech, guidelines)
-- Core systems (modifiers, combat, weapon qualities/upgrades)
-- Ammunition and specialty systems
-
-### Maintenance Notes
-- weapon-quality-accurate.md and weapon-quality-melta.md are legacy - content merged into weapon-qualities.md
-- lightning-claws.md is legacy - content merged into weapon-qualities.md
-- refactoring-summary.md is historical reference only
+## File Locations
+```
+src/module/documents/    Actor, Item, ActorConditions
+src/module/helpers/      24+ helper modules
+src/module/sheets/       ActorSheet, ItemSheet
+src/template.json        Data schema
+src/packs-source/        Compendium JSON source
+tests/                   804 tests across 71 suites
+```
 
 ---
-
-**Last Updated**: January 2025  
-**Status**: Active Development
+**Last Updated**: January 2025

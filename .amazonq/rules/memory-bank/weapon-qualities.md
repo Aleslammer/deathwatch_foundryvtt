@@ -14,13 +14,21 @@ The weapon qualities system implements special weapon properties from the Deathw
 ### Data Structure
 
 #### Weapon Schema (Current)
+Qualities stored in two formats:
 ```json
 {
   "weapon": {
-    "attachedQualities": ["accurate", "tearing", "stalker-pattern"]
+    "attachedQualities": [
+      "accurate",
+      "tearing",
+      {"id": "proven", "value": "3"},
+      {"id": "felling", "value": "2"}
+    ]
   }
 }
 ```
+- **String format**: Simple qualities without parameters (e.g., `"accurate"`, `"tearing"`)
+- **Object format**: Qualities with parameters (e.g., `{"id": "proven", "value": "3"}`)
 
 #### Quality Schema
 ```json
@@ -612,14 +620,28 @@ const provenRating = await WeaponQualityHelper.getProvenRating(weapon);
 4. Add tests to weapon-qualities.test.mjs
 5. Update documentation
 
+## UI Display
+
+### Gear Tab Weapon Tooltip
+Hovering over a weapon name on the actor Gear tab shows a tooltip listing all attached qualities.
+- Implemented via `qualityList` Handlebars helper in `handlebars.js`
+- Handles both string and object quality formats
+- Object qualities with `value` show as `"Proven (3)"`
+- String qualities title-cased from kebab-case: `"power-field"` → `"Power Field"`
+- Uses `item.system.attachedQualities` (raw data, not resolved objects)
+
+### Gear Tab Columns
+Weapon rows display: Equipped, Name, Damage, Pen, Range, Ammo, Controls
+- Pen column shows `effectivePenetration` when available, falls back to `penetration`
+
 ## Notes
 
 - **Quality IDs are keys** - Weapon qualities use their key as the `_id` (e.g., `_id: "stalker-pattern"`)
-- **Synchronous checks** - Use `attachedQualities.includes(key)` for simple, fast quality detection
+- **Two storage formats** - Strings for simple qualities, objects with `id`/`value` for parameterized qualities
+- **Synchronous checks** - Use `attachedQualities.includes(key)` for simple string qualities
 - **No async needed** - Quality checks work in synchronous functions like `prepareData()`
 - Quality effects are applied dynamically during combat
 - Some qualities require UI buttons (Shocking, Toxic, Force)
-- Quality values (Proven, Felling) stored in `value` field
 - All quality logic centralized in combat helpers
 - Force quality has both passive (data prep) and active (post-damage) effects
 - Fully unit tested with 65+ tests

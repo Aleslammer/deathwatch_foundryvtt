@@ -499,6 +499,12 @@ Handlebars.registerHelper("config", function(key) {
 Handlebars.registerHelper("enrich", function(string) {
   return TextEditor.enrichHTML(string, { async: false });
 });
+
+Handlebars.registerHelper("qualityList", function(qualities) {
+  // Formats attachedQualities array for tooltip display
+  // Handles strings ("tearing") and objects ({id: "proven", value: "3"})
+  // Returns: "Tearing, Proven (3)"
+});
 ```
 
 ## Debug and Logging Patterns

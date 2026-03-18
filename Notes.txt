@@ -7,10 +7,7 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 
 cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
-Lets add penetration to the weapon table on the gear sheet 
-
 TODO: I have issues still with first load of html files.
-
 
 Traits
     TODO: if a target has a trait size can we auto apply modifier?
@@ -20,7 +17,6 @@ Talents
 
 Gear:
     TODO: Add gear from Rites of battle.   Done up to Camo-CLoak
-    TODO: weapon damage does not appear to be modifyable on the gear page.
     Relics
     Deathwatch Relics
     Chapter Relics
@@ -40,14 +36,8 @@ TODO: Need to handle called shot mechanic
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 
-
-
-Melee Attack 
-    TODO: Handle attack mechanic
-        PowerLevel (for powerswords)  COntinue testing this
-    TODO: Weapons 153 (Force and Other)
-
-TODO: Rites of Battle
+Rites of Battle
+    TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 
 Armor:
