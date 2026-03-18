@@ -47,7 +47,7 @@ Source Code:
 Tests:
   tests/
     ├── setup.mjs
-    └── *.test.mjs (781 tests passing)
+    └── *.test.mjs (804 tests passing)
 ```
 
 ### Common Commands
@@ -63,7 +63,7 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1     # Full build + deploy
 
 ### Metrics
 - **Test Coverage**: 79.31%
-- **Tests**: 781 passing
+- **Tests**: 804 passing
 - **Helper Classes**: 24 helpers (XPCalculator, ModifierCollector, RollDialogBuilder, ChatMessageBuilder, ItemHandlers, WeaponQualityHelper, WeaponUpgradeHelper, CombatHelper, RangedCombatHelper, MeleeCombatHelper, RighteousFuryHelper, WoundHelper, RankHelper, SkillLoader, StatusEffects, CriticalEffects, FoundryAdapter, and more)
 - **CSS**: Modular component-based architecture
 - **Compendium Packs**: 15 packs (Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Implants, Cybernetics, Weapon Qualities, Weapon Upgrades, Demeanours, Critical Effects, Tables)

@@ -103,6 +103,13 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
     ModifierCollector.applyArmorModifiers(this.items, allModifiers);
     ModifierCollector.applyPsyRatingModifiers(systemData.psyRating, allModifiers);
 
+    // Apply force weapon modifiers after psy rating is computed
+    for (const item of this.items) {
+      if (item.type === 'weapon') {
+        item._applyForceWeaponModifiers();
+      }
+    }
+
     // Calculate movement based on Agility Bonus
     const agBonus = systemData.characteristics?.ag?.mod || 0;
     if (!systemData.movement) {

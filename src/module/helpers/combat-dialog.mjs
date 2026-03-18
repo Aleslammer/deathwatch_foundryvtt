@@ -251,7 +251,7 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null) {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null, forceWeaponData = null) {
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
     if (charDamageEffect && woundsTaken > 0) {
@@ -266,6 +266,10 @@ export class CombatDialogHelper {
     if (isToxic && woundsTaken > 0) {
       const penalty = woundsTaken * 5;
       message += `<br><button class="toxic-test-btn" data-actor-id="${targetId}" data-penalty="${penalty}">Toxic: Roll Toughness Test (-${penalty})</button>`;
+    }
+    
+    if (forceWeaponData && woundsTaken > 0) {
+      message += `<br><button class="force-channel-btn" data-attacker-id="${forceWeaponData.attackerId}" data-target-id="${targetId}" data-psy-rating="${forceWeaponData.psyRating}">Force: Channel Psychic Energy (Opposed Willpower)</button>`;
     }
     
     if (drainLifeMessage) {

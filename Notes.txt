@@ -7,6 +7,9 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 
 cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
+Critical Effect level 8 not found
+Lets add penetration to the weapon table on the gear sheet 
+
 TODO: I have issues still with first load of html files.
 
 
@@ -42,12 +45,7 @@ TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 
 Melee Attack 
     TODO: Handle attack mechanic
-        All Out
-        Charge
-        Aim
-        Called shot
-        Running
-        PowerLevel (for powerswords)
+        PowerLevel (for powerswords)  COntinue testing this
     TODO: Weapons 153 (Force and Other)
 
 TODO: Rites of Battle

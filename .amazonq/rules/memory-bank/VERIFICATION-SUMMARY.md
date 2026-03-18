@@ -1,14 +1,14 @@
 # Memory Bank Verification Summary
 
 ## Verification Date
-January 2025 (Updated: Psy Rating feature addition)
+January 2025 (Updated: Force Weapons feature addition)
 
 ## Changes Made
 
 ### 1. Updated Test Metrics
 **Previous:** 747 tests, 79.31% coverage  
-**Current:** 781 tests passing  
-**Status:** ✅ Updated in index.md, QUICK-REFERENCE.md, tech.md, modifiers.md
+**Current:** 804 tests passing  
+**Status:** ✅ Updated in index.md, QUICK-REFERENCE.md, tech.md, combat-systems.md
 
 ### 2. Updated Helper Class Count
 **Previous:** Listed 10 helpers  
@@ -67,7 +67,7 @@ January 2025 (Updated: Psy Rating feature addition)
 
 ### 4. Updated Weapon Qualities Count
 **Previous:** 16+ qualities  
-**Actual:** 23+ implemented qualities  
+**Actual:** 24+ implemented qualities  
 **Status:** ✅ Updated in weapon-qualities.md, QUICK-REFERENCE.md
 
 **Additional Qualities Documented:**
@@ -90,8 +90,8 @@ January 2025 (Updated: Psy Rating feature addition)
 **Status:** ✅ Updated in tech.md
 
 **Test Organization:**
-- combat/ (11 files)
-- documents/ (11 files)
+- combat/ (12 files)
+- documents/ (12 files)
 - helpers/ (14 files)
 - modifiers/ (6 files)
 - weapon-qualities/ (13 files)
@@ -131,6 +131,29 @@ January 2025 (Updated: Psy Rating feature addition)
 - `src/packs-source/talents/psy-rating-3.json` through `psy-rating-10.json` (8 talents)
 - Specialty `talentCosts` field in template.json
 - Specialty `hasPsyRating` field in template.json
+
+### 9. Force Weapons System Added
+**New Feature:** Force weapon quality with passive Psy Rating bonuses and active psychic channeling
+**Status:** ✅ Documented in weapon-qualities.md, combat-systems.md, tech.md
+
+**Changes:**
+- Added Force quality (#24) to weapon-qualities.md with full passive + active implementation
+- Added `_applyForceWeaponModifiers()` to item.mjs (passive: +1 dmg/pen per Psy Rating)
+- Added `forceWeaponData` flow through combat.mjs → chat-message-builder.mjs → combat-dialog.mjs → deathwatch.mjs
+- Added Force channel button handler in deathwatch.mjs (Opposed Willpower, Xd10 ignoring armor/TB)
+- Added `force` weapon quality to compendium (weapon-qualities/force.json)
+- Added Astartes Force Staff (melee0000000012) and Force Sword (melee0000000013) to weapons compendium
+- Added `tests/documents/item-force-weapon.test.mjs` (9 tests - passive modifiers)
+- Added `tests/combat/force-weapon-channeling.test.mjs` (6 tests - channeling button/data)
+- Updated test count from 789 to 804 across all documents
+- Added Force to key qualities list in QUICK-REFERENCE.md
+
+**New Files:**
+- `src/packs-source/weapons/imperial/melee/force-staff-astartes.json`
+- `src/packs-source/weapons/imperial/melee/force-sword-astartes.json`
+- `src/packs-source/weapon-qualities/force.json`
+- `tests/documents/item-force-weapon.test.mjs`
+- `tests/combat/force-weapon-channeling.test.mjs`
 
 ## Verification Method
 

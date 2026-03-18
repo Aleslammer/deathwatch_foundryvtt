@@ -128,13 +128,18 @@ Hooks.on('renderChatMessage', (message, html) => {
         const charDamageName = button.data('charDamageName');
         const charDamageEffect = charDamageFormula ? { formula: charDamageFormula, characteristic: charDamageChar, name: charDamageName } : null;
         
+        const isForce = button.data('isForce') === 'true' || button.data('isForce') === true;
+        const forceAttackerId = button.data('forceAttackerId');
+        const forcePsyRating = parseInt(button.data('forcePsyRating')) || 0;
+        const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
+        
         const targetActor = game.actors.get(targetId);
         if (!targetActor) {
             ui.notifications.warn('Target actor not found!');
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect });
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {
@@ -240,6 +245,69 @@ Hooks.on('renderChatMessage', (message, html) => {
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
+    });
+    
+    html.find('.force-channel-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const attackerId = button.data('attackerId');
+        const targetId = button.data('targetId');
+        const psyRating = parseInt(button.data('psyRating')) || 0;
+        
+        const attacker = game.actors.get(attackerId);
+        const target = game.actors.get(targetId);
+        if (!attacker || !target) {
+            ui.notifications.warn('Attacker or target actor not found!');
+            return;
+        }
+        
+        const attackerWP = attacker.system.characteristics?.wil?.value || 0;
+        const targetWP = target.system.characteristics?.wil?.value || 0;
+        
+        const attackerRoll = await new Roll('1d100').evaluate();
+        const targetRoll = await new Roll('1d100').evaluate();
+        
+        const attackerDoS = attackerRoll.total <= attackerWP ? Math.floor((attackerWP - attackerRoll.total) / 10) + 1 : 0;
+        const targetDoS = targetRoll.total <= targetWP ? Math.floor((targetWP - targetRoll.total) / 10) + 1 : 0;
+        
+        const attackerWins = attackerDoS > targetDoS;
+        const netDoS = attackerDoS - targetDoS;
+        
+        let flavor = `<strong style="background: #4a0080; color: #e0b0ff; padding: 2px 6px; border-radius: 3px;">🔮 Force: Channel Psychic Energy 🔮</strong>`;
+        flavor += `<br><strong>${attacker.name}</strong> WP ${attackerWP}: rolled ${attackerRoll.total} (${attackerDoS} DoS)`;
+        flavor += `<br><strong>${target.name}</strong> WP ${targetWP}: rolled ${targetRoll.total} (${targetDoS} DoS)`;
+        
+        if (attackerWins && netDoS > 0) {
+            const forceDamageFormula = `${netDoS}d10`;
+            const forceDamageRoll = await new Roll(forceDamageFormula).evaluate();
+            const forceDamage = forceDamageRoll.total;
+            
+            flavor += `<br><strong style="color: #9900cc;">SUCCESS (${netDoS} net DoS) - ${forceDamage} Energy Damage (ignores Armour & TB)</strong>`;
+            
+            const currentWounds = target.system.wounds.value || 0;
+            const maxWounds = target.system.wounds.max || 0;
+            const newWounds = currentWounds + forceDamage;
+            await target.update({ 'system.wounds.value': newWounds });
+            
+            if (newWounds > maxWounds) {
+                const criticalDamage = newWounds - maxWounds;
+                flavor += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
+                flavor += `<br><button class="roll-critical-btn" data-actor-id="${targetId}" data-location="Body" data-damage-type="Energy" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
+            }
+            
+            await forceDamageRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: attacker }),
+                flavor,
+                rollMode: game.settings.get('core', 'rollMode')
+            });
+        } else {
+            flavor += `<br><strong style="color: green;">FAILED - Target resists the psychic force</strong>`;
+            
+            await attackerRoll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: attacker }),
+                flavor,
+                rollMode: game.settings.get('core', 'rollMode')
+            });
+        }
     });
     
     html.find('.roll-critical-btn').click(async (ev) => {

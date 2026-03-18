@@ -9,7 +9,7 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1  # Full build + deploy
 ```
 
 ## Key Metrics
-- **Test Coverage**: 79.31% (781 tests passing)
+- **Test Coverage**: 79.31% (804 tests passing)
 - **Target Coverage**: 90%+ for helpers, 70%+ for documents
 - **Helper Classes**: 24 specialized helpers
 - **Compendium Packs**: 15 packs (Ammunition, Weapons, Armor, Gear, Talents, Traits, Chapters, Specialties, Implants, Cybernetics, Weapon Qualities, Weapon Upgrades, Demeanours, Critical Effects, Tables)
@@ -29,8 +29,8 @@ cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1  # Full build + deploy
 
 ### Weapon Qualities
 - **File**: weapon-qualities.md
-- **Count**: 23+ implemented qualities
-- **Key Qualities**: Accurate, Tearing, Primitive, Melta, Lightning Claws, Power Field, Overheats, Reliable, Power Fist, Gyro-Stabilised
+- **Count**: 24+ implemented qualities
+- **Key Qualities**: Accurate, Tearing, Primitive, Melta, Lightning Claws, Power Field, Overheats, Reliable, Power Fist, Gyro-Stabilised, Force
 - **Detection**: Synchronous via `attachedQualities.includes(key)`
 
 ### Weapon Upgrades

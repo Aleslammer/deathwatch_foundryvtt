@@ -45,7 +45,7 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Specialties (6 specialties: Tactical, Assault, Devastator, Apothecary, Librarian, Techmarine)
 - Implants (19 Space Marine implants)
 - Cybernetics (mechanical augmentations)
-- Weapon Qualities (35+ qualities)
+- Weapon Qualities (35+ qualities, including Force weapons for psykers)
 - Weapon Upgrades (attachments and modifications)
 - Demeanours (19 personality traits)
 - Critical Effects (by damage type)
