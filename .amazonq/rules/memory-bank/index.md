@@ -17,7 +17,7 @@
 10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 
 ## Key Metrics
-- **Tests**: 804 passing, 71 suites
+- **Tests**: 829 passing, 73 suites
 - **Helper Classes**: 24+ modules
 - **Compendium Packs**: 15
 
@@ -26,13 +26,13 @@
 npm test                                                    # Run all tests
 npm run test:coverage                                       # Coverage report
 npm run build:packs                                         # Compile compendium packs
-cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1     # Full build + deploy
+npm run build:all                                          # Validate + build packs + deploy
 ```
 
 ## Core Systems Summary
 
 ### Modifiers
-- **Types**: characteristic, skill, initiative, wounds, armor, psy-rating
+- **Types**: characteristic, characteristic-post-multiplier, skill, initiative, wounds, armor, psy-rating, movement, movement-restriction
 - **Sources**: Actor, equipped items, chapters, armor histories, ammunition
 - **Pattern**: `ModifierCollector.collectAllModifiers(actor)` → apply methods
 

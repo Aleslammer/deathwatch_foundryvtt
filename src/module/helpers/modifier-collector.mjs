@@ -138,10 +138,26 @@ export class ModifierCollector {
         if (characteristic.advances.expert) { total += 5; appliedMods.push({ name: 'Expert Advance', value: 5, source: 'Advances' }); }
       }
       
+      // Apply standard characteristic modifiers
       for (const mod of modifiers) {
         if (mod.enabled !== false && mod.effectType === 'characteristic' && mod.valueAffected === key) {
           const modValue = parseInt(mod.modifier) || 0;
           total += modValue;
+          appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
+        }
+      }
+      
+      // CRITICAL: characteristic-post-multiplier modifiers add to the characteristic VALUE
+      // (for skill tests) but their bonus contribution is applied AFTER the Unnatural
+      // multiplier. This is used by Power Armor Enhanced Strength (+20 STR) where the
+      // +20 affects test target numbers but the +2 SB must not be multiplied by Unnatural.
+      // See power-armor-implementation-plan.md for full explanation.
+      let postMultiplierTotal = 0;
+      for (const mod of modifiers) {
+        if (mod.enabled !== false && mod.effectType === 'characteristic-post-multiplier' && mod.valueAffected === key) {
+          const modValue = parseInt(mod.modifier) || 0;
+          total += modValue;
+          postMultiplierTotal += modValue;
           appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
         }
       }
@@ -155,9 +171,15 @@ export class ModifierCollector {
       
       characteristic.value = total;
       characteristic.modifiers = appliedMods;
-      characteristic.mod = Math.floor(total / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
+      
+      // CRITICAL ORDERING: baseMod excludes post-multiplier contributions so that
+      // the Unnatural multiplier (below) only applies to the base characteristic bonus.
+      // The post-multiplier bonus is added AFTER the multiplier step.
+      // Moving this addition before the multiplier will produce incorrect SB values.
+      characteristic.mod = Math.floor((total - postMultiplierTotal) / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
       characteristic.baseMod = characteristic.mod;
       characteristic.unnaturalMultiplier = 1;
+      characteristic.postMultiplierBonus = Math.floor(postMultiplierTotal / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
       
       // Group and apply characteristic bonus modifiers
       const bonusModGroups = new Map();
@@ -183,7 +205,7 @@ export class ModifierCollector {
         }
       }
       
-      // Apply grouped modifiers
+      // Apply grouped modifiers (Unnatural multipliers and flat bonus modifiers)
       const bonusMods = [];
       for (const group of bonusModGroups.values()) {
         if (group.multiplier !== null) {
@@ -196,6 +218,21 @@ export class ModifierCollector {
           characteristic.mod += group.value;
           bonusMods.push({ name: group.name, value: group.value, source: group.source });
         }
+      }
+      
+      // CRITICAL: Post-multiplier bonus applied AFTER Unnatural multiplier.
+      // This is the entire purpose of characteristic-post-multiplier — the bonus
+      // from e.g. Power Armor (+2 SB from +20 STR) must NOT be multiplied.
+      // DO NOT move this above the Unnatural multiplier loop.
+      if (characteristic.postMultiplierBonus > 0) {
+        characteristic.mod += characteristic.postMultiplierBonus;
+        const postMod = modifiers.find(m => m.enabled !== false && m.effectType === 'characteristic-post-multiplier' && m.valueAffected === key);
+        bonusMods.push({
+          name: postMod?.name || 'Post-Multiplier Bonus',
+          value: characteristic.postMultiplierBonus,
+          source: postMod?.source || 'Equipment',
+          display: `+${characteristic.postMultiplierBonus} (post-multiplier)`
+        });
       }
       characteristic.bonusModifiers = bonusMods;
     }
@@ -273,6 +310,39 @@ export class ModifierCollector {
 
     psyRating.value = total;
     psyRating.modifiers = appliedMods;
+  }
+
+  static applyMovementModifiers(movement, agBonus, modifiers) {
+    if (!movement) return;
+
+    let bonus = 0;
+    const appliedMods = [];
+
+    for (const mod of modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'movement') {
+        const modValue = parseInt(mod.modifier) || 0;
+        bonus += modValue;
+        appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
+      }
+    }
+
+    const base = agBonus + bonus;
+    movement.half = base;
+    movement.full = base * 2;
+    movement.charge = base * 3;
+    movement.run = base * 6;
+    movement.bonus = bonus;
+    movement.modifiers = appliedMods;
+
+    // Apply movement restrictions (e.g., Terminator Armor cannot Run)
+    for (const mod of modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'movement-restriction') {
+        const type = mod.modifier?.toLowerCase();
+        if (type && movement[type] !== undefined) {
+          movement[type] = "N/A";
+        }
+      }
+    }
   }
 
   static applyArmorModifiers(items, modifiers) {

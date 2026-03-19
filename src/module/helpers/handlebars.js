@@ -62,6 +62,11 @@ function registerHandlebarsHelpers() {
         return obj && typeof obj === 'object' && Object.keys(obj).length > 0;
     })
 
+    Handlebars.registerHelper("movementValue", function (value) {
+        if (typeof value === 'string') return value;
+        return `${value}m`;
+    })
+
     Handlebars.registerHelper("qualityList", function (qualities) {
         if (!Array.isArray(qualities) || qualities.length === 0) return "";
         return qualities.map(q => {

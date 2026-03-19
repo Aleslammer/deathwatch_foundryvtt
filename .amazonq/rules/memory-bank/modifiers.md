@@ -17,7 +17,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
    - Equipped items
    - Chapter items (always active)
    - Armor histories (on equipped armor)
-3. Modifiers applied to characteristics, skills, initiative, wounds, armor, and psy rating
+3. Modifiers applied to characteristics, skills, initiative, wounds, armor, psy rating, and movement
 4. Modified values used throughout system
 
 ## Modifier Structure
@@ -27,7 +27,7 @@ The modifier system allows items, talents, chapters, and other effects to modify
 {
   "name": "Modifier Name",
   "modifier": 5,
-  "effectType": "characteristic|skill|initiative|wounds|armor|psy-rating",
+  "effectType": "characteristic|characteristic-post-multiplier|skill|initiative|wounds|armor|psy-rating|movement|movement-restriction",
   "valueAffected": "ws|bs|str|tg|ag|int|per|wil|fs|skillName",
   "enabled": true,
   "source": "Item Name"
@@ -205,6 +205,91 @@ Modify Psy Rating for Librarian characters.
 - Psy Rating 4-10 (tal00000000276-282): +1 modifier each, escalating costs
 - Each requires the previous level as prerequisite
 
+### 7. Characteristic Post-Multiplier Modifiers
+Modify characteristic value for tests while applying bonus AFTER Unnatural multiplier.
+
+**CRITICAL ORDERING**: This effectType exists specifically because Power Armor Enhanced Strength (+20 STR) must add to the characteristic value for skill tests, but the resulting +2 SB must NOT be multiplied by Unnatural Strength. If the post-multiplier bonus is moved before the Unnatural multiplier step in `applyCharacteristicModifiers()`, SB calculations will be wrong.
+
+**Structure:**
+```json
+{
+  "name": "Enhanced Strength",
+  "modifier": 20,
+  "effectType": "characteristic-post-multiplier",
+  "valueAffected": "str",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Adds full value (+20) to characteristic `value` (for skill tests)
+- Calculates `baseMod` excluding post-multiplier contributions
+- Applies Unnatural multiplier to `baseMod` only
+- Adds `floor(postMultiplierValue / 10)` to `mod` AFTER multiplier
+- Tracked in both `characteristic.modifiers[]` (value tooltip: +20) and `characteristic.bonusModifiers[]` (bonus tooltip: +2 post-multiplier)
+
+**Example** (STR 40, Unnatural x2, Power Armor +20):
+- Value: 60 (40 + 20) — used for STR tests
+- baseMod: floor((60 - 20) / 10) = 4
+- Unnatural x2: mod = 8
+- Post-multiplier: mod += floor(20 / 10) = 2
+- Final mod: **10** (NOT 12 which would result from multiplying the +20)
+
+**Example Use Cases:**
+- Power Armor Enhanced Strength (+20 STR)
+- Any equipment bonus that should not be multiplied by Unnatural characteristics
+
+### 8. Movement Modifiers
+Modify base movement rates.
+
+**Structure:**
+```json
+{
+  "name": "Giant Among Men",
+  "modifier": 1,
+  "effectType": "movement",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Applied to base movement (AG Bonus + movement modifiers)
+- All movement rates derived from modified base: half = base, full = base x 2, charge = base x 3, run = base x 6
+- Tracked in `movement.modifiers[]` for tooltip display
+- `movement.bonus` stores total modifier sum
+- No `valueAffected` needed
+
+**Example Use Cases:**
+- Power Armor Giant Among Men (+1 movement)
+- Talents or traits that modify speed
+- Encumbrance penalties (negative modifiers)
+
+### 9. Movement Restriction Modifiers
+Disable specific movement types entirely (set to "N/A").
+
+**Structure:**
+```json
+{
+  "name": "Terminator Armor",
+  "modifier": "run",
+  "effectType": "movement-restriction",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- `modifier` field contains the movement type to disable: `half`, `full`, `charge`, or `run`
+- Sets the specified movement type to the string `"N/A"` (replaces numeric value)
+- Applied after all movement bonus modifiers are calculated
+- Multiple restrictions can stack (e.g., disable both `run` and `charge`)
+- Invalid movement type names are silently ignored
+- No `valueAffected` needed
+
+**Example Use Cases:**
+- Terminator Armor cannot Run
+- Heavy equipment preventing certain movement types
+- Conditions that restrict movement
+
 ## Modifier Sources
 
 ### 1. Actor Modifiers
@@ -306,6 +391,7 @@ ModifierCollector.applySkillModifiers(skills, allModifiers);
 ModifierCollector.applyInitiativeModifiers(allModifiers);
 ModifierCollector.applyWoundModifiers(wounds, allModifiers);
 ModifierCollector.applyPsyRatingModifiers(psyRating, allModifiers);
+ModifierCollector.applyMovementModifiers(movement, agBonus, allModifiers);
 ```
 
 ### Characteristic Application
@@ -482,23 +568,29 @@ static applyWoundModifiers(wounds, modifiers) {
 - `tests/modifiers/modifier-collector.test.mjs`: Core modifier collection tests
 - `tests/modifiers/modifier-collector-wounds.test.mjs`: Wound modifier tests
 - `tests/modifiers/modifier-collector-psy-rating.test.mjs`: Psy Rating modifier tests
+- `tests/modifiers/modifier-collector-post-multiplier.test.mjs`: Post-multiplier modifier tests (11 tests)
+- `tests/modifiers/modifier-collector-movement.test.mjs`: Movement and movement-restriction modifier tests (14 tests)
 - `tests/documents/actor.test.mjs`: Integration tests
 
 ### Coverage
 - Characteristic modifiers: ✓
+- Characteristic post-multiplier modifiers: ✓
 - Skill modifiers: ✓
 - Initiative modifiers: ✓
 - Wound modifiers: ✓
 - Psy Rating modifiers: ✓
+- Movement modifiers: ✓
+- Movement restriction modifiers: ✓
 - Equipped item filtering: ✓
 - Chapter item handling: ✓
 - Armor history modifiers: ✓
 - Disabled modifier handling: ✓
 - Multiple modifier stacking: ✓
+- Post-multiplier + Unnatural ordering: ✓
 
 ### Test Count
-- Total: 781 tests
-- Modifier-specific: ~60 tests
+- Total: 829 tests
+- Modifier-specific: ~85 tests
 - All passing ✓
 
 ## Best Practices

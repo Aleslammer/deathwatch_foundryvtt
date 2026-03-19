@@ -175,7 +175,7 @@ tests/
 ### Build Scripts
 - **Location**: `builds/scripts/`
 - **compilePacks.mjs**: Converts source compendium data to LevelDB format
-- **CopyLocal.ps1**: PowerShell script for local deployment
+- **copyLocal.mjs**: Node.js script for local deployment
 
 ### NPM Scripts
 ```json
@@ -217,8 +217,8 @@ npm run build:packs
 Compiles source data from `src/packs-source/` into LevelDB format in `src/packs/`
 
 ### Local Deployment
-```powershell
-.\builds\scripts\CopyLocal.ps1
+```bash
+npm run build:copy
 ```
 Copies system files to local Foundry installation
 

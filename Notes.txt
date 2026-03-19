@@ -42,5 +42,9 @@ Rites of Battle
 
 Armor:
     TODO: Armor provides benefits to the space marine.   We need to work on that.
+        163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
+        164 - Terminator Armour has forcefield like effects
+
+
 
 

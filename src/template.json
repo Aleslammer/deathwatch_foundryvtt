@@ -184,6 +184,7 @@
             "book": "",
             "page": "",
             "effects": "",
+            "armorEffects": [],
             "attachedHistories": [],
             "equipped": false,
             "modifiers": []

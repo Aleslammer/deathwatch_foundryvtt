@@ -115,6 +115,7 @@ Defines the data structure for:
   - Base template with description
   - Type-specific properties
   - Weapon upgrades with modifiers array
+  - Armor items with `armorEffects` array (structured narrative effects with `name` and `points[]`)
   - Specialty items with `hasPsyRating`, `talentCosts`, `characteristicCosts`, `rankCosts`
 
 ### 6. Compendium System

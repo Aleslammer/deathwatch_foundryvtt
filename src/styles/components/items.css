@@ -252,3 +252,49 @@
 .deathwatch .item-image.rollable:hover {
   box-shadow: 0 0 8px red;
 }
+
+/* Armor Effects Table */
+.armor-effects-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--dw-spacing-sm);
+  font-size: var(--dw-font-size-sm);
+}
+
+.armor-effects-table thead tr {
+  background: var(--dw-color-bg-tertiary);
+  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+}
+
+.armor-effects-table th {
+  font-weight: bold;
+  padding: var(--dw-spacing-sm) var(--dw-spacing-md);
+  text-align: left;
+}
+
+.armor-effects-table td {
+  padding: var(--dw-spacing-xs) var(--dw-spacing-md);
+  border-bottom: var(--dw-border-width) solid var(--dw-color-border);
+  vertical-align: top;
+}
+
+.armor-effects-table tbody tr:nth-child(even) {
+  background: var(--dw-color-bg-secondary);
+}
+
+.armor-effects-name {
+  width: 180px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.armor-effects-desc ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style: disc;
+}
+
+.armor-effects-desc ul li {
+  margin: 1px 0;
+  line-height: 1.4;
+}
