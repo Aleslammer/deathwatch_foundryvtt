@@ -235,7 +235,9 @@ describe('DeathwatchActor', () => {
         half: 5,
         full: 10,
         charge: 15,
-        run: 30
+        run: 30,
+        bonus: 0,
+        modifiers: []
       });
     });
 
@@ -255,7 +257,9 @@ describe('DeathwatchActor', () => {
         half: 0,
         full: 0,
         charge: 0,
-        run: 0
+        run: 0,
+        bonus: 0,
+        modifiers: []
       });
     });
 

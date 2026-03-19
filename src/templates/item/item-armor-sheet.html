@@ -70,10 +70,35 @@
                 </div>
             </div>
             <h3>Effects</h3>
+            {{#if system.armorEffects.length}}
+            <table class="armor-effects-table">
+                <thead>
+                    <tr>
+                        <th class="armor-effects-name">Effect</th>
+                        <th class="armor-effects-desc">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each system.armorEffects}}
+                    <tr>
+                        <td class="armor-effects-name">{{this.name}}</td>
+                        <td class="armor-effects-desc">
+                            <ul>
+                                {{#each this.points}}
+                                <li>{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{else}}
             <div class="resource">
                 <label class="resource-label">Special Effects</label>
                 <textarea name="system.effects" rows="3" style="width: 100%;">{{system.effects}}</textarea>
             </div>
+            {{/if}}
             <h3>Histories</h3>
             <div class="histories-list">
                 {{#each system.attachedHistories}}

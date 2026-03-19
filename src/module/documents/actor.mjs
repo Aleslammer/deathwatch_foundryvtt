@@ -110,15 +110,12 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
       }
     }
 
-    // Calculate movement based on Agility Bonus
+    // Calculate movement based on Agility Bonus (with modifier support)
     const agBonus = systemData.characteristics?.ag?.mod || 0;
     if (!systemData.movement) {
       systemData.movement = {};
     }
-    systemData.movement.half = agBonus;
-    systemData.movement.full = agBonus * 2;
-    systemData.movement.charge = agBonus * 3;
-    systemData.movement.run = agBonus * 6;
+    ModifierCollector.applyMovementModifiers(systemData.movement, agBonus, allModifiers);
   }
 
   /**
