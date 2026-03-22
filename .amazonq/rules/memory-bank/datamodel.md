@@ -148,7 +148,17 @@ Most complex DataModel overall. Full character derived data computation.
 **Access pattern:** `this.parent` is the Actor document. `this.parent.items` for items, `this.parent.effects` for active effects.
 
 ### DeathwatchNPC (Phase 4)
-Minimal DataModel. `prepareDerivedData()` calculates `this.xp = (this.cr * this.cr) * 100` when `cr` is defined.
+NPC DataModel with characteristics, skills, wounds, and modifiers. Simplified version of DeathwatchCharacter without biography, XP, psy rating, etc.
+
+**Schema fields:** 9 characteristics (same structure as character), skills (ObjectField), modifiers (ArrayField), conditions (ObjectField), description (HTMLField). Inherits wounds and fatigue from base.
+
+**prepareDerivedData():**
+1. Loads skills via `SkillLoader.loadSkills()`
+2. Collects all modifiers via `ModifierCollector.collectAllModifiers()`
+3. Applies characteristic modifiers (advances, bonuses, post-multiplier, damage)
+4. Applies skill modifiers
+5. Applies initiative, wound, fatigue, armor modifiers
+6. Calculates movement from AG bonus + movement modifiers/restrictions
 
 ### DeathwatchTalent (Phase 3a)
 First item DataModel with `prepareDerivedData()`. Two responsibilities:

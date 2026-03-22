@@ -73,6 +73,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Prepare NPC data and items.
     if (actorData.type == 'npc') {
+      this._prepareNPCData(context);
       this._prepareItems(context);
     }
 
@@ -220,6 +221,39 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Show Psy Rating box if specialty has hasPsyRating
     context.showPsyRating = context.specialtyItem?.system?.hasPsyRating || false;
+  }
+
+  /**
+   * Prepare NPC-specific data.
+   * Simplified version of _prepareCharacterData — characteristics labels, skills, wound color.
+   * @param {Object} context The sheet context
+   */
+  _prepareNPCData(context) {
+    for (let [k, v] of Object.entries(context.system.characteristics)) {
+      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
+    }
+
+    if (context.system.skills) {
+      const sortedSkills = Object.entries(context.system.skills)
+        .sort(([keyA], [keyB]) => {
+          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
+          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
+          return labelA.localeCompare(labelB);
+        });
+
+      for (const [k, v] of sortedSkills) {
+        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+        const liveSkill = this.actor.system.skills[k];
+        const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const skillModTotal = liveSkill?.modifierTotal || 0;
+        v.total = baseSkillTotal + skillModTotal;
+      }
+    }
+
+    context.config = game.deathwatch.config;
+
+    const wounds = context.system.wounds;
+    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
   }
 
   /**
