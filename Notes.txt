@@ -45,7 +45,10 @@ Armor:
         164 - Terminator Armour has forcefield like effects
 
 Hordes
+    These should be extensions of enemy actors as they are but they have some different rules when attacking\applying damage.
 NPC
+    They should be the same as Actors just maybe some other indicators on them?
 Enemy actors?
+    Same as NPC just with some other characterisitcs?  Not sure what is needed yet.
 
 

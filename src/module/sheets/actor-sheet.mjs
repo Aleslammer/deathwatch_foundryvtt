@@ -18,7 +18,7 @@ export class DeathwatchActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["deathwatch", "sheet", "actor"],
-      template: "systems/deathwatch/templates/actor/actor-sheet.html",
+      template: "systems/deathwatch/templates/actor/actor-character-sheet.html",
       width: 1000,
       height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "characteristics" }]
