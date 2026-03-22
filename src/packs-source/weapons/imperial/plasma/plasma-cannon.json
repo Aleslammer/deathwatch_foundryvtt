@@ -20,8 +20,13 @@
     "rof": "S/-/-",
     "wt": 70,
     "attachedQualities": [
-      {"id": "blast", "value": "3"},
-      "volatile"
+      {
+        "id": "blast",
+        "value": "3"
+      },
+      {
+        "id": "volatile"
+      }
     ]
   },
   "type": "weapon"

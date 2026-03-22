@@ -91,15 +91,6 @@ describe('DeathwatchItemSheet', () => {
       expect(result.system).toBeDefined();
     });
 
-    it('initializes capacity.max from clip for weapons', () => {
-      mockItem.type = 'weapon';
-      mockItem.system.clip = '30';
-      mockItem.system.capacity = {};
-      
-      const result = mockSheet.getData();
-      expect(result.system.capacity.max).toBe(30);
-    });
-
     it('populates attached histories for armor with actor', () => {
       mockItem.type = 'armor';
       mockItem.system.attachedHistories = ['hist-1'];

@@ -97,10 +97,28 @@ global.ActorSheet = class ActorSheet {
 };
 
 global.foundry = {
+  abstract: {
+    TypeDataModel: class TypeDataModel {
+      static defineSchema() { return {}; }
+      static migrateData(data) { return data; }
+      prepareDerivedData() {}
+    }
+  },
+  data: {
+    fields: {
+      StringField: class StringField { constructor(opts = {}) { this.options = opts; } },
+      NumberField: class NumberField { constructor(opts = {}) { this.options = opts; } },
+      BooleanField: class BooleanField { constructor(opts = {}) { this.options = opts; } },
+      ArrayField: class ArrayField { constructor(element, opts = {}) { this.element = element; this.options = opts; } },
+      ObjectField: class ObjectField { constructor(opts = {}) { this.options = opts; } },
+      SchemaField: class SchemaField { constructor(fields, opts = {}) { this.fields = fields; this.options = opts; } },
+      HTMLField: class HTMLField { constructor(opts = {}) { this.options = opts; } }
+    }
+  },
   utils: {
     randomID: () => 'test-id-' + Math.random().toString(36).substr(2, 9),
     deepClone: (obj) => JSON.parse(JSON.stringify(obj)),
-    mergeObject: (original, other) => ({ ...original, ...other })
+    mergeObject: (original, other) => Object.assign(original, other)
   },
   applications: {
     ux: {

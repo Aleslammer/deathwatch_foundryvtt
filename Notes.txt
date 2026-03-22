@@ -8,6 +8,10 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
+TODO: Perhaps hide the psychic powers table header if they dont have psy abilities
+TODO: Move Special Abilities as a sub folder under Specialties
+TODO: need to update living ammunition quality to be effective
+TODO: Volatile should have an indicator?
 
 Traits
     TODO: if a target has a trait size can we auto apply modifier?

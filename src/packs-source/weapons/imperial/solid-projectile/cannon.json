@@ -20,8 +20,13 @@
     "rof": "-/-/10",
     "wt": 80,
     "attachedQualities": [
-      {"id": "devastating", "value": "1"},
-      "tearing"
+      {
+        "id": "devastating",
+        "value": "1"
+      },
+      {
+        "id": "tearing"
+      }
     ]
   },
   "type": "weapon"

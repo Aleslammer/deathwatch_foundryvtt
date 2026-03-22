@@ -1,6 +1,6 @@
 {
   "_id": "melee0000000012",
-"img": "systems/deathwatch/icons/weapons/force-staff.webp",
+  "img": "systems/deathwatch/icons/weapons/force-staff.webp",
   "name": "Astartes Force Staff",
   "system": {
     "book": "Deathwatch Core Rulebook",
@@ -20,8 +20,12 @@
     "rof": "",
     "wt": 5,
     "attachedQualities": [
-      "balanced",
-      "force"
+      {
+        "id": "balanced"
+      },
+      {
+        "id": "force"
+      }
     ]
   },
   "type": "weapon"

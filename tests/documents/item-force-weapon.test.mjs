@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
-import { DeathwatchItem } from '../../src/module/documents/item.mjs';
+import DeathwatchWeapon from '../../src/module/data/item/weapon.mjs';
 
-describe('DeathwatchItem - Force Weapon Modifiers', () => {
+describe('DeathwatchWeapon - Force Weapon Modifiers', () => {
   let mockActor;
 
   beforeEach(() => {
@@ -14,115 +14,115 @@ describe('DeathwatchItem - Force Weapon Modifiers', () => {
   });
 
   function createForceWeapon(overrides = {}) {
-    const weapon = new DeathwatchItem({
-      name: overrides.name || 'Force Sword',
-      type: 'weapon',
-      system: {
-        dmg: overrides.dmg || '1d10+2',
-        penetration: overrides.penetration || '2',
-        class: 'Melee',
-        attachedQualities: overrides.attachedQualities || ['balanced', 'force'],
-        ...overrides.extraSystem
-      }
+    const weapon = new DeathwatchWeapon();
+    Object.assign(weapon, {
+      dmg: overrides.dmg || '1d10+2',
+      penetration: overrides.penetration || '2',
+      class: 'Melee',
+      attachedQualities: overrides.attachedQualities || [{id: 'balanced'}, {id: 'force'}],
+      attachedUpgrades: [],
+      range: 0,
+      damage: '',
+      rof: '',
+      wt: 0,
+      loadedAmmo: null
     });
-    weapon.actor = mockActor;
+    if (overrides.extraSystem) Object.assign(weapon, overrides.extraSystem);
+    weapon.parent = { actor: mockActor };
     return weapon;
   }
 
-  describe('_applyForceWeaponModifiers', () => {
+  describe('applyForceWeaponModifiers', () => {
     it('should add psy rating bonus to damage and penetration', () => {
       mockActor.system.psyRating.value = 3;
       const weapon = createForceWeapon();
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBe('1d10+2 +3');
-      expect(weapon.system.effectivePenetration).toBe(5);
+      expect(weapon.effectiveDamage).toBe('1d10+2 +3');
+      expect(weapon.effectivePenetration).toBe(5);
     });
 
     it('should not modify weapon without force quality', () => {
       mockActor.system.psyRating.value = 3;
-      const weapon = createForceWeapon({ attachedQualities: ['balanced'] });
+      const weapon = createForceWeapon({ attachedQualities: [{id: 'balanced'}] });
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBeUndefined();
-      expect(weapon.system.effectivePenetration).toBeUndefined();
+      expect(weapon.effectiveDamage).toBeUndefined();
+      expect(weapon.effectivePenetration).toBeUndefined();
     });
 
     it('should not modify weapon when actor has no psy rating', () => {
       mockActor.system.psyRating.value = 0;
       const weapon = createForceWeapon();
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBeUndefined();
-      expect(weapon.system.effectivePenetration).toBeUndefined();
+      expect(weapon.effectiveDamage).toBeUndefined();
+      expect(weapon.effectivePenetration).toBeUndefined();
     });
 
     it('should handle psy rating of 1', () => {
       mockActor.system.psyRating.value = 1;
       const weapon = createForceWeapon({ dmg: '1d10+1', penetration: '0' });
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBe('1d10+1 +1');
-      expect(weapon.system.effectivePenetration).toBe(1);
+      expect(weapon.effectiveDamage).toBe('1d10+1 +1');
+      expect(weapon.effectivePenetration).toBe(1);
     });
 
     it('should handle high psy rating', () => {
       mockActor.system.psyRating.value = 7;
       const weapon = createForceWeapon();
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBe('1d10+2 +7');
-      expect(weapon.system.effectivePenetration).toBe(9);
+      expect(weapon.effectiveDamage).toBe('1d10+2 +7');
+      expect(weapon.effectivePenetration).toBe(9);
     });
 
     it('should stack with existing effectiveDamage from ammunition', () => {
       mockActor.system.psyRating.value = 3;
       const weapon = createForceWeapon();
-      weapon.system.effectiveDamage = '1d10+2 -1';
+      weapon.effectiveDamage = '1d10+2 -1';
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBe('1d10+2 -1 +3');
+      expect(weapon.effectiveDamage).toBe('1d10+2 -1 +3');
     });
 
     it('should stack with existing effectivePenetration from ammunition', () => {
       mockActor.system.psyRating.value = 3;
       const weapon = createForceWeapon();
-      weapon.system.effectivePenetration = 4;
+      weapon.effectivePenetration = 4;
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectivePenetration).toBe(7);
+      expect(weapon.effectivePenetration).toBe(7);
     });
 
     it('should handle missing psyRating on actor', () => {
       mockActor.system.psyRating = undefined;
       const weapon = createForceWeapon();
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBeUndefined();
-      expect(weapon.system.effectivePenetration).toBeUndefined();
+      expect(weapon.effectiveDamage).toBeUndefined();
+      expect(weapon.effectivePenetration).toBeUndefined();
     });
 
     it('should handle weapon with no attachedQualities', () => {
       mockActor.system.psyRating.value = 3;
-      const weapon = new DeathwatchItem({
-        name: 'Plain Sword',
-        type: 'weapon',
-        system: { dmg: '1d10+2', penetration: '2', class: 'Melee' }
-      });
-      weapon.actor = mockActor;
+      const weapon = new DeathwatchWeapon();
+      Object.assign(weapon, { dmg: '1d10+2', penetration: '2', class: 'Melee', range: 0, damage: '', rof: '', wt: 0, attachedUpgrades: [], loadedAmmo: null, attachedQualities: [] });
+      weapon.parent = { actor: mockActor };
 
-      weapon._applyForceWeaponModifiers();
+      weapon.applyForceWeaponModifiers();
 
-      expect(weapon.system.effectiveDamage).toBeUndefined();
-      expect(weapon.system.effectivePenetration).toBeUndefined();
+      expect(weapon.effectiveDamage).toBeUndefined();
+      expect(weapon.effectivePenetration).toBeUndefined();
     });
   });
 });

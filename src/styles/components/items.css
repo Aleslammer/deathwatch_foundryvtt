@@ -38,6 +38,46 @@
   letter-spacing: 1px;
 }
 
+/* Collapsible gear sections */
+.deathwatch .section-toggle {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deathwatch .section-toggle:hover {
+  color: #3a2210;
+}
+
+.deathwatch .section-chevron {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.deathwatch .gear-section.collapsed .section-chevron {
+  transform: rotate(-90deg);
+}
+
+.deathwatch .section-summary {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--dw-color-text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: auto;
+  display: none;
+}
+
+.deathwatch .gear-section.collapsed .section-summary {
+  display: inline;
+}
+
+.deathwatch .gear-section.collapsed .section-content {
+  display: none;
+}
+
 .dw-items-list,
 .deathwatch .items-list {
   list-style: none;

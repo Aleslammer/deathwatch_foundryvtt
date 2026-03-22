@@ -1,6 +1,8 @@
 // Import document classes.
 import { DeathwatchActor } from "./documents/actor.mjs";
 import { DeathwatchItem } from "./documents/item.mjs";
+// Import data models.
+import * as models from './data/_module.mjs';
 // Import sheet classes.
 import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
 import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
@@ -73,6 +75,32 @@ Hooks.once('init', async function () {
     // Define custom Document classes
     CONFIG.Actor.documentClass = DeathwatchActor;
     CONFIG.Item.documentClass = DeathwatchItem;
+
+    // Register DataModels
+    CONFIG.Actor.dataModels = {
+      character: models.DeathwatchCharacter,
+      npc: models.DeathwatchNPC
+    };
+
+    CONFIG.Item.dataModels = {
+      gear: models.DeathwatchGear,
+      demeanour: models.DeathwatchDemeanour,
+      trait: models.DeathwatchTrait,
+      "armor-history": models.DeathwatchArmorHistory,
+      "weapon-quality": models.DeathwatchWeaponQuality,
+      "critical-effect": models.DeathwatchCriticalEffect,
+      implant: models.DeathwatchImplant,
+      cybernetic: models.DeathwatchCybernetic,
+      talent: models.DeathwatchTalent,
+      ammunition: models.DeathwatchAmmunition,
+      "weapon-upgrade": models.DeathwatchWeaponUpgrade,
+      "psychic-power": models.DeathwatchPsychicPower,
+      "special-ability": models.DeathwatchSpecialAbility,
+      armor: models.DeathwatchArmor,
+      chapter: models.DeathwatchChapter,
+      specialty: models.DeathwatchSpecialty,
+      weapon: models.DeathwatchWeapon
+    };
 
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;

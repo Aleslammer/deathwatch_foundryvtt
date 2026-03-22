@@ -1,68 +1,56 @@
 import { jest } from '@jest/globals';
 import './setup.mjs';
-import { DeathwatchItem } from '../src/module/documents/item.mjs';
+import DeathwatchWeapon from '../src/module/data/item/weapon.mjs';
 
 describe('Vengeance Rounds', () => {
   let mockActor;
-  let mockWeapon;
-  let mockAmmo;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    mockActor = {
-      items: {
-        get: jest.fn()
-      }
-    };
+    mockActor = { items: { get: jest.fn() } };
   });
 
+  function createWeapon(systemOverrides) {
+    const weapon = new DeathwatchWeapon();
+    Object.assign(weapon, { range: 0, dmg: '', damage: '', rof: '', class: '', attachedUpgrades: [], attachedQualities: [], loadedAmmo: null, penetration: 0, pen: 0, wt: 0, ...systemOverrides });
+    weapon.parent = { actor: mockActor };
+    return weapon;
+  }
+
   it('sets penetration to 9', () => {
-    mockAmmo = {
+    const mockAmmo = {
       system: {
         modifiers: [
           { name: 'Vengeance Penetration', modifier: '9', effectType: 'weapon-penetration', enabled: true }
         ]
       }
     };
-    
-    mockWeapon = new DeathwatchItem({
-      name: 'Bolter',
-      type: 'weapon',
-      system: { dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' }
-    }, { parent: mockActor });
-    
-    mockWeapon.actor = mockActor;
     mockActor.items.get.mockReturnValue(mockAmmo);
-    mockWeapon._applyAmmunitionModifiers();
-    
-    expect(mockWeapon.system.effectivePenetration).toBe(9);
+    const weapon = createWeapon({ dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' });
+
+    weapon._applyAmmunitionModifiers();
+
+    expect(weapon.effectivePenetration).toBe(9);
   });
 
   it('adds Felling (1)', () => {
-    mockAmmo = {
+    const mockAmmo = {
       system: {
         modifiers: [
           { name: 'Vengeance Felling', modifier: '1', effectType: 'weapon-felling', enabled: true }
         ]
       }
     };
-    
-    mockWeapon = new DeathwatchItem({
-      name: 'Bolter',
-      type: 'weapon',
-      system: { dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' }
-    }, { parent: mockActor });
-    
-    mockWeapon.actor = mockActor;
     mockActor.items.get.mockReturnValue(mockAmmo);
-    mockWeapon._applyAmmunitionModifiers();
-    
-    expect(mockWeapon.system.effectiveFelling).toBe(1);
+    const weapon = createWeapon({ dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' });
+
+    weapon._applyAmmunitionModifiers();
+
+    expect(weapon.effectiveFelling).toBe(1);
   });
 
   it('applies all three modifiers together', () => {
-    mockAmmo = {
+    const mockAmmo = {
       system: {
         modifiers: [
           { name: 'Vengeance Penetration', modifier: '9', effectType: 'weapon-penetration', enabled: true },
@@ -71,63 +59,44 @@ describe('Vengeance Rounds', () => {
         ]
       }
     };
-    
-    mockWeapon = new DeathwatchItem({
-      name: 'Bolter',
-      type: 'weapon',
-      system: { dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' }
-    }, { parent: mockActor });
-    
-    mockWeapon.actor = mockActor;
     mockActor.items.get.mockReturnValue(mockAmmo);
-    mockWeapon._applyAmmunitionModifiers();
-    
-    expect(mockWeapon.system.effectivePenetration).toBe(9);
-    expect(mockWeapon.system.effectiveFelling).toBe(1);
-    // premature-detonation is checked in combat, not in prepareData
+    const weapon = createWeapon({ dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' });
+
+    weapon._applyAmmunitionModifiers();
+
+    expect(weapon.effectivePenetration).toBe(9);
+    expect(weapon.effectiveFelling).toBe(1);
   });
 
   it('does not set effectiveFelling when no felling modifier', () => {
-    mockAmmo = {
+    const mockAmmo = {
       system: {
         modifiers: [
           { name: 'Vengeance Penetration', modifier: '9', effectType: 'weapon-penetration', enabled: true }
         ]
       }
     };
-    
-    mockWeapon = new DeathwatchItem({
-      name: 'Bolter',
-      type: 'weapon',
-      system: { dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' }
-    }, { parent: mockActor });
-    
-    mockWeapon.actor = mockActor;
     mockActor.items.get.mockReturnValue(mockAmmo);
-    mockWeapon._applyAmmunitionModifiers();
-    
-    expect(mockWeapon.system.effectiveFelling).toBeUndefined();
+    const weapon = createWeapon({ dmg: '1d10+9', pen: 4, range: 100, rof: 'S/3/-', loadedAmmo: 'ammo123' });
+
+    weapon._applyAmmunitionModifiers();
+
+    expect(weapon.effectiveFelling).toBeUndefined();
   });
 
   it('keeps base penetration when higher than override', () => {
-    mockAmmo = {
+    const mockAmmo = {
       system: {
         modifiers: [
           { name: 'Vengeance Penetration', modifier: '9', effectType: 'weapon-penetration', enabled: true }
         ]
       }
     };
-    
-    mockWeapon = new DeathwatchItem({
-      name: 'Heavy Bolter',
-      type: 'weapon',
-      system: { dmg: '2d10', pen: 10, range: 150, rof: '-/-/6', loadedAmmo: 'ammo123' }
-    }, { parent: mockActor });
-    
-    mockWeapon.actor = mockActor;
     mockActor.items.get.mockReturnValue(mockAmmo);
-    mockWeapon._applyAmmunitionModifiers();
-    
-    expect(mockWeapon.system.effectivePenetration).toBe(10);
+    const weapon = createWeapon({ dmg: '2d10', pen: 10, range: 150, rof: '-/-/6', loadedAmmo: 'ammo123' });
+
+    weapon._applyAmmunitionModifiers();
+
+    expect(weapon.effectivePenetration).toBe(10);
   });
 });

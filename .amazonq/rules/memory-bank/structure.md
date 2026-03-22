@@ -23,7 +23,33 @@ src/
 │   ├── gear/                       # Equipment icons
 │   └── weapons/                    # Weapon icons
 ├── module/                         # Core system logic
-│   ├── documents/                  # Data model definitions
+│   ├── data/                       # TypeDataModel classes (v13 programmatic schemas)
+│   │   ├── _module.mjs             # Barrel export for all DataModels
+│   │   ├── base-document.mjs       # DeathwatchDataModel (root, shared templates)
+│   │   ├── actor/                  # Actor type DataModels
+│   │   │   ├── base-actor.mjs      # DeathwatchActorBase (wounds, fatigue)
+│   │   │   ├── character.mjs       # DeathwatchCharacter (full PC, prepareDerivedData)
+│   │   │   └── npc.mjs             # DeathwatchNPC (minimal)
+│   │   └── item/                   # Item type DataModels
+│   │       ├── base-item.mjs       # DeathwatchItemBase (description, book, page, modifiers)
+│   │       ├── gear.mjs            # DeathwatchGear
+│   │       ├── demeanour.mjs       # DeathwatchDemeanour
+│   │       ├── trait.mjs           # DeathwatchTrait
+│   │       ├── armor-history.mjs   # DeathwatchArmorHistory
+│   │       ├── weapon-quality.mjs  # DeathwatchWeaponQuality
+│   │       ├── critical-effect.mjs # DeathwatchCriticalEffect
+│   │       ├── implant.mjs         # DeathwatchImplant
+│   │       ├── cybernetic.mjs      # DeathwatchCybernetic
+│   │       ├── talent.mjs          # DeathwatchTalent (prepareDerivedData)
+│   │       ├── ammunition.mjs      # DeathwatchAmmunition
+│   │       ├── weapon-upgrade.mjs  # DeathwatchWeaponUpgrade
+│   │       ├── psychic-power.mjs   # DeathwatchPsychicPower
+│   │       ├── special-ability.mjs # DeathwatchSpecialAbility
+│   │       ├── armor.mjs           # DeathwatchArmor
+│   │       ├── chapter.mjs         # DeathwatchChapter
+│   │       ├── specialty.mjs       # DeathwatchSpecialty
+│   │       └── weapon.mjs          # DeathwatchWeapon (migrateData, prepareDerivedData)
+│   ├── documents/                  # Document classes (thin shells: Actor, Item)
 │   ├── helpers/                    # Utility functions
 │   ├── modifiers/                  # Modifier system
 │   ├── sheets/                     # UI sheet implementations
@@ -52,24 +78,37 @@ src/
 
 ### 1. System Entry Point
 - **deathwatch.mjs**: Main initialization file that bootstraps the system
-  - Registers document types
+  - Registers document types and DataModels (`CONFIG.Actor.dataModels`, `CONFIG.Item.dataModels`)
   - Loads helpers and utilities
   - Initializes sheets
   - Sets up Handlebars templates
 
-### 2. Document Models (`module/documents/`)
-- **actor.mjs**: Defines Actor document behavior (characters, NPCs)
-  - Character data preparation
-  - Derived value calculations (bonuses, totals)
-  - Actor-specific methods
-- **actor-conditions.mjs**: Actor condition tracking and management
-- **item.mjs**: Defines Item document behavior (weapons, armor, gear, etc.)
-  - Item data preparation
-  - Equipment state management
-  - Weapon upgrade modifier application (effectiveRange calculation)
-  - Item-specific methods
+### 2. TypeDataModel Classes (`module/data/`)
+- **base-document.mjs**: `DeathwatchDataModel` — root class extending `foundry.abstract.TypeDataModel`
+  - Shared template methods: `equippedTemplate()`, `requisitionTemplate()`, `capacityTemplate()`, `keyTemplate()`
+- **actor/base-actor.mjs**: `DeathwatchActorBase` — base for all actor types
+  - Shared fields: `wounds` (value, base, max), `fatigue` (value, max)
+- **actor/character.mjs**: `DeathwatchCharacter` — full PC data with `prepareDerivedData()`
+  - Schema: 9 characteristics (each with value, base, bonus, damage, advances), biography, progression, modifiers, conditions, psyRating, skills, legacy fields
+  - Imports: ModifierCollector, XPCalculator, SkillLoader
+  - `prepareDerivedData()`: skills, XP, modifiers, force weapons, movement
+- **actor/npc.mjs**: `DeathwatchNPC` — minimal NPC data
+  - `prepareDerivedData()`: XP from CR calculation
+- **item/base-item.mjs**: `DeathwatchItemBase` — base for all item types
+  - Universal fields: `description` (HTML), `book`, `page`, `modifiers` (array)
+- **item/*.mjs**: One DataModel per item type (all 17 registered)
+  - All item types have DataModels; template.json contains only type lists
+  - Registered via `CONFIG.Item.dataModels` in deathwatch.mjs
+  - **weapon.mjs** is the most complex item: `migrateData()`, `prepareDerivedData()`, `applyForceWeaponModifiers()`
 
-### 3. Helper Modules (`module/helpers/`)
+### 3. Document Classes (`module/documents/`)
+- **actor.mjs**: Thin shell — `prepareData()`, `_preCreate()`, `getRollData()`
+  - All derived data computation moved to `DeathwatchCharacter.prepareDerivedData()`
+- **actor-conditions.mjs**: Actor condition tracking and management
+- **item.mjs**: Thin shell — `prepareData()`, `getRollData()`, `roll()`
+  - All derived data computation moved to respective DataModel classes
+
+### 4. Helper Modules (`module/helpers/`)
 - **xp-calculator.mjs**: XP and rank calculations (pure functions)
 - **modifier-collector.mjs**: Modifier collection and application
 - **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
@@ -97,7 +136,7 @@ src/
 - **templates.mjs**: Template preloading
 - **status-effects.mjs**: Status effect management
 
-### 4. Sheet Classes (`module/sheets/`)
+### 5. Sheet Classes (`module/sheets/`)
 - **actor-sheet.mjs**: Character and NPC sheet UI logic
   - Renders character sheets
   - Handles user interactions
@@ -106,19 +145,13 @@ src/
   - Renders item configuration sheets
   - Handles item editing
 
-### 5. Data Schema (`template.json`)
-Defines the data structure for:
-- **Actor Types**: character, npc
-  - Base template with wounds and fatigue
-  - Character-specific data (characteristics, skills, modifiers, psyRating)
-- **Item Types**: weapon, armor, armor-history, gear, ammunition, characteristic, weapon-upgrade
-  - Base template with description
-  - Type-specific properties
-  - Weapon upgrades with modifiers array
-  - Armor items with `armorEffects` array (structured narrative effects with `name` and `points[]`)
-  - Specialty items with `hasPsyRating`, `talentCosts`, `characteristicCosts`, `rankCosts`
+### 6. Data Schema (`template.json`)
+Contains only type lists — all field definitions live in DataModel classes:
+- **Actor Types**: `["character", "npc"]`
+- **Item Types**: 17 types listed
+- No field definitions, templates, or default values (all in DataModels)
 
-### 6. Compendium System
+### 7. Compendium System
 - **packs-source/**: Human-readable source data (JSON/YAML)
 - **packs/**: Compiled LevelDB format for Foundry
 - **builds/scripts/compilePacks.mjs**: Converts source to compiled format
@@ -154,7 +187,7 @@ Defines the data structure for:
 }
 ```
 
-### 7. UI Templates (`templates/`)
+### 8. UI Templates (`templates/`)
 Handlebars templates for rendering:
 - Actor sheets (character/NPC views)
 - Item sheets (weapon/armor/gear configuration)
@@ -163,6 +196,9 @@ Handlebars templates for rendering:
 
 ### Document-Oriented Architecture
 - Extends Foundry's Document base classes (Actor, Item)
+- TypeDataModel classes define programmatic schemas per type (v13 pattern)
+- All types have DataModels; template.json contains only type lists
+- Document classes (actor.mjs, item.mjs) are thin shells — business logic lives in DataModels
 - Data-driven design with schema validation
 - Separation of data model and presentation
 
@@ -209,9 +245,11 @@ Handlebars templates for rendering:
 ```
 deathwatch.mjs (Entry Point)
     ↓
-    ├─→ Documents (actor.mjs, item.mjs)
+    ├─→ DataModels (data/*.mjs) ← CONFIG.Actor.dataModels + CONFIG.Item.dataModels
     │       ↓
-    │       └─→ Helpers (modifiers, effects, combat)
+    │       └─→ defineSchema() + prepareDerivedData()
+    │
+    ├─→ Documents (actor.mjs, item.mjs) ← thin shells, delegate to DataModels
     │
     ├─→ Sheets (actor-sheet.mjs, item-sheet.mjs)
     │       ↓

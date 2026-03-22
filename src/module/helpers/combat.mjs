@@ -332,7 +332,7 @@ export class CombatHelper {
             const isMeltaRange = isMelta && distance !== null && weaponRange > 0 && distance < (weaponRange * 0.5);
             const furyThreshold = this._getFuryThreshold(weapon, actor);
             const charDamageEffect = this._getCharacteristicDamageEffect(weapon, actor);
-            const isForce = weapon.system.attachedQualities?.includes('force') || false;
+            const isForce = weapon.system.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === 'force') || false;
             const psyRating = actor.system?.psyRating?.value || 0;
             const forceWeaponData = (isForce && psyRating > 0) ? { attackerId: actor.id, psyRating } : null;
             

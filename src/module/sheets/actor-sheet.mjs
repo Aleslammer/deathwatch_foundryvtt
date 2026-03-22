@@ -60,7 +60,9 @@ export class DeathwatchActorSheet extends ActorSheet {
     const actorData = this.actor.toObject(false);
 
     // Add the actor's data to context.data for easier access, as well as flags.
-    context.system = actorData.system;
+    // Use live actor system data to preserve derived DataModel properties
+    // (toObject() strips prepareDerivedData() values like characteristic.mod, movement, etc.)
+    context.system = { ...this.actor.system };
     context.flags = actorData.flags;
 
     // Prepare character data and items.
@@ -242,6 +244,12 @@ export class DeathwatchActorSheet extends ActorSheet {
    * @return {undefined}
    */
   _prepareItems(context) {
+    if (this.actor?.items?.map) {
+      context.items = this.actor.items.map(i => ({
+        ...i.toObject(false),
+        system: { ...i.system }
+      }));
+    }
     const categories = ItemHandlers.processItems(context.items);
     Object.assign(context, categories);
     
@@ -547,6 +555,21 @@ export class DeathwatchActorSheet extends ActorSheet {
       });
     }
 
+    // Collapsible gear sections
+    const collapsedSections = this.actor.getFlag('deathwatch', 'collapsedGearSections') || {};
+    html.find('.gear-section').each((i, el) => {
+      const section = el.dataset.section;
+      if (collapsedSections[section]) el.classList.add('collapsed');
+    });
+    html.find('.section-toggle').click(async ev => {
+      const section = $(ev.currentTarget).closest('.gear-section');
+      const sectionKey = section.data('section');
+      section.toggleClass('collapsed');
+      const current = this.actor.getFlag('deathwatch', 'collapsedGearSections') || {};
+      current[sectionKey] = section.hasClass('collapsed');
+      await this.actor.setFlag('deathwatch', 'collapsedGearSections', current);
+    });
+
     // Drop handler for armor histories on armor
     html.find('.inventory .items-list li.item').each((i, li) => {
       li.addEventListener('drop', this._onDropItemOnItem.bind(this), false);
@@ -850,7 +873,6 @@ export class DeathwatchActorSheet extends ActorSheet {
   /* istanbul ignore next */
   async _onDropItemOnItem(event) {
     event.preventDefault();
-    event.stopPropagation();
 
     const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
     if (data.type !== 'Item') return;
@@ -860,6 +882,7 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Handle armor history drops
     if (droppedItem.type === 'armor-history') {
+      event.stopPropagation();
       let historyItem = droppedItem;
       if (!droppedItem.parent) {
         const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
@@ -901,15 +924,15 @@ export class DeathwatchActorSheet extends ActorSheet {
       await targetItem.update({ "system.attachedHistories": [...currentHistories, historyItem.id] });
       ui.notifications.info(`${historyItem.name} attached to ${targetItem.name}.`);
     }
-    // Handle ammunition drops
+    // Handle ammunition drops on weapons
     else if (droppedItem.type === 'ammunition') {
       let targetItemId = $(event.currentTarget).data('itemId');
       let targetItem = this.actor.items.get(targetItemId);
       
       if (!targetItem || targetItem.type !== 'weapon') {
-        ui.notifications.warn('Ammunition can only be attached to weapons.');
         return;
       }
+      event.stopPropagation();
 
       const weaponClass = targetItem.system.class?.toLowerCase();
       if (weaponClass?.includes('melee') || weaponClass?.includes('thrown')) {
@@ -934,6 +957,7 @@ export class DeathwatchActorSheet extends ActorSheet {
     }
     // Handle weapon upgrade drops
     else if (droppedItem.type === 'weapon-upgrade') {
+      event.stopPropagation();
       let upgradeItem = droppedItem;
       if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
         const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });

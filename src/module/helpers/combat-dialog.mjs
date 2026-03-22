@@ -143,7 +143,7 @@ export class CombatDialogHelper {
     const clip = weapon.system.clip;
     const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
     
-    if (hasAmmoManagement && weapon.system.capacity && weapon.system.capacity.max > 0) {
+    if (hasAmmoManagement) {
       if (!weapon.system.loadedAmmo) {
         return { valid: false, message: `${weapon.name} has no ammunition loaded!` };
       }

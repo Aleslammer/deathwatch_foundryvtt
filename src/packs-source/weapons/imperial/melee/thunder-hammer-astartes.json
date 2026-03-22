@@ -20,9 +20,15 @@
     "rof": "",
     "wt": 30,
     "attachedQualities": [
-      "power-field",
-      "concussive",
-      "unwieldy"
+      {
+        "id": "power-field"
+      },
+      {
+        "id": "concussive"
+      },
+      {
+        "id": "unwieldy"
+      }
     ]
   },
   "type": "weapon"

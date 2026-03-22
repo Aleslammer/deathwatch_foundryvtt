@@ -1,6 +1,15 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
 import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
+import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
+
+function prepareCharacterData(actor) {
+  const model = new DeathwatchCharacter();
+  Object.assign(model, actor.system);
+  model.parent = actor;
+  model.prepareDerivedData();
+  Object.assign(actor.system, model);
+}
 
 describe('Stackable Talent XP Cost', () => {
   beforeEach(() => {
@@ -36,7 +45,7 @@ describe('Stackable Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(12500); // 12000 + 500
     });
@@ -89,7 +98,7 @@ describe('Stackable Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(14500); // 12000 + 500 + 1000 + 1000
     });
@@ -133,7 +142,7 @@ describe('Stackable Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(14000); // 12000 + 1000 + 1000
     });
@@ -186,7 +195,7 @@ describe('Stackable Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(14500); // 12000 + 500 + 1000 + 1000
     });
@@ -230,7 +239,7 @@ describe('Stackable Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(13000); // 12000 + 500 + 500
     });
@@ -292,7 +301,7 @@ describe('Stackable Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       // Sound Constitution: 500 + 1000 = 1500
       // Signature Wargear: 500 + 1000 = 1500

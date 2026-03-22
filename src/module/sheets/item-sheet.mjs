@@ -106,15 +106,6 @@ export class DeathwatchItemSheet extends ItemSheet {
             }
         }
 
-        // Initialize capacity.max from clip field for weapons if not set
-        if (itemData.type === 'weapon' && itemData.system.clip && !itemData.system.capacity?.max) {
-            const clipValue = parseInt(itemData.system.clip);
-            if (!isNaN(clipValue) && this.item.pack === null) {
-                this.item.update({ "system.capacity.max": clipValue }, { render: false });
-                context.system.capacity = context.system.capacity || {};
-                context.system.capacity.max = clipValue;
-            }
-        }
 
         // Populate attached histories for armor
         if (itemData.type === 'armor') {

@@ -19,7 +19,17 @@
     "req": 15,
     "rof": "S/-/-",
     "wt": 17,
-    "attachedQualities": ["accurate", "tearing", "stalker-pattern"]
+    "attachedQualities": [
+      {
+        "id": "accurate"
+      },
+      {
+        "id": "tearing"
+      },
+      {
+        "id": "stalker-pattern"
+      }
+    ]
   },
   "type": "weapon"
 }

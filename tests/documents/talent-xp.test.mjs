@@ -1,6 +1,15 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
 import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
+import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
+
+function prepareCharacterData(actor) {
+  const model = new DeathwatchCharacter();
+  Object.assign(model, actor.system);
+  model.parent = actor;
+  model.prepareDerivedData();
+  Object.assign(actor.system, model);
+}
 
 describe('Talent XP Cost', () => {
   beforeEach(() => {
@@ -35,7 +44,7 @@ describe('Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(12800); // 12000 base + 500 + 300
     });
@@ -66,7 +75,7 @@ describe('Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(12000); // 12000 base only
     });
@@ -112,7 +121,7 @@ describe('Talent XP Cost', () => {
       });
 
       actor.items = { [Symbol.iterator]: function* () { yield* mockItems; }, get: (id) => id === 'spec1' ? mockSpecialty : null };
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(12750); // 12000 + 500 + 250 + 0
     });
@@ -143,7 +152,7 @@ describe('Talent XP Cost', () => {
       });
 
       actor.items = mockItems;
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
 
       expect(actor.system.xp.spent).toBe(12000); // 12000 base only
     });

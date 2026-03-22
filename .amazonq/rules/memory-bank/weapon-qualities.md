@@ -14,21 +14,21 @@ The weapon qualities system implements special weapon properties from the Deathw
 ### Data Structure
 
 #### Weapon Schema (Current)
-Qualities stored in two formats:
+Qualities stored as objects:
 ```json
 {
   "weapon": {
     "attachedQualities": [
-      "accurate",
-      "tearing",
+      {"id": "accurate"},
+      {"id": "tearing"},
       {"id": "proven", "value": "3"},
       {"id": "felling", "value": "2"}
     ]
   }
 }
 ```
-- **String format**: Simple qualities without parameters (e.g., `"accurate"`, `"tearing"`)
-- **Object format**: Qualities with parameters (e.g., `{"id": "proven", "value": "3"}`)
+- **Object format**: All qualities use `{"id": "key"}` or `{"id": "key", "value": "N"}` for parameterized
+- **Legacy string format**: Code still handles strings via `.some(q => (typeof q === 'string' ? q : q.id) === key)` for backward compatibility
 
 #### Quality Schema
 ```json
@@ -71,11 +71,11 @@ Qualities stored in two formats:
 - Portable across systems
 
 ### Weapon Schema
-Weapons store quality keys directly in `attachedQualities` array:
+Weapons store quality objects in `attachedQualities` array:
 ```json
 {
   "weapon": {
-    "attachedQualities": ["accurate", "tearing", "stalker-pattern"]
+    "attachedQualities": [{"id": "accurate"}, {"id": "tearing"}, {"id": "stalker-pattern"}]
   }
 }
 ```
@@ -505,14 +505,18 @@ if (forceWeaponData && woundsTaken > 0) {
 ## Quality Detection
 
 ### Simple Synchronous Checks (Preferred)
-Since quality `_id` values are their keys, checking for qualities is simple:
+Since all qualities are now objects, use `.some()` for detection:
 
 ```javascript
-// Check if weapon has a quality
-const hasAccurate = weapon.system.attachedQualities?.includes('accurate');
+// Check if weapon has a quality (handles both string and object format)
+const hasAccurate = weapon.system.attachedQualities?.some(
+  q => (typeof q === 'string' ? q : q.id) === 'accurate'
+);
 
 // Check for quality exception in ammunition modifiers
-if (mod.qualityException && weapon.system.attachedQualities?.includes(mod.qualityException)) {
+if (mod.qualityException && weapon.system.attachedQualities?.some(
+  q => (typeof q === 'string' ? q : q.id) === mod.qualityException
+)) {
   continue; // Skip modifier
 }
 ```
@@ -637,8 +641,8 @@ Weapon rows display: Equipped, Name, Damage, Pen, Range, Ammo, Controls
 ## Notes
 
 - **Quality IDs are keys** - Weapon qualities use their key as the `_id` (e.g., `_id: "stalker-pattern"`)
-- **Two storage formats** - Strings for simple qualities, objects with `id`/`value` for parameterized qualities
-- **Synchronous checks** - Use `attachedQualities.includes(key)` for simple string qualities
+- **Standardized object format** - All compendium weapons use `{"id": "key"}` or `{"id": "key", "value": "N"}`
+- **Backward-compatible checks** - Use `.some(q => (typeof q === 'string' ? q : q.id) === key)` to handle both formats
 - **No async needed** - Quality checks work in synchronous functions like `prepareData()`
 - Quality effects are applied dynamically during combat
 - Some qualities require UI buttons (Shocking, Toxic, Force)
