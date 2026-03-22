@@ -23,7 +23,7 @@ npm run test:coverage
 
 ### Test Setup
 - **Setup File**: `tests/setup.mjs`
-- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, foundry.utils)
+- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields)
 - **Loaded**: Automatically before each test file
 
 ### Coverage Reports
@@ -107,6 +107,8 @@ tests/
 │   ├── actor-sheet-talents-traits.test.mjs
 │   ├── item-sheet.test.mjs
 │   └── talents-traits-chat.test.mjs
+├── data/                              # DataModel schema tests
+│   └── item-models.test.mjs
 ├── integration/                       # Integration tests
 │   └── characteristic-damage-integration.test.mjs
 ├── kraken-rounds.test.mjs             # Ammunition tests
@@ -158,6 +160,8 @@ tests/
   - Maximum: v13
 - **API Usage**:
   - Document classes (Actor, Item)
+  - TypeDataModel classes for programmatic data schemas (v13 pattern)
+  - `foundry.data.fields` field types (StringField, NumberField, BooleanField, ArrayField, ObjectField, SchemaField, HTMLField)
   - Sheet classes (ActorSheet, ItemSheet)
   - Handlebars integration
   - Compendium packs (LevelDB)
@@ -235,9 +239,10 @@ Copies system files to local Foundry installation
 
 ### Data Schema (`template.json`)
 - Defines Actor types and templates
-- Defines Item types and templates
+- Defines Item types and templates (fallback for types without DataModels)
 - Specifies default values
 - Establishes data structure
+- Being incrementally replaced by TypeDataModel classes in `src/module/data/`
 
 ### Compendium Source
 - **Format**: JSON
@@ -294,7 +299,8 @@ Copies system files to local Foundry installation
 - **Purpose**: Initialize system, register hooks, load components
 
 ### Module Organization
-- **documents/**: Data model extensions
+- **data/**: TypeDataModel classes (programmatic schemas per type)
+- **documents/**: Document class extensions (Actor, Item)
 - **helpers/**: Utility functions and calculations
 - **modifiers/**: Modifier system logic
 - **sheets/**: UI sheet classes

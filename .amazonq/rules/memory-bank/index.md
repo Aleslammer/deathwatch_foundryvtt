@@ -7,19 +7,21 @@
 2. **structure.md** - Codebase organization and architecture
 3. **tech.md** - Technology stack and tooling
 4. **guidelines.md** - Coding standards, testing, and best practices
+5. **datamodel.md** - TypeDataModel migration (class hierarchy, shared templates, registration)
 
 ### Game Systems
-5. **modifiers.md** - Modifier system (characteristics, skills, wounds, armor, psy-rating)
-6. **combat-systems.md** - Combat mechanics (ranged/melee, damage, hit locations)
-7. **weapon-qualities.md** - 24+ weapon qualities (Accurate, Tearing, Melta, Force, etc.)
-8. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
-9. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
-10. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
+6. **modifiers.md** - Modifier system (characteristics, skills, wounds, armor, psy-rating)
+7. **combat-systems.md** - Combat mechanics (ranged/melee, damage, hit locations)
+8. **weapon-qualities.md** - 24+ weapon qualities (Accurate, Tearing, Melta, Force, etc.)
+9. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
+10. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
+11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 
 ## Key Metrics
-- **Tests**: 829 passing, 73 suites
+- **Tests**: 880 passing, 74 suites
 - **Helper Classes**: 24+ modules
 - **Compendium Packs**: 15
+- **DataModel Types**: All 17 item types + 2 actor types registered
 
 ## Commands
 ```bash
@@ -30,6 +32,13 @@ npm run build:all                                          # Validate + build pa
 ```
 
 ## Core Systems Summary
+
+### DataModel System
+- **Actor Models**: `DeathwatchCharacter` (full derived data), `DeathwatchNPC` (minimal)
+- **Item Models**: 17 types, all registered via `CONFIG.Item.dataModels`
+- **Document Shells**: `actor.mjs` and `item.mjs` are thin shells; business logic in DataModels
+- **Actor Sheet Integration**: `getData()` uses `{ ...this.actor.system }` for live derived data; `_prepareItems()` uses live item data
+- **Critical**: Characteristic `base` field MUST be in schema (template binds to it for user input)
 
 ### Modifiers
 - **Types**: characteristic, characteristic-post-multiplier, skill, initiative, wounds, armor, psy-rating, movement, movement-restriction
@@ -42,8 +51,8 @@ npm run build:all                                          # Validate + build pa
 - **Shared**: Hit locations, damage application, Righteous Fury
 
 ### Weapon Qualities
-- **Detection**: `weapon.system.attachedQualities?.includes('key')`
-- **Storage**: Strings for simple qualities, objects `{id, value}` for parameterized
+- **Detection**: `.some(q => (typeof q === 'string' ? q : q.id) === key)`
+- **Storage**: Objects `{id}` or `{id, value}` (standardized from mixed string/object format)
 - **Key**: Accurate, Tearing, Primitive, Melta, Lightning Claws, Power Field, Force
 
 ### Ammunition Modifiers
@@ -61,16 +70,18 @@ npm run build:all                                          # Validate + build pa
 
 ### Add New Modifier Type
 1. Add to ModifierCollector apply methods
-2. Update template.json if needed
+2. Add DataModel field if needed
 3. Write tests
 4. Update UI and document in modifiers.md
 
 ### Add Compendium Pack
-1. Add item type to template.json
-2. Register in system.json
-3. Create source directory in packs-source/
-4. Add JSON files with unique `_id` fields
-5. Run `npm run build:packs`
+1. Add item type to template.json types array
+2. Create DataModel class in `src/module/data/item/`
+3. Register in `deathwatch.mjs` CONFIG.Item.dataModels
+4. Register in system.json
+5. Create source directory in packs-source/
+6. Add JSON files with unique `_id` fields
+7. Run `npm run build:packs`
 
 ## Troubleshooting
 
@@ -87,13 +98,15 @@ npm run build:all                                          # Validate + build pa
 
 ## File Locations
 ```
-src/module/documents/    Actor, Item, ActorConditions
+src/module/data/         TypeDataModel classes (base-document, actor/*.mjs, item/*.mjs)
+src/module/documents/    Actor, Item (thin shells), ActorConditions
 src/module/helpers/      24+ helper modules
 src/module/sheets/       ActorSheet, ItemSheet
-src/template.json        Data schema
+src/template.json        Type lists only (field definitions in DataModels)
 src/packs-source/        Compendium JSON source
-tests/                   804 tests across 71 suites
+tests/                   880 tests across 74 suites
+docs/datamodel/          Full DataModel migration plan (10 files)
 ```
 
 ---
-**Last Updated**: January 2025
+**Last Updated**: January 2025 (Phase 5 complete, DataModel migration finalized)

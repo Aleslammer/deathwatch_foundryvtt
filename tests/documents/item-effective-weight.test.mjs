@@ -1,11 +1,18 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
-import { DeathwatchItem } from '../../src/module/documents/item.mjs';
+import DeathwatchWeapon from '../../src/module/data/item/weapon.mjs';
 
-describe('DeathwatchItem - Effective Weight', () => {
+describe('DeathwatchWeapon - Effective Weight', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
+  function createWeapon(systemOverrides, actor) {
+    const weapon = new DeathwatchWeapon();
+    Object.assign(weapon, { range: 0, dmg: '', damage: '', attachedUpgrades: [], wt: 0, ...systemOverrides });
+    weapon.parent = { actor };
+    return weapon;
+  }
 
   describe('_applyWeaponUpgradeModifiers - weight', () => {
     it('sets effectiveWeight with multiplicative modifier (x0.5)', () => {
@@ -17,15 +24,11 @@ describe('DeathwatchItem - Effective Weight', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveWeight).toBe(5);
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveWeight).toBe(5);
     });
 
     it('applies additive modifier (-2)', () => {
@@ -37,15 +40,11 @@ describe('DeathwatchItem - Effective Weight', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveWeight).toBe(8);
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveWeight).toBe(8);
     });
 
     it('applies both additive and multiplicative modifiers', () => {
@@ -58,16 +57,12 @@ describe('DeathwatchItem - Effective Weight', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
       // (10 - 2) * 0.5 = 4
-      expect(item.system.effectiveWeight).toBe(4);
+      expect(weapon.effectiveWeight).toBe(4);
     });
 
     it('clamps result to minimum 0', () => {
@@ -79,15 +74,11 @@ describe('DeathwatchItem - Effective Weight', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveWeight).toBe(0);
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveWeight).toBe(0);
     });
 
     it('handles zero weight', () => {
@@ -99,15 +90,11 @@ describe('DeathwatchItem - Effective Weight', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 0, attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveWeight).toBeUndefined();
+      const weapon = createWeapon({ wt: 0, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveWeight).toBeUndefined();
     });
 
     it('ignores disabled weight modifiers', () => {
@@ -119,16 +106,12 @@ describe('DeathwatchItem - Effective Weight', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
       // Should be base weight since modifier is disabled
-      expect(item.system.effectiveWeight).toBe(10);
+      expect(weapon.effectiveWeight).toBe(10);
     });
 
     it('handles multiple weight upgrades', () => {
@@ -146,23 +129,19 @@ describe('DeathwatchItem - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { 
-        items: { 
+      const mockActor = {
+        items: {
           get: jest.fn()
             .mockReturnValueOnce(mockUpgrade1)
             .mockReturnValueOnce(mockUpgrade2)
-        } 
+        }
       };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { wt: 10, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
       // (10 - 1) * 0.5 = 4.5
-      expect(item.system.effectiveWeight).toBe(4.5);
+      expect(weapon.effectiveWeight).toBe(4.5);
     });
   });
 });

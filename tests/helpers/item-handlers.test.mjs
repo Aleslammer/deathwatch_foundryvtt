@@ -133,4 +133,104 @@ describe('ItemHandlers', () => {
       expect(result.talents[2].name).toBe('Psy Rating 10');
     });
   });
+
+  describe('buildSummaries', () => {
+    it('should summarize weapons with count and equipped', () => {
+      const categories = {
+        weapons: [
+          { system: { equipped: true, loadedAmmo: 'a1' } },
+          { system: { equipped: false } },
+          { system: { equipped: true } }
+        ],
+        armor: [],
+        gear: [],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.weapons).toBe('3 weapons, 2 equipped');
+    });
+
+    it('should use singular for 1 weapon', () => {
+      const categories = {
+        weapons: [{ system: { equipped: true } }],
+        armor: [],
+        gear: [],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.weapons).toBe('1 weapon, 1 equipped');
+    });
+
+    it('should summarize armor with count and equipped', () => {
+      const categories = {
+        weapons: [],
+        armor: [
+          { system: { equipped: true } },
+          { system: { equipped: false } }
+        ],
+        gear: [],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.armor).toBe('2 armor, 1 equipped');
+    });
+
+    it('should summarize gear with count and total weight', () => {
+      const categories = {
+        weapons: [],
+        armor: [],
+        gear: [
+          { system: { wt: 2.5 } },
+          { system: { wt: 1 } },
+          { system: { wt: 0 } }
+        ],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.gear).toBe('3 items, 3.5 kg');
+    });
+
+    it('should summarize ammunition with count and loaded', () => {
+      const categories = {
+        weapons: [
+          { system: { loadedAmmo: 'a1' } },
+          { system: { loadedAmmo: null } }
+        ],
+        armor: [],
+        gear: [],
+        ammunition: [
+          { _id: 'a2' },
+          { _id: 'a3' }
+        ]
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.ammunition).toBe('2 types, 1 loaded');
+    });
+
+    it('should handle empty categories', () => {
+      const categories = {
+        weapons: [],
+        armor: [],
+        gear: [],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.weapons).toBe('0 weapons, 0 equipped');
+      expect(result.armor).toBe('0 armor, 0 equipped');
+      expect(result.gear).toBe('0 items, 0 kg');
+      expect(result.ammunition).toBe('0 types, 0 loaded');
+    });
+  });
 });

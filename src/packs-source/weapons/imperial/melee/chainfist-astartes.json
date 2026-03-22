@@ -20,10 +20,18 @@
     "rof": "",
     "wt": 48,
     "attachedQualities": [
-      "power-field",
-      "tearing",
-      "unwieldy",
-      "power-fist"
+      {
+        "id": "power-field"
+      },
+      {
+        "id": "tearing"
+      },
+      {
+        "id": "unwieldy"
+      },
+      {
+        "id": "power-fist"
+      }
     ],
     "doublesStrengthBonus": true
   },

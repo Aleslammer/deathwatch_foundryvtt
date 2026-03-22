@@ -19,7 +19,11 @@
     "req": 15,
     "rof": "S/-/-",
     "wt": 65,
-    "attachedQualities": ["flame"]
+    "attachedQualities": [
+      {
+        "id": "flame"
+      }
+    ]
   },
   "type": "weapon"
 }

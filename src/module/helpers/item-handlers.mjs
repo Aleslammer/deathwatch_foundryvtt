@@ -142,6 +142,9 @@ export class ItemHandlers {
     // Group duplicate traits and add count/multiplier
     categories.traits = this.groupTraits(categories.traits);
 
+    // Calculate section summaries
+    categories.summaries = this.buildSummaries(categories);
+
     return categories;
   }
 
@@ -150,6 +153,32 @@ export class ItemHandlers {
    * @param {Array} traits The trait items
    * @returns {Array} Grouped traits with count
    */
+  /**
+   * Build summary strings for each gear section
+   * @param {Object} categories The categorized items
+   * @returns {Object} Summary strings keyed by section
+   */
+  static buildSummaries(categories) {
+    const weaponCount = categories.weapons.length;
+    const weaponEquipped = categories.weapons.filter(w => w.system.equipped).length;
+
+    const armorCount = categories.armor.length;
+    const armorEquipped = categories.armor.filter(a => a.system.equipped).length;
+
+    const gearCount = categories.gear.length;
+    const gearWeight = categories.gear.reduce((sum, g) => sum + (parseFloat(g.system.wt) || 0), 0);
+
+    const ammoCount = categories.ammunition.length;
+    const ammoLoaded = categories.weapons.filter(w => w.system.loadedAmmo).length;
+
+    return {
+      weapons: `${weaponCount} weapon${weaponCount !== 1 ? 's' : ''}, ${weaponEquipped} equipped`,
+      armor: `${armorCount} armor, ${armorEquipped} equipped`,
+      gear: `${gearCount} item${gearCount !== 1 ? 's' : ''}, ${gearWeight} kg`,
+      ammunition: `${ammoCount} type${ammoCount !== 1 ? 's' : ''}, ${ammoLoaded} loaded`
+    };
+  }
+
   static groupTraits(traits) {
     const grouped = new Map();
     

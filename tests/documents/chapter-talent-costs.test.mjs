@@ -1,6 +1,15 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
 import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
+import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
+
+function prepareCharacterData(actor) {
+  const model = new DeathwatchCharacter();
+  Object.assign(model, actor.system);
+  model.parent = actor;
+  model.prepareDerivedData();
+  Object.assign(actor.system, model);
+}
 
 describe('Chapter Talent Cost Overrides', () => {
   let actor;
@@ -78,7 +87,7 @@ describe('Chapter Talent Cost Overrides', () => {
 
   describe('Talent cost override application', () => {
     it('applies chapter talent cost override for matching talent', () => {
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Base XP (12000) + chapter override cost (800) = 12800
       expect(actor.system.xp.spent).toBe(12800);
@@ -89,7 +98,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.name = 'Some Other Talent';
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal99999999999' } };
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Base XP (12000) + default cost (1000) = 13000
       expect(actor.system.xp.spent).toBe(13000);
@@ -101,7 +110,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.system.cost = 1000;
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal00000000003' } };
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Should use chapter override 500 instead of 1000
       expect(actor.system.xp.spent).toBe(12500);
@@ -114,7 +123,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal00000000004' } };
       mockChapter.system.talentCosts['tal00000000004'] = 500;
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       expect(actor.system.xp.spent).toBe(12500);
     });
@@ -140,7 +149,7 @@ describe('Chapter Talent Cost Overrides', () => {
         yield mockTalent2;
       };
 
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Base (12000) + Abhor the Witch (800) + Fearless (800) = 13600
       expect(actor.system.xp.spent).toBe(13600);
@@ -149,7 +158,7 @@ describe('Chapter Talent Cost Overrides', () => {
     it('works when chapter has no talent cost overrides', () => {
       mockChapter.system.talentCosts = {};
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Should use default cost
       expect(actor.system.xp.spent).toBe(13000);
@@ -162,7 +171,7 @@ describe('Chapter Talent Cost Overrides', () => {
         yield mockTalent;
       };
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Should use default cost
       expect(actor.system.xp.spent).toBe(13000);
@@ -192,7 +201,7 @@ describe('Chapter Talent Cost Overrides', () => {
         yield mockTalent2;
       };
 
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Base (12000) + first instance with override (800) + subsequent (500) = 13300
       expect(actor.system.xp.spent).toBe(13300);
@@ -206,7 +215,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal00000000006' } };
       mockChapter.system.talentCosts['tal00000000006'] = 1000;
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       expect(actor.system.xp.spent).toBe(13000);
     });
@@ -216,7 +225,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.name = 'Different Name';
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal00000000001' } };
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       // Should match by ID and use 800
       expect(actor.system.xp.spent).toBe(12800);
@@ -228,7 +237,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal00000000005' } };
       mockChapter.system.talentCosts['tal00000000005'] = 500;
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       expect(actor.system.xp.spent).toBe(12500);
     });
@@ -239,7 +248,7 @@ describe('Chapter Talent Cost Overrides', () => {
       mockTalent.system.cost = 1200;
       mockTalent.flags = { core: { sourceId: 'Compendium.deathwatch.talents.tal99999999999' } };
       
-      actor._prepareCharacterData(actor);
+      prepareCharacterData(actor);
       
       expect(actor.system.xp.spent).toBe(13200);
     });

@@ -20,6 +20,9 @@
       {
         "id": "devastating",
         "value": "2"
+      },
+      {
+        "id": "living-ammunition"
       }
     ],
     "equipped": false,

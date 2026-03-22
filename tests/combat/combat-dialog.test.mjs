@@ -226,7 +226,6 @@ describe('validateWeaponForAttack', () => {
       system: { 
         jammed: false,
         clip: '30',
-        capacity: { max: 30 }, 
         loadedAmmo: null 
       } 
     };
@@ -244,7 +243,6 @@ describe('validateWeaponForAttack', () => {
       system: { 
         jammed: false,
         clip: '30',
-        capacity: { max: 30 }, 
         loadedAmmo: 'ammo1' 
       } 
     };
@@ -262,7 +260,7 @@ describe('validateWeaponForAttack', () => {
       name: 'Bolter', 
       system: { 
         jammed: false, 
-        capacity: { max: 30 }, 
+        clip: '28',
         loadedAmmo: 'ammo1' 
       } 
     };
@@ -275,10 +273,10 @@ describe('validateWeaponForAttack', () => {
     expect(result.message).toBeUndefined();
   });
 
-  it('returns valid for weapon without capacity', () => {
+  it('returns valid for melee weapon without clip', () => {
     const weapon = { 
       name: 'Power Sword', 
-      system: { jammed: false } 
+      system: { jammed: false, clip: '' } 
     };
     const actor = { items: { get: () => null } };
     

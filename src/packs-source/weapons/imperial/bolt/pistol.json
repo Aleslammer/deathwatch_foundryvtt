@@ -19,7 +19,11 @@
     "req": 5,
     "rof": "S/2/-",
     "wt": 5.5,
-    "attachedQualities": ["tearing"]
+    "attachedQualities": [
+      {
+        "id": "tearing"
+      }
+    ]
   },
   "type": "weapon"
 }

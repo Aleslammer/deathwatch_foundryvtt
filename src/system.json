@@ -131,13 +131,6 @@
             "path": "packs/psychic-powers",
             "type": "Item",
             "system": "deathwatch"
-        },
-        {
-            "name": "special-abilities",
-            "label": "Special Abilities",
-            "path": "packs/special-abilities",
-            "type": "Item",
-            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

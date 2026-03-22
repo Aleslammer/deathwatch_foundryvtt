@@ -1,11 +1,18 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
-import { DeathwatchItem } from '../../src/module/documents/item.mjs';
+import DeathwatchWeapon from '../../src/module/data/item/weapon.mjs';
 
-describe('DeathwatchItem - Weapon Upgrade Damage', () => {
+describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
+  function createWeapon(systemOverrides, actor) {
+    const weapon = new DeathwatchWeapon();
+    Object.assign(weapon, { range: 0, dmg: '', damage: '', attachedUpgrades: [], wt: 0, ...systemOverrides });
+    weapon.parent = { actor };
+    return weapon;
+  }
 
   describe('_applyWeaponUpgradeModifiers - weapon-damage', () => {
     it('overrides weapon damage with upgrade modifier', () => {
@@ -17,15 +24,11 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBe('2d10+6');
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBe('2d10+6');
     });
 
     it('does not set effectiveDamage when no weapon-damage modifier', () => {
@@ -37,15 +40,11 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBeUndefined();
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBeUndefined();
     });
 
     it('ignores disabled weapon-damage modifier', () => {
@@ -57,15 +56,11 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBeUndefined();
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBeUndefined();
     });
 
     it('uses last weapon-damage modifier when multiple exist', () => {
@@ -78,15 +73,11 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBe('2d10+6');
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBe('2d10+6');
     });
 
     it('does not set effectiveDamage when weapon has no base damage', () => {
@@ -98,15 +89,11 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { dmg: '', attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBeUndefined();
+      const weapon = createWeapon({ dmg: '', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBeUndefined();
     });
 
     it('works with damage field instead of dmg', () => {
@@ -118,15 +105,11 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
         }
       };
       const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { damage: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBe('2d10+6');
+      const weapon = createWeapon({ damage: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBe('2d10+6');
     });
 
     it('handles multiple upgrades with different modifier types', () => {
@@ -144,23 +127,19 @@ describe('DeathwatchItem - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { 
-        items: { 
+      const mockActor = {
+        items: {
           get: jest.fn()
             .mockReturnValueOnce(mockUpgrade1)
             .mockReturnValueOnce(mockUpgrade2)
-        } 
+        }
       };
-      const item = new DeathwatchItem({ 
-        type: 'weapon',
-        system: { dmg: '1d10+4', range: 100, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }
-      }, { parent: mockActor });
-      
-      item.actor = mockActor;
-      item._applyWeaponUpgradeModifiers();
-      
-      expect(item.system.effectiveDamage).toBe('2d10+6');
-      expect(item.system.effectiveRange).toBe(70);
+      const weapon = createWeapon({ dmg: '1d10+4', range: 100, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }, mockActor);
+
+      weapon._applyWeaponUpgradeModifiers();
+
+      expect(weapon.effectiveDamage).toBe('2d10+6');
+      expect(weapon.effectiveRange).toBe(70);
     });
   });
 });

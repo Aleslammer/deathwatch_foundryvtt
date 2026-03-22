@@ -8,6 +8,7 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
+TODO: Need to add an indicator on characters that they are the only ones capable for RF NPC, Enemies etc cannot RF.
 
 Traits
     TODO: if a target has a trait size can we auto apply modifier?
@@ -16,13 +17,15 @@ Talents
     TODO: Review all talents to determine if effects can be applied to anythig
 
 Gear:
-    TODO: Add gear from Rites of battle.   Done up to Camo-CLoak
     Relics
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
     Cybernetics
     Servitors
+Rites of Battle
+    TODO: GEAR - Completed up to Camo-Cloak
+    There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 
 Ammmunition 158
     TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
@@ -34,17 +37,15 @@ Ammmunition 158
 
 TODO: Need to handle called shot mechanic
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
-TODO: Reivew armor bonus (do we need to automatic this or rely on folks)
 
-Rites of Battle
-    TODO: GEAR - Completed up to Camo-Cloak
-    There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 
 Armor:
     TODO: Armor provides benefits to the space marine.   We need to work on that.
         163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
         164 - Terminator Armour has forcefield like effects
 
-
+Hordes
+NPC
+Enemy actors?
 
 

@@ -87,6 +87,10 @@ export class ChatMessageBuilder {
     return `<strong style="font-size: 1.1em;">${weapon}${hitInfo}</strong><br><strong>Hit ${hitNumber}:</strong> ${location}${dosInfo}<br><strong>Penetration:</strong> ${penetration}${strInfo}${applyInfo}`;
   }
 
+  static createVolatileAutoConfirmFlavor() {
+    return `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br><em style="color: orange;">Volatile weapon — auto-confirmed!</em>`;
+  }
+
   static createRighteousFuryFlavor(targetNumber, confirmed) {
     return `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br>Target: ${targetNumber} - ${confirmed ? '<strong style="color: green;">CONFIRMED!</strong>' : '<strong style="color: red;">Failed</strong>'}`;
   }

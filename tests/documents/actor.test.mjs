@@ -1,11 +1,26 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
 import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
+import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
+import DeathwatchNPC from '../../src/module/data/actor/npc.mjs';
+
+/**
+ * Helper: creates a DeathwatchCharacter DataModel wired to a mock actor,
+ * calls prepareDerivedData(), then syncs derived values back to actor.system.
+ */
+function prepareCharacterData(actor) {
+  const model = new DeathwatchCharacter();
+  Object.assign(model, actor.system);
+  model.parent = actor;
+  model.prepareDerivedData();
+  Object.assign(actor.system, model);
+}
 
 describe('DeathwatchActor', () => {
   let mockActor;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     mockActor = new DeathwatchActor({
       name: 'Test Marine',
       type: 'character',
@@ -35,24 +50,27 @@ describe('DeathwatchActor', () => {
     });
   });
 
-  describe('_prepareCharacterData', () => {
-    it('skips if actor type is not character', () => {
-      mockActor.type = 'npc';
-      const initialValue = mockActor.system.characteristics.ws.value;
-      mockActor._prepareCharacterData(mockActor);
-      expect(mockActor.system.characteristics.ws.value).toBe(initialValue);
+  describe('Character prepareDerivedData', () => {
+    it('skips if model is not character type', () => {
+      // NPC model has no characteristic logic
+      const npc = new DeathwatchNPC();
+      npc.cr = 5;
+      npc.parent = mockActor;
+      npc.prepareDerivedData();
+      // Characteristics unchanged
+      expect(mockActor.system.characteristics.ws.value).toBe(40);
     });
 
     it('stores base value if not already stored', () => {
       mockActor.system.characteristics.ws.base = undefined;
       mockActor.system.characteristics.ws.value = 40;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.base).toBe(40);
     });
 
     it('calculates characteristic mod correctly', () => {
       mockActor.system.characteristics.ws.base = 45;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.mod).toBe(4);
     });
 
@@ -65,7 +83,7 @@ describe('DeathwatchActor', () => {
         enabled: true
       }];
       mockActor.system.characteristics.ws.base = 40;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.value).toBe(50);
       expect(mockActor.system.characteristics.ws.mod).toBe(5);
     });
@@ -86,7 +104,7 @@ describe('DeathwatchActor', () => {
         }
       }];
       mockActor.system.characteristics.str.base = 50;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.str.value).toBe(55);
     });
 
@@ -106,7 +124,7 @@ describe('DeathwatchActor', () => {
         }
       }];
       mockActor.system.characteristics.str.base = 50;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.str.value).toBe(50);
     });
 
@@ -119,7 +137,7 @@ describe('DeathwatchActor', () => {
         enabled: false
       }];
       mockActor.system.characteristics.ws.base = 40;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.value).toBe(40);
     });
 
@@ -153,7 +171,7 @@ describe('DeathwatchActor', () => {
         return null;
       });
       mockActor.system.characteristics.ag.base = 35;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ag.value).toBe(40);
     });
 
@@ -165,7 +183,7 @@ describe('DeathwatchActor', () => {
         valueAffected: 'awareness',
         enabled: true
       }];
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.skills.awareness.modifierTotal).toBe(10);
     });
 
@@ -176,7 +194,7 @@ describe('DeathwatchActor', () => {
         effectType: 'initiative',
         enabled: true
       }];
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.initiativeBonus).toBe(5);
     });
 
@@ -198,7 +216,7 @@ describe('DeathwatchActor', () => {
         }
       ];
       mockActor.system.characteristics.ws.base = 40;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.value).toBe(55);
     });
 
@@ -211,7 +229,7 @@ describe('DeathwatchActor', () => {
         enabled: true
       }];
       mockActor.system.characteristics.ws.base = 40;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.modifiers).toHaveLength(1);
       expect(mockActor.system.characteristics.ws.modifiers[0]).toEqual({
         name: 'Test Modifier',
@@ -224,13 +242,13 @@ describe('DeathwatchActor', () => {
       mockActor.system.characteristics.ws.base = 40;
       mockActor.system.characteristics.ws.advances.simple = true;
       mockActor.system.characteristics.ws.advances.intermediate = true;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.characteristics.ws.value).toBe(50); // 40 + 5 + 5
     });
 
     it('calculates movement based on agility bonus', () => {
       mockActor.system.characteristics.ag.base = 50;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.movement).toEqual({
         half: 5,
         full: 10,
@@ -243,7 +261,7 @@ describe('DeathwatchActor', () => {
 
     it('calculates movement with different agility bonuses', () => {
       mockActor.system.characteristics.ag.base = 30;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.movement.half).toBe(3);
       expect(mockActor.system.movement.full).toBe(6);
       expect(mockActor.system.movement.charge).toBe(9);
@@ -252,7 +270,7 @@ describe('DeathwatchActor', () => {
 
     it('handles zero agility bonus for movement', () => {
       mockActor.system.characteristics.ag.base = 5;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.movement).toEqual({
         half: 0,
         full: 0,
@@ -265,32 +283,32 @@ describe('DeathwatchActor', () => {
 
     it('initializes fatePoints if not present', () => {
       delete mockActor.system.fatePoints;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.fatePoints).toEqual({ value: 0, max: 0 });
     });
 
     it('preserves existing fatePoints values', () => {
       mockActor.system.fatePoints = { value: 2, max: 3 };
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.fatePoints).toEqual({ value: 2, max: 3 });
     });
 
     it('initializes renown to 0 if not present', () => {
       delete mockActor.system.renown;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.renown).toBe(0);
     });
 
     it('preserves existing renown value', () => {
       mockActor.system.renown = 50;
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.renown).toBe(50);
     });
 
     it('applies fatigue modifiers based on toughness bonus', () => {
       mockActor.system.characteristics.tg = { base: 40, value: 40, mod: 4 };
       mockActor.system.fatigue = { value: 2, max: 0 };
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.fatigue.max).toBe(4);
       expect(mockActor.system.fatigue.penalty).toBe(-10);
       expect(mockActor.system.fatigue.unconscious).toBe(false);
@@ -299,30 +317,32 @@ describe('DeathwatchActor', () => {
     it('marks character unconscious when fatigue exceeds TB', () => {
       mockActor.system.characteristics.tg = { base: 40, value: 40, mod: 4 };
       mockActor.system.fatigue = { value: 5, max: 0 };
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.fatigue.unconscious).toBe(true);
     });
 
     it('applies no penalty when fatigue is 0', () => {
       mockActor.system.characteristics.tg = { base: 40, value: 40, mod: 4 };
       mockActor.system.fatigue = { value: 0, max: 0 };
-      mockActor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
       expect(mockActor.system.fatigue.penalty).toBe(0);
     });
   });
 
-  describe('_prepareNpcData', () => {
-    it('skips if actor type is not npc', () => {
-      mockActor.type = 'character';
-      mockActor._prepareNpcData(mockActor);
-      expect(mockActor.system.xp).toBeUndefined();
+  describe('NPC prepareDerivedData', () => {
+    it('does not set xp when cr is undefined', () => {
+      const npc = new DeathwatchNPC();
+      npc.parent = mockActor;
+      npc.prepareDerivedData();
+      expect(npc.xp).toBeUndefined();
     });
 
     it('calculates xp for npc', () => {
-      mockActor.type = 'npc';
-      mockActor.system.cr = 5;
-      mockActor._prepareNpcData(mockActor);
-      expect(mockActor.system.xp).toBe(2500);
+      const npc = new DeathwatchNPC();
+      npc.cr = 5;
+      npc.parent = mockActor;
+      npc.prepareDerivedData();
+      expect(npc.xp).toBe(2500);
     });
   });
 

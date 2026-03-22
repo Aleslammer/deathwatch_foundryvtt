@@ -20,8 +20,12 @@
     "rof": "S/2/-",
     "wt": 5,
     "attachedQualities": [
-      "reliable",
-      "scatter"
+      {
+        "id": "reliable"
+      },
+      {
+        "id": "scatter"
+      }
     ]
   },
   "type": "weapon"

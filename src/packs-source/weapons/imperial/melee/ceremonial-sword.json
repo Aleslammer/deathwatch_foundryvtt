@@ -20,7 +20,9 @@
     "rof": "",
     "wt": 3,
     "attachedQualities": [
-      "balanced"
+      {
+        "id": "balanced"
+      }
     ]
   },
   "type": "weapon"

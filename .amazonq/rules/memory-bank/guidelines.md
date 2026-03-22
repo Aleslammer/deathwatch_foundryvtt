@@ -115,16 +115,17 @@ const mockActor = {
 - **Total Lines**: ~2,618 lines across core modules
 - **Test Coverage**: 68%
 - **Key Files**:
-  - actor.mjs: 124 lines (uses XPCalculator, ModifierCollector)
+  - actor.mjs: ~60 lines (thin shell, delegates to DataModels)
   - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
   - combat.mjs: 395 lines (uses ChatMessageBuilder)
   - CSS: 9 modular files (~1100 lines total)
 
 ### Architecture Patterns Established
 1. **Helper Classes**: Extract business logic into focused static classes
-2. **CSS Modularity**: Component-based CSS with variables and low specificity
-3. **Template Partials**: Reusable Handlebars components
-4. **Constants**: Named constants instead of magic numbers
+2. **TypeDataModel Classes**: Programmatic data schemas per item/actor type (v13 pattern)
+3. **CSS Modularity**: Component-based CSS with variables and low specificity
+4. **Template Partials**: Reusable Handlebars components
+5. **Constants**: Named constants instead of magic numbers
 
 ### File Extensions and Module System
 - Use `.mjs` extension for all ES module JavaScript files (100% of core modules)
@@ -205,7 +206,50 @@ Follow Foundry's data preparation order:
 1. `prepareData()` - Entry point, calls super
 2. `prepareBaseData()` - Before embedded documents
 3. `prepareDerivedData()` - After embedded documents, calculate derived values
-4. Type-specific methods: `_prepareCharacterData()`, `_prepareNpcData()`
+4. DataModel `prepareDerivedData()` - Called automatically by Foundry for registered TypeDataModels
+5. Document classes are thin shells — all business logic lives in DataModel classes
+
+### TypeDataModel Pattern
+Programmatic data schemas using Foundry v13's TypeDataModel API:
+```javascript
+// Base class with shared templates
+export default class DeathwatchDataModel extends foundry.abstract.TypeDataModel {
+  static defineSchema() { return {}; }
+  static equippedTemplate() {
+    return { equipped: new fields.BooleanField({ initial: false }) };
+  }
+}
+
+// Item base with universal fields
+export default class DeathwatchItemBase extends DeathwatchDataModel {
+  static defineSchema() {
+    const schema = super.defineSchema();
+    schema.description = new fields.HTMLField({ initial: "" });
+    schema.modifiers = new fields.ArrayField(new fields.ObjectField(), { initial: [] });
+    return schema;
+  }
+}
+
+// Concrete type composing shared templates + type-specific fields
+export default class DeathwatchGear extends DeathwatchItemBase {
+  static defineSchema() {
+    const schema = super.defineSchema();
+    foundry.utils.mergeObject(schema, {
+      ...DeathwatchItemBase.equippedTemplate(),
+      ...DeathwatchItemBase.requisitionTemplate()
+    });
+    schema.wt = new fields.NumberField({ initial: 0, min: 0 });
+    return schema;
+  }
+}
+```
+
+**Key patterns:**
+- Extend parent → call `super.defineSchema()` → merge shared templates → add type-specific fields → return schema
+- Shared templates are static methods returning field objects (composition via spread)
+- `foundry.utils.mergeObject(schema, {...spread})` mutates schema in place
+- All types have registered DataModels; template.json contains only type lists
+- Register via `CONFIG.Item.dataModels = { gear: DeathwatchGear }` in init hook
 
 ### Sheet Pattern
 Sheets extend Foundry sheet classes and follow this structure:
@@ -540,20 +584,21 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
 
 ### Adding a New Compendium Pack
 
-1. **Add item type to template.json**:
+1. **Add item type to template.json types array**:
 ```json
 "Item": {
-  "types": ["weapon", "armor", "gear", "new-type"],
-  "new-type": {
-    "templates": ["base"],
-    "field1": "",
-    "field2": 0,
-    "modifiers": []
-  }
+  "types": ["weapon", "armor", "gear", "new-type"]
 }
 ```
 
-2. **Register pack in system.json**:
+2. **Create DataModel class** in `src/module/data/item/new-type.mjs`
+
+3. **Register DataModel** in `deathwatch.mjs`:
+```javascript
+CONFIG.Item.dataModels['new-type'] = models.DeathwatchNewType;
+```
+
+4. **Register pack in system.json**:
 ```json
 "packs": [
   {
@@ -618,21 +663,9 @@ debug('COMBAT', 'Deducting ammo:', { loadedAmmo, roundsFired });
 
 ## Data Schema Patterns
 
-### Template Inheritance
-```json
-{
-  "Actor": {
-    "types": ["character", "npc"],
-    "templates": {
-      "base": { "wounds": { "value": 0, "max": 0 } }
-    },
-    "character": {
-      "templates": ["base"],
-      "characteristics": { /* ... */ }
-    }
-  }
-}
-```
+### Data Schema
+
+`template.json` contains only type lists. All field definitions live in DataModel classes (`src/module/data/`).
 
 ### Nested Data Structures
 - Use dot notation for updates: `"system.equipped": true`

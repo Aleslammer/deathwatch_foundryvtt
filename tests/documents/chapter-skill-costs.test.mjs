@@ -1,13 +1,21 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
-import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
+import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
+
+function prepareCharacterData(actor) {
+  const model = new DeathwatchCharacter();
+  Object.assign(model, actor.system);
+  model.parent = actor;
+  model.prepareDerivedData();
+  Object.assign(actor.system, model);
+}
 
 describe('DeathwatchActor - Chapter Skill Costs', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('_prepareCharacterData with chapter skill cost overrides', () => {
+  describe('prepareDerivedData with chapter skill cost overrides', () => {
     it('should use default skill costs when no chapter is assigned', () => {
       const mockActor = {
         type: 'character',
@@ -23,9 +31,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
         items: []
       };
 
-      const actor = Object.create(DeathwatchActor.prototype);
-      Object.assign(actor, mockActor);
-      actor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(12000);
     });
@@ -58,9 +64,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
         }
       };
 
-      const actor = Object.create(DeathwatchActor.prototype);
-      Object.assign(actor, mockActor);
-      actor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(12100);
     });
@@ -100,9 +104,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
         }
       };
 
-      const actor = Object.create(DeathwatchActor.prototype);
-      Object.assign(actor, mockActor);
-      actor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(12600);
     });
@@ -136,9 +138,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
         }
       };
 
-      const actor = Object.create(DeathwatchActor.prototype);
-      Object.assign(actor, mockActor);
-      actor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(12400);
     });
@@ -178,9 +178,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
         }
       };
 
-      const actor = Object.create(DeathwatchActor.prototype);
-      Object.assign(actor, mockActor);
-      actor._prepareCharacterData(mockActor);
+      prepareCharacterData(mockActor);
 
       expect(mockActor.system.xp.spent).toBe(12800);
     });

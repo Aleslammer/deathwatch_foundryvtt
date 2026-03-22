@@ -1,7 +1,16 @@
 import { jest } from '@jest/globals';
 import '../setup.mjs';
 import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
+import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
 import { XPCalculator } from '../../src/module/helpers/xp-calculator.mjs';
+
+function prepareCharacterData(actor) {
+  const model = new DeathwatchCharacter();
+  Object.assign(model, actor.system);
+  model.parent = actor;
+  model.prepareDerivedData();
+  Object.assign(actor.system, model);
+}
 
 describe('Stackable Talent with Specialty Rank Overrides', () => {
   let actor;
@@ -114,7 +123,7 @@ describe('Stackable Talent with Specialty Rank Overrides', () => {
       }
     };
 
-    actor._prepareCharacterData(actor);
+    prepareCharacterData(actor);
     
     // Base (12000) + rank 6 override (500) + rank 7 override (1000) + rank 8 override (1000) = 14500
     expect(actor.system.xp.spent).toBe(14500);
@@ -191,7 +200,7 @@ describe('Stackable Talent with Specialty Rank Overrides', () => {
       }
     };
 
-    actor._prepareCharacterData(actor);
+    prepareCharacterData(actor);
     
     // Base (12000) + 500 + 1000 + 1000 + 1000 (subsequentCost) = 15500
     expect(actor.system.xp.spent).toBe(15500);

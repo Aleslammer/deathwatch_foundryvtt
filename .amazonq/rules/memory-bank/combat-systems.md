@@ -72,9 +72,13 @@ static async weaponAttackDialog(actor, weapon) {
 - Clearing jam removes loaded ammunition
 
 ### Ammunition Tracking
-- Deducts rounds based on rate of fire
-- Warns when ammunition depleted
-- Validates loaded ammo before attack
+- Weapon `clip` field (StringField) determines if ammo management applies
+- Ammo management active when: `clip && clip !== '—' && clip !== '-' && clip !== ''`
+- Actual round count tracked on loaded ammunition item's `capacity.value`
+- Deducts rounds based on rate of fire (Storm/Twin-Linked multiply expenditure)
+- Warns when ammunition depleted (capacity.value reaches 0)
+- Validates loaded ammo before attack via `validateWeaponForAttack()`
+- Rejects attack if no ammo loaded or ammo is empty
 
 ### Hit Calculation
 ```javascript
@@ -246,7 +250,20 @@ export const RANGE_MODIFIERS = {
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 79.31% coverage, 804 tests passing
+- Overall: 880 tests passing across 74 suites
+
+## Force Weapon Integration
+
+Force weapon modifiers are applied from `DeathwatchCharacter.prepareDerivedData()` (in `actor/character.mjs`) after psy rating is computed:
+```javascript
+// In DeathwatchCharacter.prepareDerivedData()
+for (const item of actor.items) {
+  if (item.type === 'weapon') {
+    item.system.applyForceWeaponModifiers();
+  }
+}
+```
+The `applyForceWeaponModifiers()` method lives on `DeathwatchWeapon` DataModel (`item/weapon.mjs`).
 
 ## Future Enhancements
 

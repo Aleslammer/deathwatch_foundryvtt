@@ -19,7 +19,14 @@
     "req": 32,
     "rof": "S/3/-",
     "wt": 7,
-    "attachedQualities": ["volatile", "overheats"]
+    "attachedQualities": [
+      {
+        "id": "volatile"
+      },
+      {
+        "id": "overheats"
+      }
+    ]
   },
   "type": "weapon"
 }

@@ -20,8 +20,12 @@
     "rof": "",
     "wt": 30,
     "attachedQualities": [
-      "power-field",
-      "unbalanced"
+      {
+        "id": "power-field"
+      },
+      {
+        "id": "unbalanced"
+      }
     ]
   },
   "type": "weapon"
