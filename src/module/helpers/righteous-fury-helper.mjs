@@ -22,7 +22,15 @@ export class RighteousFuryHelper {
     let furyCount = 0;
     const allRolls = [];
 
-    let keepChecking = isVolatile ? true : await this.rollConfirmation(actor, targetNumber, hitLocation);
+    let keepChecking;
+    if (isVolatile) {
+      keepChecking = true;
+      const speaker = FoundryAdapter.getChatSpeaker(actor);
+      const flavor = ChatMessageBuilder.createVolatileAutoConfirmFlavor();
+      await FoundryAdapter.createChatMessage(flavor, speaker);
+    } else {
+      keepChecking = await this.rollConfirmation(actor, targetNumber, hitLocation);
+    }
     
     while (keepChecking) {
       furyCount++;
@@ -36,7 +44,18 @@ export class RighteousFuryHelper {
         flavor: furyFlavor
       });
       
-      keepChecking = this.hasNaturalTen(furyRoll, furyThreshold) && (isVolatile ? true : await this.rollConfirmation(actor, targetNumber, hitLocation));
+      if (this.hasNaturalTen(furyRoll, furyThreshold)) {
+        if (isVolatile) {
+          const speaker = FoundryAdapter.getChatSpeaker(actor);
+          const flavor = ChatMessageBuilder.createVolatileAutoConfirmFlavor();
+          await FoundryAdapter.createChatMessage(flavor, speaker);
+          keepChecking = true;
+        } else {
+          keepChecking = await this.rollConfirmation(actor, targetNumber, hitLocation);
+        }
+      } else {
+        keepChecking = false;
+      }
     }
     
     return { totalDamage, furyCount, allRolls };
