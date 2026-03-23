@@ -124,6 +124,77 @@ describe('ModifierCollector - applyMovementModifiers', () => {
     expect(movement.bonus).toBe(-1);
   });
 
+  describe('movement-multiplier', () => {
+    it('doubles AG bonus with multiplier of 2 (Unnatural Speed)', () => {
+      const movement = {};
+      const modifiers = [
+        { name: 'Unnatural Speed', modifier: '2', effectType: 'movement-multiplier', enabled: true, source: 'Trait' }
+      ];
+
+      ModifierCollector.applyMovementModifiers(movement, 5, modifiers);
+
+      expect(movement.half).toBe(10);
+      expect(movement.full).toBe(20);
+      expect(movement.charge).toBe(30);
+      expect(movement.run).toBe(60);
+    });
+
+    it('applies multiplier before additive movement modifiers', () => {
+      const movement = {};
+      const modifiers = [
+        { name: 'Unnatural Speed', modifier: '2', effectType: 'movement-multiplier', enabled: true, source: 'Trait' },
+        { name: 'Giant Among Men', modifier: '1', effectType: 'movement', enabled: true, source: 'Power Armor' }
+      ];
+
+      ModifierCollector.applyMovementModifiers(movement, 4, modifiers);
+
+      // AG 4 * 2 = 8, + 1 = 9
+      expect(movement.half).toBe(9);
+      expect(movement.full).toBe(18);
+      expect(movement.charge).toBe(27);
+      expect(movement.run).toBe(54);
+    });
+
+    it('ignores disabled movement-multiplier modifiers', () => {
+      const movement = {};
+      const modifiers = [
+        { name: 'Unnatural Speed', modifier: '2', effectType: 'movement-multiplier', enabled: false, source: 'Trait' }
+      ];
+
+      ModifierCollector.applyMovementModifiers(movement, 5, modifiers);
+
+      expect(movement.half).toBe(5);
+    });
+
+    it('tracks multiplier in modifiers array for tooltip', () => {
+      const movement = {};
+      const modifiers = [
+        { name: 'Unnatural Speed', modifier: '2', effectType: 'movement-multiplier', enabled: true, source: 'Trait' }
+      ];
+
+      ModifierCollector.applyMovementModifiers(movement, 5, modifiers);
+
+      expect(movement.modifiers).toHaveLength(1);
+      expect(movement.modifiers[0]).toMatchObject({
+        name: 'Unnatural Speed',
+        value: 5,
+        source: 'Trait',
+        display: 'x2'
+      });
+    });
+
+    it('defaults to multiplier of 1 for invalid modifier value', () => {
+      const movement = {};
+      const modifiers = [
+        { name: 'Bad Multiplier', modifier: 'abc', effectType: 'movement-multiplier', enabled: true, source: 'Test' }
+      ];
+
+      ModifierCollector.applyMovementModifiers(movement, 5, modifiers);
+
+      expect(movement.half).toBe(5);
+    });
+  });
+
   describe('movement-restriction', () => {
     it('sets restricted movement type to N/A', () => {
       const movement = {};

@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "build:validate": "node builds/scripts/validatePacks.mjs",
-    "build:packs": "node builds/scripts/compilePacks.mjs",
+    "build:packs": "node builds/scripts/validatePacks.mjs && node builds/scripts/compilePacks.mjs",
     "build:copy": "node builds/scripts/copyLocal.mjs",
-    "build:all": "npm run build:validate && npm run build:packs && npm run build:copy",
+    "build:all": "npm run build:packs && npm run build:copy",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"

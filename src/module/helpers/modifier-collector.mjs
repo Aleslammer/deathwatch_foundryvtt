@@ -315,8 +315,20 @@ export class ModifierCollector {
   static applyMovementModifiers(movement, agBonus, modifiers) {
     if (!movement) return;
 
-    let bonus = 0;
+    // Apply movement-multiplier first (e.g., Unnatural Speed doubles AG Bonus)
+    let effectiveAgBonus = agBonus;
     const appliedMods = [];
+
+    for (const mod of modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'movement-multiplier') {
+        const multiplier = parseInt(mod.modifier) || 1;
+        const added = agBonus * (multiplier - 1);
+        effectiveAgBonus += added;
+        appliedMods.push({ name: mod.name, value: added, source: mod.source, display: `x${multiplier}` });
+      }
+    }
+
+    let bonus = 0;
 
     for (const mod of modifiers) {
       if (mod.enabled !== false && mod.effectType === 'movement') {
@@ -326,7 +338,7 @@ export class ModifierCollector {
       }
     }
 
-    const base = agBonus + bonus;
+    const base = effectiveAgBonus + bonus;
     movement.half = base;
     movement.full = base * 2;
     movement.charge = base * 3;

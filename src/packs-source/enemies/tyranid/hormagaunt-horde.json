@@ -1,0 +1,235 @@
+{
+  "_id": "hord00000000001",
+  "name": "Hormagaunt Horde",
+  "type": "horde",
+  "img": "systems/deathwatch/icons/enemies/tyranid/hormagaunt_horde.webp",
+  "system": {
+    "characteristics": {
+      "ws": {
+        "base": 45
+      },
+      "bs": {
+        "base": 20
+      },
+      "str": {
+        "base": 35
+      },
+      "tg": {
+        "base": 30
+      },
+      "ag": {
+        "base": 55
+      },
+      "int": {
+        "base": 10
+      },
+      "per": {
+        "base": 40
+      },
+      "wil": {
+        "base": 30
+      },
+      "fs": {
+        "base": 0
+      }
+    },
+    "wounds": {
+      "base": 30,
+      "max": 30,
+      "value": 0
+    },
+    "fatigue": {
+      "value": 0,
+      "max": 0
+    },
+    "armor": 2,
+    "skills": {
+      "acrobatics": {
+        "trained": true,
+        "mastered": true,
+        "expert": true
+      },
+      "awareness": {
+        "trained": true
+      },
+      "dodge": {
+        "trained": true,
+        "mastered": true
+      },
+      "silent_move": {
+        "trained": true
+      },
+      "swim": {
+        "trained": true,
+        "mastered": true
+      }
+    },
+    "modifiers": [],
+    "conditions": {},
+    "description": "<p>A seething mass of Hormagaunts, bounding forward on powerful legs to overwhelm the enemy through sheer numbers. Each creature is a fast-moving assault organism armed with razor-sharp scything talons.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "psyRating": {
+      "value": 0,
+      "base": 0
+    }
+  },
+  "items": [
+    {
+      "_id": "horditem0000010",
+      "name": "Leap Up",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "DeathWatch Core Rulebook",
+        "page": "121",
+        "prerequisite": "Agility 30",
+        "benefit": "Stand up as Free Action",
+        "description": "<p>The character may stand up as a Free Action.</p>",
+        "compendiumId": "tal00000000143",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000011",
+      "name": "Swift Attack",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "DeathWatch Core Rulebook",
+        "page": "127",
+        "prerequisite": "Weapon Skill 35",
+        "benefit": "Make two melee attacks as Full Action",
+        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "compendiumId": "tal00000000252",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000020",
+      "_sourceId": "trt000000000011",
+      "name": "Dark Sight",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Sees normally in total darkness, never takes a penalty for fighting in dim or no lighting.</p>",
+        "book": "Core Rulebook",
+        "page": "130",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000021",
+      "_sourceId": "trt000000000025",
+      "name": "Natural Armour (2)",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Chitinous Carapace — 2 Armour Points to all locations.</p>",
+        "book": "Core Rulebook",
+        "page": "133",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000022",
+      "_sourceId": "trt000000000019",
+      "name": "Improved Natural Weapons",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Scything Talons. Natural weapon attacks do not count as Primitive.</p>",
+        "book": "Core Rulebook",
+        "page": "132",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000023",
+      "_sourceId": "trt000000000021",
+      "name": "Instinctive Behaviour (Feed)",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Without synapse, attacks any living non-Tyranid creature. Gains Fearless and Frenzy.</p>",
+        "book": "Core Rulebook",
+        "page": "132",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000024",
+      "_sourceId": "trt000000000043",
+      "name": "Tyranid",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Immune to pinning, mind-affecting Psychic Powers, cold, heat, diseases, poisons, and Toxic weapons.</p>",
+        "book": "Core Rulebook",
+        "page": "136",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000025",
+      "_sourceId": "trt000000000027",
+      "name": "Overwhelming (Horde)",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Rolls an extra 1d10 for horde melee damage while Magnitude is 20 or greater.</p>",
+        "book": "Core Rulebook",
+        "page": "133",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "horditem0000026",
+      "_sourceId": "trt000000000050",
+      "name": "Unnatural Speed",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>Doubles Agility Bonus for movement purposes.</p>",
+        "book": "Core Rulebook",
+        "page": "136",
+        "modifiers": [
+          {
+            "name": "Unnatural Speed",
+            "modifier": 2,
+            "effectType": "movement-multiplier",
+            "enabled": true
+          }
+        ]
+      }
+    },
+    {
+      "_id": "horditem0000001",
+      "name": "Scything Talons",
+      "type": "weapon",
+      "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
+      "system": {
+        "class": "Melee",
+        "dmg": "1d10+3",
+        "dmgType": "Rending",
+        "penetration": "3",
+        "range": "",
+        "rof": "",
+        "clip": "",
+        "reload": "",
+        "equipped": true,
+        "modifiers": [],
+        "attachedQualities": [],
+        "attachedUpgrades": [],
+        "description": "<p>Razor-edged claws of fused chitin and serrated bone.</p>"
+      }
+    }
+  ],
+  "prototypeToken": {
+    "name": "Hormagaunt Horde",
+    "displayName": 30,
+    "actorLink": false,
+    "disposition": -1,
+    "bar1": {
+      "attribute": "wounds"
+    }
+  }
+}

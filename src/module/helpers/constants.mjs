@@ -40,7 +40,8 @@ export const EFFECT_TYPES = {
   INITIATIVE: 'initiative',
   WOUNDS: 'wounds',
   ARMOR: 'armor',
-  PSY_RATING: 'psy-rating'
+  PSY_RATING: 'psy-rating',
+  MOVEMENT_MULTIPLIER: 'movement-multiplier'
 };
 
 // Combat Modifiers

@@ -131,6 +131,13 @@
             "path": "packs/psychic-powers",
             "type": "Item",
             "system": "deathwatch"
+        },
+        {
+            "name": "enemies",
+            "label": "Enemies",
+            "path": "packs/enemies",
+            "type": "Actor",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

@@ -29,7 +29,6 @@ Rites of Battle
 
 Ammmunition 158
     
-    TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
     TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
     TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
     TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
@@ -40,7 +39,8 @@ TODO: Need to handle called shot mechanic
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 TODO: Automated Animations - Can we use this for things?
 
-
+Enemies:
+    Hormagaunt: the unnatural speed does not apply by default.   I had to pull the trait and readd
 Armor:
     TODO: Armor provides benefits to the space marine.   We need to work on that.
         163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
