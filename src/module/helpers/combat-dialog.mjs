@@ -251,25 +251,26 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null, forceWeaponData = null) {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null, forceWeaponData = null, tokenInfo = null) {
+    const tokenData = tokenInfo ? ` data-scene-id="${tokenInfo.sceneId}" data-token-id="${tokenInfo.tokenId}"` : '';
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
     if (charDamageEffect && woundsTaken > 0) {
-      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}" data-formula="${charDamageEffect.formula}" data-characteristic="${charDamageEffect.characteristic}">${charDamageEffect.name}: Roll ${charDamageEffect.formula}</button>`;
+      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}"${tokenData} data-formula="${charDamageEffect.formula}" data-characteristic="${charDamageEffect.characteristic}">${charDamageEffect.name}: Roll ${charDamageEffect.formula}</button>`;
     }
     
     if (isShocking && woundsTaken > 0) {
       const stunRounds = Math.floor(woundsTaken / 2);
-      message += `<br><button class="shocking-test-btn" data-actor-id="${targetId}" data-armor-value="${armorValue}" data-stun-rounds="${stunRounds}">Shocking: Roll Toughness Test</button>`;
+      message += `<br><button class="shocking-test-btn" data-actor-id="${targetId}"${tokenData} data-armor-value="${armorValue}" data-stun-rounds="${stunRounds}">Shocking: Roll Toughness Test</button>`;
     }
     
     if (isToxic && woundsTaken > 0) {
       const penalty = woundsTaken * 5;
-      message += `<br><button class="toxic-test-btn" data-actor-id="${targetId}" data-penalty="${penalty}">Toxic: Roll Toughness Test (-${penalty})</button>`;
+      message += `<br><button class="toxic-test-btn" data-actor-id="${targetId}"${tokenData} data-penalty="${penalty}">Toxic: Roll Toughness Test (-${penalty})</button>`;
     }
     
     if (forceWeaponData && woundsTaken > 0) {
-      message += `<br><button class="force-channel-btn" data-attacker-id="${forceWeaponData.attackerId}" data-target-id="${targetId}" data-psy-rating="${forceWeaponData.psyRating}">Force: Channel Psychic Energy (Opposed Willpower)</button>`;
+      message += `<br><button class="force-channel-btn" data-attacker-id="${forceWeaponData.attackerId}" data-target-id="${targetId}"${tokenData} data-psy-rating="${forceWeaponData.psyRating}">Force: Channel Psychic Energy (Opposed Willpower)</button>`;
     }
     
     if (drainLifeMessage) {
@@ -278,7 +279,7 @@ export class CombatDialogHelper {
     
     if (isCritical) {
       message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
-      message += `<br><button class="roll-critical-btn" data-actor-id="${targetId}" data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
+      message += `<br><button class="roll-critical-btn" data-actor-id="${targetId}"${tokenData} data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
     }
     
     return message;

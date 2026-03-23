@@ -46,6 +46,12 @@ Hooks.once('init', async function () {
         decimals: 2
     };
 
+    CONFIG.Combat.turnMarker = {
+        path: "systems/deathwatch/icons/aquila.png"
+    };
+
+    CONFIG.Combat.skipDefeated = true;
+
     // Override Combat.rollInitiative to show dialog
     const originalRollInitiative = Combat.prototype.rollInitiative;
     Combat.prototype.rollInitiative = async function(ids, options = {}) {
@@ -146,12 +152,26 @@ Hooks.once('ready', async function () {
 });
 
 Hooks.on('renderChatMessage', (message, html) => {
+    /**
+     * Resolve an actor from button data. For unlinked tokens, resolves the
+     * synthetic token actor so damage is applied to the token, not the base actor.
+     */
+    function resolveActor(button, actorIdAttr = 'targetId') {
+        const sceneId = button.data('sceneId');
+        const tokenId = button.data('tokenId');
+        if (sceneId && tokenId) {
+            const tokenDoc = game.scenes.get(sceneId)?.tokens.get(tokenId);
+            if (tokenDoc?.actor) return tokenDoc.actor;
+        }
+        const actorId = button.data(actorIdAttr);
+        return actorId ? game.actors.get(actorId) : null;
+    }
+
     html.find('.apply-damage-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
         const damage = parseInt(button.data('damage'));
         const penetration = parseInt(button.data('penetration'));
         const location = button.data('location');
-        const targetId = button.data('targetId');
         const damageType = button.data('damageType') || 'Impact';
         const isPrimitive = button.data('isPrimitive') === 'true' || button.data('isPrimitive') === true;
         const isRazorSharp = button.data('isRazorSharp') === 'true' || button.data('isRazorSharp') === true;
@@ -172,22 +192,25 @@ Hooks.on('renderChatMessage', (message, html) => {
         const forcePsyRating = parseInt(button.data('forcePsyRating')) || 0;
         const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
         
-        const targetActor = game.actors.get(targetId);
+        const sceneId = button.data('sceneId');
+        const tokenId = button.data('tokenId');
+        const tokenInfo = (sceneId && tokenId) ? { sceneId, tokenId } : null;
+        
+        const targetActor = resolveActor(button);
         if (!targetActor) {
             ui.notifications.warn('Target actor not found!');
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData });
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
-        const actorId = button.data('actorId');
         const armorValue = parseInt(button.data('armorValue'));
         const stunRounds = parseInt(button.data('stunRounds'));
         
-        const actor = game.actors.get(actorId);
+        const actor = resolveActor(button, 'actorId');
         if (!actor) {
             ui.notifications.warn('Actor not found!');
             return;
@@ -216,10 +239,9 @@ Hooks.on('renderChatMessage', (message, html) => {
     
     html.find('.toxic-test-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
-        const actorId = button.data('actorId');
         const penalty = parseInt(button.data('penalty'));
         
-        const actor = game.actors.get(actorId);
+        const actor = resolveActor(button, 'actorId');
         if (!actor) {
             ui.notifications.warn('Actor not found!');
             return;
@@ -258,11 +280,10 @@ Hooks.on('renderChatMessage', (message, html) => {
     
     html.find('.char-damage-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
-        const actorId = button.data('actorId');
         const formula = button.data('formula');
         const characteristic = button.data('characteristic');
         
-        const actor = game.actors.get(actorId);
+        const actor = resolveActor(button, 'actorId');
         if (!actor) {
             ui.notifications.warn('Actor not found!');
             return;
@@ -289,15 +310,15 @@ Hooks.on('renderChatMessage', (message, html) => {
     html.find('.force-channel-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
         const attackerId = button.data('attackerId');
-        const targetId = button.data('targetId');
         const psyRating = parseInt(button.data('psyRating')) || 0;
         
         const attacker = game.actors.get(attackerId);
-        const target = game.actors.get(targetId);
+        const target = resolveActor(button);
         if (!attacker || !target) {
             ui.notifications.warn('Attacker or target actor not found!');
             return;
         }
+        const targetId = button.data('targetId');
         
         const attackerWP = attacker.system.characteristics?.wil?.value || 0;
         const targetWP = target.system.characteristics?.wil?.value || 0;
@@ -351,11 +372,10 @@ Hooks.on('renderChatMessage', (message, html) => {
     
     html.find('.roll-critical-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
-        const actorId = button.data('actorId');
         const location = button.data('location');
         const damageType = button.data('damageType');
         
-        const actor = game.actors.get(actorId);
+        const actor = resolveActor(button, 'actorId');
         if (!actor) {
             ui.notifications.warn('Actor not found!');
             return;

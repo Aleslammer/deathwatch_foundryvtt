@@ -72,10 +72,11 @@ export class ChatMessageBuilder {
     });
   }
 
-  static createDamageApplyButton(damage, penetration, location, targetId, damageType = 'Impact', isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false, isShocking = false, isToxic = false, isMeltaRange = false, charDamageEffect = null, forceWeaponData = null) {
+  static createDamageApplyButton(damage, penetration, location, targetId, damageType = 'Impact', isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false, isShocking = false, isToxic = false, isMeltaRange = false, charDamageEffect = null, forceWeaponData = null, tokenInfo = null) {
     const charDamageData = charDamageEffect ? ` data-char-damage-formula="${charDamageEffect.formula}" data-char-damage-char="${charDamageEffect.characteristic}" data-char-damage-name="${charDamageEffect.name}"` : '';
     const forceData = forceWeaponData ? ` data-is-force="true" data-force-attacker-id="${forceWeaponData.attackerId}" data-force-psy-rating="${forceWeaponData.psyRating}"` : '';
-    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}" data-is-toxic="${isToxic}" data-is-melta-range="${isMeltaRange}"${charDamageData}${forceData}>Apply Damage</button>`;
+    const tokenData = tokenInfo ? ` data-scene-id="${tokenInfo.sceneId}" data-token-id="${tokenInfo.tokenId}"` : '';
+    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}" data-is-toxic="${isToxic}" data-is-melta-range="${isMeltaRange}"${charDamageData}${forceData}${tokenData}>Apply Damage</button>`;
   }
 
   static createDamageFlavor(weapon, hitNumber, totalHits, location, degreesOfSuccess, penetration, isMelee, strBonus, applyButton = '') {
