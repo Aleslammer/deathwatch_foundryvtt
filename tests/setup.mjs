@@ -3,6 +3,7 @@ import { jest } from '@jest/globals';
 // Mock Foundry VTT globals
 global.game = {
   packs: new Map(),
+  folders: [],
   i18n: {
     localize: (key) => key
   },
@@ -155,6 +156,10 @@ global.Combatant = class Combatant {
     Object.assign(this, data);
   }
   getInitiativeRoll() {}
+};
+
+global.Folder = class Folder {
+  static create = jest.fn(async (data) => ({ id: 'folder-enemies', ...data }));
 };
 
 global.Combat = class Combat {

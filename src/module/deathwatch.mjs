@@ -135,6 +135,19 @@ Hooks.once('init', async function () {
         }
     });
 
+    // Auto-assign enemy/horde actors to an "Enemies" folder
+    Hooks.on('createActor', async (actor, options, userId) => {
+        if (game.user.id !== userId) return;
+        if (actor.type !== 'enemy' && actor.type !== 'horde') return;
+        if (actor.folder) return;
+
+        let folder = game.folders.find(f => f.type === 'Actor' && f.name === 'Enemies');
+        if (!folder) {
+            folder = await Folder.create({ name: 'Enemies', type: 'Actor', parent: null });
+        }
+        if (folder) await actor.update({ folder: folder.id });
+    });
+
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });

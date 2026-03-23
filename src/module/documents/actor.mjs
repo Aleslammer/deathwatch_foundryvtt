@@ -17,17 +17,17 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     
-    const tokenUpdates = {
+    const updates = {
       'prototypeToken.name': data.name,
       'prototypeToken.displayName': 20
     };
 
     if (data.type === 'character') {
-      tokenUpdates['prototypeToken.actorLink'] = true;
-      tokenUpdates['prototypeToken.displayName'] = 30;
+      updates['prototypeToken.actorLink'] = true;
+      updates['prototypeToken.displayName'] = 30;
     }
 
-    this.updateSource(tokenUpdates);
+    this.updateSource(updates);
   }
 
   /**
