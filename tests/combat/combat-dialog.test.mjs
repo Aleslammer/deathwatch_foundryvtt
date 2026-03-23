@@ -318,30 +318,6 @@ describe('validateWeaponForAttack', () => {
     
     expect(result.valid).toBe(true);
   });
-
-  it('returns valid for thrown weapon without loaded ammo', () => {
-    const weapon = { 
-      name: 'Frag Grenade', 
-      system: { jammed: false, clip: '1', class: 'Thrown', loadedAmmo: null } 
-    };
-    const actor = { items: { get: () => null } };
-    
-    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
-    
-    expect(result.valid).toBe(true);
-  });
-
-  it('returns valid for thrown weapon with clip but no ammo management', () => {
-    const weapon = { 
-      name: 'Krak Grenade', 
-      system: { jammed: false, clip: '1', class: 'Thrown' } 
-    };
-    const actor = { items: { get: () => null } };
-    
-    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
-    
-    expect(result.valid).toBe(true);
-  });
 });
 
 describe('buildDamageFormula', () => {

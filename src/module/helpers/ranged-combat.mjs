@@ -66,9 +66,8 @@ export class RangedCombatHelper {
 
     const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
-    const isThrown = weapon.system.class?.toLowerCase() === 'thrown';
     const clip = weapon.system.clip;
-    const hasAmmoManagement = !isThrown && clip && clip !== '—' && clip !== '-' && clip !== '';
+    const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
     const loadedAmmo = hasAmmoManagement && weapon.system.loadedAmmo ? actor.items.get(weapon.system.loadedAmmo) : null;
     const currentAmmo = loadedAmmo?.system.capacity.value || 0;
     const hasSingle = rofParts[0] && rofParts[0] !== '-';

@@ -1017,8 +1017,8 @@ export class DeathwatchActorSheet extends ActorSheet {
       event.stopPropagation();
 
       const weaponClass = targetItem.system.class?.toLowerCase();
-      if (weaponClass?.includes('melee') || weaponClass?.includes('thrown')) {
-        ui.notifications.warn('Ammunition cannot be loaded into melee or thrown weapons.');
+      if (weaponClass?.includes('melee')) {
+        ui.notifications.warn('Ammunition cannot be loaded into melee weapons.');
         return;
       }
 
