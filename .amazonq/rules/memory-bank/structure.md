@@ -27,9 +27,11 @@ src/
 │   │   ├── _module.mjs             # Barrel export for all DataModels
 │   │   ├── base-document.mjs       # DeathwatchDataModel (root, shared templates)
 │   │   ├── actor/                  # Actor type DataModels
-│   │   │   ├── base-actor.mjs      # DeathwatchActorBase (wounds, fatigue)
+│   │   │   ├── base-actor.mjs      # DeathwatchActorBase (wounds, fatigue, polymorphic combat)
 │   │   │   ├── character.mjs       # DeathwatchCharacter (full PC, prepareDerivedData)
-│   │   │   └── npc.mjs             # DeathwatchNPC (minimal)
+│   │   │   ├── npc.mjs             # DeathwatchNPC (minimal)
+│   │   │   ├── enemy.mjs           # DeathwatchEnemy (full characteristics, psy rating, movement)
+│   │   │   └── horde.mjs           # DeathwatchHorde (magnitude-based, overrides combat methods)
 │   │   └── item/                   # Item type DataModels
 │   │       ├── base-item.mjs       # DeathwatchItemBase (description, book, page, modifiers)
 │   │       ├── gear.mjs            # DeathwatchGear
@@ -88,12 +90,18 @@ src/
   - Shared template methods: `equippedTemplate()`, `requisitionTemplate()`, `capacityTemplate()`, `keyTemplate()`
 - **actor/base-actor.mjs**: `DeathwatchActorBase` — base for all actor types
   - Shared fields: `wounds` (value, base, max), `fatigue` (value, max)
+  - Polymorphic combat methods: `getArmorValue()`, `getDefenses()`, `calculateHitsReceived()`, `receiveDamage()`, `canRighteousFury()`
 - **actor/character.mjs**: `DeathwatchCharacter` — full PC data with `prepareDerivedData()`
   - Schema: 9 characteristics (each with value, base, bonus, damage, advances), biography, progression, modifiers, conditions, psyRating, skills, legacy fields
   - Imports: ModifierCollector, XPCalculator, SkillLoader
   - `prepareDerivedData()`: skills, XP, modifiers, force weapons, movement
 - **actor/npc.mjs**: `DeathwatchNPC` — minimal NPC data
   - `prepareDerivedData()`: XP from CR calculation
+- **actor/enemy.mjs**: `DeathwatchEnemy` — full enemy data (characteristics, skills, psy rating, movement)
+  - Extends DeathwatchActorBase, same prepareDerivedData pattern as NPC but with psy rating and force weapons
+- **actor/horde.mjs**: `DeathwatchHorde` — magnitude-based horde
+  - Extends DeathwatchEnemy, adds single `armor` field
+  - Overrides: `getArmorValue()`, `getDefenses()`, `calculateHitsReceived()`, `receiveDamage()`, `receiveBatchDamage()`
 - **item/base-item.mjs**: `DeathwatchItemBase` — base for all item types
   - Universal fields: `description` (HTML), `book`, `page`, `modifiers` (array)
 - **item/*.mjs**: One DataModel per item type (all 17 registered)
@@ -119,6 +127,7 @@ src/
 - **combat.mjs**: Core combat logic (hit locations, damage application, routing)
 - **ranged-combat.mjs**: Ranged weapon attack dialog and logic
 - **melee-combat.mjs**: Melee weapon attack dialog and logic
+- **horde-combat.mjs**: Horde-specific combat mechanics (magnitude, hit calculation)
 - **combat-dialog.mjs**: Combat dialog utilities (pure functions)
 - **righteous-fury-helper.mjs**: Righteous Fury mechanics
 - **wound-helper.mjs**: Wound calculation utilities
@@ -147,7 +156,7 @@ src/
 
 ### 6. Data Schema (`template.json`)
 Contains only type lists — all field definitions live in DataModel classes:
-- **Actor Types**: `["character", "npc"]`
+- **Actor Types**: `["character", "npc", "enemy", "horde"]`
 - **Item Types**: 17 types listed
 - No field definitions, templates, or default values (all in DataModels)
 

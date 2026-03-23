@@ -5,11 +5,11 @@ import { SkillLoader } from '../../helpers/skill-loader.mjs';
 const { fields } = foundry.data;
 
 /**
- * NPC DataModel. Has characteristics, skills, wounds, and modifiers.
- * Simplified version of DeathwatchCharacter without biography, XP, psy rating, etc.
+ * Enemy DataModel. Same as character but without chapters, specialties,
+ * rank, XP, fate points, renown, special abilities, demeanours, past events.
  * @extends {DeathwatchActorBase}
  */
-export default class DeathwatchNPC extends DeathwatchActorBase {
+export default class DeathwatchEnemy extends DeathwatchActorBase {
 
   static _characteristicFields() {
     return new fields.SchemaField({
@@ -30,21 +30,31 @@ export default class DeathwatchNPC extends DeathwatchActorBase {
     const schema = super.defineSchema();
 
     schema.characteristics = new fields.SchemaField({
-      ws: DeathwatchNPC._characteristicFields(),
-      bs: DeathwatchNPC._characteristicFields(),
-      str: DeathwatchNPC._characteristicFields(),
-      tg: DeathwatchNPC._characteristicFields(),
-      ag: DeathwatchNPC._characteristicFields(),
-      int: DeathwatchNPC._characteristicFields(),
-      per: DeathwatchNPC._characteristicFields(),
-      wil: DeathwatchNPC._characteristicFields(),
-      fs: DeathwatchNPC._characteristicFields()
+      ws: DeathwatchEnemy._characteristicFields(),
+      bs: DeathwatchEnemy._characteristicFields(),
+      str: DeathwatchEnemy._characteristicFields(),
+      tg: DeathwatchEnemy._characteristicFields(),
+      ag: DeathwatchEnemy._characteristicFields(),
+      int: DeathwatchEnemy._characteristicFields(),
+      per: DeathwatchEnemy._characteristicFields(),
+      wil: DeathwatchEnemy._characteristicFields(),
+      fs: DeathwatchEnemy._characteristicFields()
     });
 
     schema.skills = new fields.ObjectField({ initial: {} });
     schema.modifiers = new fields.ArrayField(new fields.ObjectField(), { initial: [] });
     schema.conditions = new fields.ObjectField({ initial: {} });
     schema.description = new fields.HTMLField({ initial: "" });
+    schema.gender = new fields.StringField({ initial: "", blank: true });
+    schema.age = new fields.StringField({ initial: "", blank: true });
+    schema.complexion = new fields.StringField({ initial: "", blank: true });
+    schema.hair = new fields.StringField({ initial: "", blank: true });
+
+    // Psy Rating
+    schema.psyRating = new fields.SchemaField({
+      value: new fields.NumberField({ initial: 0, min: 0, integer: true }),
+      base: new fields.NumberField({ initial: 0, min: 0, integer: true })
+    });
 
     return schema;
   }
@@ -67,6 +77,14 @@ export default class DeathwatchNPC extends DeathwatchActorBase {
     ModifierCollector.applyWoundModifiers(this.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(this.fatigue, this.characteristics?.tg?.mod || 0);
     ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
+    ModifierCollector.applyPsyRatingModifiers(this.psyRating, allModifiers);
+
+    // Apply force weapon modifiers after psy rating is computed
+    for (const item of actor.items) {
+      if (item.type === 'weapon') {
+        item.system.applyForceWeaponModifiers();
+      }
+    }
 
     // Calculate movement from Agility Bonus
     const agBonus = this.characteristics?.ag?.mod || 0;

@@ -1,10 +1,13 @@
 import DeathwatchDataModel from '../base-document.mjs';
+import { CombatDialogHelper } from '../../helpers/combat-dialog.mjs';
+import { FoundryAdapter } from '../../helpers/foundry-adapter.mjs';
+import { ChatMessageBuilder } from '../../helpers/chat-message-builder.mjs';
 
 const { fields } = foundry.data;
 
 /**
  * Base DataModel for all Deathwatch actor types.
- * Provides shared wounds and fatigue schemas.
+ * Provides shared wounds and fatigue schemas, and default combat methods.
  * @extends {DeathwatchDataModel}
  */
 export default class DeathwatchActorBase extends DeathwatchDataModel {
@@ -23,5 +26,107 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
     });
 
     return schema;
+  }
+
+  /**
+   * Whether this actor type can trigger Righteous Fury.
+   * Only characters can. Override in DeathwatchCharacter.
+   * @returns {boolean}
+   */
+  canRighteousFury() {
+    return false;
+  }
+
+  /**
+   * Get armor value for a hit location.
+   * Default: location-based from equipped armor item.
+   * @param {string} location - Hit location name
+   * @returns {number}
+   */
+  getArmorValue(location) {
+    const actor = this.parent;
+    const equippedArmor = actor.items.find(i => i.type === 'armor' && i.system.equipped);
+    if (!equippedArmor) return 0;
+
+    const locationMap = {
+      "Head": "head", "Body": "body",
+      "Right Arm": "right_arm", "Left Arm": "left_arm",
+      "Right Leg": "right_leg", "Left Leg": "left_leg"
+    };
+    const armorField = locationMap[location];
+    return armorField ? (equippedArmor.system[armorField] || 0) : 0;
+  }
+
+  /**
+   * Get defensive stats for damage calculation.
+   * @param {string} location - Hit location name
+   * @returns {{armorValue: number, toughnessBonus: number, unnaturalToughnessMultiplier: number}}
+   */
+  getDefenses(location) {
+    return {
+      armorValue: this.getArmorValue(location),
+      toughnessBonus: this.characteristics?.tg?.baseMod || 0,
+      unnaturalToughnessMultiplier: this.characteristics?.tg?.unnaturalMultiplier || 1
+    };
+  }
+
+  /**
+   * Calculate effective hits received from an attack.
+   * Default: pass through baseHits unchanged.
+   * @param {Object} options - Attack options
+   * @param {number} options.baseHits - Hits from normal calculation
+   * @returns {number}
+   */
+  calculateHitsReceived(options) {
+    return options.baseHits || 1;
+  }
+
+  /**
+   * Apply damage to this actor. Default: wound-based with critical damage.
+   * @param {Object} options - Damage options
+   */
+  async receiveDamage(options) {
+    const actor = this.parent;
+    const { damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false,
+      isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false,
+      isShocking = false, isToxic = false, hasDrainLife = false, attackerActor = null,
+      isMeltaRange = false, charDamageEffect = null, forceWeaponData = null, tokenInfo = null } = options;
+
+    const defenses = this.getDefenses(location);
+    const damageResult = CombatDialogHelper.calculateDamageResult({
+      damage, penetration, felling, isPrimitive, isRazorSharp, degreesOfSuccess,
+      isScatter, isLongOrExtremeRange, armorValue: defenses.armorValue,
+      toughnessBonus: defenses.toughnessBonus,
+      unnaturalToughnessMultiplier: defenses.unnaturalToughnessMultiplier, isMeltaRange
+    });
+
+    if (damageResult.woundsTaken > 0) {
+      const { newWounds, isCritical, criticalDamage } = CombatDialogHelper.calculateCriticalDamage(
+        this.wounds.value || 0, damageResult.woundsTaken, this.wounds.max || 0
+      );
+
+      await FoundryAdapter.updateDocument(actor, { "system.wounds.value": newWounds });
+
+      const drainLifeMessage = (hasDrainLife && attackerActor)
+        ? `<button class="drain-life-test-btn" data-attacker-id="${attackerActor.id}" data-target-id="${actor.id}">Drain Life: Opposed Willpower Test</button>`
+        : '';
+      const message = CombatDialogHelper.buildDamageMessage(
+        actor.name, damageResult.woundsTaken, location, damage, defenses.armorValue, penetration,
+        damageResult.effectiveArmor, damageResult.effectiveTB, isCritical, criticalDamage, actor.id,
+        damageType, isShocking, isToxic, drainLifeMessage, charDamageEffect, forceWeaponData, tokenInfo
+      );
+
+      FoundryAdapter.showNotification(
+        isCritical ? 'warn' : 'info',
+        isCritical ? `${actor.name} is taking CRITICAL DAMAGE!` : `${actor.name} takes ${damageResult.woundsTaken} wounds!`
+      );
+      await FoundryAdapter.createChatMessage(message);
+    } else {
+      FoundryAdapter.showNotification('info', `${actor.name}'s armor absorbs all damage!`);
+      const message = CombatDialogHelper.buildArmorAbsorbMessage(
+        actor.name, location, damage, defenses.armorValue, penetration, damageResult.effectiveTB
+      );
+      await FoundryAdapter.createChatMessage(message);
+    }
   }
 }

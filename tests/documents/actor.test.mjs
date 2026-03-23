@@ -52,13 +52,27 @@ describe('DeathwatchActor', () => {
 
   describe('Character prepareDerivedData', () => {
     it('skips if model is not character type', () => {
-      // NPC model has no characteristic logic
+      // NPC model now has its own characteristic logic
       const npc = new DeathwatchNPC();
-      npc.cr = 5;
-      npc.parent = mockActor;
+      npc.characteristics = {
+        ws: { base: 30, value: 30 },
+        bs: { base: 30, value: 30 },
+        str: { base: 30, value: 30 },
+        tg: { base: 30, value: 30 },
+        ag: { base: 30, value: 30 },
+        int: { base: 30, value: 30 },
+        per: { base: 30, value: 30 },
+        wil: { base: 30, value: 30 },
+        fs: { base: 30, value: 30 }
+      };
+      npc.modifiers = [];
+      npc.skills = {};
+      npc.wounds = { value: 0, base: 10, max: 10 };
+      npc.fatigue = { value: 0, max: 0 };
+      npc.parent = { items: [], effects: undefined, system: npc };
       npc.prepareDerivedData();
-      // Characteristics unchanged
-      expect(mockActor.system.characteristics.ws.value).toBe(40);
+      // NPC characteristics are processed independently from character
+      expect(npc.characteristics.ws.value).toBe(30);
     });
 
     it('stores base value if not already stored', () => {
@@ -330,19 +344,55 @@ describe('DeathwatchActor', () => {
   });
 
   describe('NPC prepareDerivedData', () => {
-    it('does not set xp when cr is undefined', () => {
+    it('applies characteristic modifiers for npc', () => {
       const npc = new DeathwatchNPC();
-      npc.parent = mockActor;
+      npc.characteristics = {
+        ws: { base: 40, value: 40 },
+        bs: { base: 30, value: 30 },
+        str: { base: 30, value: 30 },
+        tg: { base: 40, value: 40 },
+        ag: { base: 35, value: 35 },
+        int: { base: 30, value: 30 },
+        per: { base: 30, value: 30 },
+        wil: { base: 30, value: 30 },
+        fs: { base: 30, value: 30 }
+      };
+      npc.modifiers = [{
+        name: 'Test',
+        modifier: 10,
+        effectType: 'characteristic',
+        valueAffected: 'ws',
+        enabled: true
+      }];
+      npc.skills = {};
+      npc.wounds = { value: 0, base: 15, max: 15 };
+      npc.fatigue = { value: 0, max: 0 };
+      npc.parent = { items: [], effects: undefined, system: npc };
       npc.prepareDerivedData();
-      expect(npc.xp).toBeUndefined();
+      expect(npc.characteristics.ws.value).toBe(50);
     });
 
-    it('calculates xp for npc', () => {
+    it('calculates movement for npc', () => {
       const npc = new DeathwatchNPC();
-      npc.cr = 5;
-      npc.parent = mockActor;
+      npc.characteristics = {
+        ws: { base: 30, value: 30 },
+        bs: { base: 30, value: 30 },
+        str: { base: 30, value: 30 },
+        tg: { base: 30, value: 30 },
+        ag: { base: 40, value: 40 },
+        int: { base: 30, value: 30 },
+        per: { base: 30, value: 30 },
+        wil: { base: 30, value: 30 },
+        fs: { base: 30, value: 30 }
+      };
+      npc.modifiers = [];
+      npc.skills = {};
+      npc.wounds = { value: 0, base: 10, max: 10 };
+      npc.fatigue = { value: 0, max: 0 };
+      npc.parent = { items: [], effects: undefined, system: npc };
       npc.prepareDerivedData();
-      expect(npc.xp).toBe(2500);
+      expect(npc.movement.half).toBe(4);
+      expect(npc.movement.full).toBe(8);
     });
   });
 
@@ -405,8 +455,8 @@ describe('DeathwatchActor', () => {
   });
 
   describe('_preCreate', () => {
-    it('sets actorLink for character type', async () => {
-      const data = { type: 'character' };
+    it('sets actorLink and token name for character type', async () => {
+      const data = { type: 'character', name: 'Test Marine' };
       const options = {};
       const user = {};
       mockActor.updateSource = jest.fn();
@@ -414,19 +464,38 @@ describe('DeathwatchActor', () => {
       await mockActor._preCreate(data, options, user);
       
       expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Test Marine',
+        'prototypeToken.displayName': 30,
         'prototypeToken.actorLink': true
       });
     });
 
-    it('does not set actorLink for npc type', async () => {
-      const data = { type: 'npc' };
+    it('sets token name but not actorLink for npc type', async () => {
+      const data = { type: 'npc', name: 'Ork Boy' };
       const options = {};
       const user = {};
       mockActor.updateSource = jest.fn();
       
       await mockActor._preCreate(data, options, user);
       
-      expect(mockActor.updateSource).not.toHaveBeenCalled();
+      expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Ork Boy',
+        'prototypeToken.displayName': 20
+      });
+    });
+
+    it('sets token name but not actorLink for enemy type', async () => {
+      const data = { type: 'enemy', name: 'Genestealer' };
+      const options = {};
+      const user = {};
+      mockActor.updateSource = jest.fn();
+      
+      await mockActor._preCreate(data, options, user);
+      
+      expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Genestealer',
+        'prototypeToken.displayName': 20
+      });
     });
   });
 });

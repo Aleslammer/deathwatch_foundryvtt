@@ -57,4 +57,18 @@ export class WeaponQualityHelper {
   static async isStalkerPattern(weapon) {
     return await this.hasQuality(weapon, 'stalker-pattern');
   }
+
+  static async getBlastValue(weapon) {
+    if (weapon.system.effectiveBlast) return weapon.system.effectiveBlast;
+    const qualityIds = weapon.system.attachedQualities || [];
+    for (const q of qualityIds) {
+      const id = typeof q === 'string' ? q : q.id;
+      const key = await this.getQualityKey(id);
+      if (key === 'blast') {
+        const value = typeof q === 'object' ? q.value : await this.getQualityValue(id, 'value');
+        return parseInt(value) || 0;
+      }
+    }
+    return 0;
+  }
 }

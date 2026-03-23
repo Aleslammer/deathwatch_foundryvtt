@@ -18,7 +18,7 @@ export class DeathwatchActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["deathwatch", "sheet", "actor"],
-      template: "systems/deathwatch/templates/actor/actor-sheet.html",
+      template: "systems/deathwatch/templates/actor/actor-character-sheet.html",
       width: 1000,
       height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "characteristics" }]
@@ -73,6 +73,19 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Prepare NPC data and items.
     if (actorData.type == 'npc') {
+      this._prepareNPCData(context);
+      this._prepareItems(context);
+    }
+
+    // Prepare Enemy data and items.
+    if (actorData.type == 'enemy') {
+      this._prepareEnemyData(context);
+      this._prepareItems(context);
+    }
+
+    // Prepare Horde data and items.
+    if (actorData.type == 'horde') {
+      this._prepareEnemyData(context);
       this._prepareItems(context);
     }
 
@@ -220,6 +233,75 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     // Show Psy Rating box if specialty has hasPsyRating
     context.showPsyRating = context.specialtyItem?.system?.hasPsyRating || false;
+  }
+
+  /**
+   * Prepare NPC-specific data.
+   * Simplified version of _prepareCharacterData — characteristics labels, skills, wound color.
+   * @param {Object} context The sheet context
+   */
+  _prepareNPCData(context) {
+    for (let [k, v] of Object.entries(context.system.characteristics)) {
+      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
+    }
+
+    if (context.system.skills) {
+      const sortedSkills = Object.entries(context.system.skills)
+        .sort(([keyA], [keyB]) => {
+          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
+          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
+          return labelA.localeCompare(labelB);
+        });
+
+      for (const [k, v] of sortedSkills) {
+        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+        const liveSkill = this.actor.system.skills[k];
+        const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const skillModTotal = liveSkill?.modifierTotal || 0;
+        v.total = baseSkillTotal + skillModTotal;
+      }
+    }
+
+    context.config = game.deathwatch.config;
+
+    const wounds = context.system.wounds;
+    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+  }
+
+  /**
+   * Prepare Enemy-specific data.
+   * Same as character but without chapter/specialty/rank/XP/renown.
+   * @param {Object} context The sheet context
+   */
+  _prepareEnemyData(context) {
+    for (let [k, v] of Object.entries(context.system.characteristics)) {
+      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
+    }
+
+    if (context.system.skills) {
+      const sortedSkills = Object.entries(context.system.skills)
+        .sort(([keyA], [keyB]) => {
+          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
+          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
+          return labelA.localeCompare(labelB);
+        });
+
+      for (const [k, v] of sortedSkills) {
+        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+        const liveSkill = this.actor.system.skills[k];
+        const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const skillModTotal = liveSkill?.modifierTotal || 0;
+        v.total = baseSkillTotal + skillModTotal;
+      }
+    }
+
+    context.config = game.deathwatch.config;
+
+    const wounds = context.system.wounds;
+    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+
+    // Show Psy Rating box if psyRating base > 0 or any psy-rating modifiers exist
+    context.showPsyRating = (context.system.psyRating?.base > 0) || (context.system.psyRating?.value > 0);
   }
 
   /**
@@ -528,6 +610,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       
       await weapon.update({ "system.loadedAmmo": null });
       ui.notifications.info('Ammunition removed.');
+    });
+
+    // Edit ammunition from inline ammo display
+    html.find('.ammo-edit-btn').click(ev => {
+      ev.stopPropagation();
+      const itemId = $(ev.currentTarget).data('itemId');
+      const item = this.actor.items.get(itemId);
+      if (item) item.sheet.render(true);
     });
 
     // Remove upgrade from weapon
@@ -935,8 +1025,8 @@ export class DeathwatchActorSheet extends ActorSheet {
       event.stopPropagation();
 
       const weaponClass = targetItem.system.class?.toLowerCase();
-      if (weaponClass?.includes('melee') || weaponClass?.includes('thrown')) {
-        ui.notifications.warn('Ammunition cannot be loaded into melee or thrown weapons.');
+      if (weaponClass?.includes('melee')) {
+        ui.notifications.warn('Ammunition cannot be loaded into melee weapons.');
         return;
       }
 

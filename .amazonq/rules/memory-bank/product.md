@@ -20,12 +20,23 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Biography and character progression tracking
 - Modifier system for temporary and permanent character adjustments
 
+### Enemy and Horde Management
+- Enemy actor type with full characteristics, skills, psy rating, and movement
+- Horde actor type with magnitude-based health (wounds = magnitude)
+- Single armor value for hordes (no location-based armor)
+- Horde-specific combat: blast hits, flame hits, melee DoS hits
+- Batch damage application with summary messages
+- Horde destruction tracking
+
 ### Combat System
 - Initiative formula: 1d10 + Agility Bonus + Initiative Bonus
 - Weapon management with damage types and capacity tracking
 - Ammunition loading and tracking system
 - Armor system with location-based protection (head, body, arms, legs)
 - Combat-specific modifiers and effects
+- Polymorphic damage application (wound-based for characters, magnitude-based for hordes)
+- Degrees of Success displayed in melee attack chat messages
+- Horde-specific hit calculation (blast, flame, melee DoS, explosive bonus)
 
 ### Item System
 - Weapons with damage, type, capacity, and loaded ammunition tracking

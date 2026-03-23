@@ -26,9 +26,7 @@ export class RangedCombatHelper {
       return;
     }
 
-    const bs = actor.system.characteristics.bs.base || actor.system.characteristics.bs.value;
-    const advances = actor.system.characteristics.bs.advances || {};
-    const bsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
+    const bs = actor.system.characteristics.bs.value || 0;
 
     const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
@@ -177,7 +175,7 @@ export class RangedCombatHelper {
             
             const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
-              bsAdv,
+              bsAdv: 0,
               aim,
               autoFire,
               calledShot,
@@ -208,10 +206,38 @@ export class RangedCombatHelper {
             }
             hasPrematureDetonation = hitValue >= detonationThreshold;
             
-            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
+            let hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
+            const isHorde = actor.type === 'horde';
+            const targetActor = targetToken?.actor;
+            if (targetActor && hitsTotal > 0) {
+              const blastValue = await WeaponQualityHelper.getBlastValue(weapon);
+              const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
+              const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
+              const degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber);
+              hitsTotal = targetActor.system.calculateHitsReceived({
+                damageType: weapon.system.dmgType || '',
+                blastValue,
+                isFlame,
+                flameRange: parseInt(weapon.system.effectiveRange || weapon.system.range) || 0,
+                isMelee: false,
+                degreesOfSuccess,
+                hasPowerField,
+                baseHits: hitsTotal
+              });
+
+              if (isFlame && targetActor.type === 'horde') {
+                const flameRoll = await new Roll('1d5').evaluate();
+                hitsTotal += flameRoll.total;
+                await flameRoll.toMessage({
+                  speaker: ChatMessage.getSpeaker({ actor }),
+                  flavor: `<strong>Flame vs Horde:</strong> +${flameRoll.total} additional hits (1d5)`,
+                  rollMode: game.settings.get('core', 'rollMode')
+                });
+              }
+            }
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
-            let isJammed = !hasLivingAmmo && hitValue >= jamThreshold;
+            let isJammed = !isHorde && !hasLivingAmmo && hitValue >= jamThreshold;
             const hasReliable = await WeaponQualityHelper.hasQuality(weapon, 'reliable');
             
             if (isJammed && hasReliable) {
@@ -264,7 +290,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackRangeLabel = rangeLabel;
             CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, 0, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 
@@ -274,7 +300,7 @@ export class RangedCombatHelper {
               rollMode: game.settings.get('core', 'rollMode')
             });
 
-            if (hasAmmoManagement && weapon.system.loadedAmmo) {
+            if (!isHorde && hasAmmoManagement && weapon.system.loadedAmmo) {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;

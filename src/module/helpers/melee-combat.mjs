@@ -1,12 +1,12 @@
 import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS } from "./constants.mjs";
 import { CombatHelper } from "./combat.mjs";
+import { CombatDialogHelper } from "./combat-dialog.mjs";
+import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class MeleeCombatHelper {
   /* istanbul ignore next */
   static async attackDialog(actor, weapon) {
-    const ws = actor.system.characteristics.ws.base || actor.system.characteristics.ws.value;
-    const advances = actor.system.characteristics.ws.advances || {};
-    const wsAdv = (advances.simple ? 5 : 0) + (advances.intermediate ? 5 : 0) + (advances.trained ? 5 : 0) + (advances.expert ? 5 : 0);
+    const ws = actor.system.characteristics.ws.value || 0;
 
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
@@ -71,7 +71,7 @@ export class MeleeCombatHelper {
             const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
-            const modifiers = wsAdv + aim + allOut + charge + calledShot + runningTarget + miscModifier;
+            const modifiers = aim + allOut + charge + calledShot + runningTarget + miscModifier;
             const isDefensive = weapon.attachedQualities?.some(q => q.system.key === 'defensive');
             const defensivePenalty = isDefensive ? -10 : 0;
             const clampedModifiers = Math.max(-60, Math.min(60, modifiers + defensivePenalty));
@@ -83,11 +83,26 @@ export class MeleeCombatHelper {
 
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
-            CombatHelper.lastAttackHits = success ? 1 : 0;
+            const degreesOfSuccess = success ? CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber) : 0;
+            let hitsTotal = success ? 1 : 0;
+
+            const targetToken = game.user.targets.first();
+            const targetActor = targetToken?.actor;
+            if (targetActor && hitsTotal > 0) {
+              const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
+              hitsTotal = targetActor.system.calculateHitsReceived({
+                isMelee: true,
+                degreesOfSuccess,
+                hasPowerField,
+                baseHits: 1
+              });
+            }
+
+            CombatHelper.lastAttackHits = hitsTotal;
+            CombatHelper.lastAttackAim = aim;
 
             const modifierParts = [];
-            modifierParts.push(`${ws} Base WS`);
-            if (wsAdv !== 0) modifierParts.push(`${wsAdv >= 0 ? '+' : ''}${wsAdv} WS Advances`);
+            modifierParts.push(`${ws} WS`);
             if (aim !== 0) modifierParts.push(`+${aim} Aim`);
             if (allOut !== 0) modifierParts.push(`+${allOut} All Out Attack`);
             if (charge !== 0) modifierParts.push(`+${charge} Charge`);
@@ -96,7 +111,8 @@ export class MeleeCombatHelper {
             if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
             if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
 
-            const label = `[Melee Attack] ${weapon.name} - Target: ${targetNumber}<br><strong>${success ? 'HIT!' : 'MISS!'}</strong>`;
+            let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
+            if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;
             const flavor = modifierParts.length > 0 
               ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`
               : label;

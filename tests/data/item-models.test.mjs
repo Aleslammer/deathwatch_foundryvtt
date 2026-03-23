@@ -22,6 +22,7 @@ import DeathwatchWeapon from '../../src/module/data/item/weapon.mjs';
 import DeathwatchActorBase from '../../src/module/data/actor/base-actor.mjs';
 import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
 import DeathwatchNPC from '../../src/module/data/actor/npc.mjs';
+import DeathwatchEnemy from '../../src/module/data/actor/enemy.mjs';
 
 describe('DeathwatchDataModel', () => {
   describe('defineSchema', () => {
@@ -393,19 +394,86 @@ describe('DeathwatchNPC', () => {
     expect(schema.fatigue).toBeDefined();
   });
 
-  it('prepareDerivedData calculates xp from cr', () => {
-    const npc = new DeathwatchNPC();
-    npc.cr = 3;
-    npc.parent = {};
-    npc.prepareDerivedData();
-    expect(npc.xp).toBe(900);
+  it('includes characteristics, skills, modifiers, and conditions', () => {
+    const schema = DeathwatchNPC.defineSchema();
+    expect(schema.characteristics).toBeDefined();
+    expect(schema.skills).toBeDefined();
+    expect(schema.modifiers).toBeDefined();
+    expect(schema.conditions).toBeDefined();
+    expect(schema.description).toBeDefined();
   });
 
-  it('prepareDerivedData skips xp when cr is undefined', () => {
+  it('prepareDerivedData applies characteristic modifiers', () => {
     const npc = new DeathwatchNPC();
-    npc.parent = {};
+    npc.characteristics = {
+      ws: { base: 40, value: 40 },
+      bs: { base: 30, value: 30 },
+      str: { base: 30, value: 30 },
+      tg: { base: 30, value: 30 },
+      ag: { base: 30, value: 30 },
+      int: { base: 30, value: 30 },
+      per: { base: 30, value: 30 },
+      wil: { base: 30, value: 30 },
+      fs: { base: 30, value: 30 }
+    };
+    npc.modifiers = [];
+    npc.skills = {};
+    npc.wounds = { value: 0, base: 10, max: 10 };
+    npc.fatigue = { value: 0, max: 0 };
+    npc.parent = { items: [], effects: undefined, system: npc };
     npc.prepareDerivedData();
-    expect(npc.xp).toBeUndefined();
+    expect(npc.characteristics.ws.value).toBe(40);
+    expect(npc.characteristics.ws.mod).toBe(4);
+  });
+});
+
+describe('DeathwatchEnemy', () => {
+  it('includes characteristics, skills, modifiers, psyRating, and description', () => {
+    const schema = DeathwatchEnemy.defineSchema();
+    expect(schema.characteristics).toBeDefined();
+    expect(schema.skills).toBeDefined();
+    expect(schema.modifiers).toBeDefined();
+    expect(schema.conditions).toBeDefined();
+    expect(schema.description).toBeDefined();
+    expect(schema.psyRating).toBeDefined();
+    expect(schema.wounds).toBeDefined();
+    expect(schema.fatigue).toBeDefined();
+  });
+
+  it('does not include character-only fields', () => {
+    const schema = DeathwatchEnemy.defineSchema();
+    expect(schema.chapterId).toBeUndefined();
+    expect(schema.specialtyId).toBeUndefined();
+    expect(schema.rank).toBeUndefined();
+    expect(schema.xp).toBeUndefined();
+    expect(schema.fatePoints).toBeUndefined();
+    expect(schema.renown).toBeUndefined();
+    expect(schema.pastEvents).toBeUndefined();
+  });
+
+  it('prepareDerivedData applies modifiers and computes movement', () => {
+    const enemy = new DeathwatchEnemy();
+    enemy.characteristics = {
+      ws: { base: 50, value: 50 },
+      bs: { base: 30, value: 30 },
+      str: { base: 30, value: 30 },
+      tg: { base: 40, value: 40 },
+      ag: { base: 35, value: 35 },
+      int: { base: 20, value: 20 },
+      per: { base: 30, value: 30 },
+      wil: { base: 30, value: 30 },
+      fs: { base: 10, value: 10 }
+    };
+    enemy.modifiers = [];
+    enemy.skills = {};
+    enemy.wounds = { value: 0, base: 20, max: 20 };
+    enemy.fatigue = { value: 0, max: 0 };
+    enemy.psyRating = { value: 0, base: 0 };
+    enemy.parent = { items: [], effects: undefined, system: enemy };
+    enemy.prepareDerivedData();
+    expect(enemy.characteristics.ws.mod).toBe(5);
+    expect(enemy.movement.half).toBe(3);
+    expect(enemy.movement.full).toBe(6);
   });
 });
 

@@ -95,6 +95,7 @@
   "speak_language_ork": { "isBasic": false, "characteristic": "int", "costTrain": 200, "costMaster": 200, "costExpert": 200, "descriptor": "" },
   "speak_language_techna_lingua": { "isBasic": false, "characteristic": "int", "costTrain": 200, "costMaster": 200, "costExpert": 200, "descriptor": "" },
   "speak_language_tau": { "isBasic": false, "characteristic": "int", "costTrain": 200, "costMaster": 200, "costExpert": 200, "descriptor": "" },
+  "speak_language_unholy_tounge": { "isBasic": false, "characteristic": "int", "costTrain": 200, "costMaster": 200, "costExpert": 200, "descriptor": "" },
   "survival": { "isBasic": false, "characteristic": "int", "costTrain": 300, "costMaster": 400, "costExpert": 800, "descriptor": "" },
   "tactics_air_combat": { "isBasic": false, "characteristic": "int", "costTrain": 0, "costMaster": 400, "costExpert": 800, "descriptor": "" },
   "tactics_armoured": { "isBasic": false, "characteristic": "int", "costTrain": 0, "costMaster": 400, "costExpert": 800, "descriptor": "" },

@@ -18,10 +18,10 @@
 11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 
 ## Key Metrics
-- **Tests**: 880 passing, 74 suites
-- **Helper Classes**: 24+ modules
+- **Tests**: 947 passing, 77 suites
+- **Helper Classes**: 25+ modules
 - **Compendium Packs**: 15
-- **DataModel Types**: All 17 item types + 2 actor types registered
+- **DataModel Types**: All 17 item types + 4 actor types registered
 
 ## Commands
 ```bash
@@ -34,11 +34,12 @@ npm run build:all                                          # Validate + build pa
 ## Core Systems Summary
 
 ### DataModel System
-- **Actor Models**: `DeathwatchCharacter` (full derived data), `DeathwatchNPC` (minimal)
+- **Actor Models**: `DeathwatchCharacter` (full derived data), `DeathwatchNPC` (minimal), `DeathwatchEnemy` (full characteristics + psy rating), `DeathwatchHorde` (magnitude-based, extends Enemy)
 - **Item Models**: 17 types, all registered via `CONFIG.Item.dataModels`
 - **Document Shells**: `actor.mjs` and `item.mjs` are thin shells; business logic in DataModels
 - **Actor Sheet Integration**: `getData()` uses `{ ...this.actor.system }` for live derived data; `_prepareItems()` uses live item data
 - **Critical**: Characteristic `base` field MUST be in schema (template binds to it for user input)
+- **Polymorphic Combat**: `DeathwatchActorBase` defines combat methods (`getArmorValue`, `getDefenses`, `calculateHitsReceived`, `receiveDamage`, `canRighteousFury`) overridden by Horde and Character
 
 ### Modifiers
 - **Types**: characteristic, characteristic-post-multiplier, skill, initiative, wounds, armor, psy-rating, movement, movement-restriction
@@ -46,9 +47,10 @@ npm run build:all                                          # Validate + build pa
 - **Pattern**: `ModifierCollector.collectAllModifiers(actor)` → apply methods
 
 ### Combat
-- **Ranged**: BS-based, RoF (Single/Semi/Full), aim, range modifiers, jamming
-- **Melee**: WS-based, all-out attack, charge
-- **Shared**: Hit locations, damage application, Righteous Fury
+- **Ranged**: BS-based (uses computed `bs.value`), RoF (Single/Semi/Full), aim, range modifiers, jamming
+- **Melee**: WS-based (uses computed `ws.value`), all-out attack, charge, DoS displayed in chat
+- **Shared**: Hit locations, damage application (polymorphic), Righteous Fury
+- **Horde**: Magnitude-based damage, batch damage application, special hit rules (blast/flame/melee DoS)
 
 ### Weapon Qualities
 - **Detection**: `.some(q => (typeof q === 'string' ? q : q.id) === key)`
@@ -100,13 +102,13 @@ npm run build:all                                          # Validate + build pa
 ```
 src/module/data/         TypeDataModel classes (base-document, actor/*.mjs, item/*.mjs)
 src/module/documents/    Actor, Item (thin shells), ActorConditions
-src/module/helpers/      24+ helper modules
+src/module/helpers/      25+ helper modules (including horde-combat.mjs)
 src/module/sheets/       ActorSheet, ItemSheet
-src/template.json        Type lists only (field definitions in DataModels)
+src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
-tests/                   880 tests across 74 suites
+tests/                   947 tests across 77 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 ```
 
 ---
-**Last Updated**: January 2025 (Phase 5 complete, DataModel migration finalized)
+**Last Updated**: January 2025 (Phase 5 complete, Enemy/Horde actor types added, polymorphic combat)

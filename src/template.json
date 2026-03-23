@@ -2,7 +2,9 @@
     "Actor": {
         "types": [
             "character",
-            "npc"
+            "npc",
+            "enemy",
+            "horde"
         ]
     },
     "Item": {

@@ -41,6 +41,7 @@ tests/
 │   ├── combat-dialog.test.mjs
 │   ├── ranged-combat.test.mjs
 │   ├── melee-combat.test.mjs
+│   ├── horde-combat.test.mjs
 │   ├── critical-effects.test.mjs
 │   ├── force-weapon-channeling.test.mjs
 │   ├── gyro-stabilised.test.mjs
@@ -52,6 +53,7 @@ tests/
 ├── documents/                         # Document tests
 │   ├── actor.test.mjs
 │   ├── actor-conditions.test.mjs
+│   ├── horde.test.mjs
 │   ├── item.test.mjs
 │   ├── item-ammunition-modifiers.test.mjs
 │   ├── item-force-weapon.test.mjs

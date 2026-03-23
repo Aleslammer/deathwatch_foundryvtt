@@ -105,56 +105,36 @@ describe('CombatHelper', () => {
       jest.clearAllMocks();
     });
 
-    it('applies damage and shows notification', async () => {
+    it('delegates to targetActor.system.receiveDamage', async () => {
       const targetActor = {
-        id: 'actor1',
-        name: 'Marine',
-        system: { wounds: { value: 10, max: 20 } },
-        items: { find: () => null }
+        system: { receiveDamage: jest.fn() }
       };
+      const options = { damage: 10, penetration: 0, location: 'Body' };
       
-      jest.spyOn(FoundryAdapter, 'updateDocument').mockResolvedValue({});
-      jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
-      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue({});
+      await CombatHelper.applyDamage(targetActor, options);
       
-      await CombatHelper.applyDamage(targetActor, { damage: 10, penetration: 0, location: 'Body' });
-      
-      expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(targetActor, { "system.wounds.value": 20 });
-      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', 'Marine takes 10 wounds!');
-      expect(FoundryAdapter.createChatMessage).toHaveBeenCalled();
+      expect(targetActor.system.receiveDamage).toHaveBeenCalledWith(options);
     });
 
-    it('shows critical damage warning', async () => {
+    it('passes all options through to receiveDamage', async () => {
       const targetActor = {
-        id: 'actor1',
-        name: 'Marine',
-        system: { wounds: { value: 18, max: 20 } },
-        items: { find: () => null }
+        system: { receiveDamage: jest.fn() }
       };
+      const options = { damage: 5, penetration: 0, location: 'Head', damageType: 'Energy', isShocking: true };
       
-      jest.spyOn(FoundryAdapter, 'updateDocument').mockResolvedValue({});
-      jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
-      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue({});
+      await CombatHelper.applyDamage(targetActor, options);
       
-      await CombatHelper.applyDamage(targetActor, { damage: 5, penetration: 0, location: 'Head' });
-      
-      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('warn', 'Marine is taking CRITICAL DAMAGE!');
+      expect(targetActor.system.receiveDamage).toHaveBeenCalledWith(options);
     });
 
-    it('shows armor absorb message', async () => {
-      const armor = { type: 'armor', system: { equipped: true, body: 10 } };
+    it('works with armor absorb scenario', async () => {
       const targetActor = {
-        name: 'Marine',
-        system: { wounds: { value: 10, max: 20 } },
-        items: { find: () => armor }
+        system: { receiveDamage: jest.fn() }
       };
-      
-      jest.spyOn(FoundryAdapter, 'showNotification').mockImplementation(() => {});
-      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue({});
       
       await CombatHelper.applyDamage(targetActor, { damage: 5, penetration: 0, location: 'Body' });
       
-      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', "Marine's armor absorbs all damage!");
+      expect(targetActor.system.receiveDamage).toHaveBeenCalled();
     });
   });
 

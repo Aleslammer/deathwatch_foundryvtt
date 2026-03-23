@@ -17,11 +17,17 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     
+    const tokenUpdates = {
+      'prototypeToken.name': data.name,
+      'prototypeToken.displayName': 20
+    };
+
     if (data.type === 'character') {
-      this.updateSource({
-        'prototypeToken.actorLink': true
-      });
+      tokenUpdates['prototypeToken.actorLink'] = true;
+      tokenUpdates['prototypeToken.displayName'] = 30;
     }
+
+    this.updateSource(tokenUpdates);
   }
 
   /**
@@ -38,7 +44,7 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
    * Prepare character roll data.
    */
   _getCharacterRollData(data) {
-    if (this.type !== 'character') return;
+    if (this.type !== 'character' && this.type !== 'enemy') return;
 
     if (data.abilities) {
       for (let [k, v] of Object.entries(data.characteristics)) {
