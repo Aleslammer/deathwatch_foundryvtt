@@ -79,7 +79,8 @@ Hooks.once('init', async function () {
     // Register DataModels
     CONFIG.Actor.dataModels = {
       character: models.DeathwatchCharacter,
-      npc: models.DeathwatchNPC
+      npc: models.DeathwatchNPC,
+      enemy: models.DeathwatchEnemy
     };
 
     CONFIG.Item.dataModels = {
@@ -104,6 +105,16 @@ Hooks.once('init', async function () {
 
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;
+
+    // Sync token name when actor name changes (for unlinked tokens like enemies/NPCs)
+    Hooks.on('updateActor', (actor, changes, options, userId) => {
+        if (!changes.name) return;
+        for (const token of actor.getActiveTokens()) {
+            if (!token.document.actorLink) {
+                token.document.update({ name: changes.name });
+            }
+        }
+    });
 
     // Re-render actor sheets when Active Effects change to keep checkboxes in sync
     Hooks.on('createActiveEffect', (effect, options, userId) => {

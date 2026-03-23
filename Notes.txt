@@ -52,3 +52,4 @@ Enemy actors?
     Same as NPC just with some other characterisitcs?  Not sure what is needed yet.
 
 
+Token copies are not the same as the actor records.   Attacking a token deal damange to the actor.

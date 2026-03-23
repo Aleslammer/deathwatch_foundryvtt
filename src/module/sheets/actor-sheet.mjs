@@ -77,6 +77,12 @@ export class DeathwatchActorSheet extends ActorSheet {
       this._prepareItems(context);
     }
 
+    // Prepare Enemy data and items.
+    if (actorData.type == 'enemy') {
+      this._prepareEnemyData(context);
+      this._prepareItems(context);
+    }
+
     // Add roll data for TinyMCE editors.
     context.rollData = context.actor.getRollData();
 
@@ -254,6 +260,42 @@ export class DeathwatchActorSheet extends ActorSheet {
 
     const wounds = context.system.wounds;
     context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+  }
+
+  /**
+   * Prepare Enemy-specific data.
+   * Same as character but without chapter/specialty/rank/XP/renown.
+   * @param {Object} context The sheet context
+   */
+  _prepareEnemyData(context) {
+    for (let [k, v] of Object.entries(context.system.characteristics)) {
+      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
+    }
+
+    if (context.system.skills) {
+      const sortedSkills = Object.entries(context.system.skills)
+        .sort(([keyA], [keyB]) => {
+          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
+          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
+          return labelA.localeCompare(labelB);
+        });
+
+      for (const [k, v] of sortedSkills) {
+        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+        const liveSkill = this.actor.system.skills[k];
+        const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+        const skillModTotal = liveSkill?.modifierTotal || 0;
+        v.total = baseSkillTotal + skillModTotal;
+      }
+    }
+
+    context.config = game.deathwatch.config;
+
+    const wounds = context.system.wounds;
+    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+
+    // Show Psy Rating box if psyRating base > 0 or any psy-rating modifiers exist
+    context.showPsyRating = (context.system.psyRating?.base > 0) || (context.system.psyRating?.value > 0);
   }
 
   /**

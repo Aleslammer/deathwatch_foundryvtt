@@ -1,6 +1,7 @@
 // Actors
 export { default as DeathwatchCharacter } from './actor/character.mjs';
 export { default as DeathwatchNPC } from './actor/npc.mjs';
+export { default as DeathwatchEnemy } from './actor/enemy.mjs';
 
 // Items
 export { default as DeathwatchGear } from './item/gear.mjs';

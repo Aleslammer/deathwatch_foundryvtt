@@ -455,8 +455,8 @@ describe('DeathwatchActor', () => {
   });
 
   describe('_preCreate', () => {
-    it('sets actorLink for character type', async () => {
-      const data = { type: 'character' };
+    it('sets actorLink and token name for character type', async () => {
+      const data = { type: 'character', name: 'Test Marine' };
       const options = {};
       const user = {};
       mockActor.updateSource = jest.fn();
@@ -464,19 +464,35 @@ describe('DeathwatchActor', () => {
       await mockActor._preCreate(data, options, user);
       
       expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Test Marine',
         'prototypeToken.actorLink': true
       });
     });
 
-    it('does not set actorLink for npc type', async () => {
-      const data = { type: 'npc' };
+    it('sets token name but not actorLink for npc type', async () => {
+      const data = { type: 'npc', name: 'Ork Boy' };
       const options = {};
       const user = {};
       mockActor.updateSource = jest.fn();
       
       await mockActor._preCreate(data, options, user);
       
-      expect(mockActor.updateSource).not.toHaveBeenCalled();
+      expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Ork Boy'
+      });
+    });
+
+    it('sets token name but not actorLink for enemy type', async () => {
+      const data = { type: 'enemy', name: 'Genestealer' };
+      const options = {};
+      const user = {};
+      mockActor.updateSource = jest.fn();
+      
+      await mockActor._preCreate(data, options, user);
+      
+      expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Genestealer'
+      });
     });
   });
 });

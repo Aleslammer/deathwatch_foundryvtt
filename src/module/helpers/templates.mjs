@@ -9,6 +9,7 @@ export const preloadHandlebarsTemplates = async function () {
     // Actor main sheets.
     "systems/deathwatch/templates/actor/actor-character-sheet.html",
     "systems/deathwatch/templates/actor/actor-npc-sheet.html",
+    "systems/deathwatch/templates/actor/actor-enemy-sheet.html",
 
     // Actor partials.
     "systems/deathwatch/templates/actor/parts/actor-skills.html",

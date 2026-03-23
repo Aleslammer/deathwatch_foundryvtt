@@ -22,6 +22,7 @@ import DeathwatchWeapon from '../../src/module/data/item/weapon.mjs';
 import DeathwatchActorBase from '../../src/module/data/actor/base-actor.mjs';
 import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
 import DeathwatchNPC from '../../src/module/data/actor/npc.mjs';
+import DeathwatchEnemy from '../../src/module/data/actor/enemy.mjs';
 
 describe('DeathwatchDataModel', () => {
   describe('defineSchema', () => {
@@ -423,6 +424,56 @@ describe('DeathwatchNPC', () => {
     npc.prepareDerivedData();
     expect(npc.characteristics.ws.value).toBe(40);
     expect(npc.characteristics.ws.mod).toBe(4);
+  });
+});
+
+describe('DeathwatchEnemy', () => {
+  it('includes characteristics, skills, modifiers, psyRating, and description', () => {
+    const schema = DeathwatchEnemy.defineSchema();
+    expect(schema.characteristics).toBeDefined();
+    expect(schema.skills).toBeDefined();
+    expect(schema.modifiers).toBeDefined();
+    expect(schema.conditions).toBeDefined();
+    expect(schema.description).toBeDefined();
+    expect(schema.psyRating).toBeDefined();
+    expect(schema.wounds).toBeDefined();
+    expect(schema.fatigue).toBeDefined();
+  });
+
+  it('does not include character-only fields', () => {
+    const schema = DeathwatchEnemy.defineSchema();
+    expect(schema.chapterId).toBeUndefined();
+    expect(schema.specialtyId).toBeUndefined();
+    expect(schema.rank).toBeUndefined();
+    expect(schema.xp).toBeUndefined();
+    expect(schema.fatePoints).toBeUndefined();
+    expect(schema.renown).toBeUndefined();
+    expect(schema.pastEvents).toBeUndefined();
+  });
+
+  it('prepareDerivedData applies modifiers and computes movement', () => {
+    const enemy = new DeathwatchEnemy();
+    enemy.characteristics = {
+      ws: { base: 50, value: 50 },
+      bs: { base: 30, value: 30 },
+      str: { base: 30, value: 30 },
+      tg: { base: 40, value: 40 },
+      ag: { base: 35, value: 35 },
+      int: { base: 20, value: 20 },
+      per: { base: 30, value: 30 },
+      wil: { base: 30, value: 30 },
+      fs: { base: 10, value: 10 }
+    };
+    enemy.modifiers = [];
+    enemy.skills = {};
+    enemy.wounds = { value: 0, base: 20, max: 20 };
+    enemy.fatigue = { value: 0, max: 0 };
+    enemy.psyRating = { value: 0, base: 0 };
+    enemy.parent = { items: [], effects: undefined, system: enemy };
+    enemy.prepareDerivedData();
+    expect(enemy.characteristics.ws.mod).toBe(5);
+    expect(enemy.movement.half).toBe(3);
+    expect(enemy.movement.full).toBe(6);
   });
 });
 
