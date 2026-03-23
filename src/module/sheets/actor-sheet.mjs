@@ -612,6 +612,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       ui.notifications.info('Ammunition removed.');
     });
 
+    // Edit ammunition from inline ammo display
+    html.find('.ammo-edit-btn').click(ev => {
+      ev.stopPropagation();
+      const itemId = $(ev.currentTarget).data('itemId');
+      const item = this.actor.items.get(itemId);
+      if (item) item.sheet.render(true);
+    });
+
     // Remove upgrade from weapon
     html.find('.upgrade-remove').click(async ev => {
       const upgradeId = $(ev.currentTarget).data('upgradeId');

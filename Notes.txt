@@ -51,7 +51,7 @@ Hordes
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
     TODO: Test Melee attacks
-    TODO: Grenade after use shoudl be inactive?
+    TODO: can we move ammo to the same weapon line?
 NPC
     They should be the same as Actors just maybe some other indicators on them?
 Enemy actors?

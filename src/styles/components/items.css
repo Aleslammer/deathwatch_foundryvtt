@@ -252,6 +252,46 @@
   text-align: center;
 }
 
+.deathwatch .items-list .item-ammo,
+.deathwatch .items-header .item-ammo {
+  flex: 0 0 180px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.deathwatch .ammo-inline {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.deathwatch .ammo-inline img {
+  flex: 0 0 18px;
+  border: none;
+}
+
+.deathwatch .ammo-inline .ammo-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.deathwatch .ammo-inline .ammo-count {
+  flex: 0 0 auto;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.deathwatch .ammo-inline a {
+  flex: 0 0 auto;
+  font-size: 10px;
+  margin: 0 1px;
+}
+
 .deathwatch .items-list .item-armor,
 .deathwatch .items-header .item-armor {
   flex: 0 0 60px;
