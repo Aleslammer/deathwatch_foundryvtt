@@ -66,8 +66,9 @@ export class RangedCombatHelper {
 
     const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
+    const isThrown = weapon.system.class?.toLowerCase() === 'thrown';
     const clip = weapon.system.clip;
-    const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
+    const hasAmmoManagement = !isThrown && clip && clip !== '—' && clip !== '-' && clip !== '';
     const loadedAmmo = hasAmmoManagement && weapon.system.loadedAmmo ? actor.items.get(weapon.system.loadedAmmo) : null;
     const currentAmmo = loadedAmmo?.system.capacity.value || 0;
     const hasSingle = rofParts[0] && rofParts[0] !== '-';
@@ -227,6 +228,16 @@ export class RangedCombatHelper {
                 hasPowerField,
                 baseHits: hitsTotal
               });
+
+              if (isFlame && targetActor.type === 'horde') {
+                const flameRoll = await new Roll('1d5').evaluate();
+                hitsTotal += flameRoll.total;
+                await flameRoll.toMessage({
+                  speaker: ChatMessage.getSpeaker({ actor }),
+                  flavor: `<strong>Flame vs Horde:</strong> +${flameRoll.total} additional hits (1d5)`,
+                  rollMode: game.settings.get('core', 'rollMode')
+                });
+              }
             }
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
             let isJammed = !isHorde && !hasLivingAmmo && hitValue >= jamThreshold;

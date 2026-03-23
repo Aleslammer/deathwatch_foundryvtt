@@ -36,8 +36,8 @@ export class HordeCombatHelper {
       return hits;
     }
 
-    // Flame weapons: ceil(range / 4) + 1d5 (1d5 handled externally, return static part)
-    // This method returns the static component; caller rolls 1d5 and adds it
+    // Flame weapons: ceil(range / 4) + 1d5
+    // Returns static component only; 1d5 rolled in ranged-combat.mjs after calculateHitsReceived()
     if (isFlame) {
       return Math.ceil(flameRange / 4);
     }

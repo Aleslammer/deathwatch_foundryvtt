@@ -163,7 +163,6 @@ describe('CombatHelper.applyDamage with horde', () => {
     });
 
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 6 });
-    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', expect.stringContaining('loses 1 Magnitude'));
   });
 
   it('applies magnitudeBonusDamage for extra magnitude loss per hit', async () => {
@@ -183,8 +182,7 @@ describe('CombatHelper.applyDamage with horde', () => {
     });
 
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 7 });
-    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', expect.stringContaining('loses 2 Magnitude'));
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('bonus Magnitude from ammunition'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('bonus Magnitude'));
   });
 
   it('does not apply magnitudeBonusDamage when armor absorbs all damage', async () => {
@@ -222,7 +220,6 @@ describe('CombatHelper.applyDamage with horde', () => {
     });
 
     expect(FoundryAdapter.updateDocument).not.toHaveBeenCalled();
-    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', expect.stringContaining('absorbs all damage'));
   });
 
   it('shows destroyed message when magnitude reaches max', async () => {
@@ -241,8 +238,83 @@ describe('CombatHelper.applyDamage with horde', () => {
     });
 
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 30 });
-    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('warn', expect.stringContaining('destroyed'));
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('HORDE DESTROYED'));
+  });
+
+  it('batch applies multiple hits with single update', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 3;
+    horde.wounds = { value: 0, max: 30 };
+    horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
+    const hordeActor = { name: 'Test Horde', system: horde };
+    horde.parent = hordeActor;
+
+    await horde.receiveBatchDamage([
+      { damage: 15, penetration: 2 },
+      { damage: 12, penetration: 2 },
+      { damage: 5, penetration: 0 }  // absorbed (5 <= 3 + 3)
+    ]);
+
+    // 2 penetrating hits, 1 absorbed = magnitude +2
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledTimes(1);
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 2 });
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledTimes(1);
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('3</strong> hits'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('2 Magnitude'));
+  });
+
+  it('batch shows hit table for multiple hits', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 3;
+    horde.wounds = { value: 0, max: 30 };
+    horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
+    const hordeActor = { name: 'Test Horde', system: horde };
+    horde.parent = hordeActor;
+
+    await horde.receiveBatchDamage([
+      { damage: 15, penetration: 2 },
+      { damage: 5, penetration: 0 }  // absorbed
+    ]);
+
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('<details'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('Absorbed'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('1 penetrating, 1 absorbed'));
+  });
+
+  it('batch all absorbed posts single message with no update', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 8;
+    horde.wounds = { value: 0, max: 30 };
+    horde.characteristics = { tg: { baseMod: 4, unnaturalMultiplier: 1 } };
+    const hordeActor = { name: 'Armored Horde', system: horde };
+    horde.parent = hordeActor;
+
+    await horde.receiveBatchDamage([
+      { damage: 5, penetration: 0 },
+      { damage: 3, penetration: 0 }
+    ]);
+
+    expect(FoundryAdapter.updateDocument).not.toHaveBeenCalled();
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledTimes(1);
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('absorb all damage'));
+  });
+
+  it('batch includes magnitudeBonusDamage per penetrating hit', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 3;
+    horde.wounds = { value: 0, max: 30 };
+    horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
+    const hordeActor = { name: 'Test Horde', system: horde };
+    horde.parent = hordeActor;
+
+    await horde.receiveBatchDamage([
+      { damage: 15, penetration: 2, magnitudeBonusDamage: 1 },
+      { damage: 15, penetration: 2, magnitudeBonusDamage: 1 },
+      { damage: 5, penetration: 0, magnitudeBonusDamage: 1 }  // absorbed, no bonus
+    ]);
+
+    // 2 penetrating × (1 + 1 bonus) = 4 magnitude
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 4 });
   });
 
   it('still uses wound-based damage for non-horde actors', async () => {

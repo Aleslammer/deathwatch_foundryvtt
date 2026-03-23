@@ -51,8 +51,6 @@ Hooks.once('init', async function () {
         animation: "pulse"
     };
 
-    CONFIG.Combat.skipDefeated = true;
-
     // Override Combat.rollInitiative to show dialog
     const originalRollInitiative = Combat.prototype.rollInitiative;
     Combat.prototype.rollInitiative = async function(ids, options = {}) {
@@ -151,6 +149,14 @@ Hooks.once('init', async function () {
 Hooks.once('ready', async function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
+
+    // Set Skip Defeated default on first load (respects manual changes after)
+    if (game.user.isGM) {
+        const config = game.settings.get("core", "combatTrackerConfig") || {};
+        if (config.skipDefeated === undefined) {
+            game.settings.set("core", "combatTrackerConfig", { ...config, skipDefeated: true });
+        }
+    }
 });
 
 Hooks.on('renderChatMessage', (message, html) => {

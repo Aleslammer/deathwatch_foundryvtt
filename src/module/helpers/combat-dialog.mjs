@@ -143,8 +143,9 @@ export class CombatDialogHelper {
     }
 
     if (!isHorde) {
+      const isThrown = weapon.system.class?.toLowerCase() === 'thrown';
       const clip = weapon.system.clip;
-      const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
+      const hasAmmoManagement = !isThrown && clip && clip !== '—' && clip !== '-' && clip !== '';
       
       if (hasAmmoManagement) {
         if (!weapon.system.loadedAmmo) {

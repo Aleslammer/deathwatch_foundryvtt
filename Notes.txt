@@ -29,8 +29,6 @@ Rites of Battle
 
 Ammmunition 158
     
-    TODO: Frag Grenades do not need ammo loaded.   THey are thier own ammo.
-
     TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
     TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
     TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
@@ -52,6 +50,8 @@ Hordes
     These should be extensions of enemy actors as they are but they have some different rules when attacking\applying damage.
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
+    TODO: Test Melee attacks
+    TODO: Grenade after use shoudl be inactive?
 NPC
     They should be the same as Actors just maybe some other indicators on them?
 Enemy actors?
