@@ -8,21 +8,29 @@ The combat system is split into separate modules for ranged and melee combat, wi
 ### Core Combat Files
 - **combat.mjs**: Core combat logic and routing
   - Hit location determination
-  - Damage application
+  - Damage application (delegates to actor DataModel via `receiveDamage()`)
   - Righteous Fury handling
   - Weapon attack routing (delegates to ranged/melee)
+  - Horde batch damage routing
 - **ranged-combat.mjs**: Ranged weapon attack dialog and logic
-  - BS-based attack rolls
+  - BS-based attack rolls (uses fully computed `bs.value`)
   - Rate of fire (Single/Semi-Auto/Full-Auto)
   - Aim modifiers
   - Range calculation
   - Ammunition tracking
   - Jamming mechanics
+  - Horde hit calculation via `calculateHitsReceived()`
 - **melee-combat.mjs**: Melee weapon attack dialog and logic
-  - WS-based attack rolls
+  - WS-based attack rolls (uses fully computed `ws.value`)
   - All Out Attack modifier
   - Charge modifier
   - Called Shot and Running Target penalties
+  - Degrees of Success displayed in chat
+  - Horde hit calculation via `calculateHitsReceived()`
+- **horde-combat.mjs**: Horde-specific combat mechanics
+  - Horde hit calculation (blast, flame, melee DoS, ranged)
+  - Magnitude reduction per penetrating hit
+  - Horde damage bonus dice
 - **combat-dialog.mjs**: Pure function helpers for combat calculations
   - Modifier building
   - Hit calculation
@@ -47,6 +55,18 @@ static async weaponAttackDialog(actor, weapon) {
 - Checks `weapon.system.class` field
 - Case-insensitive check for "melee"
 - Defaults to ranged if class is undefined or doesn't contain "melee"
+
+## Characteristic Value Usage
+
+**CRITICAL:** Both ranged and melee combat use the fully computed `characteristics.{ws|bs}.value` from `prepareDerivedData()`. This value includes base + advances + all modifiers (chapter bonuses, gear, Power Armor, etc.).
+
+```javascript
+// Correct (current)
+const ws = actor.system.characteristics.ws.value || 0;
+const bs = actor.system.characteristics.bs.value || 0;
+```
+
+Dialog modifiers (aim, charge, etc.) are added on top of this computed value. The modifier clamping range is -60 to +60.
 
 ## Ranged Combat
 
@@ -115,7 +135,11 @@ const targetNumber = ws + clampedModifiers;
 const success = hitValue <= targetNumber;
 ```
 
-**Note:** Melee attacks currently result in single hit (no multiple hits like ranged)
+**Melee vs Hordes:** When target is a horde, `calculateHitsReceived()` is called with `isMelee: true` and `degreesOfSuccess`. Horde returns 1 hit per 2 DoS (min 1), +1 for Power Field.
+
+**Chat Display:** Melee attacks show hit count (via `buildAttackLabel()`) and Degrees of Success on successful hits.
+
+**Note:** Melee attacks currently result in single hit against non-horde targets (no multiple hits like ranged)
 
 ## Shared Combat Logic
 
@@ -143,27 +167,35 @@ static determineMultipleHitLocations(firstLocation, totalHits) {
 
 ### Damage Application
 ```javascript
-static async applyDamage(targetActor, damage, penetration, location, damageType) {
-  // 1. Get armor value for location
-  // 2. Calculate effective armor (armor - penetration)
-  // 3. Calculate wounds taken (damage - effective armor)
-  // 4. Check for critical damage (wounds > max)
-  // 5. Update actor wounds
-  // 6. Create chat message with damage details
+// Polymorphic — delegates to actor DataModel
+static async applyDamage(targetActor, options) {
+  return targetActor.system.receiveDamage(options);
 }
+```
+
+**Character/NPC/Enemy:** Standard wound-based damage with armor, penetration, TB, critical damage.
+**Horde:** Magnitude reduction — each penetrating hit reduces magnitude by 1.
+
+### Horde Batch Damage
+For horde targets, `weaponDamageRoll()` collects all hit results into an array and calls `receiveBatchDamage()` once:
+```javascript
+if (isHordeTarget && hordeHitResults.length > 0) {
+  await targetToken.actor.system.receiveBatchDamage(hordeHitResults);
+}
+```
+This produces a single summary chat message with hit-by-hit breakdown.
 ```
 
 ### Armor Value Lookup
 ```javascript
+// Polymorphic — delegates to actor DataModel
 static getArmorValue(actor, location) {
-  const equippedArmor = actor.items.find(i => i.type === 'armor' && i.system.equipped);
-  // Maps location names to armor fields
-  // "Head" -> armor.system.head
-  // "Body" -> armor.system.body
-  // "Right Arm" -> armor.system.right_arm
-  // etc.
+  return actor.system.getArmorValue(location);
 }
 ```
+
+**Character/NPC/Enemy:** Location-based from equipped armor item.
+**Horde:** Single `armor` field (ignores location).
 
 ### Righteous Fury
 ```javascript
@@ -235,6 +267,39 @@ export const RANGE_MODIFIERS = {
 };
 ```
 
+## Horde Combat
+
+### Overview
+Hordes use Magnitude instead of individual wounds. Each hit that penetrates armor+TB reduces Magnitude by 1. Special rules apply for blast, flame, and melee attacks.
+
+### HordeCombatHelper (`horde-combat.mjs`)
+
+**calculateHordeHits(options):**
+- **Blast weapons**: Hits = Blast value (+1 for Explosive damage type)
+- **Flame weapons**: Hits = ceil(range / 4) + 1d5 (1d5 rolled separately)
+- **Melee**: 1 hit per 2 DoS (min 1 on success), +1 for Power Field
+- **Ranged (other)**: Uses normal hit count (+1 for Explosive)
+
+**calculateMagnitudeReduction(damage, armor, pen, TB, qualityOptions):**
+- Returns 1 if damage > (effective armor + TB), else 0
+- Supports Primitive (doubles armor), Razor Sharp (doubles pen at 2+ DoS), Melta (doubles pen)
+
+**calculateHordeDamageBonusDice(magnitude):**
+- Horde attacks get bonus d10s based on current magnitude
+- floor(magnitude / 10), max 2d10
+
+### Magnitude Bonus Damage (Ammunition)
+Ammunition can have `magnitude-bonus-damage` modifier:
+- Adds extra magnitude loss per penetrating hit
+- Extracted by `CombatHelper._getMagnitudeBonusDamage()`
+- Applied in `receiveBatchDamage()`: `lost = baseLost > 0 ? baseLost + magnitudeBonusDamage : 0`
+
+### Horde Damage Message
+- Single summary message for all hits
+- Shows total magnitude lost, current/max magnitude
+- Collapsible details table for multi-hit attacks (penetrating vs absorbed)
+- "HORDE DESTROYED" when magnitude reaches max
+
 ## Testing
 
 ### Test Files
@@ -242,6 +307,8 @@ export const RANGE_MODIFIERS = {
 - **ranged-combat.test.mjs**: Ranged combat helper tests
 - **melee-combat.test.mjs**: Melee combat helper tests
 - **combat-dialog.test.mjs**: Combat dialog helper tests
+- **horde-combat.test.mjs**: Horde combat mechanics tests
+- **horde.test.mjs**: Horde DataModel tests (receiveBatchDamage, getDefenses)
 
 ### Coverage
 - Core combat logic: Well tested
@@ -250,7 +317,7 @@ export const RANGE_MODIFIERS = {
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 880 tests passing across 74 suites
+- Overall: 947 tests passing across 77 suites
 
 ## Force Weapon Integration
 

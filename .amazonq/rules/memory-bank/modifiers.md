@@ -589,7 +589,7 @@ static applyWoundModifiers(wounds, modifiers) {
 - Post-multiplier + Unnatural ordering: ✓
 
 ### Test Count
-- Total: 829 tests
+- Total: 947 tests
 - Modifier-specific: ~85 tests
 - All passing ✓
 

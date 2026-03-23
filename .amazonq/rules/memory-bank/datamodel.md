@@ -10,9 +10,11 @@ All 17 item types and 2 actor types have registered DataModels. `template.json` 
 ```
 foundry.abstract.TypeDataModel
   └── DeathwatchDataModel (base-document.mjs)
-        ├── DeathwatchActorBase (actor/base-actor.mjs)
+        ├── DeathwatchActorBase (actor/base-actor.mjs)  ← polymorphic combat methods
         │     ├── DeathwatchCharacter (actor/character.mjs)  ← most complex actor, full prepareDerivedData()
-        │     └── DeathwatchNPC (actor/npc.mjs)
+        │     ├── DeathwatchNPC (actor/npc.mjs)
+        │     └── DeathwatchEnemy (actor/enemy.mjs)  ← full characteristics, skills, psy rating, movement
+        │           └── DeathwatchHorde (actor/horde.mjs)  ← magnitude-based, overrides combat methods
         └── DeathwatchItemBase (item/base-item.mjs)
               ├── DeathwatchGear (item/gear.mjs)
               ├── DeathwatchDemeanour (item/demeanour.mjs)
@@ -55,6 +57,8 @@ All 17 item types registered via `CONFIG.Item.dataModels` and 2 actor types via 
 |----------|----------------|-------|
 | character | DeathwatchCharacter | 4 |
 | npc | DeathwatchNPC | 4 |
+| enemy | DeathwatchEnemy | 4 |
+| horde | DeathwatchHorde | 4 |
 
 ### Item Types
 | Type Key | DataModel Class | Phase |
@@ -160,6 +164,30 @@ NPC DataModel with characteristics, skills, wounds, and modifiers. Simplified ve
 5. Applies initiative, wound, fatigue, armor modifiers
 6. Calculates movement from AG bonus + movement modifiers/restrictions
 
+### DeathwatchEnemy (Phase 4)
+Enemy DataModel. Same as character but without chapters, specialties, rank, XP, fate points, renown, special abilities, demeanours, past events. Extends DeathwatchActorBase.
+
+**Schema fields:** 9 characteristics (with value, base, bonus, damage, advances), skills (ObjectField), modifiers (ArrayField), conditions (ObjectField), description (HTMLField), biography fields (gender, age, complexion, hair), psyRating (SchemaField: value, base).
+
+**prepareDerivedData():**
+1. Loads skills via `SkillLoader.loadSkills()`
+2. Collects all modifiers via `ModifierCollector.collectAllModifiers()`
+3. Applies characteristic, skill, initiative, wound, fatigue, armor, psy rating modifiers
+4. Applies force weapon modifiers after psy rating is computed
+5. Calculates movement from AG bonus + movement modifiers/restrictions
+
+### DeathwatchHorde (Phase 4)
+Horde DataModel. Extends DeathwatchEnemy with a single armor value. Wounds fields represent Magnitude instead of individual wounds. Overrides combat methods for horde-specific mechanics.
+
+**Schema fields:** Inherits all from DeathwatchEnemy, plus `armor` (NumberField) — single armor value for all locations.
+
+**Overridden methods:**
+- `getArmorValue(_location)`: Returns single `armor` value (ignores location)
+- `getDefenses(_location)`: Returns armor, baseMod TB, and unnaturalMultiplier
+- `calculateHitsReceived(options)`: Delegates to `HordeCombatHelper.calculateHordeHits()`
+- `receiveDamage(options)`: Delegates to `receiveBatchDamage([options])`
+- `receiveBatchDamage(hits)`: Applies multiple hits as single magnitude update with summary message
+
 ### DeathwatchTalent (Phase 3a)
 First item DataModel with `prepareDerivedData()`. Two responsibilities:
 
@@ -232,6 +260,20 @@ Weapon qualities stored in `attachedQualities` as objects:
 ```
 
 Quality checks use: `.some(q => (typeof q === 'string' ? q : q.id) === key)` for backward compatibility, though new data is always objects.
+
+## Polymorphic Combat Methods
+
+Combat methods are defined on `DeathwatchActorBase` and overridden by specific actor types:
+
+| Method | Base (Character/NPC/Enemy) | Horde |
+|--------|---------------------------|-------|
+| `getArmorValue(location)` | Location-based from equipped armor | Single `armor` field |
+| `getDefenses(location)` | Armor + baseMod TB + unnaturalMultiplier | Same but uses single armor |
+| `calculateHitsReceived(options)` | Returns `baseHits` unchanged | Delegates to `HordeCombatHelper` |
+| `receiveDamage(options)` | Wound-based with critical damage | Magnitude reduction |
+| `canRighteousFury()` | `false` (overridden to `true` in Character) | `false` |
+
+**Key:** `CombatHelper.applyDamage()` and `CombatHelper.weaponDamageRoll()` call `targetActor.system.receiveDamage()` — the correct implementation runs based on actor type.
 
 ## Document Classes (Thin Shells)
 

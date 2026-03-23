@@ -140,6 +140,44 @@ Deals damage to target's characteristics when wounds are taken.
 **Example:**
 - Implosion Shells: 1d5 Agility damage when target takes wounds
 
+### 6. magnitude-bonus-damage
+Adds extra magnitude loss per penetrating hit against hordes.
+
+**Structure:**
+```json
+{
+  "name": "Anti-Horde Rounds",
+  "modifier": "1",
+  "effectType": "magnitude-bonus-damage",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Extracted by `CombatHelper._getMagnitudeBonusDamage()`
+- Only applies against horde targets
+- Each penetrating hit reduces magnitude by 1 + bonus
+- Displayed in horde damage summary message
+
+### 7. premature-detonation
+Weapon detonates prematurely on high attack rolls.
+
+**Structure:**
+```json
+{
+  "name": "Unstable Rounds",
+  "modifier": "96",
+  "effectType": "premature-detonation",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Checked during ranged attack roll
+- If attack roll >= threshold, weapon detonates
+- Weapon marked as jammed
+- Wielder takes weapon damage to random arm with Pen 5
+
 ## Implementation
 
 ### Ammunition Data Preparation

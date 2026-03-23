@@ -47,11 +47,8 @@ Armor:
         164 - Terminator Armour has forcefield like effects    
 
 Hordes
-    These should be extensions of enemy actors as they are but they have some different rules when attacking\applying damage.
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
-    TODO: Test Melee attacks
-    TODO: can we move ammo to the same weapon line?
 NPC
     They should be the same as Actors just maybe some other indicators on them?
 Enemy actors?
