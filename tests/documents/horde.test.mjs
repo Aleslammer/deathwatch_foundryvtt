@@ -1,0 +1,263 @@
+import { jest } from '@jest/globals';
+import '../setup.mjs';
+import DeathwatchHorde from '../../src/module/data/actor/horde.mjs';
+import { CombatHelper } from '../../src/module/helpers/combat.mjs';
+import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
+
+describe('DeathwatchHorde', () => {
+
+  describe('defineSchema', () => {
+    it('includes armor field defaulting to 0', () => {
+      const schema = DeathwatchHorde.defineSchema();
+      expect(schema.armor).toBeDefined();
+      expect(schema.armor.options.initial).toBe(0);
+    });
+
+    it('inherits wounds from base (used as magnitude)', () => {
+      const schema = DeathwatchHorde.defineSchema();
+      expect(schema.wounds).toBeDefined();
+      expect(schema.wounds.fields.value).toBeDefined();
+      expect(schema.wounds.fields.base).toBeDefined();
+      expect(schema.wounds.fields.max).toBeDefined();
+    });
+
+    it('inherits all enemy fields', () => {
+      const schema = DeathwatchHorde.defineSchema();
+      expect(schema.characteristics).toBeDefined();
+      expect(schema.skills).toBeDefined();
+      expect(schema.modifiers).toBeDefined();
+      expect(schema.conditions).toBeDefined();
+      expect(schema.description).toBeDefined();
+      expect(schema.psyRating).toBeDefined();
+      expect(schema.fatigue).toBeDefined();
+    });
+
+    it('does not include character-only fields', () => {
+      const schema = DeathwatchHorde.defineSchema();
+      expect(schema.chapterId).toBeUndefined();
+      expect(schema.specialtyId).toBeUndefined();
+      expect(schema.rank).toBeUndefined();
+      expect(schema.xp).toBeUndefined();
+    });
+  });
+
+  describe('prepareDerivedData', () => {
+    it('applies modifiers and computes movement like enemy', () => {
+      const horde = new DeathwatchHorde();
+      horde.characteristics = {
+        ws: { base: 30, value: 30 },
+        bs: { base: 25, value: 25 },
+        str: { base: 30, value: 30 },
+        tg: { base: 30, value: 30 },
+        ag: { base: 30, value: 30 },
+        int: { base: 20, value: 20 },
+        per: { base: 25, value: 25 },
+        wil: { base: 20, value: 20 },
+        fs: { base: 10, value: 10 }
+      };
+      horde.modifiers = [];
+      horde.skills = {};
+      horde.wounds = { value: 0, base: 30, max: 30 };
+      horde.fatigue = { value: 0, max: 0 };
+      horde.psyRating = { value: 0, base: 0 };
+      horde.armor = 3;
+      horde.parent = { items: [], effects: undefined, system: horde };
+
+      horde.prepareDerivedData();
+
+      expect(horde.characteristics.ws.mod).toBe(3);
+      expect(horde.movement.half).toBe(3);
+      expect(horde.movement.full).toBe(6);
+    });
+  });
+});
+
+describe('CombatHelper.getArmorValue with horde', () => {
+  it('delegates to actor.system.getArmorValue', () => {
+    const hordeActor = {
+      system: {
+        getArmorValue: jest.fn(() => 4)
+      }
+    };
+
+    expect(CombatHelper.getArmorValue(hordeActor, 'Head')).toBe(4);
+    expect(CombatHelper.getArmorValue(hordeActor, 'Body')).toBe(4);
+  });
+});
+
+describe('DeathwatchHorde combat methods', () => {
+  let horde;
+
+  beforeEach(() => {
+    horde = new DeathwatchHorde();
+    horde.armor = 4;
+    horde.characteristics = {
+      ws: { base: 30, value: 30 },
+      bs: { base: 25, value: 25 },
+      str: { base: 30, value: 30 },
+      tg: { base: 30, value: 30, baseMod: 3, unnaturalMultiplier: 1 },
+      ag: { base: 30, value: 30 },
+      int: { base: 20, value: 20 },
+      per: { base: 25, value: 25 },
+      wil: { base: 20, value: 20 },
+      fs: { base: 10, value: 10 }
+    };
+  });
+
+  it('getArmorValue returns flat armor for any location', () => {
+    expect(horde.getArmorValue('Head')).toBe(4);
+    expect(horde.getArmorValue('Body')).toBe(4);
+    expect(horde.getArmorValue('Left Arm')).toBe(4);
+  });
+
+  it('getArmorValue returns 0 when armor is 0', () => {
+    horde.armor = 0;
+    expect(horde.getArmorValue('Body')).toBe(0);
+  });
+
+  it('getDefenses returns flat armor and TB', () => {
+    const defenses = horde.getDefenses('Body');
+    expect(defenses.armorValue).toBe(4);
+    expect(defenses.toughnessBonus).toBe(3);
+    expect(defenses.unnaturalToughnessMultiplier).toBe(1);
+  });
+
+  it('calculateHitsReceived uses horde blast rules', () => {
+    expect(horde.calculateHitsReceived({ blastValue: 3 })).toBe(3);
+  });
+
+  it('calculateHitsReceived uses horde melee rules', () => {
+    expect(horde.calculateHitsReceived({ isMelee: true, degreesOfSuccess: 4 })).toBe(2);
+  });
+
+  it('calculateHitsReceived passes through for normal ranged', () => {
+    expect(horde.calculateHitsReceived({ baseHits: 2 })).toBe(2);
+  });
+
+  it('canRighteousFury returns false', () => {
+    expect(horde.canRighteousFury()).toBe(false);
+  });
+});
+
+describe('CombatHelper.applyDamage with horde', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    FoundryAdapter.updateDocument = jest.fn();
+    FoundryAdapter.createChatMessage = jest.fn();
+    FoundryAdapter.showNotification = jest.fn();
+  });
+
+  it('delegates to receiveDamage on horde DataModel', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 3;
+    horde.wounds = { value: 5, max: 30 };
+    horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
+    const hordeActor = {
+      name: 'Heretic Horde',
+      system: horde
+    };
+    horde.parent = hordeActor;
+
+    await CombatHelper.applyDamage(hordeActor, {
+      damage: 15, penetration: 2, location: 'Body', damageType: 'Impact'
+    });
+
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 6 });
+    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', expect.stringContaining('loses 1 Magnitude'));
+  });
+
+  it('applies magnitudeBonusDamage for extra magnitude loss per hit', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 3;
+    horde.wounds = { value: 5, max: 30 };
+    horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
+    const hordeActor = {
+      name: 'Heretic Horde',
+      system: horde
+    };
+    horde.parent = hordeActor;
+
+    await CombatHelper.applyDamage(hordeActor, {
+      damage: 15, penetration: 2, location: 'Body', damageType: 'Impact',
+      magnitudeBonusDamage: 1
+    });
+
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 7 });
+    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', expect.stringContaining('loses 2 Magnitude'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('bonus Magnitude from ammunition'));
+  });
+
+  it('does not apply magnitudeBonusDamage when armor absorbs all damage', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 8;
+    horde.wounds = { value: 5, max: 30 };
+    horde.characteristics = { tg: { baseMod: 4, unnaturalMultiplier: 1 } };
+    const hordeActor = {
+      name: 'Armored Horde',
+      system: horde
+    };
+    horde.parent = hordeActor;
+
+    await CombatHelper.applyDamage(hordeActor, {
+      damage: 10, penetration: 0, location: 'Body', damageType: 'Impact',
+      magnitudeBonusDamage: 1
+    });
+
+    expect(FoundryAdapter.updateDocument).not.toHaveBeenCalled();
+  });
+
+  it('does not reduce magnitude when armor absorbs all damage', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 8;
+    horde.wounds = { value: 5, max: 30 };
+    horde.characteristics = { tg: { baseMod: 4, unnaturalMultiplier: 1 } };
+    const hordeActor = {
+      name: 'Armored Horde',
+      system: horde
+    };
+    horde.parent = hordeActor;
+
+    await CombatHelper.applyDamage(hordeActor, {
+      damage: 10, penetration: 0, location: 'Body', damageType: 'Impact'
+    });
+
+    expect(FoundryAdapter.updateDocument).not.toHaveBeenCalled();
+    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('info', expect.stringContaining('absorbs all damage'));
+  });
+
+  it('shows destroyed message when magnitude reaches max', async () => {
+    const horde = new DeathwatchHorde();
+    horde.armor = 0;
+    horde.wounds = { value: 29, max: 30 };
+    horde.characteristics = { tg: { baseMod: 2, unnaturalMultiplier: 1 } };
+    const hordeActor = {
+      name: 'Dying Horde',
+      system: horde
+    };
+    horde.parent = hordeActor;
+
+    await CombatHelper.applyDamage(hordeActor, {
+      damage: 10, penetration: 0, location: 'Body', damageType: 'Impact'
+    });
+
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 30 });
+    expect(FoundryAdapter.showNotification).toHaveBeenCalledWith('warn', expect.stringContaining('destroyed'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('HORDE DESTROYED'));
+  });
+
+  it('still uses wound-based damage for non-horde actors', async () => {
+    const normalActor = {
+      name: 'Normal Enemy',
+      id: 'enemy1',
+      system: {
+        receiveDamage: jest.fn()
+      }
+    };
+
+    await CombatHelper.applyDamage(normalActor, {
+      damage: 15, penetration: 2, location: 'Body', damageType: 'Impact'
+    });
+
+    expect(normalActor.system.receiveDamage).toHaveBeenCalled();
+  });
+});

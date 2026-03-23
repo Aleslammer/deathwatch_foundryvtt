@@ -160,117 +160,27 @@ describe('CombatHelper', () => {
   });
 
   describe('getArmorValue', () => {
-    let mockActor;
-
-    beforeEach(() => {
-      mockActor = {
-        items: {
-          find: jest.fn()
+    it('delegates to actor system getArmorValue', () => {
+      const mockActor = {
+        system: {
+          getArmorValue: jest.fn(() => 8)
         }
       };
-    });
-
-    it('returns 0 if no armor equipped', () => {
-      mockActor.items.find.mockReturnValue(null);
-      const result = CombatHelper.getArmorValue(mockActor, 'Head');
-      expect(result).toBe(0);
-    });
-
-    it('returns head armor value', () => {
-      mockActor.items.find.mockReturnValue({
-        type: 'armor',
-        system: { equipped: true, head: 8 }
-      });
-      const result = CombatHelper.getArmorValue(mockActor, 'Head');
-      expect(result).toBe(8);
-    });
-
-    it('returns body armor value', () => {
-      mockActor.items.find.mockReturnValue({
-        type: 'armor',
-        system: { equipped: true, body: 10 }
-      });
-      const result = CombatHelper.getArmorValue(mockActor, 'Body');
-      expect(result).toBe(10);
-    });
-
-    it('returns right arm armor value', () => {
-      mockActor.items.find.mockReturnValue({
-        type: 'armor',
-        system: { equipped: true, right_arm: 7 }
-      });
-      const result = CombatHelper.getArmorValue(mockActor, 'Right Arm');
-      expect(result).toBe(7);
-    });
-
-    it('returns 0 for unknown location', () => {
-      mockActor.items.find.mockReturnValue({
-        type: 'armor',
-        system: { equipped: true }
-      });
-      const result = CombatHelper.getArmorValue(mockActor, 'Unknown');
-      expect(result).toBe(0);
+      expect(CombatHelper.getArmorValue(mockActor, 'Head')).toBe(8);
+      expect(mockActor.system.getArmorValue).toHaveBeenCalledWith('Head');
     });
   });
 
   describe('applyDamage', () => {
-    let mockActor;
-
-    beforeEach(() => {
-      mockActor = {
-        id: 'actor123',
-        name: 'Test Marine',
+    it('delegates to targetActor.system.receiveDamage', async () => {
+      const mockActor = {
         system: {
-          wounds: { value: 5, max: 20 }
-        },
-        update: jest.fn(),
-        items: {
-          find: jest.fn(() => null)
+          receiveDamage: jest.fn()
         }
       };
-    });
-
-    it('applies damage after armor reduction', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 8);
-      await CombatHelper.applyDamage(mockActor, { damage: 15, penetration: 2, location: 'Body', damageType: 'Impact' });
-
-      expect(mockActor.update).toHaveBeenCalledWith({
-        'system.wounds.value': 14
-      });
-    });
-
-    it('does not apply damage if armor absorbs all', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 8);
-      await CombatHelper.applyDamage(mockActor, { damage: 5, penetration: 0, location: 'Body', damageType: 'Impact' });
-
-      expect(mockActor.update).not.toHaveBeenCalled();
-    });
-
-    it('creates chat message for damage', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 8);
-      await CombatHelper.applyDamage(mockActor, { damage: 15, penetration: 2, location: 'Body', damageType: 'Impact' });
-
-      expect(global.ChatMessage.create).toHaveBeenCalled();
-    });
-
-    it('detects critical damage', async () => {
-      jest.clearAllMocks();
-      CombatHelper.getArmorValue = jest.fn(() => 8);
-      mockActor.system.wounds.value = 18;
-      await CombatHelper.applyDamage(mockActor, { damage: 20, penetration: 2, location: 'Body', damageType: 'Energy' });
-
-      const chatCall = global.ChatMessage.create.mock.calls[0][0];
-      expect(chatCall.content).toContain('CRITICAL DAMAGE');
-      expect(chatCall.content).toContain('Apply Critical Effect');
-    });
-
-    it('handles penetration correctly', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 10);
-      await CombatHelper.applyDamage(mockActor, { damage: 15, penetration: 5, location: 'Body', damageType: 'Impact' });
-
-      expect(mockActor.update).toHaveBeenCalledWith({
-        'system.wounds.value': 15
-      });
+      const options = { damage: 15, penetration: 2, location: 'Body', damageType: 'Impact' };
+      await CombatHelper.applyDamage(mockActor, options);
+      expect(mockActor.system.receiveDamage).toHaveBeenCalledWith(options);
     });
   });
 
@@ -523,60 +433,38 @@ describe('CombatHelper', () => {
     });
   });
 
+  describe('_getMagnitudeBonusDamage', () => {
+    it('returns 0 when no ammo loaded', () => {
+      const weapon = { system: { loadedAmmo: null } };
+      expect(CombatHelper._getMagnitudeBonusDamage(weapon, {})).toBe(0);
+    });
+
+    it('returns 0 when ammo has no magnitude-bonus-damage modifier', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'weapon-damage', modifier: '-2', enabled: true }] } })) } };
+      expect(CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(0);
+    });
+
+    it('returns bonus from magnitude-bonus-damage modifier', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'magnitude-bonus-damage', modifier: '1', enabled: true }] } })) } };
+      expect(CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(1);
+    });
+
+    it('ignores disabled magnitude-bonus-damage modifier', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'magnitude-bonus-damage', modifier: '1', enabled: false }] } })) } };
+      expect(CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(0);
+    });
+  });
+
   describe('edge cases', () => {
-    it('handles zero damage', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 10);
+    it('handles zero damage via receiveDamage', async () => {
       const mockActor = {
-        name: 'Test',
-        system: { wounds: { value: 5, max: 20 } },
-        update: jest.fn(),
-        items: { find: jest.fn(() => null) }
+        system: { receiveDamage: jest.fn() }
       };
-      
       await CombatHelper.applyDamage(mockActor, { damage: 5, penetration: 0, location: 'Body', damageType: 'Impact' });
-      expect(mockActor.update).not.toHaveBeenCalled();
-    });
-
-    it('handles zero armor', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 0);
-      const mockActor = {
-        name: 'Test',
-        system: { wounds: { value: 5, max: 20 } },
-        update: jest.fn(),
-        items: { find: jest.fn(() => null) }
-      };
-      
-      await CombatHelper.applyDamage(mockActor, { damage: 10, penetration: 0, location: 'Body', damageType: 'Impact' });
-      expect(mockActor.update).toHaveBeenCalledWith({ 'system.wounds.value': 15 });
-    });
-
-    it('handles high penetration', async () => {
-      CombatHelper.getArmorValue = jest.fn(() => 5);
-      const mockActor = {
-        name: 'Test',
-        system: { wounds: { value: 5, max: 20 } },
-        update: jest.fn(),
-        items: { find: jest.fn(() => null) }
-      };
-      
-      await CombatHelper.applyDamage(mockActor, { damage: 10, penetration: 10, location: 'Body', damageType: 'Impact' });
-      expect(mockActor.update).toHaveBeenCalledWith({ 'system.wounds.value': 15 });
-    });
-
-    it('handles exactly max wounds', async () => {
-      jest.clearAllMocks();
-      CombatHelper.getArmorValue = jest.fn(() => 0);
-      const mockActor = {
-        id: 'test',
-        name: 'Test',
-        system: { wounds: { value: 15, max: 20 } },
-        update: jest.fn(),
-        items: { find: jest.fn(() => null) }
-      };
-      
-      await CombatHelper.applyDamage(mockActor, { damage: 5, penetration: 0, location: 'Body', damageType: 'Impact' });
-      const chatCall = global.ChatMessage.create.mock.calls[0][0];
-      expect(chatCall.content).not.toContain('CRITICAL DAMAGE');
+      expect(mockActor.system.receiveDamage).toHaveBeenCalled();
     });
   });
 });

@@ -3,7 +3,8 @@
         "types": [
             "character",
             "npc",
-            "enemy"
+            "enemy",
+            "horde"
         ]
     },
     "Item": {

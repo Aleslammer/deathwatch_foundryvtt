@@ -284,6 +284,40 @@ describe('validateWeaponForAttack', () => {
     
     expect(result.valid).toBe(true);
   });
+
+  it('returns valid for horde even if weapon is jammed', () => {
+    const weapon = { name: 'Bolter', system: { jammed: true } };
+    const actor = { type: 'horde', items: { get: () => null } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(true);
+  });
+
+  it('returns valid for horde even with no ammo loaded', () => {
+    const weapon = { 
+      name: 'Bolter', 
+      system: { jammed: false, clip: '30', loadedAmmo: null } 
+    };
+    const actor = { type: 'horde', items: { get: () => null } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(true);
+  });
+
+  it('returns valid for horde even with empty ammo', () => {
+    const weapon = { 
+      name: 'Bolter', 
+      system: { jammed: false, clip: '30', loadedAmmo: 'ammo1' } 
+    };
+    const loadedAmmo = { system: { capacity: { value: 0 } } };
+    const actor = { type: 'horde', items: { get: () => loadedAmmo } };
+    
+    const result = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    
+    expect(result.valid).toBe(true);
+  });
 });
 
 describe('buildDamageFormula', () => {

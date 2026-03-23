@@ -1,5 +1,7 @@
 import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS } from "./constants.mjs";
 import { CombatHelper } from "./combat.mjs";
+import { CombatDialogHelper } from "./combat-dialog.mjs";
+import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class MeleeCombatHelper {
   /* istanbul ignore next */
@@ -83,7 +85,22 @@ export class MeleeCombatHelper {
 
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
-            CombatHelper.lastAttackHits = success ? 1 : 0;
+            let hitsTotal = success ? 1 : 0;
+
+            const targetToken = game.user.targets.first();
+            const targetActor = targetToken?.actor;
+            if (targetActor && hitsTotal > 0) {
+              const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
+              const degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber);
+              hitsTotal = targetActor.system.calculateHitsReceived({
+                isMelee: true,
+                degreesOfSuccess,
+                hasPowerField,
+                baseHits: 1
+              });
+            }
+
+            CombatHelper.lastAttackHits = hitsTotal;
 
             const modifierParts = [];
             modifierParts.push(`${ws} Base WS`);

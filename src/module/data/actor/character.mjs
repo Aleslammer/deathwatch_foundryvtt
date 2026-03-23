@@ -102,6 +102,14 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
   }
 
   /**
+   * Characters can trigger Righteous Fury.
+   * @returns {boolean}
+   */
+  canRighteousFury() {
+    return true;
+  }
+
+  /**
    * Compute all character derived data.
    * Moved from actor.mjs _prepareCharacterData().
    */

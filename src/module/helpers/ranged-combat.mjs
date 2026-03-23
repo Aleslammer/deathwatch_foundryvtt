@@ -208,10 +208,28 @@ export class RangedCombatHelper {
             }
             hasPrematureDetonation = hitValue >= detonationThreshold;
             
-            const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
+            let hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
+            const isHorde = actor.type === 'horde';
+            const targetActor = targetToken?.actor;
+            if (targetActor && hitsTotal > 0) {
+              const blastValue = await WeaponQualityHelper.getBlastValue(weapon);
+              const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
+              const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
+              const degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber);
+              hitsTotal = targetActor.system.calculateHitsReceived({
+                damageType: weapon.system.dmgType || '',
+                blastValue,
+                isFlame,
+                flameRange: parseInt(weapon.system.effectiveRange || weapon.system.range) || 0,
+                isMelee: false,
+                degreesOfSuccess,
+                hasPowerField,
+                baseHits: hitsTotal
+              });
+            }
             const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
-            let isJammed = !hasLivingAmmo && hitValue >= jamThreshold;
+            let isJammed = !isHorde && !hasLivingAmmo && hitValue >= jamThreshold;
             const hasReliable = await WeaponQualityHelper.hasQuality(weapon, 'reliable');
             
             if (isJammed && hasReliable) {
@@ -274,7 +292,7 @@ export class RangedCombatHelper {
               rollMode: game.settings.get('core', 'rollMode')
             });
 
-            if (hasAmmoManagement && weapon.system.loadedAmmo) {
+            if (!isHorde && hasAmmoManagement && weapon.system.loadedAmmo) {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;

@@ -465,6 +465,7 @@ describe('DeathwatchActor', () => {
       
       expect(mockActor.updateSource).toHaveBeenCalledWith({
         'prototypeToken.name': 'Test Marine',
+        'prototypeToken.displayName': 30,
         'prototypeToken.actorLink': true
       });
     });
@@ -478,7 +479,8 @@ describe('DeathwatchActor', () => {
       await mockActor._preCreate(data, options, user);
       
       expect(mockActor.updateSource).toHaveBeenCalledWith({
-        'prototypeToken.name': 'Ork Boy'
+        'prototypeToken.name': 'Ork Boy',
+        'prototypeToken.displayName': 20
       });
     });
 
@@ -491,7 +493,8 @@ describe('DeathwatchActor', () => {
       await mockActor._preCreate(data, options, user);
       
       expect(mockActor.updateSource).toHaveBeenCalledWith({
-        'prototypeToken.name': 'Genestealer'
+        'prototypeToken.name': 'Genestealer',
+        'prototypeToken.displayName': 20
       });
     });
   });

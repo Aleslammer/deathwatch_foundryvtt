@@ -83,6 +83,12 @@ export class DeathwatchActorSheet extends ActorSheet {
       this._prepareItems(context);
     }
 
+    // Prepare Horde data and items.
+    if (actorData.type == 'horde') {
+      this._prepareEnemyData(context);
+      this._prepareItems(context);
+    }
+
     // Add roll data for TinyMCE editors.
     context.rollData = context.actor.getRollData();
 

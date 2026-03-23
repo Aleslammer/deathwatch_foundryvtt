@@ -47,7 +47,8 @@ Hooks.once('init', async function () {
     };
 
     CONFIG.Combat.turnMarker = {
-        path: "systems/deathwatch/icons/aquila.png"
+        path: "systems/deathwatch/icons/aquila.png",
+        animation: "pulse"
     };
 
     CONFIG.Combat.skipDefeated = true;
@@ -86,7 +87,8 @@ Hooks.once('init', async function () {
     CONFIG.Actor.dataModels = {
       character: models.DeathwatchCharacter,
       npc: models.DeathwatchNPC,
-      enemy: models.DeathwatchEnemy
+      enemy: models.DeathwatchEnemy,
+      horde: models.DeathwatchHorde
     };
 
     CONFIG.Item.dataModels = {
@@ -192,6 +194,8 @@ Hooks.on('renderChatMessage', (message, html) => {
         const forcePsyRating = parseInt(button.data('forcePsyRating')) || 0;
         const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
         
+        const magnitudeBonusDamage = parseInt(button.data('magnitudeBonusDamage')) || 0;
+        
         const sceneId = button.data('sceneId');
         const tokenId = button.data('tokenId');
         const tokenInfo = (sceneId && tokenId) ? { sceneId, tokenId } : null;
@@ -202,7 +206,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo });
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {

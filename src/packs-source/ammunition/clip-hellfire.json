@@ -31,6 +31,12 @@
         "effectType": "weapon-blast",
         "enabled": true,
         "weaponClass": "heavy"
+      },
+      {
+        "name": "Hellfire Anti-Horde",
+        "modifier": "1",
+        "effectType": "magnitude-bonus-damage",
+        "enabled": true
       }
     ]
   },

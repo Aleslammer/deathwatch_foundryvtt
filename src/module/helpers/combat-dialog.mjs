@@ -136,20 +136,24 @@ export class CombatDialogHelper {
   }
 
   static validateWeaponForAttack(weapon, actor) {
-    if (weapon.system.jammed) {
+    const isHorde = actor.type === 'horde';
+
+    if (!isHorde && weapon.system.jammed) {
       return { valid: false, message: `${weapon.name} is jammed! Clear the jam before firing.` };
     }
 
-    const clip = weapon.system.clip;
-    const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
-    
-    if (hasAmmoManagement) {
-      if (!weapon.system.loadedAmmo) {
-        return { valid: false, message: `${weapon.name} has no ammunition loaded!` };
-      }
-      const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
-      if (!loadedAmmo || loadedAmmo.system.capacity.value <= 0) {
-        return { valid: false, message: `${weapon.name} is out of ammunition!` };
+    if (!isHorde) {
+      const clip = weapon.system.clip;
+      const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
+      
+      if (hasAmmoManagement) {
+        if (!weapon.system.loadedAmmo) {
+          return { valid: false, message: `${weapon.name} has no ammunition loaded!` };
+        }
+        const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
+        if (!loadedAmmo || loadedAmmo.system.capacity.value <= 0) {
+          return { valid: false, message: `${weapon.name} is out of ammunition!` };
+        }
       }
     }
 
