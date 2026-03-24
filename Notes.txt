@@ -43,6 +43,7 @@ Enemies:
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects    
+    TODO: Need to work on space marines being hulking but need to find out how they loose some modifiers...
 
 Hordes
     TODO: Update to support psychic attacks (pg 360)

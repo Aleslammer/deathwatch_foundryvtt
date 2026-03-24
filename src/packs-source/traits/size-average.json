@@ -1,0 +1,12 @@
+{
+  "name": "Size (Average)",
+  "type": "trait",
+  "img": "systems/deathwatch/icons/generic/traits.webp",
+  "system": {
+    "description": "<p>This creature is Average-sized. No modifiers to hit, Concealment, or movement.</p>",
+    "book": "Core Rulebook",
+    "page": "134",
+    "modifiers": []
+  },
+  "_id": "trt000000000059"
+}
