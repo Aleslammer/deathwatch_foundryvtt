@@ -10,10 +10,12 @@
       {
         "name": "Unnatural Willpower",
         "modifier": "x2",
+        "type": "trait",
         "effectType": "characteristic-bonus",
         "valueAffected": "wil",
         "enabled": true
       }
     ]
-  }
+  },
+  "_id": "trt000000000053"
 }

@@ -1,0 +1,223 @@
+{
+  "_id": "enmy00000000002",
+  "name": "Termagant",
+  "type": "enemy",
+  "img": "systems/deathwatch/icons/enemies/tyranid/termagant.webp",
+  "system": {
+    "characteristics": {
+      "ws": {
+        "base": 30
+      },
+      "bs": {
+        "base": 33
+      },
+      "str": {
+        "base": 32
+      },
+      "tg": {
+        "base": 30
+      },
+      "ag": {
+        "base": 40
+      },
+      "int": {
+        "base": 10
+      },
+      "per": {
+        "base": 40
+      },
+      "wil": {
+        "base": 30
+      },
+      "fs": {
+        "base": 0
+      }
+    },
+    "wounds": {
+      "base": 9,
+      "max": 9,
+      "value": 0
+    },
+    "fatigue": {
+      "value": 0,
+      "max": 0
+    },
+    "skills": {
+      "awareness": {
+        "trained": true
+      },
+      "climb": {
+        "trained": true
+      },
+      "dodge": {
+        "trained": true
+      },
+      "silent_move": {
+        "trained": true
+      },
+      "swim": {
+        "trained": true,
+        "mastered": true
+      }
+    },
+    "modifiers": [],
+    "conditions": {},
+    "description": "<p>Termagants are the most numerous of the Tyranid bioforms, forming the bulk of any Tyranid swarm. They are small, skittering creatures armed with living ranged weapons called Fleshborers that fire borer beetles at the enemy. While individually weak, their sheer numbers make them a significant threat.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (3), Improved Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Dark Sight</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "psyRating": {
+      "value": 0,
+      "base": 0
+    }
+  },
+  "items": [
+    {
+      "_id": "enmyitem0000030",
+      "name": "Leap Up",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "DeathWatch Core Rulebook",
+        "page": "121",
+        "prerequisite": "Agility 30",
+        "benefit": "Stand up as Free Action",
+        "description": "<p>The character may stand up as a Free Action.</p>",
+        "compendiumId": "tal00000000143",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000031",
+      "_sourceId": "trt000000000011",
+      "name": "Dark Sight",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>A creature with this trait sees normally even in areas of total darkness, and never takes a penalty for fighting in areas of dim or no lighting.</p>",
+        "book": "Core Rulebook",
+        "page": "130",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000032",
+      "_sourceId": "trt000000000025",
+      "name": "Natural Armour (3)",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>This creature has a naturally tough hide or an exoskeleton, affording it some protection against attacks. This trait always includes a numeric value to indicate how many Armour Points the creature gains to all locations.</p>",
+        "book": "Core Rulebook",
+        "page": "133",
+        "modifiers": [
+          {
+            "_id": "natural-armour-mod",
+            "name": "Natural Armour",
+            "modifier": "3",
+            "type": "trait",
+            "effectType": "armor",
+            "enabled": true
+          }
+        ]
+      }
+    },
+    {
+      "_id": "enmyitem0000033",
+      "_sourceId": "trt000000000019",
+      "name": "Improved Natural Weapons (Teeth and Claws)",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>This creature's attacks are powerful enough to crush plasteel or punch through armour. The creature gains all the benefits of the Natural Weapons Trait, except that its attacks do not count as Primitive.</p>",
+        "book": "Core Rulebook",
+        "page": "132",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000034",
+      "_sourceId": "trt000000000021",
+      "name": "Instinctive Behaviour (Lurk)",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>A Tyranid creature with this trait will be reduced to acting according to their instincts if they are separated from the controlling presence of the Hive Mind. In effect, this means that any encounter in which creatures with this trait are not accompanied by a Tyranid creature with the Synapse Creature trait (see page 135 in this chapter), they will behave in a particular way. The creature's instinctive behaviour is noted in parentheses and has the following effects:</p><p><strong>Feed:</strong> The creature's instinct is to feed on flesh, blood, and bone and its hunger can never be sated. The creature will try to find and attack any living, biological, non-Tyranid creature and eat them. In this state, the creature gains the Fearless and Frenzy talents. The same applies to a Horde with this trait not under the influence of a synapse creature.</p><p><strong>Lurk:</strong> The creature's instincts are to find shelter from attack, to hide and survive. It will try to flee and find shelter in whatever way the situation allows. In a starship, for example, it may scuttle into the ducting system. When confronted, the creature's aim is to try to escape and will only attack if left no avenue for escape or in order to survive. If a Horde with this trait is not under the influence of a synapse creature, it will automatically break (see Breaking a Horde on page 360 of this chapter).</p><p><strong>Stalk:</strong> The creature's instinct is to remain unseen, to find prey, slay it, feed, and then resume its hunt for others. In this state, the creature gains the Stealth (Ag) +10 skill. It will not attack enemies unless it can take them by surprise or outnumbers them. Having made a kill, the creature briefly feeds before fleeing. A horde with this trait automatically breaks (see Breaking a Horde on page 360 of this chapter), with individual creatures scattering to find shadows from which to begin their hunt.</p>",
+        "book": "Core Rulebook",
+        "page": "132",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000035",
+      "_sourceId": "trt000000000043",
+      "name": "Tyranid",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "description": "<p>The creature is a species of Tyranid; the all consuming alien race ruled by the will of the Hive Mind that links and controls all Tyranids. Tyranids are immune to all of the effects of the following: pinning, mind-affecting Psychic Powers, warp-based powers that affect the mind, cold, heat, diseases, and poisons, including the effects of weapons with the Toxic Quality.</p>",
+        "book": "Core Rulebook",
+        "page": "136",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000036",
+      "name": "Fleshborer",
+      "type": "weapon",
+      "img": "systems/deathwatch/icons/weapons/tyranid-fleshborer.webp",
+      "system": {
+        "class": "Basic",
+        "dmg": "1d10+9",
+        "dmgType": "Rending",
+        "penetration": "3",
+        "range": "20",
+        "rof": "S/-/-",
+        "clip": "—",
+        "reload": "—",
+        "equipped": true,
+        "modifiers": [],
+        "attachedQualities": [
+          {
+            "id": "proven"
+          },
+          {
+            "id": "tearing"
+          },
+          {
+            "id": "living-ammunition"
+          }
+        ],
+        "attachedUpgrades": [],
+        "description": "<p>A Fleshborer is a nest for razor-fanged borer beetles which it ejects towards enemies.</p>"
+      }
+    },
+    {
+      "_id": "enmyitem0000037",
+      "name": "Teeth and Claws",
+      "type": "weapon",
+      "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
+      "system": {
+        "class": "Melee",
+        "dmg": "1d10+3",
+        "dmgType": "Rending",
+        "penetration": "3",
+        "range": "",
+        "rof": "",
+        "clip": "",
+        "reload": "",
+        "equipped": true,
+        "modifiers": [],
+        "attachedQualities": [],
+        "attachedUpgrades": [],
+        "description": "<p>Sharp teeth and claws used in close combat.</p>"
+      }
+    }
+  ],
+  "prototypeToken": {
+    "name": "Termagant",
+    "displayName": 30,
+    "actorLink": false,
+    "disposition": -1,
+    "bar1": {
+      "attribute": "wounds"
+    }
+  }
+}

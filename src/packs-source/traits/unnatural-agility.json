@@ -10,10 +10,12 @@
       {
         "name": "Unnatural Agility",
         "modifier": "x2",
+        "type": "trait",
         "effectType": "characteristic-bonus",
         "valueAffected": "ag",
         "enabled": true
       }
     ]
-  }
+  },
+  "_id": "trt000000000045"
 }

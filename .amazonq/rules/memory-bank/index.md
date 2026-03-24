@@ -16,11 +16,12 @@
 9. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
 10. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
 11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
+12. **enemies.md** - Enemy & horde compendium entries (Tyranid: Hormagaunt, Termagant)
 
 ## Key Metrics
 - **Tests**: 947 passing, 77 suites
 - **Helper Classes**: 25+ modules
-- **Compendium Packs**: 15
+- **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
 
 ## Commands
@@ -111,4 +112,4 @@ docs/datamodel/          Full DataModel migration plan (10 files)
 ```
 
 ---
-**Last Updated**: January 2025 (Phase 5 complete, Enemy/Horde actor types added, polymorphic combat)
+**Last Updated**: January 2025 (Termagant enemy/horde added, enemies.md created)

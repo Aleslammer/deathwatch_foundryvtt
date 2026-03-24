@@ -6,6 +6,15 @@
     "description": "<p>The creature moves with incredible speed. For the purposes of determining movement, the creature doubles its Agility Bonus (after modifying AB from other traits and factors, specifically size).</p>",
     "book": "Core Rulebook",
     "page": "136",
-    "modifiers": []
-  }
+    "modifiers": [
+      {
+        "name": "Unnatural Speed",
+        "modifier": 2,
+        "type": "trait",
+        "effectType": "movement-multiplier",
+        "enabled": true
+      }
+    ]
+  },
+  "_id": "trt000000000050"
 }

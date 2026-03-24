@@ -20,13 +20,14 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
 
   /** @override */
   getArmorValue(_location) {
-    return this.armor || 0;
+    return (this.armor || 0) + (this.naturalArmorValue || 0);
   }
 
   /** @override */
   getDefenses(_location) {
     return {
-      armorValue: this.armor || 0,
+      armorValue: (this.armor || 0) + (this.naturalArmorValue || 0),
+      naturalArmorValue: this.naturalArmorValue || 0,
       toughnessBonus: this.characteristics?.tg?.baseMod || 0,
       unnaturalToughnessMultiplier: this.characteristics?.tg?.unnaturalMultiplier || 1
     };
@@ -54,7 +55,7 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
    */
   async receiveBatchDamage(hits) {
     const actor = this.parent;
-    const armorValue = this.armor || 0;
+    const baseArmorValue = (this.armor || 0) + (this.naturalArmorValue || 0);
     const toughnessBonus = this.characteristics?.tg?.baseMod || 0;
     const unnaturalMultiplier = this.characteristics?.tg?.unnaturalMultiplier || 1;
     const effectiveTB = toughnessBonus * unnaturalMultiplier;
@@ -65,7 +66,11 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
     for (const hit of hits) {
       const { damage, penetration, isPrimitive = false,
         isRazorSharp = false, degreesOfSuccess = 0, isMeltaRange = false,
-        magnitudeBonusDamage = 0, location = 'Body' } = hit;
+        magnitudeBonusDamage = 0, location = 'Body', ignoresNaturalArmour = false } = hit;
+
+      const armorValue = ignoresNaturalArmour
+        ? Math.max(0, baseArmorValue - (this.naturalArmorValue || 0))
+        : baseArmorValue;
 
       const baseLost = HordeCombatHelper.calculateMagnitudeReduction(
         damage, armorValue, penetration, effectiveTB,
@@ -87,7 +92,7 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
       const magnitudeBonusDamage = hits[0]?.magnitudeBonusDamage || 0;
 
       let message = `<strong>${actor.name}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''}, loses <strong style="color: red;">${totalMagnitudeLost} Magnitude</strong> (${newMagnitude}/${maxMagnitude})`;
-      message += `<br><em>Armor: ${armorValue} | TB: ${effectiveTB}</em>`;
+      message += `<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;
       if (magnitudeBonusDamage > 0) {
         message += `<br><em>+${magnitudeBonusDamage} bonus Magnitude per penetrating hit from ammunition</em>`;
       }
@@ -114,7 +119,7 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
 
       await FoundryAdapter.createChatMessage(message);
     } else {
-      const message = `<strong>${actor.name}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''} — armor and toughness absorb all damage<br><em>Armor: ${armorValue} | TB: ${effectiveTB}</em>`;
+      const message = `<strong>${actor.name}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''} — armor and toughness absorb all damage<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;
       await FoundryAdapter.createChatMessage(message);
     }
   }

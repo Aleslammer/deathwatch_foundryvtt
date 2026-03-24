@@ -8,10 +8,10 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
-TODO: Need to add an indicator on characters that they are the only ones capable for RF NPC, Enemies etc cannot RF.
 
 Traits
     TODO: if a target has a trait size can we auto apply modifier?
+    TODO: review traits if they need modifiers
 
 Talents
     TODO: Review all talents to determine if effects can be applied to anythig
@@ -29,8 +29,6 @@ Rites of Battle
 
 Ammmunition 158
     
-    TODO: We need to revisit Hellfire ROunds when we get to application of Hordes
-    TODO: We need to revisit Hellfire ROunds when we get to application of natural armor ignoring
     TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
     TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
     TODO: We need to revisit the Devastation upgrade for cohesion damage
@@ -40,19 +38,15 @@ TODO: Need to handle called shot mechanic
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 TODO: Automated Animations - Can we use this for things?
 
+Enemies:
 
 Armor:
-    TODO: Armor provides benefits to the space marine.   We need to work on that.
-        163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
-        164 - Terminator Armour has forcefield like effects    
+    TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
+          164 - Terminator Armour has forcefield like effects    
 
 Hordes
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
-NPC
-    They should be the same as Actors just maybe some other indicators on them?
-Enemy actors?
-    Same as NPC just with some other characterisitcs?  Not sure what is needed yet.
 
 
 Breaking a Horde
@@ -60,6 +54,3 @@ Breaking a Horde
 • If the Horde’s Magnitude is less than 50% of its starting value, it suffers a –10 to the Willpower Test. If the Horde’s Magnitude is less than 25% of its starting value, it will automatically break. 
 • Hordes composed of enemies with the Fearless talent do not have to test to see if they break as their Magnitude is eroded: they have to be wiped out to the last.
 
-
-
-SO based on all this work we just did lets update the memory bank.   I feel like its likely out of date

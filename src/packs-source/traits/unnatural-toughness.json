@@ -10,10 +10,12 @@
       {
         "name": "Unnatural Toughness",
         "modifier": "x2",
+        "type": "trait",
         "effectType": "characteristic-bonus",
         "valueAffected": "tg",
         "enabled": true
       }
     ]
-  }
+  },
+  "_id": "trt000000000052"
 }

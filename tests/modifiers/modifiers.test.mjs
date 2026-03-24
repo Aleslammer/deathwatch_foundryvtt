@@ -244,7 +244,7 @@ describe('ModifierHelper', () => {
       const result = ModifierHelper._getValueAffectedField(modifier);
 
       expect(result).toContain('text');
-      expect(result).toContain('acrobatics');
+      expect(result).toContain('name="valueAffected"');
     });
 
     it('returns text input for wounds effect type', () => {
@@ -252,7 +252,7 @@ describe('ModifierHelper', () => {
       const result = ModifierHelper._getValueAffectedField(modifier);
 
       expect(result).toContain('text');
-      expect(result).toContain('acrobatics');
+      expect(result).toContain('name="valueAffected"');
     });
 
     it('returns text input for other effect types', () => {
@@ -260,7 +260,7 @@ describe('ModifierHelper', () => {
       const result = ModifierHelper._getValueAffectedField(modifier);
 
       expect(result).toContain('custom');
-      expect(result).toContain('acrobatics');
+      expect(result).toContain('name="valueAffected"');
     });
   });
 

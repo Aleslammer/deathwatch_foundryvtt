@@ -126,10 +126,87 @@ function validateWeaponQualityIds() {
   return true;
 }
 
+function syncEmbeddedItems() {
+  const SYNC_DIRS = ['traits', 'talents'];
+  const ACTOR_DIRS = ['enemies'];
+
+  // Build lookup of compendium source items by _id
+  const lookup = {};
+  for (const dir of SYNC_DIRS) {
+    const dirPath = path.join(PACKS_SOURCE, dir);
+    if (!fs.existsSync(dirPath)) continue;
+    for (const filePath of getAllJsonFiles(dirPath)) {
+      const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (doc._id) lookup[doc._id] = doc;
+    }
+  }
+
+  let totalUpdates = 0;
+
+  for (const dir of ACTOR_DIRS) {
+    const dirPath = path.join(PACKS_SOURCE, dir);
+    if (!fs.existsSync(dirPath)) continue;
+
+    for (const filePath of getAllJsonFiles(dirPath)) {
+      const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!Array.isArray(doc.items)) continue;
+
+      let changed = false;
+      const relative = path.relative(PACKS_SOURCE, filePath);
+
+      for (const item of doc.items) {
+        if (!item._sourceId) continue;
+        const source = lookup[item._sourceId];
+        if (!source) {
+          console.warn(`  \x1b[33mWARNING: _sourceId "${item._sourceId}" not found for "${item.name}" in ${relative}\x1b[0m`);
+          continue;
+        }
+
+        const fields = [];
+        const srcMods = source.system?.modifiers || [];
+        const itemMods = item.system?.modifiers || [];
+        const mergedMods = srcMods.map(srcMod => {
+          const isPlaceholder = String(srcMod.modifier) === '0';
+          if (isPlaceholder) {
+            const localMod = itemMods.find(m => m._id === srcMod._id);
+            if (localMod) return { ...srcMod, modifier: localMod.modifier };
+          }
+          return srcMod;
+        });
+        const mergedStr = JSON.stringify(mergedMods);
+        const itemStr = JSON.stringify(itemMods);
+        if (mergedStr !== itemStr) { item.system.modifiers = JSON.parse(mergedStr); fields.push('modifiers'); }
+        if (source.system?.description && item.system?.description !== source.system.description) { item.system.description = source.system.description; fields.push('description'); }
+        if (source.system?.book && item.system?.book !== source.system.book) { item.system.book = source.system.book; fields.push('book'); }
+        if (source.system?.page && item.system?.page !== source.system.page) { item.system.page = source.system.page; fields.push('page'); }
+        if (source.img && item.img !== source.img) { item.img = source.img; fields.push('img'); }
+
+        if (fields.length > 0) {
+          console.log(`  \u2705 ${relative} → ${item.name}: synced ${fields.join(', ')}`);
+          changed = true;
+          totalUpdates++;
+        }
+      }
+
+      if (changed) {
+        fs.writeFileSync(filePath, JSON.stringify(doc, null, 2) + '\n', 'utf8');
+      }
+    }
+  }
+
+  if (totalUpdates > 0) {
+    console.log(`\u2705 Synced ${totalUpdates} embedded item(s) from compendium sources`);
+  } else {
+    console.log(`\u2705 All embedded items are up to date`);
+  }
+  return true;
+}
+
 const talentsOk = validateTalentIds();
 const qualitiesOk = validateWeaponQualityIds();
 const idsOk = validateUniqueIds();
+const syncOk = syncEmbeddedItems();
 
-if (!talentsOk || !qualitiesOk || !idsOk) {
+if (!talentsOk || !qualitiesOk || !idsOk || !syncOk) {
   process.exit(1);
 }

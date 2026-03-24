@@ -135,6 +135,19 @@ Hooks.once('init', async function () {
         }
     });
 
+    // Auto-assign enemy/horde actors to an "Enemies" folder
+    Hooks.on('createActor', async (actor, options, userId) => {
+        if (game.user.id !== userId) return;
+        if (actor.type !== 'enemy' && actor.type !== 'horde') return;
+        if (actor.folder) return;
+
+        let folder = game.folders.find(f => f.type === 'Actor' && f.name === 'Enemies');
+        if (!folder) {
+            folder = await Folder.create({ name: 'Enemies', type: 'Actor', parent: null });
+        }
+        if (folder) await actor.update({ folder: folder.id });
+    });
+
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });
@@ -201,6 +214,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
         
         const magnitudeBonusDamage = parseInt(button.data('magnitudeBonusDamage')) || 0;
+        const ignoresNaturalArmour = button.data('ignoresNaturalArmour') === 'true' || button.data('ignoresNaturalArmour') === true;
         
         const sceneId = button.data('sceneId');
         const tokenId = button.data('tokenId');
@@ -212,7 +226,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage });
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {

@@ -1,3 +1,5 @@
+import { ModifierHelper } from "../helpers/modifiers.mjs";
+
 /**
  * Extend the basic ItemSheet with some very simple modifications
  * @extends {ItemSheet}
@@ -226,130 +228,14 @@ export class DeathwatchItemSheet extends ItemSheet {
         const modifier = this.item.system.modifiers?.find(m => m._id === modifierId);
         if (!modifier) return;
 
-        const { DWConfig } = await import("../helpers/config.mjs");
-
-        let valueAffectedField = '';
-        if (modifier.effectType === 'characteristic') {
-            valueAffectedField = `
-                <select name="valueAffected">
-                    <option value="">Select Characteristic</option>
-                    <option value="ws" ${modifier.valueAffected === 'ws' ? 'selected' : ''}>Weapon Skill</option>
-                    <option value="bs" ${modifier.valueAffected === 'bs' ? 'selected' : ''}>Ballistic Skill</option>
-                    <option value="str" ${modifier.valueAffected === 'str' ? 'selected' : ''}>Strength</option>
-                    <option value="tg" ${modifier.valueAffected === 'tg' ? 'selected' : ''}>Toughness</option>
-                    <option value="ag" ${modifier.valueAffected === 'ag' ? 'selected' : ''}>Agility</option>
-                    <option value="int" ${modifier.valueAffected === 'int' ? 'selected' : ''}>Intelligence</option>
-                    <option value="per" ${modifier.valueAffected === 'per' ? 'selected' : ''}>Perception</option>
-                    <option value="wil" ${modifier.valueAffected === 'wil' ? 'selected' : ''}>Willpower</option>
-                    <option value="fs" ${modifier.valueAffected === 'fs' ? 'selected' : ''}>Fellowship</option>
-                </select>
-            `;
-        } else if (modifier.effectType === 'skill') {
-            valueAffectedField = '<select name="valueAffected"><option value="">Select Skill</option>';
-            for (const [key, label] of Object.entries(DWConfig.Skills)) {
-                const selected = modifier.valueAffected === key ? 'selected' : '';
-                valueAffectedField += `<option value="${key}" ${selected}>${label}</option>`;
+        ModifierHelper._showEditDialog(modifier, async (updated) => {
+            const modifiers = [...this.item.system.modifiers];
+            const index = modifiers.findIndex(m => m._id === modifierId);
+            if (index >= 0) {
+                modifiers[index] = { ...modifiers[index], ...updated };
+                await this.item.update({ "system.modifiers": modifiers });
             }
-            valueAffectedField += '</select>';
-        } else {
-            valueAffectedField = `<input type="text" name="valueAffected" value="${modifier.valueAffected}" />`;
-        }
-
-        const content = `
-            <div class="form-group">
-                <label>Name:</label>
-                <input type="text" name="name" value="${modifier.name}" />
-            </div>
-            <div class="form-group">
-                <label>Modifier:</label>
-                <input type="text" name="modifier" value="${modifier.modifier}" />
-            </div>
-            <div class="form-group">
-                <label>Type:</label>
-                <select name="type">
-                    <option value="untyped" ${modifier.type === 'untyped' ? 'selected' : ''}>Untyped</option>
-                    <option value="circumstance" ${modifier.type === 'circumstance' ? 'selected' : ''}>Circumstance</option>
-                    <option value="equipment" ${modifier.type === 'equipment' ? 'selected' : ''}>Equipment</option>
-                    <option value="trait" ${modifier.type === 'trait' ? 'selected' : ''}>Trait</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Effect Type:</label>
-                <select name="effectType" id="effectType">
-                    <option value="characteristic" ${modifier.effectType === 'characteristic' ? 'selected' : ''}>Characteristic</option>
-                    <option value="skill" ${modifier.effectType === 'skill' ? 'selected' : ''}>Skill</option>
-                    <option value="initiative" ${modifier.effectType === 'initiative' ? 'selected' : ''}>Initiative</option>
-                </select>
-            </div>
-            <div class="form-group" id="valueAffectedGroup">
-                <label>Value Affected:</label>
-                ${valueAffectedField}
-            </div>
-        `;
-
-        new Dialog({
-            title: "Edit Modifier",
-            content: content,
-            render: (html) => {
-                html.find('#effectType').change((ev) => {
-                    const effectType = ev.target.value;
-                    const group = html.find('#valueAffectedGroup');
-                    if (effectType === 'characteristic') {
-                        group.find('input, select').remove();
-                        group.append(`
-                            <select name="valueAffected">
-                                <option value="">Select Characteristic</option>
-                                <option value="ws">Weapon Skill</option>
-                                <option value="bs">Ballistic Skill</option>
-                                <option value="str">Strength</option>
-                                <option value="tg">Toughness</option>
-                                <option value="ag">Agility</option>
-                                <option value="int">Intelligence</option>
-                                <option value="per">Perception</option>
-                                <option value="wil">Willpower</option>
-                                <option value="fs">Fellowship</option>
-                            </select>
-                        `);
-                    } else if (effectType === 'skill') {
-                        group.find('input, select').remove();
-                        let skillOptions = '<select name="valueAffected"><option value="">Select Skill</option>';
-                        for (const [key, label] of Object.entries(DWConfig.Skills)) {
-                            skillOptions += `<option value="${key}">${label}</option>`;
-                        }
-                        skillOptions += '</select>';
-                        group.append(skillOptions);
-                    } else if (effectType === 'initiative') {
-                        group.find('input, select').remove();
-                        group.append(`<input type="text" name="valueAffected" value="" placeholder="N/A" disabled />`);
-                    } else {
-                        group.find('input, select').remove();
-                        group.append(`<input type="text" name="valueAffected" value="" />`);
-                    }
-                });
-            },
-            buttons: {
-                save: {
-                    label: "Save",
-                    callback: async (html) => {
-                        const modifiers = [...this.item.system.modifiers];
-                        const index = modifiers.findIndex(m => m._id === modifierId);
-                        if (index >= 0) {
-                            modifiers[index] = {
-                                ...modifiers[index],
-                                name: html.find('[name="name"]').val(),
-                                modifier: html.find('[name="modifier"]').val(),
-                                type: html.find('[name="type"]').val(),
-                                effectType: html.find('[name="effectType"]').val(),
-                                valueAffected: html.find('[name="valueAffected"]').val()
-                            };
-                            await this.item.update({ "system.modifiers": modifiers });
-                        }
-                    }
-                },
-                cancel: { label: "Cancel" }
-            },
-            default: "save"
-        }).render(true);
+        });
     }
 
     async _onToggleModifierEnabled(event) {

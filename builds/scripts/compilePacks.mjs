@@ -69,13 +69,16 @@ async function compilePackFile(packName) {
     const { folders, folderMap } = getAllFolders(srcPath);
     
     const isRollTable = packName === 'tables';
+    const isActorPack = packName === 'enemies';
     
     const tablesDb = isRollTable ? db.sublevel('tables', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
     const resultsDb = isRollTable ? db.sublevel('tables.results', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
     const foldersDb = db.sublevel('folders', { keyEncoding: 'utf8', valueEncoding: 'json' });
-    const itemsDb = !isRollTable ? db.sublevel('items', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    const actorsDb = isActorPack ? db.sublevel('actors', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    const itemsDb = (!isRollTable && !isActorPack) ? db.sublevel('items', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
     
     for (const folder of folders) {
+        folder.type = isActorPack ? 'Actor' : (isRollTable ? 'RollTable' : 'Item');
         await foldersDb.put(folder._id, folder);
     }
     
@@ -147,6 +150,64 @@ async function compilePackFile(packName) {
             };
             
             await tablesDb.put(id, entry);
+        } else if (isActorPack) {
+            const embeddedItems = doc.items || [];
+            const embeddedItemIds = [];
+            const actorItemsDb = db.sublevel('actors.items', { keyEncoding: 'utf8', valueEncoding: 'json' });
+            
+            for (const embItem of embeddedItems) {
+                const embId = embItem._id || randomID();
+                embeddedItemIds.push(embId);
+                const embEntry = {
+                    _id: embId,
+                    name: embItem.name,
+                    type: embItem.type,
+                    img: embItem.img || '',
+                    system: embItem.system || {},
+                    effects: embItem.effects || [],
+                    folder: null,
+                    sort: embItem.sort || 0,
+                    ownership: { default: 0 },
+                    flags: embItem.flags || {},
+                    _stats: {
+                        systemId: 'deathwatch',
+                        systemVersion: '0.0.2',
+                        coreVersion: '13.351',
+                        createdTime: null,
+                        modifiedTime: null,
+                        lastModifiedBy: null,
+                        compendiumSource: null,
+                        duplicateSource: null
+                    }
+                };
+                await actorItemsDb.put(`${id}.${embId}`, embEntry);
+            }
+            
+            const entry = {
+                _id: id,
+                name: doc.name,
+                type: doc.type,
+                img: doc.img || '',
+                system: doc.system || {},
+                items: embeddedItemIds,
+                effects: doc.effects || [],
+                folder: folderId,
+                sort: doc.sort || 0,
+                ownership: doc.ownership || { default: 0 },
+                flags: doc.flags || {},
+                prototypeToken: doc.prototypeToken || {},
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351',
+                    createdTime: null,
+                    modifiedTime: null,
+                    lastModifiedBy: null,
+                    compendiumSource: null,
+                    duplicateSource: null
+                }
+            };
+            await actorsDb.put(id, entry);
         } else {
             const entry = {
                 _id: id,

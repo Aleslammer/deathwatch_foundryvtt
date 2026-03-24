@@ -178,6 +178,50 @@ Weapon detonates prematurely on high attack rolls.
 - Weapon marked as jammed
 - Wielder takes weapon damage to random arm with Pen 5
 
+### 8. ignores-natural-armour
+Weapon ignores Natural Armour on the target.
+
+**Structure:**
+```json
+{
+  "name": "Hellfire Ignores Natural Armour",
+  "modifier": "1",
+  "effectType": "ignores-natural-armour",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Extracted by `CombatHelper._getIgnoresNaturalArmour()`
+- Boolean flag — modifier value is ignored (presence = active)
+- During damage application, `naturalArmorValue` is subtracted from total armor
+- Natural armor is identified as `armor` effectType modifiers sourced from traits
+- Works for both individual targets and hordes
+- Passed through apply-damage button data attributes
+
+**Example:**
+- Hellfire Rounds: Ignores Natural Armour on all targets
+
+## Natural Armor System
+
+### Overview
+Natural Armour is implemented as a trait with an `armor` effectType modifier. The modifier value represents the armor points granted to all locations. During `prepareDerivedData()`, `ModifierCollector.calculateNaturalArmor()` sums all `armor` modifiers sourced from traits and stores the result as `actor.system.naturalArmorValue`.
+
+### Data Flow
+1. Trait "Natural Armour (2)" has modifier `{ effectType: "armor", modifier: 2 }`
+2. `collectItemModifiers()` collects it (traits are always active)
+3. `applyArmorModifiers()` adds +2 to all equipped armor locations
+4. `calculateNaturalArmor()` identifies trait-sourced armor modifiers → stores as `naturalArmorValue`
+5. `getArmorValue()` combines equipped armor + `naturalArmorValue`
+6. `getDefenses()` returns both `armorValue` (total) and `naturalArmorValue`
+7. When `ignoresNaturalArmour` is true, `receiveDamage()` subtracts `naturalArmorValue` from armor
+
+### No Armor Item Required (Option B)
+Enemies with only natural armor (no equipped armor item) still get armor protection. `getArmorValue()` returns `naturalArmorValue` when no equipped armor item exists. This eliminates the need for placeholder "0 armor" items on creatures.
+
+### Trait Sheet
+Traits now have a Modifiers tab (same UI as ammunition/weapon-upgrade sheets) allowing users to add/edit/toggle/delete modifiers. The Natural Armour trait uses an `armor` effectType modifier with the desired value.
+
 ## Implementation
 
 ### Ammunition Data Preparation
@@ -365,6 +409,18 @@ html.find('.char-damage-btn').click(async (ev) => {
         "effectType": "weapon-blast",
         "weaponClass": "heavy",
         "enabled": true
+      },
+      {
+        "name": "Hellfire Anti-Horde",
+        "modifier": "1",
+        "effectType": "magnitude-bonus-damage",
+        "enabled": true
+      },
+      {
+        "name": "Hellfire Ignores Natural Armour",
+        "modifier": "1",
+        "effectType": "ignores-natural-armour",
+        "enabled": true
       }
     ]
   }
@@ -375,6 +431,8 @@ html.find('.char-damage-btn').click(async (ev) => {
 - Changes Heavy weapon RoF to Single Shot only
 - Righteous Fury triggers on 9 or 10
 - Adds Blast(3) to Heavy weapons
+- +1 Magnitude per penetrating hit vs hordes
+- Ignores Natural Armour
 
 ### Implosion Shells
 ```json
@@ -436,6 +494,9 @@ if (mod.qualityException && this.system.attachedQualities?.includes(mod.qualityE
 - `tests/helpers/righteous-fury-threshold.test.mjs`: 8 tests
 - `tests/modifiers/modifier-collector-damage.test.mjs`: 8 tests
 - `tests/integration/characteristic-damage-integration.test.mjs`: 5 tests
+- `tests/modifiers/modifier-collector-natural-armor.test.mjs`: 8 tests
+- `tests/combat/ignores-natural-armour.test.mjs`: 8 tests
+- `tests/documents/natural-armor.test.mjs`: 8 tests
 
 ### Coverage
 - weapon-damage modifiers: ✓
@@ -446,9 +507,12 @@ if (mod.qualityException && this.system.attachedQualities?.includes(mod.qualityE
 - Disabled modifiers: ✓
 - Righteous Fury threshold: ✓
 - Characteristic damage: ✓
+- Natural armor calculation: ✓
+- Ignores natural armour extraction: ✓
+- Natural armor in damage application: ✓
 - Integration tests: ✓
 
-**Total: 36 tests, all passing**
+**Total: 60 tests, all passing**
 
 ## Notes
 

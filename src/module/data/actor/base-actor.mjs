@@ -39,14 +39,16 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
 
   /**
    * Get armor value for a hit location.
-   * Default: location-based from equipped armor item.
+   * Combines equipped armor item value with natural armor from traits.
    * @param {string} location - Hit location name
    * @returns {number}
    */
   getArmorValue(location) {
     const actor = this.parent;
     const equippedArmor = actor.items.find(i => i.type === 'armor' && i.system.equipped);
-    if (!equippedArmor) return 0;
+    const naturalArmor = this.naturalArmorValue || 0;
+
+    if (!equippedArmor) return naturalArmor;
 
     const locationMap = {
       "Head": "head", "Body": "body",
@@ -54,17 +56,19 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
       "Right Leg": "right_leg", "Left Leg": "left_leg"
     };
     const armorField = locationMap[location];
-    return armorField ? (equippedArmor.system[armorField] || 0) : 0;
+    const itemArmor = armorField ? (equippedArmor.system[armorField] || 0) : 0;
+    return itemArmor + naturalArmor;
   }
 
   /**
    * Get defensive stats for damage calculation.
    * @param {string} location - Hit location name
-   * @returns {{armorValue: number, toughnessBonus: number, unnaturalToughnessMultiplier: number}}
+   * @returns {{armorValue: number, naturalArmorValue: number, toughnessBonus: number, unnaturalToughnessMultiplier: number}}
    */
   getDefenses(location) {
     return {
       armorValue: this.getArmorValue(location),
+      naturalArmorValue: this.naturalArmorValue || 0,
       toughnessBonus: this.characteristics?.tg?.baseMod || 0,
       unnaturalToughnessMultiplier: this.characteristics?.tg?.unnaturalMultiplier || 1
     };
@@ -90,12 +94,16 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
     const { damage, penetration, location, damageType = 'Impact', felling = 0, isPrimitive = false,
       isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false,
       isShocking = false, isToxic = false, hasDrainLife = false, attackerActor = null,
-      isMeltaRange = false, charDamageEffect = null, forceWeaponData = null, tokenInfo = null } = options;
+      isMeltaRange = false, charDamageEffect = null, forceWeaponData = null, tokenInfo = null,
+      ignoresNaturalArmour = false } = options;
 
     const defenses = this.getDefenses(location);
+    const effectiveArmorValue = ignoresNaturalArmour
+      ? Math.max(0, defenses.armorValue - defenses.naturalArmorValue)
+      : defenses.armorValue;
     const damageResult = CombatDialogHelper.calculateDamageResult({
       damage, penetration, felling, isPrimitive, isRazorSharp, degreesOfSuccess,
-      isScatter, isLongOrExtremeRange, armorValue: defenses.armorValue,
+      isScatter, isLongOrExtremeRange, armorValue: effectiveArmorValue,
       toughnessBonus: defenses.toughnessBonus,
       unnaturalToughnessMultiplier: defenses.unnaturalToughnessMultiplier, isMeltaRange
     });
