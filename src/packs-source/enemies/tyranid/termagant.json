@@ -1,24 +1,24 @@
 {
-  "_id": "enmy00000000001",
-  "name": "Hormagaunt",
+  "_id": "enmy00000000002",
+  "name": "Termagant",
   "type": "enemy",
-  "img": "systems/deathwatch/icons/enemies/tyranid/hormagaunt.webp",
+  "img": "systems/deathwatch/icons/enemies/tyranid/termagant.webp",
   "system": {
     "characteristics": {
       "ws": {
-        "base": 45
+        "base": 30
       },
       "bs": {
-        "base": 20
+        "base": 33
       },
       "str": {
-        "base": 35
+        "base": 32
       },
       "tg": {
         "base": 30
       },
       "ag": {
-        "base": 55
+        "base": 40
       },
       "int": {
         "base": 10
@@ -43,17 +43,14 @@
       "max": 0
     },
     "skills": {
-      "acrobatics": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      },
       "awareness": {
         "trained": true
       },
+      "climb": {
+        "trained": true
+      },
       "dodge": {
-        "trained": true,
-        "mastered": true
+        "trained": true
       },
       "silent_move": {
         "trained": true
@@ -65,7 +62,7 @@
     },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>Hormagaunts are fast-moving Tyranid assault organisms. They bound forward on powerful legs, leaping over obstacles to close with the enemy and tear them apart with their scything talons. They are among the most numerous of Tyranid bioforms and are often the first wave of a Tyranid assault.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "description": "<p>Termagants are the most numerous of the Tyranid bioforms, forming the bulk of any Tyranid swarm. They are small, skittering creatures armed with living ranged weapons called Fleshborers that fire borer beetles at the enemy. While individually weak, their sheer numbers make them a significant threat.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (3), Improved Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Dark Sight</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
     "psyRating": {
       "value": 0,
       "base": 0
@@ -73,7 +70,7 @@
   },
   "items": [
     {
-      "_id": "enmyitem0000010",
+      "_id": "enmyitem0000030",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -88,22 +85,7 @@
       }
     },
     {
-      "_id": "enmyitem0000011",
-      "name": "Swift Attack",
-      "type": "talent",
-      "img": "systems/deathwatch/icons/talents/generic.webp",
-      "system": {
-        "book": "DeathWatch Core Rulebook",
-        "page": "127",
-        "prerequisite": "Weapon Skill 35",
-        "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
-        "compendiumId": "tal00000000252",
-        "modifiers": []
-      }
-    },
-    {
-      "_id": "enmyitem0000020",
+      "_id": "enmyitem0000031",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -116,7 +98,7 @@
       }
     },
     {
-      "_id": "enmyitem0000021",
+      "_id": "enmyitem0000032",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (3)",
       "type": "trait",
@@ -138,9 +120,9 @@
       }
     },
     {
-      "_id": "enmyitem0000022",
+      "_id": "enmyitem0000033",
       "_sourceId": "trt000000000019",
-      "name": "Improved Natural Weapons",
+      "name": "Improved Natural Weapons (Teeth and Claws)",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
@@ -151,9 +133,9 @@
       }
     },
     {
-      "_id": "enmyitem0000023",
+      "_id": "enmyitem0000034",
       "_sourceId": "trt000000000021",
-      "name": "Instinctive Behaviour (Feed)",
+      "name": "Instinctive Behaviour (Lurk)",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
@@ -164,7 +146,7 @@
       }
     },
     {
-      "_id": "enmyitem0000024",
+      "_id": "enmyitem0000035",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -177,42 +159,39 @@
       }
     },
     {
-      "_id": "enmyitem0000025",
-      "_sourceId": "trt000000000027",
-      "name": "Overwhelming (Horde)",
-      "type": "trait",
-      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "_id": "enmyitem0000036",
+      "name": "Fleshborer",
+      "type": "weapon",
+      "img": "systems/deathwatch/icons/weapons/tyranid-fleshborer.webp",
       "system": {
-        "description": "<p>The creatures that make up the horde are capable of swarming over enemies and ripping them apart with a thousand cuts. The horde with this trait always rolls an extra 1d10 for damage caused by the horde in close combat as long as it has a magnitude equal to or greater than 20.</p>",
-        "book": "Core Rulebook",
-        "page": "133",
-        "modifiers": []
-      }
-    },
-    {
-      "_id": "enmyitem0000026",
-      "_sourceId": "trt000000000050",
-      "name": "Unnatural Speed",
-      "type": "trait",
-      "img": "systems/deathwatch/icons/generic/traits.webp",
-      "system": {
-        "description": "<p>The creature moves with incredible speed. For the purposes of determining movement, the creature doubles its Agility Bonus (after modifying AB from other traits and factors, specifically size).</p>",
-        "book": "Core Rulebook",
-        "page": "136",
-        "modifiers": [
+        "class": "Basic",
+        "dmg": "1d10+9",
+        "dmgType": "Rending",
+        "penetration": "3",
+        "range": "20",
+        "rof": "S/-/-",
+        "clip": "—",
+        "reload": "—",
+        "equipped": true,
+        "modifiers": [],
+        "attachedQualities": [
           {
-            "name": "Unnatural Speed",
-            "modifier": 2,
-            "type": "trait",
-            "effectType": "movement-multiplier",
-            "enabled": true
+            "id": "proven"
+          },
+          {
+            "id": "tearing"
+          },
+          {
+            "id": "living-ammunition"
           }
-        ]
+        ],
+        "attachedUpgrades": [],
+        "description": "<p>A Fleshborer is a nest for razor-fanged borer beetles which it ejects towards enemies.</p>"
       }
     },
     {
-      "_id": "enmyitem0000001",
-      "name": "Scything Talons",
+      "_id": "enmyitem0000037",
+      "name": "Teeth and Claws",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
       "system": {
@@ -228,12 +207,12 @@
         "modifiers": [],
         "attachedQualities": [],
         "attachedUpgrades": [],
-        "description": "<p>Razor-edged claws of fused chitin and serrated bone.</p>"
+        "description": "<p>Sharp teeth and claws used in close combat.</p>"
       }
     }
   ],
   "prototypeToken": {
-    "name": "Hormagaunt",
+    "name": "Termagant",
     "displayName": 30,
     "actorLink": false,
     "disposition": -1,

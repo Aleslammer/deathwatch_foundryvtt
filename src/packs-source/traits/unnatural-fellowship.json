@@ -10,6 +10,7 @@
       {
         "name": "Unnatural Fellowship",
         "modifier": "x2",
+        "type": "trait",
         "effectType": "characteristic-bonus",
         "valueAffected": "fs",
         "enabled": true

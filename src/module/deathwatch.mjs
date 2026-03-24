@@ -214,6 +214,7 @@ Hooks.on('renderChatMessage', (message, html) => {
         const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
         
         const magnitudeBonusDamage = parseInt(button.data('magnitudeBonusDamage')) || 0;
+        const ignoresNaturalArmour = button.data('ignoresNaturalArmour') === 'true' || button.data('ignoresNaturalArmour') === true;
         
         const sceneId = button.data('sceneId');
         const tokenId = button.data('tokenId');
@@ -225,7 +226,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage });
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour });
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {

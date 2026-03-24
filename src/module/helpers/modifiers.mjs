@@ -1,5 +1,23 @@
 import { DWConfig } from "./config.mjs";
-import { CHARACTERISTICS, CHARACTERISTIC_LABELS, MODIFIER_TYPES, EFFECT_TYPES } from "./constants.mjs";
+import { CHARACTERISTICS, CHARACTERISTIC_LABELS, MODIFIER_TYPES, EFFECT_TYPES, EFFECT_TYPE_LABELS } from "./constants.mjs";
+
+// Effect types that don't need a valueAffected field
+const NO_VALUE_AFFECTED = new Set([
+  EFFECT_TYPES.INITIATIVE, EFFECT_TYPES.WOUNDS, EFFECT_TYPES.ARMOR,
+  EFFECT_TYPES.PSY_RATING, EFFECT_TYPES.MOVEMENT, EFFECT_TYPES.MOVEMENT_MULTIPLIER,
+  EFFECT_TYPES.MOVEMENT_RESTRICTION, EFFECT_TYPES.WEAPON_DAMAGE, EFFECT_TYPES.WEAPON_RANGE,
+  EFFECT_TYPES.WEAPON_WEIGHT, EFFECT_TYPES.WEAPON_ROF, EFFECT_TYPES.WEAPON_BLAST,
+  EFFECT_TYPES.WEAPON_FELLING, EFFECT_TYPES.WEAPON_PENETRATION,
+  EFFECT_TYPES.WEAPON_PENETRATION_MODIFIER, EFFECT_TYPES.RIGHTEOUS_FURY_THRESHOLD,
+  EFFECT_TYPES.MAGNITUDE_BONUS_DAMAGE, EFFECT_TYPES.PREMATURE_DETONATION,
+  EFFECT_TYPES.IGNORES_NATURAL_ARMOUR
+]);
+
+// Effect types that use characteristic dropdown for valueAffected
+const CHARACTERISTIC_VALUE_AFFECTED = new Set([
+  EFFECT_TYPES.CHARACTERISTIC, EFFECT_TYPES.CHARACTERISTIC_BONUS,
+  EFFECT_TYPES.CHARACTERISTIC_POST_MULTIPLIER, EFFECT_TYPES.CHARACTERISTIC_DAMAGE
+]);
 
 export class ModifierHelper {
   
@@ -37,8 +55,22 @@ export class ModifierHelper {
     const modifier = actor.system.modifiers?.find(m => m._id === modifierId);
     if (!modifier) return;
 
-    let valueAffectedField = this._getValueAffectedField(modifier);
+    ModifierHelper._showEditDialog(modifier, async (updated) => {
+      const modifiers = [...actor.system.modifiers];
+      const index = modifiers.findIndex(m => m._id === modifierId);
+      if (index >= 0) {
+        modifiers[index] = { ...modifiers[index], ...updated };
+        await actor.update({ "system.modifiers": modifiers });
+      }
+    });
+  }
 
+  /**
+   * Show the shared modifier edit dialog for any document (actor or item).
+   * @param {Object} modifier - The modifier object to edit
+   * @param {Function} onSave - Callback receiving the updated fields
+   */
+  static _showEditDialog(modifier, onSave) {
     const content = `
       <div class="form-group">
         <label>Name:</label>
@@ -51,27 +83,22 @@ export class ModifierHelper {
       <div class="form-group">
         <label>Type:</label>
         <select name="type">
-          <option value="${MODIFIER_TYPES.UNTYPED}" ${modifier.type === MODIFIER_TYPES.UNTYPED ? 'selected' : ''}>Untyped</option>
-          <option value="${MODIFIER_TYPES.CIRCUMSTANCE}" ${modifier.type === MODIFIER_TYPES.CIRCUMSTANCE ? 'selected' : ''}>Circumstance</option>
-          <option value="${MODIFIER_TYPES.EQUIPMENT}" ${modifier.type === MODIFIER_TYPES.EQUIPMENT ? 'selected' : ''}>Equipment</option>
-          <option value="${MODIFIER_TYPES.TRAIT}" ${modifier.type === MODIFIER_TYPES.TRAIT ? 'selected' : ''}>Trait</option>
+          ${Object.entries(MODIFIER_TYPES).map(([, v]) =>
+            `<option value="${v}" ${modifier.type === v ? 'selected' : ''}>${v.charAt(0).toUpperCase() + v.slice(1)}</option>`
+          ).join('')}
         </select>
       </div>
       <div class="form-group">
         <label>Effect Type:</label>
         <select name="effectType" id="effectType">
-          <option value="${EFFECT_TYPES.CHARACTERISTIC}" ${modifier.effectType === EFFECT_TYPES.CHARACTERISTIC ? 'selected' : ''}>Characteristic</option>
-          <option value="${EFFECT_TYPES.SKILL}" ${modifier.effectType === EFFECT_TYPES.SKILL ? 'selected' : ''}>Skill</option>
-          <option value="${EFFECT_TYPES.CHARACTERISTIC_BONUS}" ${modifier.effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS ? 'selected' : ''}>Characteristic Bonus</option>
-          <option value="${EFFECT_TYPES.INITIATIVE}" ${modifier.effectType === EFFECT_TYPES.INITIATIVE ? 'selected' : ''}>Initiative</option>
-          <option value="${EFFECT_TYPES.WOUNDS}" ${modifier.effectType === EFFECT_TYPES.WOUNDS ? 'selected' : ''}>Wounds</option>
-          <option value="${EFFECT_TYPES.ARMOR}" ${modifier.effectType === EFFECT_TYPES.ARMOR ? 'selected' : ''}>Armor</option>
-          <option value="${EFFECT_TYPES.PSY_RATING}" ${modifier.effectType === EFFECT_TYPES.PSY_RATING ? 'selected' : ''}>Psy Rating</option>
+          ${Object.entries(EFFECT_TYPE_LABELS).map(([key, label]) =>
+            `<option value="${key}" ${modifier.effectType === key ? 'selected' : ''}>${label}</option>`
+          ).join('')}
         </select>
       </div>
-      <div class="form-group" id="valueAffectedGroup" style="${modifier.effectType === EFFECT_TYPES.INITIATIVE || modifier.effectType === EFFECT_TYPES.WOUNDS || modifier.effectType === EFFECT_TYPES.ARMOR || modifier.effectType === EFFECT_TYPES.PSY_RATING ? 'display: none;' : ''}">
+      <div class="form-group" id="valueAffectedGroup" style="${NO_VALUE_AFFECTED.has(modifier.effectType) ? 'display: none;' : ''}">
         <label>Value Affected:</label>
-        ${valueAffectedField}
+        ${ModifierHelper._getValueAffectedField(modifier)}
       </div>
     `;
 
@@ -83,18 +110,18 @@ export class ModifierHelper {
           const effectType = ev.target.value;
           const group = html.find('#valueAffectedGroup');
           
-          if (effectType === EFFECT_TYPES.INITIATIVE || effectType === EFFECT_TYPES.WOUNDS || effectType === EFFECT_TYPES.ARMOR || effectType === EFFECT_TYPES.PSY_RATING) {
+          if (NO_VALUE_AFFECTED.has(effectType)) {
             group.hide();
           } else {
             group.show();
             group.find('input, select').remove();
             
-            if (effectType === EFFECT_TYPES.CHARACTERISTIC || effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS) {
-              group.append(this._getCharacteristicSelect());
+            if (CHARACTERISTIC_VALUE_AFFECTED.has(effectType)) {
+              group.append(ModifierHelper._getCharacteristicSelect());
             } else if (effectType === EFFECT_TYPES.SKILL) {
-              group.append(this._getSkillSelect());
+              group.append(ModifierHelper._getSkillSelect());
             } else {
-              group.append(`<input type="text" name="valueAffected" value="" placeholder="e.g., acrobatics" />`);
+              group.append(`<input type="text" name="valueAffected" value="" />`);
             }
           }
         });
@@ -103,19 +130,13 @@ export class ModifierHelper {
         save: {
           label: "Save",
           callback: async (html) => {
-            const modifiers = [...actor.system.modifiers];
-            const index = modifiers.findIndex(m => m._id === modifierId);
-            if (index >= 0) {
-              modifiers[index] = {
-                ...modifiers[index],
-                name: html.find('[name="name"]').val(),
-                modifier: html.find('[name="modifier"]').val(),
-                type: html.find('[name="type"]').val(),
-                effectType: html.find('[name="effectType"]').val(),
-                valueAffected: html.find('[name="valueAffected"]').val()
-              };
-              await actor.update({ "system.modifiers": modifiers });
-            }
+            onSave({
+              name: html.find('[name="name"]').val(),
+              modifier: html.find('[name="modifier"]').val(),
+              type: html.find('[name="type"]').val(),
+              effectType: html.find('[name="effectType"]').val(),
+              valueAffected: html.find('[name="valueAffected"]').val()
+            });
           }
         },
         cancel: { label: "Cancel" }
@@ -125,30 +146,22 @@ export class ModifierHelper {
   }
 
   static _getValueAffectedField(modifier) {
-    if (modifier.effectType === EFFECT_TYPES.CHARACTERISTIC || modifier.effectType === EFFECT_TYPES.CHARACTERISTIC_BONUS) {
+    if (CHARACTERISTIC_VALUE_AFFECTED.has(modifier.effectType)) {
       return this._getCharacteristicSelect(modifier.valueAffected);
     } else if (modifier.effectType === EFFECT_TYPES.SKILL) {
       return this._getSkillSelect(modifier.valueAffected);
     } else {
-      return `<input type="text" name="valueAffected" value="${modifier.valueAffected}" placeholder="e.g., acrobatics" />`;
+      return `<input type="text" name="valueAffected" value="${modifier.valueAffected || ''}" />`;
     }
   }
 
   static _getCharacteristicSelect(selected = '') {
-    return `
-      <select name="valueAffected">
-        <option value="">Select Characteristic</option>
-        <option value="${CHARACTERISTICS.WS}" ${selected === CHARACTERISTICS.WS ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.WS]}</option>
-        <option value="${CHARACTERISTICS.BS}" ${selected === CHARACTERISTICS.BS ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.BS]}</option>
-        <option value="${CHARACTERISTICS.STR}" ${selected === CHARACTERISTICS.STR ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.STR]}</option>
-        <option value="${CHARACTERISTICS.TG}" ${selected === CHARACTERISTICS.TG ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.TG]}</option>
-        <option value="${CHARACTERISTICS.AG}" ${selected === CHARACTERISTICS.AG ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.AG]}</option>
-        <option value="${CHARACTERISTICS.INT}" ${selected === CHARACTERISTICS.INT ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.INT]}</option>
-        <option value="${CHARACTERISTICS.PER}" ${selected === CHARACTERISTICS.PER ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.PER]}</option>
-        <option value="${CHARACTERISTICS.WIL}" ${selected === CHARACTERISTICS.WIL ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.WIL]}</option>
-        <option value="${CHARACTERISTICS.FS}" ${selected === CHARACTERISTICS.FS ? 'selected' : ''}>${CHARACTERISTIC_LABELS[CHARACTERISTICS.FS]}</option>
-      </select>
-    `;
+    let html = '<select name="valueAffected"><option value="">Select Characteristic</option>';
+    for (const [, key] of Object.entries(CHARACTERISTICS)) {
+      html += `<option value="${key}" ${selected === key ? 'selected' : ''}>${CHARACTERISTIC_LABELS[key]}</option>`;
+    }
+    html += '</select>';
+    return html;
   }
 
   static _getSkillSelect(selected = '') {

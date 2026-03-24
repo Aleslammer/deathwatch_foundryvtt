@@ -10,6 +10,7 @@
       {
         "name": "Unnatural Perception",
         "modifier": "x2",
+        "type": "trait",
         "effectType": "characteristic-bonus",
         "valueAffected": "per",
         "enabled": true

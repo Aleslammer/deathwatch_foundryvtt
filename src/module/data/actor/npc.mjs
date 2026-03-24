@@ -67,6 +67,7 @@ export default class DeathwatchNPC extends DeathwatchActorBase {
     ModifierCollector.applyWoundModifiers(this.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(this.fatigue, this.characteristics?.tg?.mod || 0);
     ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
+    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, actor.items);
 
     // Calculate movement from Agility Bonus
     const agBonus = this.characteristics?.ag?.mod || 0;

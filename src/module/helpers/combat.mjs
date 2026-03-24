@@ -188,6 +188,19 @@ export class CombatHelper {
     return null;
   }
 
+  static _getIgnoresNaturalArmour(weapon, actor) {
+    if (!weapon.system.loadedAmmo || !actor) return false;
+    const ammo = actor.items.get(weapon.system.loadedAmmo);
+    if (!ammo || !Array.isArray(ammo.system.modifiers)) return false;
+    
+    for (const mod of ammo.system.modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'ignores-natural-armour') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
     return RighteousFuryHelper.rollConfirmation(actor, targetNumber, hitLocation);
   }
@@ -277,6 +290,7 @@ export class CombatHelper {
             const furyThreshold = this._getFuryThreshold(weapon, actor);
             const charDamageEffect = this._getCharacteristicDamageEffect(weapon, actor);
             const magnitudeBonusDamage = this._getMagnitudeBonusDamage(weapon, actor);
+            const ignoresNaturalArmour = this._getIgnoresNaturalArmour(weapon, actor);
             const isForce = weapon.system.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === 'force') || false;
             const psyRating = actor.system?.psyRating?.value || 0;
             const forceWeaponData = (isForce && psyRating > 0) ? { attackerId: actor.id, psyRating } : null;
@@ -328,10 +342,10 @@ export class CombatHelper {
                   damage: totalDamage, penetration, location: hitLocations[i],
                   damageType: weapon.system.dmgType || 'Impact',
                   isPrimitive, isRazorSharp, degreesOfSuccess,
-                  isScatter, isLongOrExtremeRange, isMeltaRange, magnitudeBonusDamage
+                  isScatter, isLongOrExtremeRange, isMeltaRange, magnitudeBonusDamage, ignoresNaturalArmour
                 });
               } else {
-                const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage) : '';
+                const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour) : '';
                 const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
                 await roll.toMessage({
@@ -346,7 +360,7 @@ export class CombatHelper {
                 
                   totalDamage += furyDamage;
                 
-                  const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage) : '';
+                  const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour) : '';
                   const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 
                   await ChatMessage.create({

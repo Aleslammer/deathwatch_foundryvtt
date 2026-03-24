@@ -163,9 +163,20 @@ function syncEmbeddedItems() {
         }
 
         const fields = [];
-        const srcMods = JSON.stringify(source.system?.modifiers || []);
-        const itemMods = JSON.stringify(item.system?.modifiers || []);
-        if (srcMods !== itemMods) { item.system.modifiers = JSON.parse(srcMods); fields.push('modifiers'); }
+        const srcMods = source.system?.modifiers || [];
+        const itemMods = item.system?.modifiers || [];
+        const mergedMods = srcMods.map(srcMod => {
+          const isPlaceholder = String(srcMod.modifier) === '0';
+          if (isPlaceholder) {
+            const localMod = itemMods.find(m => m._id === srcMod._id);
+            if (localMod) return { ...srcMod, modifier: localMod.modifier };
+          }
+          return srcMod;
+        });
+        const mergedStr = JSON.stringify(mergedMods);
+        const itemStr = JSON.stringify(itemMods);
+        if (mergedStr !== itemStr) { item.system.modifiers = JSON.parse(mergedStr); fields.push('modifiers'); }
+        if (source.system?.description && item.system?.description !== source.system.description) { item.system.description = source.system.description; fields.push('description'); }
         if (source.system?.book && item.system?.book !== source.system.book) { item.system.book = source.system.book; fields.push('book'); }
         if (source.system?.page && item.system?.page !== source.system.page) { item.system.page = source.system.page; fields.push('page'); }
         if (source.img && item.img !== source.img) { item.img = source.img; fields.push('img'); }

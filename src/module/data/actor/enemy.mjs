@@ -77,6 +77,7 @@ export default class DeathwatchEnemy extends DeathwatchActorBase {
     ModifierCollector.applyWoundModifiers(this.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(this.fatigue, this.characteristics?.tg?.mod || 0);
     ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
+    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, actor.items);
     ModifierCollector.applyPsyRatingModifiers(this.psyRating, allModifiers);
 
     // Apply force weapon modifiers after psy rating is computed

@@ -10,6 +10,7 @@
       {
         "name": "Unnatural Intelligence",
         "modifier": "x2",
+        "type": "trait",
         "effectType": "characteristic-bonus",
         "valueAffected": "int",
         "enabled": true

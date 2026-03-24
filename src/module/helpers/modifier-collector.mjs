@@ -384,4 +384,24 @@ export class ModifierCollector {
       }
     }
   }
+
+  /**
+   * Calculate total natural armor value from trait-sourced armor modifiers.
+   * @param {Array} modifiers - All collected modifiers
+   * @param {Map|Array} items - Actor items collection
+   * @returns {number} Total natural armor bonus from traits
+   */
+  static calculateNaturalArmor(modifiers, items) {
+    const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
+    let total = 0;
+    for (const mod of modifiers) {
+      if (mod.enabled !== false && mod.effectType === 'armor') {
+        const sourceItem = itemsArray.find(i => i.name === mod.source);
+        if (sourceItem && sourceItem.type === 'trait') {
+          total += parseInt(mod.modifier) || 0;
+        }
+      }
+    }
+    return total;
+  }
 }

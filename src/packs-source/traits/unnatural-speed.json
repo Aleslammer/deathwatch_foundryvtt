@@ -10,6 +10,7 @@
       {
         "name": "Unnatural Speed",
         "modifier": 2,
+        "type": "trait",
         "effectType": "movement-multiplier",
         "enabled": true
       }

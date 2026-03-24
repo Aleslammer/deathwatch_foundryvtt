@@ -37,6 +37,12 @@
         "modifier": "1",
         "effectType": "magnitude-bonus-damage",
         "enabled": true
+      },
+      {
+        "name": "Hellfire Ignores Natural Armour",
+        "modifier": "1",
+        "effectType": "ignores-natural-armour",
+        "enabled": true
       }
     ]
   },

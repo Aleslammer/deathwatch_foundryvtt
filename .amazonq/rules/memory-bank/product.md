@@ -27,6 +27,7 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Horde-specific combat: blast hits, flame hits, melee DoS hits
 - Batch damage application with summary messages
 - Horde destruction tracking
+- Pre-built Tyranid enemies: Hormagaunt, Termagant (each with enemy + horde variant)
 
 ### Combat System
 - Initiative formula: 1d10 + Agility Bonus + Initiative Bonus
@@ -61,6 +62,7 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Demeanours (19 personality traits)
 - Critical Effects (by damage type)
 - Roll Tables (scatter, haywire effects)
+- Enemies (Tyranid: Hormagaunt, Termagant — each with enemy and horde variants)
 - All items include book references and page numbers
 
 ### Lore and Knowledge System

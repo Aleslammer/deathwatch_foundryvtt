@@ -110,7 +110,7 @@
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Sees normally in total darkness, never takes a penalty for fighting in dim or no lighting.</p>",
+        "description": "<p>A creature with this trait sees normally even in areas of total darkness, and never takes a penalty for fighting in areas of dim or no lighting.</p>",
         "book": "Core Rulebook",
         "page": "130",
         "modifiers": []
@@ -119,14 +119,23 @@
     {
       "_id": "horditem0000021",
       "_sourceId": "trt000000000025",
-      "name": "Natural Armour (2)",
+      "name": "Natural Armour (3)",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Chitinous Carapace — 2 Armour Points to all locations.</p>",
+        "description": "<p>This creature has a naturally tough hide or an exoskeleton, affording it some protection against attacks. This trait always includes a numeric value to indicate how many Armour Points the creature gains to all locations.</p>",
         "book": "Core Rulebook",
         "page": "133",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "natural-armour-mod",
+            "name": "Natural Armour",
+            "modifier": "3",
+            "type": "trait",
+            "effectType": "armor",
+            "enabled": true
+          }
+        ]
       }
     },
     {
@@ -136,7 +145,7 @@
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Scything Talons. Natural weapon attacks do not count as Primitive.</p>",
+        "description": "<p>This creature's attacks are powerful enough to crush plasteel or punch through armour. The creature gains all the benefits of the Natural Weapons Trait, except that its attacks do not count as Primitive.</p>",
         "book": "Core Rulebook",
         "page": "132",
         "modifiers": []
@@ -149,7 +158,7 @@
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Without synapse, attacks any living non-Tyranid creature. Gains Fearless and Frenzy.</p>",
+        "description": "<p>A Tyranid creature with this trait will be reduced to acting according to their instincts if they are separated from the controlling presence of the Hive Mind. In effect, this means that any encounter in which creatures with this trait are not accompanied by a Tyranid creature with the Synapse Creature trait (see page 135 in this chapter), they will behave in a particular way. The creature's instinctive behaviour is noted in parentheses and has the following effects:</p><p><strong>Feed:</strong> The creature's instinct is to feed on flesh, blood, and bone and its hunger can never be sated. The creature will try to find and attack any living, biological, non-Tyranid creature and eat them. In this state, the creature gains the Fearless and Frenzy talents. The same applies to a Horde with this trait not under the influence of a synapse creature.</p><p><strong>Lurk:</strong> The creature's instincts are to find shelter from attack, to hide and survive. It will try to flee and find shelter in whatever way the situation allows. In a starship, for example, it may scuttle into the ducting system. When confronted, the creature's aim is to try to escape and will only attack if left no avenue for escape or in order to survive. If a Horde with this trait is not under the influence of a synapse creature, it will automatically break (see Breaking a Horde on page 360 of this chapter).</p><p><strong>Stalk:</strong> The creature's instinct is to remain unseen, to find prey, slay it, feed, and then resume its hunt for others. In this state, the creature gains the Stealth (Ag) +10 skill. It will not attack enemies unless it can take them by surprise or outnumbers them. Having made a kill, the creature briefly feeds before fleeing. A horde with this trait automatically breaks (see Breaking a Horde on page 360 of this chapter), with individual creatures scattering to find shadows from which to begin their hunt.</p>",
         "book": "Core Rulebook",
         "page": "132",
         "modifiers": []
@@ -162,7 +171,7 @@
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Immune to pinning, mind-affecting Psychic Powers, cold, heat, diseases, poisons, and Toxic weapons.</p>",
+        "description": "<p>The creature is a species of Tyranid; the all consuming alien race ruled by the will of the Hive Mind that links and controls all Tyranids. Tyranids are immune to all of the effects of the following: pinning, mind-affecting Psychic Powers, warp-based powers that affect the mind, cold, heat, diseases, and poisons, including the effects of weapons with the Toxic Quality.</p>",
         "book": "Core Rulebook",
         "page": "136",
         "modifiers": []
@@ -175,7 +184,7 @@
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Rolls an extra 1d10 for horde melee damage while Magnitude is 20 or greater.</p>",
+        "description": "<p>The creatures that make up the horde are capable of swarming over enemies and ripping them apart with a thousand cuts. The horde with this trait always rolls an extra 1d10 for damage caused by the horde in close combat as long as it has a magnitude equal to or greater than 20.</p>",
         "book": "Core Rulebook",
         "page": "133",
         "modifiers": []
@@ -188,13 +197,14 @@
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "description": "<p>Doubles Agility Bonus for movement purposes.</p>",
+        "description": "<p>The creature moves with incredible speed. For the purposes of determining movement, the creature doubles its Agility Bonus (after modifying AB from other traits and factors, specifically size).</p>",
         "book": "Core Rulebook",
         "page": "136",
         "modifiers": [
           {
             "name": "Unnatural Speed",
             "modifier": 2,
+            "type": "trait",
             "effectType": "movement-multiplier",
             "enabled": true
           }
