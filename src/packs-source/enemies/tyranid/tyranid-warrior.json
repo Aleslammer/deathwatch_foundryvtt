@@ -1,5 +1,5 @@
 {
-  "_id": "enmy00000000003",
+  "_id": "enmytyranid00003",
   "name": "Tyranid Warrior",
   "type": "enemy",
   "img": "systems/deathwatch/icons/enemies/tyranid/warrior.webp",
@@ -29,7 +29,7 @@
   },
   "items": [
     {
-      "_id": "enmyitem0000040",
+      "_id": "eityranid0300001",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "_id": "enmyitem0000041",
+      "_id": "eityranid0300002",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -59,7 +59,7 @@
       }
     },
     {
-      "_id": "enmyitem0000050",
+      "_id": "eityranid0300003",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -72,7 +72,7 @@
       }
     },
     {
-      "_id": "enmyitem0000051",
+      "_id": "eityranid0300004",
       "_sourceId": "trt000000000013",
       "name": "Fear 3 (Horrifying)",
       "type": "trait",
@@ -85,7 +85,7 @@
       }
     },
     {
-      "_id": "enmyitem0000052",
+      "_id": "eityranid0300005",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (8)",
       "type": "trait",
@@ -107,7 +107,7 @@
       }
     },
     {
-      "_id": "enmyitem0000053",
+      "_id": "eityranid0300006",
       "_sourceId": "trt000000000024",
       "name": "Multiple Arms",
       "type": "trait",
@@ -129,7 +129,7 @@
       }
     },
     {
-      "_id": "enmyitem0000054",
+      "_id": "eityranid0300007",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -152,7 +152,7 @@
       }
     },
     {
-      "_id": "enmyitem0000055",
+      "_id": "eityranid0300008",
       "_sourceId": "trt000000000052",
       "name": "Unnatural Toughness",
       "type": "trait",
@@ -175,7 +175,7 @@
       }
     },
     {
-      "_id": "enmyitem0000056",
+      "_id": "eityranid0300009",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons (Scything Talons or Rending Claws)",
       "type": "trait",
@@ -188,7 +188,7 @@
       }
     },
     {
-      "_id": "enmyitem0000057",
+      "_id": "eityranid0300010",
       "_sourceId": "trt000000000032",
       "name": "Shadow in the Warp",
       "type": "trait",
@@ -201,7 +201,7 @@
       }
     },
     {
-      "_id": "enmyitem0000058",
+      "_id": "eityranid0300011",
       "_sourceId": "trt000000000033",
       "name": "Size (Enormous)",
       "type": "trait",
@@ -232,7 +232,7 @@
       }
     },
     {
-      "_id": "enmyitem0000059",
+      "_id": "eityranid0300012",
       "_sourceId": "trt000000000039",
       "name": "Synapse Creature",
       "type": "trait",
@@ -245,7 +245,7 @@
       }
     },
     {
-      "_id": "enmyitem0000060",
+      "_id": "eityranid0300013",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -258,7 +258,7 @@
       }
     },
     {
-      "_id": "enmyitem0000070",
+      "_id": "eityranid0300014",
       "name": "Scything Talons",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
@@ -279,7 +279,7 @@
       }
     },
     {
-      "_id": "enmyitem0000071",
+      "_id": "eityranid0300015",
       "name": "Rending Claws",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-rending-claws.webp",
@@ -300,7 +300,7 @@
       }
     },
     {
-      "_id": "enmyitem0000072",
+      "_id": "eityranid0300016",
       "name": "Devourer",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-devourer.webp",
@@ -326,7 +326,7 @@
       }
     },
     {
-      "_id": "enmyitem0000073",
+      "_id": "eityranid0300017",
       "name": "Deathspitter",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-deathspitter.webp",

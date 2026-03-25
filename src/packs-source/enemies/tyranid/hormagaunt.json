@@ -1,5 +1,5 @@
 {
-  "_id": "enmy00000000001",
+  "_id": "enmytyranid00001",
   "name": "Hormagaunt",
   "type": "enemy",
   "img": "systems/deathwatch/icons/enemies/tyranid/hormagaunt.webp",
@@ -31,7 +31,7 @@
   },
   "items": [
     {
-      "_id": "enmyitem0000010",
+      "_id": "eityranid0100001",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -46,7 +46,7 @@
       }
     },
     {
-      "_id": "enmyitem0000011",
+      "_id": "eityranid0100002",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -61,7 +61,7 @@
       }
     },
     {
-      "_id": "enmyitem0000020",
+      "_id": "eityranid0100003",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -74,7 +74,7 @@
       }
     },
     {
-      "_id": "enmyitem0000021",
+      "_id": "eityranid0100004",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (3)",
       "type": "trait",
@@ -96,7 +96,7 @@
       }
     },
     {
-      "_id": "enmyitem0000022",
+      "_id": "eityranid0100005",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons",
       "type": "trait",
@@ -109,7 +109,7 @@
       }
     },
     {
-      "_id": "enmyitem0000023",
+      "_id": "eityranid0100006",
       "_sourceId": "trt000000000021",
       "name": "Instinctive Behaviour (Feed)",
       "type": "trait",
@@ -122,7 +122,7 @@
       }
     },
     {
-      "_id": "enmyitem0000024",
+      "_id": "eityranid0100007",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -135,7 +135,7 @@
       }
     },
     {
-      "_id": "enmyitem0000025",
+      "_id": "eityranid0100008",
       "_sourceId": "trt000000000027",
       "name": "Overwhelming (Horde)",
       "type": "trait",
@@ -148,7 +148,7 @@
       }
     },
     {
-      "_id": "enmyitem0000026",
+      "_id": "eityranid0100009",
       "_sourceId": "trt000000000050",
       "name": "Unnatural Speed",
       "type": "trait",
@@ -170,7 +170,7 @@
       }
     },
     {
-      "_id": "enmyitem0000001",
+      "_id": "eityranid0100010",
       "name": "Scything Talons",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",

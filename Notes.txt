@@ -56,37 +56,44 @@ Hordes
 
 
 
-Lets create a new enemy type Ork.  If the weapon does not exist lets create it as a weapon for orks
+Back to Tyranids
 
-ORK bOY
+Purestrain Genestealer
+Book: Mark of the Xenos
+Page 39
 
-Description: The majority of Orks encountered throughout the galaxy are 
-Ork Boyz, the common, foot-slogging warriors that make up 
-the bulk of the greenskin horde. They are neither rulers nor 
-leaders, for that role belongs to the Nobz, but nor are they 
-servants or slaves, for the Gretchin fulfil that role. They exist for 
-one purpose, and one purpose alone—to wage war. Orks care 
-not where war is waged or against whom, and in the absence of 
-a worthy foe, they happily fight amongst themselves.
-Ork Boyz are tough, hulking brutes with thick, gnarly 
-green hides. Fully erect they stand somewhere between 
-six and seven feet tall, but most stand hunched over. Their 
-bestial, almost porcine faces have beady little red eyes and a 
-jutting jaw brimming with long tusks. Their skulls are thick, 
-their arms long and ape-like, and their torsos extremely well
-muscled. They typically wear battered and worn clothing and 
-armour, cobbled together from whatever scraps they can find, 
-take, or steal, and wield crude weaponry ranging from loud 
-slug-firing pistols to even louder rifles.
+Description: Genestealers are terrifying close combat horrors with the 
+individual strength and speed to tear apart even an armoured 
+Space Marine if they can get close enough to land a telling 
+blow. They stand almost six feet in height, even hunched over 
+as they are on hind legs, their four arms ending in claws, talons 
+or other bio-weapons capable of cutting through ceramite 
+and plasteel with equal ease. Cunning and independent, 
+Genestealers are also one of the few Tyranid creatures which 
+can exist away from the nurturing and controlling influence 
+of the Hive Mind, using their own innate intelligence and 
+brood telepathy to form tight-knit groups. These groups can 
+survive for decades or even centuries on worlds, hiding their 
+presence and infecting more and more of the population until 
+the time to strike arrives, usually coinciding with the arrival 
+of the hive fleet and the wholesale invasion and consumption 
+of the world itself.
+Purestrain Genestealers are Genestealers which have been 
+spawned not through the process of infecting hosts but 
+rather by the hive ships themselves in great bio-factories and 
+birthing vats. Not polluted or altered by “inferior” genetic 
+material, they are markedly stronger and faster than a normal 
+Genestealer and possess a wider variety of adaptive bio
+morphs. This is intentional, as Purestrain Genestealers are 
+the creatures from which all other Genestealers are born, and 
+even a single Purestrain Genestealer can create a vast brood 
+from a local population given time and enough raw material. 
 
-Ork boy (Troops) Profile
+Purestrain Genestealer (Elite) Profile
 WS bS S T Ag Int Per WP Fel
-40 20 46 45 30 20 25 25 20
-Wounds: 15
-Skills: Awareness (Per), Dodge (Ag), Intimidate (S)
-Talents: Basic Weapon Training (Primitive, SP), Bulging Biceps, Crushing Blow, Furious Assault, Hardy, Iron Jaw, Melee Weapon Training (Chain, Primitive), Pistol Weapon Training (Primitive, SP), Street Fighting, True Grit.
-Traits: Brutal Charge, Make it Work, Mob Rule, Sturdy, Unnatural Toughness
-Armour: Flak armour (Body 2)
-Weapons: Slugga (20m; S/3/–; 1d10+9 I; Pen 2; Clip 18; Reload Full; Inaccurate, Unreliable) or Shoota (60m; S/3/10; 1d10+8 I; Pen 2; Reload Full; Inaccurate, Unreliable), choppa (1d10+7 R; Pen 2; Tearing, Unbalanced).
-Gear: Shiny bitz, really small Squig.
-Horde: Ork Boyz can form a Horde, in which case they gain the Overwhelming Trait.
+65 0 45 40 40 35 60 45 0
+Wounds: 20
+Skills: AAwareness (Per) +10, Climb (S) +10, Dodge (Ag) +10, Swim (S) +10.
+Talents: Ambidextrous, Fearless, Hard Target, Leap Up, Lightning Attack, Lightning Reflexes, Step Aside, Swift Attack.
+Traits: Dark Sight, Fear 2 (Frightening), Improved Natural Weapons (Rending Claws), Multiple Arms, Natural Armour (4), Unnatural Agility, Unnatural Speed, Unnatural Strength, Unnatural Toughness,  Tyranid
+Weapons: Rending Claws (1d10+4 R; Pen 5, Razor Sharp)

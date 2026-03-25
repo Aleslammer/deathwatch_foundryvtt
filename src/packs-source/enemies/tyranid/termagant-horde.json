@@ -1,5 +1,5 @@
 {
-  "_id": "hord00000000002",
+  "_id": "hordtyranid00002",
   "name": "Termagant Horde",
   "type": "horde",
   "img": "systems/deathwatch/icons/enemies/tyranid/termagant_horde.webp",
@@ -32,7 +32,7 @@
   },
   "items": [
     {
-      "_id": "horditem0000030",
+      "_id": "hityranid0200001",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -47,7 +47,7 @@
       }
     },
     {
-      "_id": "horditem0000031",
+      "_id": "hityranid0200002",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -60,7 +60,7 @@
       }
     },
     {
-      "_id": "horditem0000032",
+      "_id": "hityranid0200003",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (3)",
       "type": "trait",
@@ -82,7 +82,7 @@
       }
     },
     {
-      "_id": "horditem0000033",
+      "_id": "hityranid0200004",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons (Teeth and Claws)",
       "type": "trait",
@@ -95,7 +95,7 @@
       }
     },
     {
-      "_id": "horditem0000034",
+      "_id": "hityranid0200005",
       "_sourceId": "trt000000000021",
       "name": "Instinctive Behaviour (Lurk)",
       "type": "trait",
@@ -108,7 +108,7 @@
       }
     },
     {
-      "_id": "horditem0000035",
+      "_id": "hityranid0200006",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -121,7 +121,7 @@
       }
     },
     {
-      "_id": "horditem0000036",
+      "_id": "hityranid0200007",
       "_sourceId": "trt000000000027",
       "name": "Overwhelming (Horde)",
       "type": "trait",
@@ -134,7 +134,7 @@
       }
     },
     {
-      "_id": "horditem0000037",
+      "_id": "hityranid0200008",
       "name": "Fleshborer",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-fleshborer.webp",
@@ -159,7 +159,7 @@
       }
     },
     {
-      "_id": "horditem0000038",
+      "_id": "hityranid0200009",
       "name": "Teeth and Claws",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
@@ -180,7 +180,7 @@
       }
     },
     {
-      "_id": "horditem0000039",
+      "_id": "hityranid0200010",
       "name": "Strangleweb",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-strangleweb.webp",

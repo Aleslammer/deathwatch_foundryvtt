@@ -669,6 +669,11 @@ Keys are ordered logically per item type, not alphabetically:
   - Armor: `armr00000000###`
   - Talents: `tal000000000###`
   - Traits: `trt000000000###`
+  - Enemies: `enmy{faction}{pad}{num}` (e.g., `enmytyranid00001`, `enmyork000000001`)
+  - Hordes: `hord{faction}{pad}{num}` (e.g., `hordtyranid00001`)
+  - Enemy items: `ei{faction}{num}{pad}0{seq}` (e.g., `eityranid0100001`)
+  - Horde items: `hi{faction}{num}{pad}0{seq}` (e.g., `hityranid0100001`)
+  - See `enemies.md` for full faction-based ID convention details
 - **Talents MUST have compendiumId**: All talent items must have `system.compendiumId` set to match their `_id`
   - Used by XPCalculator and chapter/specialty cost overrides
   - Run `node builds/scripts/sortTalentJsons.mjs` to ensure compendiumId is set

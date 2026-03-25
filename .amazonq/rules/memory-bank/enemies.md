@@ -3,11 +3,35 @@
 ## Overview
 Enemy and horde actors are stored in `src/packs-source/enemies/` organized by faction subfolder. Each enemy has a normal (enemy type) and optionally a horde variant (horde type).
 
-## ID Conventions
-- **Enemy IDs**: `enmy00000000###`
-- **Horde IDs**: `hord00000000###`
-- **Embedded item IDs (enemy)**: `enmyitem00000##`
-- **Embedded item IDs (horde)**: `horditem00000##`
+## ID Conventions (Faction-Based)
+
+All enemy/horde IDs use a faction-based format for self-documenting, collision-free identifiers. IDs are always **16 characters**.
+
+### Actor IDs
+- **Enemy**: `enmy{faction}{padding}{number}` — e.g., `enmytyranid00001`, `enmyork000000001`
+- **Horde**: `hord{faction}{padding}{number}` — e.g., `hordtyranid00001`, `hordork000000001`
+
+### Embedded Item IDs
+- **Enemy items**: `ei{faction}{number}{padding}0{seq}` — e.g., `eityranid0100001`, `eiork0100000001`
+- **Horde items**: `hi{faction}{number}{padding}0{seq}` — e.g., `hityranid0100001`, `hiork0100000001`
+
+Where `{number}` matches the actor number and `{seq}` is a zero-padded sequential item index (01, 02, ...).
+
+### Adding a New Faction
+1. Create subfolder: `src/packs-source/enemies/{faction}/`
+2. Choose a short faction key (e.g., `tyranid`, `ork`, `tau`, `chaos`)
+3. Number enemies sequentially within the faction starting at `01`
+4. Add the faction to `builds/scripts/migrateEnemyIds.mjs` FACTIONS array
+5. Run the migration script to assign IDs, then `npm run build:packs`
+
+### Adding a New Enemy to an Existing Faction
+1. Create JSON file in the faction subfolder
+2. Use the next sequential number for the faction
+3. Add to `migrateEnemyIds.mjs` and run it, OR manually assign IDs following the pattern
+4. Run `npm run build:packs` to validate
+
+### Migration Script
+`builds/scripts/migrateEnemyIds.mjs` — Assigns faction-based IDs to all enemies/hordes. Supports multiple factions. Safe to re-run (idempotent on numbering). Run `npm run format:json` after to restore key ordering.
 
 ## Compendium Entries
 
@@ -16,8 +40,8 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 #### Hormagaunt
 | Variant | ID | File |
 |---------|-----|------|
-| Enemy | `enmy00000000001` | `hormagaunt.json` |
-| Horde | `hord00000000001` | `hormagaunt-horde.json` |
+| Enemy | `enmytyranid00001` | `hormagaunt.json` |
+| Horde | `hordtyranid00001` | `hormagaunt-horde.json` |
 
 **Stats:** WS 45, BS 20, S 35, T 30, AG 55, INT 10, PER 40, WP 30, Fel 0
 **Wounds:** 9 (Enemy), Magnitude 30 (Horde)
@@ -31,8 +55,8 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 #### Termagant
 | Variant | ID | File |
 |---------|-----|------|
-| Enemy | `enmy00000000002` | `termagant.json` |
-| Horde | `hord00000000002` | `termagant-horde.json` |
+| Enemy | `enmytyranid00002` | `termagant.json` |
+| Horde | `hordtyranid00002` | `termagant-horde.json` |
 
 **Stats:** WS 30, BS 33, S 32, T 30, AG 40, INT 10, PER 40, WP 30, Fel 0
 **Wounds:** 9 (Enemy), Magnitude 30 (Horde)
@@ -46,7 +70,7 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 #### Tyranid Warrior
 | Variant | ID | File |
 |---------|-----|------|
-| Enemy | `enmy00000000003` | `tyranid-warrior.json` |
+| Enemy | `enmytyranid00003` | `tyranid-warrior.json` |
 
 **Stats:** WS 55, BS 30, S 60, T 50, AG 44, INT 22, PER 35, WP 50, Fel 0
 **Wounds:** 48
@@ -60,7 +84,7 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 #### Tyranid Shrike
 | Variant | ID | File |
 |---------|-----|------|
-| Enemy | `enmy00000000004` | `tyranid-shrike.json` |
+| Enemy | `enmytyranid00004` | `tyranid-shrike.json` |
 
 **Stats:** Identical to Tyranid Warrior
 **Wounds:** 48
@@ -73,7 +97,7 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 #### Carnifex
 | Variant | ID | File |
 |---------|-----|------|
-| Enemy | `enmy00000000005` | `carnifex.json` |
+| Enemy | `enmytyranid00005` | `carnifex.json` |
 
 **Stats:** WS 35, BS 25, S 70, T 55, AG 22, INT 20, PER 35, WP 45, Fel 0
 **Wounds:** 100
@@ -87,7 +111,7 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 #### Carnifex (Thornback)
 | Variant | ID | File |
 |---------|-----|------|
-| Enemy | `enmy00000000006` | `carnifex-thornback.json` |
+| Enemy | `enmytyranid00006` | `carnifex-thornback.json` |
 
 **Stats:** WS 35, BS 35, S 70, T 55, AG 22, INT 20, PER 40, WP 45, Fel 0
 **Wounds:** 100
@@ -97,6 +121,54 @@ Enemy and horde actors are stored in `src/packs-source/enemies/` organized by fa
 **Weapons:** Devourer (1d10+6 R, Pen 0, Range 30, -/-/6, Twin-linked, Living Ammunition, Storm, Tearing), Stranglethorn Cannon (2d10+10 I, Pen 3, Range 80, S/-/-, Blast 10, Deadly Snare, Devastating 2, Living Ammunition, Tearing)
 **Token:** 3x3 (Massive)
 **Source:** Deathwatch Core Rulebook, p. 370
+
+#### Carnifex (Venomspitter)
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00007` | `carnifex-venomspitter.json` |
+
+**Stats:** WS 35, BS 40, S 70, T 55, AG 22, INT 20, PER 45, WP 45, Fel 0
+**Wounds:** 100
+**Differences from base Carnifex:** +15 BS, +10 Per. Adds Spore Cysts trait. Replaces weapons with twin Heavy Venom Cannons.
+**Traits:** Same as Carnifex + Spore Cysts
+**Weapons:** Heavy Venom Cannon ×2 (4d10+10 I, Pen 6, Range 100, S/-/-, Blast 6, Living Ammunition, Toxic)
+**Token:** 3x3 (Massive)
+**Source:** Deathwatch Core Rulebook, p. 370
+
+#### Carnifex (Bile-Beast)
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00008` | `carnifex-bile-beast.json` |
+
+**Stats:** WS 35, BS 25, S 70, T 55, AG 22, INT 20, PER 35, WP 45, Fel 0
+**Wounds:** 100
+**Differences from base Carnifex:** Adds Dorsal Chimneys and Spore Cysts traits. Mixed ranged/melee loadout.
+**Traits:** Same as Carnifex + Dorsal Chimneys, Spore Cysts
+**Weapons:** Deathspitters (twin-linked, tearing), Rending Claws (Razor Sharp), Prehensile Tongue (Flexible, Snare)
+**Token:** 3x3 (Massive)
+**Source:** Deathwatch Core Rulebook, p. 370
+
+#### Purestrain Genestealer
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00009` | `purestrain-genestealer.json` |
+
+**Stats:** WS 65, BS 0, S 45, T 40, AG 40, INT 35, PER 60, WP 45, Fel 0
+**Wounds:** 20
+**Skills:** Awareness +10, Climb +10, Dodge +10, Swim +10
+**Talents:** Ambidextrous, Fearless, Hard Target, Leap Up, Lightning Attack, Lightning Reflexes, Step Aside, Swift Attack
+**Traits:** Dark Sight, Fear 2 (Frightening), Improved Natural Weapons (Rending Claws), Multiple Arms, Natural Armour (4), Unnatural Agility (×2), Unnatural Speed, Unnatural Strength (×2), Unnatural Toughness (×2), Tyranid
+**Weapons:** Rending Claws (1d10+4 R, Pen 5, Melee, Razor Sharp)
+**Token:** 1x1 (default)
+**Source:** Mark of the Xenos, p. 39
+
+### Ork (`enemies/ork/`)
+
+#### Ork Boy
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmyork000000001` | `ork-boy.json` |
+| Horde | `hordork000000001` | `ork-boy-horde.json` |
 
 ## Horde vs Enemy Differences
 When creating a horde variant from an enemy:
@@ -108,20 +180,10 @@ When creating a horde variant from an enemy:
 - Icon uses `_horde` suffix (e.g., `termagant_horde.webp`)
 - Token name appends " Horde"
 
-## Embedded Item ID Ranges
-| Enemy | Enemy Items | Horde Items |
-|-------|------------|-------------|
-| Hormagaunt | `enmyitem0000010`–`enmyitem0000026` | `horditem0000010`–`horditem0000026` |
-| Termagant | `enmyitem0000030`–`enmyitem0000039` | `horditem0000030`–`horditem0000039` |
-| Tyranid Warrior | `enmyitem0000040`–`enmyitem0000073` | N/A |
-| Tyranid Shrike | `enmyitem0000080`–`enmyitem0000097` | N/A |
-| Carnifex | `enmyitem0000100`–`enmyitem0000142` | N/A |
-| Carnifex (Thornback) | `enmyitem0000150`–`enmyitem0000175` | N/A |
-
 ## Icon Requirements
 Each enemy needs artwork at:
-- `src/icons/enemies/tyranid/{name}.webp` — individual enemy
-- `src/icons/enemies/tyranid/{name}_horde.webp` — horde variant
+- `src/icons/enemies/{faction}/{name}.webp` — individual enemy
+- `src/icons/enemies/{faction}/{name}_horde.webp` — horde variant
 
 ## Notes
 - Natural Armour trait includes an `armor` effectType modifier with the value
@@ -133,4 +195,5 @@ Each enemy needs artwork at:
 - Multiple Arms trait includes +10 Toughness characteristic modifier
 - Carnifex has no horde variant
 - Carnifex (Thornback) is a ranged variant of the Carnifex
+- Purestrain Genestealer is a melee-only elite with 4 Unnatural traits
 - Build validation ensures no duplicate `_id` values across all packs

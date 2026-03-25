@@ -16,7 +16,7 @@
 9. **weapon-upgrades.md** - Weapon upgrade system (attachments, modifiers)
 10. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
 11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
-12. **enemies.md** - Enemy & horde compendium entries (Tyranid: Hormagaunt, Termagant)
+12. **enemies.md** - Enemy & horde compendium entries, faction-based ID conventions
 
 ## Key Metrics
 - **Tests**: 1005 passing, 81 suites
@@ -114,4 +114,4 @@ docs/datamodel/          Full DataModel migration plan (10 files)
 ```
 
 ---
-**Last Updated**: January 2025 (Carnifex + Thornback enemies, JSON formatting pipeline, Multiple Arms +10 TG modifier)
+**Last Updated**: January 2025 (Purestrain Genestealer, faction-based enemy IDs, migrateEnemyIds.mjs script)

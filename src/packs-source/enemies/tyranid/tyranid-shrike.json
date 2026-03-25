@@ -1,5 +1,5 @@
 {
-  "_id": "enmy00000000004",
+  "_id": "enmytyranid00004",
   "name": "Tyranid Shrike",
   "type": "enemy",
   "img": "systems/deathwatch/icons/enemies/tyranid/shrike.webp",
@@ -29,7 +29,7 @@
   },
   "items": [
     {
-      "_id": "enmyitem0000080",
+      "_id": "eityranid0400001",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "_id": "enmyitem0000081",
+      "_id": "eityranid0400002",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -59,7 +59,7 @@
       }
     },
     {
-      "_id": "enmyitem0000082",
+      "_id": "eityranid0400003",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -72,7 +72,7 @@
       }
     },
     {
-      "_id": "enmyitem0000083",
+      "_id": "eityranid0400004",
       "_sourceId": "trt000000000013",
       "name": "Fear 3 (Horrifying)",
       "type": "trait",
@@ -85,7 +85,7 @@
       }
     },
     {
-      "_id": "enmyitem0000084",
+      "_id": "eityranid0400005",
       "_sourceId": "trt000000000016",
       "name": "Flyer (10)",
       "type": "trait",
@@ -98,7 +98,7 @@
       }
     },
     {
-      "_id": "enmyitem0000085",
+      "_id": "eityranid0400006",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (8)",
       "type": "trait",
@@ -120,7 +120,7 @@
       }
     },
     {
-      "_id": "enmyitem0000086",
+      "_id": "eityranid0400007",
       "_sourceId": "trt000000000024",
       "name": "Multiple Arms",
       "type": "trait",
@@ -142,7 +142,7 @@
       }
     },
     {
-      "_id": "enmyitem0000087",
+      "_id": "eityranid0400008",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -165,7 +165,7 @@
       }
     },
     {
-      "_id": "enmyitem0000088",
+      "_id": "eityranid0400009",
       "_sourceId": "trt000000000052",
       "name": "Unnatural Toughness",
       "type": "trait",
@@ -188,7 +188,7 @@
       }
     },
     {
-      "_id": "enmyitem0000089",
+      "_id": "eityranid0400010",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons (Scything Talons or Rending Claws)",
       "type": "trait",
@@ -201,7 +201,7 @@
       }
     },
     {
-      "_id": "enmyitem0000090",
+      "_id": "eityranid0400011",
       "_sourceId": "trt000000000032",
       "name": "Shadow in the Warp",
       "type": "trait",
@@ -214,7 +214,7 @@
       }
     },
     {
-      "_id": "enmyitem0000091",
+      "_id": "eityranid0400012",
       "_sourceId": "trt000000000033",
       "name": "Size (Enormous)",
       "type": "trait",
@@ -245,7 +245,7 @@
       }
     },
     {
-      "_id": "enmyitem0000092",
+      "_id": "eityranid0400013",
       "_sourceId": "trt000000000039",
       "name": "Synapse Creature",
       "type": "trait",
@@ -258,7 +258,7 @@
       }
     },
     {
-      "_id": "enmyitem0000093",
+      "_id": "eityranid0400014",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -271,7 +271,7 @@
       }
     },
     {
-      "_id": "enmyitem0000094",
+      "_id": "eityranid0400015",
       "name": "Scything Talons",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-scything-talons.webp",
@@ -292,7 +292,7 @@
       }
     },
     {
-      "_id": "enmyitem0000095",
+      "_id": "eityranid0400016",
       "name": "Rending Claws",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-rending-claws.webp",
@@ -313,7 +313,7 @@
       }
     },
     {
-      "_id": "enmyitem0000096",
+      "_id": "eityranid0400017",
       "name": "Devourer",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-devourer.webp",
@@ -339,7 +339,7 @@
       }
     },
     {
-      "_id": "enmyitem0000097",
+      "_id": "eityranid0400018",
       "name": "Deathspitter",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-deathspitter.webp",

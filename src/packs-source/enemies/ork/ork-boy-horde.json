@@ -1,5 +1,5 @@
 {
-  "_id": "hord00000000010",
+  "_id": "hordork000000001",
   "name": "Ork Boy Horde",
   "type": "horde",
   "img": "systems/deathwatch/icons/enemies/ork/ork-boy_horde.webp",
@@ -30,7 +30,7 @@
   },
   "items": [
     {
-      "_id": "horditem0000300",
+      "_id": "hiork01000000001",
       "name": "Basic Weapon Training (Primitive, SP)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "_id": "horditem0000301",
+      "_id": "hiork01000000002",
       "name": "Bulging Biceps",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -60,7 +60,7 @@
       }
     },
     {
-      "_id": "horditem0000302",
+      "_id": "hiork01000000003",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -75,7 +75,7 @@
       }
     },
     {
-      "_id": "horditem0000303",
+      "_id": "hiork01000000004",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -90,7 +90,7 @@
       }
     },
     {
-      "_id": "horditem0000304",
+      "_id": "hiork01000000005",
       "name": "Hardy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -105,7 +105,7 @@
       }
     },
     {
-      "_id": "horditem0000305",
+      "_id": "hiork01000000006",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -120,7 +120,7 @@
       }
     },
     {
-      "_id": "horditem0000306",
+      "_id": "hiork01000000007",
       "name": "Melee Weapon Training (Chain, Primitive)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -135,7 +135,7 @@
       }
     },
     {
-      "_id": "horditem0000307",
+      "_id": "hiork01000000008",
       "name": "Pistol Weapon Training (Primitive, SP)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -150,7 +150,7 @@
       }
     },
     {
-      "_id": "horditem0000308",
+      "_id": "hiork01000000009",
       "name": "Street Fighting",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -165,7 +165,7 @@
       }
     },
     {
-      "_id": "horditem0000309",
+      "_id": "hiork01000000010",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -180,7 +180,7 @@
       }
     },
     {
-      "_id": "horditem0000320",
+      "_id": "hiork01000000011",
       "_sourceId": "trt000000000007",
       "name": "Brutal Charge",
       "type": "trait",
@@ -193,7 +193,7 @@
       }
     },
     {
-      "_id": "horditem0000321",
+      "_id": "hiork01000000012",
       "_sourceId": "trt000000000062",
       "name": "Make it Work",
       "type": "trait",
@@ -206,7 +206,7 @@
       }
     },
     {
-      "_id": "horditem0000322",
+      "_id": "hiork01000000013",
       "_sourceId": "trt000000000063",
       "name": "Mob Rule",
       "type": "trait",
@@ -219,7 +219,7 @@
       }
     },
     {
-      "_id": "horditem0000323",
+      "_id": "hiork01000000014",
       "_sourceId": "trt000000000038",
       "name": "Sturdy",
       "type": "trait",
@@ -232,7 +232,7 @@
       }
     },
     {
-      "_id": "horditem0000324",
+      "_id": "hiork01000000015",
       "_sourceId": "trt000000000052",
       "name": "Unnatural Toughness",
       "type": "trait",
@@ -255,7 +255,7 @@
       }
     },
     {
-      "_id": "horditem0000325",
+      "_id": "hiork01000000016",
       "_sourceId": "trt000000000027",
       "name": "Overwhelming (Horde)",
       "type": "trait",
@@ -268,7 +268,7 @@
       }
     },
     {
-      "_id": "horditem0000330",
+      "_id": "hiork01000000017",
       "name": "Slugga",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/ork-slugga.webp",
@@ -289,7 +289,7 @@
       }
     },
     {
-      "_id": "horditem0000331",
+      "_id": "hiork01000000018",
       "name": "Shoota",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/ork-shoota.webp",
@@ -310,7 +310,7 @@
       }
     },
     {
-      "_id": "horditem0000332",
+      "_id": "hiork01000000019",
       "name": "Choppa",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/ork-choppa.webp",

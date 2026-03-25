@@ -1,5 +1,5 @@
 {
-  "_id": "enmy00000000008",
+  "_id": "enmytyranid00008",
   "name": "Carnifex (Bile-Beast)",
   "type": "enemy",
   "img": "systems/deathwatch/icons/enemies/tyranid/carnifex.webp",
@@ -30,7 +30,7 @@
   },
   "items": [
     {
-      "_id": "enmyitem0000250",
+      "_id": "eityranid0800001",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "_id": "enmyitem0000251",
+      "_id": "eityranid0800002",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -60,7 +60,7 @@
       }
     },
     {
-      "_id": "enmyitem0000252",
+      "_id": "eityranid0800003",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -75,7 +75,7 @@
       }
     },
     {
-      "_id": "enmyitem0000253",
+      "_id": "eityranid0800004",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -90,7 +90,7 @@
       }
     },
     {
-      "_id": "enmyitem0000254",
+      "_id": "eityranid0800005",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -105,7 +105,7 @@
       }
     },
     {
-      "_id": "enmyitem0000255",
+      "_id": "eityranid0800006",
       "name": "Heightened Senses (Sound)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -120,7 +120,7 @@
       }
     },
     {
-      "_id": "enmyitem0000256",
+      "_id": "eityranid0800007",
       "name": "Heightened Senses (Smell)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -135,7 +135,7 @@
       }
     },
     {
-      "_id": "enmyitem0000257",
+      "_id": "eityranid0800008",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -150,7 +150,7 @@
       }
     },
     {
-      "_id": "enmyitem0000258",
+      "_id": "eityranid0800009",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -165,7 +165,7 @@
       }
     },
     {
-      "_id": "enmyitem0000259",
+      "_id": "eityranid0800010",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -180,7 +180,7 @@
       }
     },
     {
-      "_id": "enmyitem0000270",
+      "_id": "eityranid0800011",
       "_sourceId": "trt000000000007",
       "name": "Brutal Charge",
       "type": "trait",
@@ -193,7 +193,7 @@
       }
     },
     {
-      "_id": "enmyitem0000271",
+      "_id": "eityranid0800012",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -206,7 +206,7 @@
       }
     },
     {
-      "_id": "enmyitem0000272",
+      "_id": "eityranid0800013",
       "name": "Dorsal Chimneys",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
@@ -218,7 +218,7 @@
       }
     },
     {
-      "_id": "enmyitem0000273",
+      "_id": "eityranid0800014",
       "_sourceId": "trt000000000013",
       "name": "Fear 3 (Horrifying)",
       "type": "trait",
@@ -231,7 +231,7 @@
       }
     },
     {
-      "_id": "enmyitem0000274",
+      "_id": "eityranid0800015",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons (Scything Talons)",
       "type": "trait",
@@ -244,7 +244,7 @@
       }
     },
     {
-      "_id": "enmyitem0000275",
+      "_id": "eityranid0800016",
       "_sourceId": "trt000000000024",
       "name": "Multiple Arms",
       "type": "trait",
@@ -266,7 +266,7 @@
       }
     },
     {
-      "_id": "enmyitem0000276",
+      "_id": "eityranid0800017",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (10)",
       "type": "trait",
@@ -288,7 +288,7 @@
       }
     },
     {
-      "_id": "enmyitem0000277",
+      "_id": "eityranid0800018",
       "_sourceId": "trt000000000031",
       "name": "Regeneration (5)",
       "type": "trait",
@@ -301,7 +301,7 @@
       }
     },
     {
-      "_id": "enmyitem0000278",
+      "_id": "eityranid0800019",
       "_sourceId": "trt000000000061",
       "name": "Size (Massive)",
       "type": "trait",
@@ -332,7 +332,7 @@
       }
     },
     {
-      "_id": "enmyitem0000279",
+      "_id": "eityranid0800020",
       "name": "Spore Cysts",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
@@ -344,7 +344,7 @@
       }
     },
     {
-      "_id": "enmyitem0000280",
+      "_id": "eityranid0800021",
       "_sourceId": "trt000000000038",
       "name": "Sturdy",
       "type": "trait",
@@ -357,7 +357,7 @@
       }
     },
     {
-      "_id": "enmyitem0000281",
+      "_id": "eityranid0800022",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -380,7 +380,7 @@
       }
     },
     {
-      "_id": "enmyitem0000286",
+      "_id": "eityranid0800023",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -403,7 +403,7 @@
       }
     },
     {
-      "_id": "enmyitem0000282",
+      "_id": "eityranid0800024",
       "_sourceId": "trt000000000052",
       "name": "Unnatural Toughness",
       "type": "trait",
@@ -426,7 +426,7 @@
       }
     },
     {
-      "_id": "enmyitem0000283",
+      "_id": "eityranid0800025",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -439,7 +439,7 @@
       }
     },
     {
-      "_id": "enmyitem0000284",
+      "_id": "eityranid0800026",
       "name": "Deathspitters",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-deathspitter.webp",
@@ -464,7 +464,7 @@
       }
     },
     {
-      "_id": "enmyitem0000285",
+      "_id": "eityranid0800027",
       "name": "Rending Claws",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-rending-claws.webp",
@@ -485,7 +485,7 @@
       }
     },
     {
-      "_id": "enmyitem0000287",
+      "_id": "eityranid0800028",
       "name": "Prehensile Tongue",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-lash-whip.webp",

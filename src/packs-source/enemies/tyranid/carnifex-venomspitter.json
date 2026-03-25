@@ -1,5 +1,5 @@
 {
-  "_id": "enmy00000000007",
+  "_id": "enmytyranid00007",
   "name": "Carnifex (Venomspitter)",
   "type": "enemy",
   "img": "systems/deathwatch/icons/enemies/tyranid/carnifex.webp",
@@ -30,7 +30,7 @@
   },
   "items": [
     {
-      "_id": "enmyitem0000200",
+      "_id": "eityranid0700001",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "_id": "enmyitem0000201",
+      "_id": "eityranid0700002",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -60,7 +60,7 @@
       }
     },
     {
-      "_id": "enmyitem0000202",
+      "_id": "eityranid0700003",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -75,7 +75,7 @@
       }
     },
     {
-      "_id": "enmyitem0000203",
+      "_id": "eityranid0700004",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -90,7 +90,7 @@
       }
     },
     {
-      "_id": "enmyitem0000204",
+      "_id": "eityranid0700005",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -105,7 +105,7 @@
       }
     },
     {
-      "_id": "enmyitem0000205",
+      "_id": "eityranid0700006",
       "name": "Heightened Senses (Sound)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -120,7 +120,7 @@
       }
     },
     {
-      "_id": "enmyitem0000206",
+      "_id": "eityranid0700007",
       "name": "Heightened Senses (Smell)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -135,7 +135,7 @@
       }
     },
     {
-      "_id": "enmyitem0000207",
+      "_id": "eityranid0700008",
       "name": "Heightened Senses (Sight)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -150,7 +150,7 @@
       }
     },
     {
-      "_id": "enmyitem0000208",
+      "_id": "eityranid0700009",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -165,7 +165,7 @@
       }
     },
     {
-      "_id": "enmyitem0000209",
+      "_id": "eityranid0700010",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -180,7 +180,7 @@
       }
     },
     {
-      "_id": "enmyitem0000210",
+      "_id": "eityranid0700011",
       "name": "Two-Weapon Wielder (Ballistic)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -195,7 +195,7 @@
       }
     },
     {
-      "_id": "enmyitem0000211",
+      "_id": "eityranid0700012",
       "_sourceId": "trt000000000007",
       "name": "Brutal Charge",
       "type": "trait",
@@ -208,7 +208,7 @@
       }
     },
     {
-      "_id": "enmyitem0000212",
+      "_id": "eityranid0700013",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -221,7 +221,7 @@
       }
     },
     {
-      "_id": "enmyitem0000213",
+      "_id": "eityranid0700014",
       "_sourceId": "trt000000000013",
       "name": "Fear 3 (Horrifying)",
       "type": "trait",
@@ -234,7 +234,7 @@
       }
     },
     {
-      "_id": "enmyitem0000214",
+      "_id": "eityranid0700015",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons (Scything Talons)",
       "type": "trait",
@@ -247,7 +247,7 @@
       }
     },
     {
-      "_id": "enmyitem0000215",
+      "_id": "eityranid0700016",
       "_sourceId": "trt000000000024",
       "name": "Multiple Arms",
       "type": "trait",
@@ -269,7 +269,7 @@
       }
     },
     {
-      "_id": "enmyitem0000216",
+      "_id": "eityranid0700017",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (10)",
       "type": "trait",
@@ -291,7 +291,7 @@
       }
     },
     {
-      "_id": "enmyitem0000217",
+      "_id": "eityranid0700018",
       "_sourceId": "trt000000000031",
       "name": "Regeneration (5)",
       "type": "trait",
@@ -304,7 +304,7 @@
       }
     },
     {
-      "_id": "enmyitem0000218",
+      "_id": "eityranid0700019",
       "_sourceId": "trt000000000061",
       "name": "Size (Massive)",
       "type": "trait",
@@ -335,7 +335,7 @@
       }
     },
     {
-      "_id": "enmyitem0000219",
+      "_id": "eityranid0700020",
       "name": "Spore Cysts",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
@@ -347,7 +347,7 @@
       }
     },
     {
-      "_id": "enmyitem0000220",
+      "_id": "eityranid0700021",
       "_sourceId": "trt000000000038",
       "name": "Sturdy",
       "type": "trait",
@@ -360,7 +360,7 @@
       }
     },
     {
-      "_id": "enmyitem0000221",
+      "_id": "eityranid0700022",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -383,7 +383,7 @@
       }
     },
     {
-      "_id": "enmyitem0000226",
+      "_id": "eityranid0700023",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -406,7 +406,7 @@
       }
     },
     {
-      "_id": "enmyitem0000222",
+      "_id": "eityranid0700024",
       "_sourceId": "trt000000000052",
       "name": "Unnatural Toughness",
       "type": "trait",
@@ -429,7 +429,7 @@
       }
     },
     {
-      "_id": "enmyitem0000223",
+      "_id": "eityranid0700025",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -442,7 +442,7 @@
       }
     },
     {
-      "_id": "enmyitem0000224",
+      "_id": "eityranid0700026",
       "name": "Heavy Venom Cannon",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-venom-cannon.webp",
@@ -467,7 +467,7 @@
       }
     },
     {
-      "_id": "enmyitem0000225",
+      "_id": "eityranid0700027",
       "name": "Heavy Venom Cannon",
       "type": "weapon",
       "img": "systems/deathwatch/icons/weapons/tyranid-venom-cannon.webp",
