@@ -32,7 +32,7 @@
       "_id": "enmyitem0000300",
       "name": "Basic Weapon Training (Primitive, SP)",
       "type": "talent",
-      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "img": "systems/deathwatch/icons/enemies/ork/ork-boy.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
         "page": "113",

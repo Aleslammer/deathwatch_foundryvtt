@@ -202,10 +202,61 @@ function syncEmbeddedItems() {
   return true;
 }
 
+function validateImages() {
+  const SRC_ROOT = './src';
+  const packs = fs.readdirSync(PACKS_SOURCE).filter(f =>
+    fs.statSync(path.join(PACKS_SOURCE, f)).isDirectory() && !f.startsWith('_')
+  );
+
+  let warnings = 0;
+
+  for (const pack of packs) {
+    const files = getAllJsonFiles(path.join(PACKS_SOURCE, pack));
+    for (const filePath of files) {
+      const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      const relative = path.relative(PACKS_SOURCE, filePath);
+
+      // Check top-level img
+      checkImg(doc.img, relative, doc.name, SRC_ROOT) && warnings++;
+
+      // Check prototypeToken texture
+      const tokenImg = doc.prototypeToken?.texture?.src;
+      checkImg(tokenImg, relative, `${doc.name} (token)`, SRC_ROOT) && warnings++;
+
+      // Check embedded items
+      if (Array.isArray(doc.items)) {
+        for (const item of doc.items) {
+          checkImg(item.img, relative, `${doc.name} → ${item.name}`, SRC_ROOT) && warnings++;
+        }
+      }
+    }
+  }
+
+  if (warnings > 0) {
+    console.warn(`\x1b[33m⚠ ${warnings} missing image(s) found\x1b[0m`);
+  } else {
+    console.log(`\u2705 All referenced images exist`);
+  }
+  return true; // warnings only, don't fail build
+}
+
+function checkImg(img, file, name, srcRoot) {
+  if (!img || img === 'icons/svg/item-bag.svg' || img.startsWith('icons/svg/')) return false;
+  const prefix = 'systems/deathwatch/';
+  if (!img.startsWith(prefix)) return false;
+  const localPath = path.join(srcRoot, img.slice(prefix.length));
+  if (!fs.existsSync(localPath)) {
+    console.warn(`  \x1b[33mWARNING: ${file} — "${name}" references missing image: ${img}\x1b[0m`);
+    return true;
+  }
+  return false;
+}
+
 const talentsOk = validateTalentIds();
 const qualitiesOk = validateWeaponQualityIds();
 const idsOk = validateUniqueIds();
 const syncOk = syncEmbeddedItems();
+validateImages();
 
 if (!talentsOk || !qualitiesOk || !idsOk || !syncOk) {
   process.exit(1);
