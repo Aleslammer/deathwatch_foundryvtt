@@ -11,9 +11,14 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
 import { resolve, join } from "path";
+import { randomBytes } from "crypto";
 
 const PRINT_WIDTH = 80;
 const INDENT = "  ";
+
+function randomID() {
+  return randomBytes(8).toString("hex");
+}
 
 // ── Key ordering definitions ──────────────────────────────────────────────
 
@@ -167,6 +172,7 @@ function orderSystemKeys(system, type) {
 }
 
 function orderModifier(mod) {
+  if (!mod._id) mod._id = randomID();
   return orderKeys(mod, MODIFIER_KEYS);
 }
 
@@ -227,20 +233,58 @@ function orderDocument(doc) {
 
 // ── Compact serialization ─────────────────────────────────────────────────
 
-function compactStringify(value, currentIndent = "") {
+/**
+ * Produce Prettier-compatible inline JSON.
+ * Objects: { "key": value, "key2": value2 }
+ * Arrays: [value, value2]
+ * Returns null if value contains strings with newlines (not suitable for inline).
+ */
+function prettierInline(value) {
+  if (value === null || typeof value !== "object") return null;
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "[]";
+    const parts = value.map((v) => {
+      if (v === null) return "null";
+      if (typeof v !== "object") return JSON.stringify(v);
+      const inner = prettierInline(v);
+      if (!inner) return null;
+      return inner;
+    });
+    if (parts.some((p) => p === null)) return null;
+    return `[${parts.join(", ")}]`;
+  }
+
+  const keys = Object.keys(value);
+  if (keys.length === 0) return "{}";
+
+  const parts = keys.map((k) => {
+    const v = value[k];
+    if (typeof v === "string" && v.includes("\n")) return null;
+    if (v !== null && typeof v === "object") {
+      const inner = prettierInline(v);
+      if (!inner) return null;
+      return `${JSON.stringify(k)}: ${inner}`;
+    }
+    return `${JSON.stringify(k)}: ${JSON.stringify(v)}`;
+  });
+  if (parts.some((p) => p === null)) return null;
+  return `{ ${parts.join(", ")} }`;
+}
+
+function compactStringify(value, currentIndent = "", contextWidth = 0) {
   if (value === null) return "null";
   if (typeof value === "boolean") return value.toString();
   if (typeof value === "number") return JSON.stringify(value);
   if (typeof value === "string") return JSON.stringify(value);
 
   const nextIndent = currentIndent + INDENT;
+  const effectiveIndent = contextWidth || currentIndent.length;
 
-  // Try inline
-  const inline = JSON.stringify(value);
-  if (currentIndent.length + inline.length <= PRINT_WIDTH) {
-    if (!inline.includes("\\n") || inline.length < 60) {
-      return inline;
-    }
+  // Try inline with Prettier-compatible spacing
+  const inline = prettierInline(value);
+  if (inline && effectiveIndent + inline.length + 1 <= PRINT_WIDTH) {
+    return inline;
   }
 
   if (Array.isArray(value)) {
@@ -255,8 +299,9 @@ function compactStringify(value, currentIndent = "") {
   if (keys.length === 0) return "{}";
 
   const entries = keys.map((key) => {
-    const valStr = compactStringify(value[key], nextIndent);
-    return `${nextIndent}${JSON.stringify(key)}: ${valStr}`;
+    const keyPrefix = `${nextIndent}${JSON.stringify(key)}: `;
+    const valStr = compactStringify(value[key], nextIndent, keyPrefix.length);
+    return `${keyPrefix}${valStr}`;
   });
   return `{\n${entries.join(",\n")}\n${currentIndent}}`;
 }

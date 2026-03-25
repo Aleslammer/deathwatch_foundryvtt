@@ -18,6 +18,7 @@
     "description": "<p>Artificer Armour is a masterwork of the Adeptus Mechanicus, individually crafted by skilled Techmarines and Artificers. Each suit is unique, incorporating advanced materials and arcane technologies that provide superior protection compared to standard Power Armour. These suits are often adorned with intricate designs, purity seals, and personal heraldry.</p><p>Artificer Armour is highly prized and typically reserved for veteran warriors, officers, and heroes of the Chapter who have earned such a prestigious honor through countless battles.</p>",
     "modifiers": [
       {
+        "_id": "8a9a28be7dfc0e5b",
         "name": "Enhanced Strength",
         "modifier": "20",
         "effectType": "characteristic-post-multiplier",
@@ -25,12 +26,14 @@
         "enabled": true
       },
       {
+        "_id": "2146b73106e00db4",
         "name": "Giant Among Men",
         "modifier": "1",
         "effectType": "movement",
         "enabled": true
       },
       {
+        "_id": "633673e117942e47",
         "name": "Hulking Size",
         "modifier": "-10",
         "effectType": "skill",

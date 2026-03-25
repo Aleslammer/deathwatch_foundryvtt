@@ -23,6 +23,7 @@
     },
     "modifiers": [
       {
+        "_id": "6ac60bb953646392",
         "name": "Chapter Bonus",
         "modifier": 5,
         "effectType": "characteristic",
@@ -30,6 +31,7 @@
         "enabled": true
       },
       {
+        "_id": "24fdaa36c963886d",
         "name": "Chapter Bonus",
         "modifier": 5,
         "effectType": "characteristic",

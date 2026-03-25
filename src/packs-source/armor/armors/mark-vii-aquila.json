@@ -18,6 +18,7 @@
     "description": "<p>The Mark VII 'Aquila' pattern is the most common type of Power Armour worn by the Adeptus Astartes. It is a marvel of technology, providing comprehensive protection while enhancing the wearer's strength and speed. The armour's machine spirit is linked to the wearer's Black Carapace, making it an extension of the Space Marine's body.</p><p>The Mark VII features the distinctive high collar and studded left shoulder pad that have become iconic symbols of the Space Marines.</p>",
     "modifiers": [
       {
+        "_id": "4d7fe3712ae670ea",
         "name": "Enhanced Strength",
         "modifier": "20",
         "effectType": "characteristic-post-multiplier",
@@ -25,12 +26,14 @@
         "enabled": true
       },
       {
+        "_id": "c82853fcf0d89f9c",
         "name": "Giant Among Men",
         "modifier": "1",
         "effectType": "movement",
         "enabled": true
       },
       {
+        "_id": "9a29efe9406cc26f",
         "name": "Hulking Size",
         "modifier": "-10",
         "effectType": "skill",

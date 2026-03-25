@@ -258,6 +258,7 @@
         "description": "<p>This creature has more than one pair of arms. It increases its Toughness Characteristic by +10 and gains a +10 bonus on Strength Tests involving movement such as Climb and Swim. Finally, the creature may use the Multiple Attack action to gain two attacks on its turn. If the creature also has the Swift or Lightning Attack Talent, this trait increases the number of attacks they make with a multiple attack action by +1.</p>",
         "modifiers": [
           {
+            "_id": "29dcf414f9344eb5",
             "name": "Multiple Arms",
             "modifier": 10,
             "effectType": "characteristic",
@@ -314,6 +315,7 @@
         "description": "<p>This creature is Massive. Enemies gain +30 to hit it, and it suffers –30 to Concealment. Its base movement is Agility Bonus +3.</p>",
         "modifiers": [
           {
+            "_id": "fb6cf4eab4c7408c",
             "name": "Size (Massive)",
             "modifier": 3,
             "type": "trait",
@@ -321,6 +323,7 @@
             "enabled": true
           },
           {
+            "_id": "5ccb70d838bd26e3",
             "name": "Size (Massive)",
             "modifier": -30,
             "type": "trait",
@@ -356,6 +359,7 @@
         "description": "<p>The creature's Strength Characteristic is unnatural. Each time this trait is gained, double its Strength Bonus. For example, a creature with Strength 41 normally has a 4 Strength Bonus. With this trait, its Strength Bonus increases to 8.</p><p>The trait may be gained multiple times. Each time you apply this trait to Strength, the Bonus multiplier increases by 1. For example, one selection multiplies the Strength Bonus by ×2, two selections by ×3, and three selections ×4. Note this trait does not modify the creature's movement.</p><p>During Opposed Characteristic Tests, on a success, the bonus multiplier is added to the degree of success. Any additional multipliers for Unnatural Characteristics (i.e., if a Space Marine with Unnatural Strength (x2) uses a Powerfist, which doubles the user's Strength Bonus), simply improves the existing multiplier by 1. For a Space Marine using a Powerfist, he would triple his Strength Bonus rather than doubling it and then doubling it again.</p><p>When taking a Skill Test based upon Strength with the Unnatural trait, the base Difficulty of the Test is staged downwards one level for degree of multiplier past normal (to a maximum of +30).</p><p>During Opposed Characteristic Tests, where success is achieved, the Unnatural multiplier is added to the degrees of success. In the case of a tie, the participant without the Unnatural Characteristic trait loses the Opposed Test.</p>",
         "modifiers": [
           {
+            "_id": "e2a1c8bc5e470bd0",
             "name": "Unnatural Strength",
             "modifier": "x2",
             "type": "trait",
@@ -378,6 +382,7 @@
         "description": "<p>The creature's Strength Characteristic is unnatural. Each time this trait is gained, double its Strength Bonus. For example, a creature with Strength 41 normally has a 4 Strength Bonus. With this trait, its Strength Bonus increases to 8.</p><p>The trait may be gained multiple times. Each time you apply this trait to Strength, the Bonus multiplier increases by 1. For example, one selection multiplies the Strength Bonus by ×2, two selections by ×3, and three selections ×4. Note this trait does not modify the creature's movement.</p><p>During Opposed Characteristic Tests, on a success, the bonus multiplier is added to the degree of success. Any additional multipliers for Unnatural Characteristics (i.e., if a Space Marine with Unnatural Strength (x2) uses a Powerfist, which doubles the user's Strength Bonus), simply improves the existing multiplier by 1. For a Space Marine using a Powerfist, he would triple his Strength Bonus rather than doubling it and then doubling it again.</p><p>When taking a Skill Test based upon Strength with the Unnatural trait, the base Difficulty of the Test is staged downwards one level for degree of multiplier past normal (to a maximum of +30).</p><p>During Opposed Characteristic Tests, where success is achieved, the Unnatural multiplier is added to the degrees of success. In the case of a tie, the participant without the Unnatural Characteristic trait loses the Opposed Test.</p>",
         "modifiers": [
           {
+            "_id": "e2a1c8bc5e470bd0",
             "name": "Unnatural Strength",
             "modifier": "x2",
             "type": "trait",
@@ -400,6 +405,7 @@
         "description": "<p>The creature's Toughness Characteristic is unnatural. Each time this trait is gained, double its Toughness Bonus. For example, a creature with Toughness 41 normally has a 4 Toughness Bonus. With this trait, its Toughness Bonus increases to 8.</p><p>The trait may be gained multiple times. Each time you apply this trait to Toughness, the Bonus multiplier increases by 1. For example, one selection multiplies the Toughness Bonus by ×2, two selections by ×3, and three selections ×4. Note this trait does not modify the creature's movement.</p><p>During Opposed Characteristic Tests, on a success, the bonus multiplier is added to the degree of success. Any additional multipliers for Unnatural Characteristics simply improve the existing multiplier by 1.</p><p>When taking a Skill Test based upon Toughness with the Unnatural trait, the base Difficulty of the Test is staged downwards one level for degree of multiplier past normal (to a maximum of +30).</p><p>During Opposed Characteristic Tests, where success is achieved, the Unnatural multiplier is added to the degrees of success. In the case of a tie, the participant without the Unnatural Characteristic trait loses the Opposed Test.</p>",
         "modifiers": [
           {
+            "_id": "265336d1e56cc6ce",
             "name": "Unnatural Toughness",
             "modifier": "x2",
             "type": "trait",

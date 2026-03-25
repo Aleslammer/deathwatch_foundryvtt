@@ -9,6 +9,7 @@
     "description": "<p>This creature is Scrawny. Enemies suffer –10 to hit it, and it gains +10 to Concealment. Its base movement is Agility Bonus –1.</p>",
     "modifiers": [
       {
+        "_id": "a9d0fcc70f20095c",
         "name": "Size (Scrawny)",
         "modifier": -1,
         "type": "trait",
@@ -16,6 +17,7 @@
         "enabled": true
       },
       {
+        "_id": "f0f438d4b5f222ea",
         "name": "Size (Scrawny)",
         "modifier": 10,
         "type": "trait",
