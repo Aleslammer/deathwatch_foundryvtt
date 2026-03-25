@@ -42,6 +42,13 @@
         "modifier": "1",
         "effectType": "movement",
         "enabled": true
+      },
+      {
+        "name": "Hulking Size",
+        "modifier": "-10",
+        "effectType": "skill",
+        "valueAffected": "concealment",
+        "enabled": true
       }
     ],
     "armorEffects": [

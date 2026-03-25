@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build:validate": "node builds/scripts/validatePacks.mjs",
-    "format:json": "node builds/scripts/compactJson.mjs && prettier --write \"src/packs-source/**/*.json\"",
-    "build:packs": "node builds/scripts/compactJson.mjs && prettier --write \"src/packs-source/**/*.json\" && node builds/scripts/validatePacks.mjs && node builds/scripts/compilePacks.mjs",
+    "format:json": "node builds/scripts/compactJson.mjs && prettier --write --log-level warn \"src/packs-source/**/*.json\"",
+    "build:packs": "node builds/scripts/compactJson.mjs && prettier --write --log-level warn \"src/packs-source/**/*.json\" && node builds/scripts/validatePacks.mjs && node builds/scripts/compilePacks.mjs",
     "build:copy": "node builds/scripts/copyLocal.mjs",
     "build:all": "npm run build:packs && npm run build:copy",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",

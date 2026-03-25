@@ -53,19 +53,3 @@ Hordes
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
 
-
-Breaking a Horde
-• When a Horde’s Magnitude is reduced by 25% in a turn, it must make a Willpower Test when it is its turn to act again. If it passes, it may continue to act. If it fails, it breaks and flees at its highest move value. 
-• If the Horde’s Magnitude is less than 50% of its starting value, it suffers a –10 to the Willpower Test. If the Horde’s Magnitude is less than 25% of its starting value, it will automatically break. 
-• Hordes composed of enemies with the Fearless talent do not have to test to see if they break as their Magnitude is eroded: they have to be wiped out to the last.
-
-Copy the carnifex and make the 
-Bile-Beast: 
-
-Remove the Talent Two-weapon wielder (melee). 
-Add the Traits Spore Cysts†† and Dorsal Chimneys†††. 
-Replace Scything Talons and Bio-Plasma with Deathspitters (Basic; 40m; S/3/–; 1d10+6 E; Pen 4; Clip —; Rld —; Living Ammunition, Twin-linked, Tearing), Rending claws (1d10+ 18 R; Pen 3; Razor Sharp) and Prehensile tongue (count as Lash Whip (1d10+21 R; Pen 3; Flexible, Snare)
-
-Add this to the description 
-    Dorsal Chimneys: Non-Tyranid creatures within 60 metres of a Bile-Beast must pass a Challenging (+0) Toughness Test each turn or suffer one level of fatigue even if in fully sealed armour. Characters and NPC’s in unsealed armour take a Hard(–20) Toughness Test instead. The belching dorsal chimneys also generate a smoke cloud that covers everything within 15 metres of the Bile-Beast.
-    
