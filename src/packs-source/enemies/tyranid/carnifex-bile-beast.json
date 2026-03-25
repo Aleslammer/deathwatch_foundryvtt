@@ -1,17 +1,17 @@
 {
-  "_id": "enmy00000000007",
-  "name": "Carnifex (Venomspitter)",
+  "_id": "enmy00000000008",
+  "name": "Carnifex (Bile-Beast)",
   "type": "enemy",
   "img": "systems/deathwatch/icons/enemies/tyranid/carnifex.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 35 },
-      "bs": { "base": 40 },
+      "bs": { "base": 25 },
       "str": { "base": 70 },
       "tg": { "base": 55 },
       "ag": { "base": 22 },
       "int": { "base": 20 },
-      "per": { "base": 45 },
+      "per": { "base": 35 },
       "wil": { "base": 45 },
       "fs": { "base": 0 }
     },
@@ -26,11 +26,11 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>The Venomspitter is a Carnifex variant optimised for long-range biological warfare. Equipped with twin heavy venom cannons, it saturates the battlefield with corrosive, toxic crystals that shatter on impact. Fat spores bloated with vile pathogens develop in its carapace, drifting toward the enemy and bursting in clouds of lethal virus.</p><p><strong>Spore Cysts:</strong> Fat spores bloated with vile pathogens develop in the creature's carapace before breaking free and floating away. On any turn the Carnifex can take a Challenging (+0) Toughness Test as a Free Action to create a Virus grenade (3d10 I; Pen 0; Blast (2), Toxic) that drifts 1d5 metres per turn towards the loudest noise in the vicinity (randomly if indeterminate). If the Toughness Test is failed, the Carnifex suffers 1d10 damage per degree of failure with no reduction for Toughness Bonus or armour.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Fear 3 (Horrifying), Improved Natural Weapons (Scything Talons), Multiple Arms, Natural Armour (10), Regeneration (5), Size (Massive), Spore Cysts, Sturdy, Unnatural Strength (×3), Unnatural Toughness (×2), Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>"
+    "description": "<p>The Bile-Beast is a Carnifex variant that exudes a constant cloud of noxious fumes from the dorsal chimneys on its back. Armed with twin deathspitters and vicious close-combat bio-weapons, it wades into the enemy wreathed in toxic smoke, choking and poisoning anything that draws near while tearing apart those foolish enough to stand their ground.</p><p><strong>Spore Cysts:</strong> Fat spores bloated with vile pathogens develop in the creature's carapace before breaking free and floating away. On any turn the Carnifex can take a Challenging (+0) Toughness Test as a Free Action to create a Virus grenade (3d10 I; Pen 0; Blast (2), Toxic) that drifts 1d5 metres per turn towards the loudest noise in the vicinity (randomly if indeterminate). If the Toughness Test is failed, the Carnifex suffers 1d10 damage per degree of failure with no reduction for Toughness Bonus or armour.</p><p><strong>Dorsal Chimneys:</strong> Non-Tyranid creatures within 60 metres of a Bile-Beast must pass a Challenging (+0) Toughness Test each turn or suffer one level of fatigue even if in fully sealed armour. Characters and NPC's in unsealed armour take a Hard (–20) Toughness Test instead. The belching dorsal chimneys also generate a smoke cloud that covers everything within 15 metres of the Bile-Beast.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Dorsal Chimneys, Fear 3 (Horrifying), Improved Natural Weapons (Scything Talons), Multiple Arms, Natural Armour (10), Regeneration (5), Size (Massive), Spore Cysts, Sturdy, Unnatural Strength (×3), Unnatural Toughness (×2), Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>"
   },
   "items": [
     {
-      "_id": "enmyitem0000200",
+      "_id": "enmyitem0000250",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -45,7 +45,7 @@
       }
     },
     {
-      "_id": "enmyitem0000201",
+      "_id": "enmyitem0000251",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -60,7 +60,7 @@
       }
     },
     {
-      "_id": "enmyitem0000202",
+      "_id": "enmyitem0000252",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -75,7 +75,7 @@
       }
     },
     {
-      "_id": "enmyitem0000203",
+      "_id": "enmyitem0000253",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -90,7 +90,7 @@
       }
     },
     {
-      "_id": "enmyitem0000204",
+      "_id": "enmyitem0000254",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -105,7 +105,7 @@
       }
     },
     {
-      "_id": "enmyitem0000205",
+      "_id": "enmyitem0000255",
       "name": "Heightened Senses (Sound)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -120,7 +120,7 @@
       }
     },
     {
-      "_id": "enmyitem0000206",
+      "_id": "enmyitem0000256",
       "name": "Heightened Senses (Smell)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -135,22 +135,7 @@
       }
     },
     {
-      "_id": "enmyitem0000207",
-      "name": "Heightened Senses (Sight)",
-      "type": "talent",
-      "img": "systems/deathwatch/icons/talents/generic.webp",
-      "system": {
-        "book": "DeathWatch Core Rulebook",
-        "page": "",
-        "prerequisite": "PER 30",
-        "benefit": "+10 to Awareness Tests involving sight",
-        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sight) would apply to an Awareness Test to see a distant flock of shale crows, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his eyes</b>.</p>",
-        "compendiumId": "tal00000000127",
-        "modifiers": []
-      }
-    },
-    {
-      "_id": "enmyitem0000208",
+      "_id": "enmyitem0000257",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -165,7 +150,22 @@
       }
     },
     {
-      "_id": "enmyitem0000209",
+      "_id": "enmyitem0000258",
+      "name": "Swift Attack",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "DeathWatch Core Rulebook",
+        "page": "127",
+        "prerequisite": "Weapon Skill 35",
+        "benefit": "Make two melee attacks as Full Action",
+        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "compendiumId": "tal00000000252",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000259",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -180,22 +180,7 @@
       }
     },
     {
-      "_id": "enmyitem0000210",
-      "name": "Two-Weapon Wielder (Ballistic)",
-      "type": "talent",
-      "img": "systems/deathwatch/icons/talents/generic.webp",
-      "system": {
-        "book": "DeathWatch Core Rulebook",
-        "page": "128",
-        "prerequisite": "Ballistic Skill 35, Agility 35",
-        "benefit": "Attack with two ranged weapons as Full Action with -20 penalty",
-        "description": "<p>Years of training allow the character to use a weapon in each hand when needed. <b>When armed with two weapons of the same type, the character may spend a Full Action to attack with both. Both tests made to attack with the weapons suffer a –20 penalty (see Chapter VIII: Combat for more details on fighting with two weapons). The character must possess Two-Weapon Wielder (Melee) and Two-Weapon Wielder (Ballistic) if he wishes to use a gun and hand weapon with this Talent.</b></p>",
-        "compendiumId": "tal00000000262",
-        "modifiers": []
-      }
-    },
-    {
-      "_id": "enmyitem0000211",
+      "_id": "enmyitem0000270",
       "_sourceId": "trt000000000007",
       "name": "Brutal Charge",
       "type": "trait",
@@ -208,7 +193,7 @@
       }
     },
     {
-      "_id": "enmyitem0000212",
+      "_id": "enmyitem0000271",
       "_sourceId": "trt000000000011",
       "name": "Dark Sight",
       "type": "trait",
@@ -221,7 +206,19 @@
       }
     },
     {
-      "_id": "enmyitem0000213",
+      "_id": "enmyitem0000272",
+      "name": "Dorsal Chimneys",
+      "type": "trait",
+      "img": "systems/deathwatch/icons/generic/traits.webp",
+      "system": {
+        "book": "Deathwatch Core Rulebook",
+        "page": "370",
+        "description": "<p>Non-Tyranid creatures within 60 metres of a Bile-Beast must pass a Challenging (+0) Toughness Test each turn or suffer one level of fatigue even if in fully sealed armour. Characters and NPC's in unsealed armour take a Hard (–20) Toughness Test instead. The belching dorsal chimneys also generate a smoke cloud that covers everything within 15 metres of the Bile-Beast.</p>",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000273",
       "_sourceId": "trt000000000013",
       "name": "Fear 3 (Horrifying)",
       "type": "trait",
@@ -234,7 +231,7 @@
       }
     },
     {
-      "_id": "enmyitem0000214",
+      "_id": "enmyitem0000274",
       "_sourceId": "trt000000000019",
       "name": "Improved Natural Weapons (Scything Talons)",
       "type": "trait",
@@ -247,7 +244,7 @@
       }
     },
     {
-      "_id": "enmyitem0000215",
+      "_id": "enmyitem0000275",
       "_sourceId": "trt000000000024",
       "name": "Multiple Arms",
       "type": "trait",
@@ -268,7 +265,7 @@
       }
     },
     {
-      "_id": "enmyitem0000216",
+      "_id": "enmyitem0000276",
       "_sourceId": "trt000000000025",
       "name": "Natural Armour (10)",
       "type": "trait",
@@ -290,7 +287,7 @@
       }
     },
     {
-      "_id": "enmyitem0000217",
+      "_id": "enmyitem0000277",
       "_sourceId": "trt000000000031",
       "name": "Regeneration (5)",
       "type": "trait",
@@ -303,7 +300,7 @@
       }
     },
     {
-      "_id": "enmyitem0000218",
+      "_id": "enmyitem0000278",
       "_sourceId": "trt000000000061",
       "name": "Size (Massive)",
       "type": "trait",
@@ -332,19 +329,19 @@
       }
     },
     {
-      "_id": "enmyitem0000219",
+      "_id": "enmyitem0000279",
       "name": "Spore Cysts",
       "type": "trait",
       "img": "systems/deathwatch/icons/generic/traits.webp",
       "system": {
-        "book": "Mark of the Xenos",
-        "page": "32",
+        "book": "Deathwatch Core Rulebook",
+        "page": "370",
         "description": "<p>Fat spores bloated with vile pathogens develop in the creature's carapace before breaking free and floating away. On any turn the Carnifex can take a Challenging (+0) Toughness Test as a Free Action to create a Virus grenade (3d10 I; Pen 0; Blast (2), Toxic) that drifts 1d5 metres per turn towards the loudest noise in the vicinity (randomly if indeterminate). If the Toughness Test is failed, the Carnifex suffers 1d10 damage per degree of failure with no reduction for Toughness Bonus or armour.</p>",
         "modifiers": []
       }
     },
     {
-      "_id": "enmyitem0000220",
+      "_id": "enmyitem0000280",
       "_sourceId": "trt000000000038",
       "name": "Sturdy",
       "type": "trait",
@@ -357,7 +354,7 @@
       }
     },
     {
-      "_id": "enmyitem0000221",
+      "_id": "enmyitem0000281",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -379,7 +376,7 @@
       }
     },
     {
-      "_id": "enmyitem0000226",
+      "_id": "enmyitem0000286",
       "_sourceId": "trt000000000051",
       "name": "Unnatural Strength",
       "type": "trait",
@@ -401,7 +398,7 @@
       }
     },
     {
-      "_id": "enmyitem0000222",
+      "_id": "enmyitem0000282",
       "_sourceId": "trt000000000052",
       "name": "Unnatural Toughness",
       "type": "trait",
@@ -423,7 +420,7 @@
       }
     },
     {
-      "_id": "enmyitem0000223",
+      "_id": "enmyitem0000283",
       "_sourceId": "trt000000000043",
       "name": "Tyranid",
       "type": "trait",
@@ -436,58 +433,75 @@
       }
     },
     {
-      "_id": "enmyitem0000224",
-      "name": "Heavy Venom Cannon",
+      "_id": "enmyitem0000284",
+      "name": "Deathspitters",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/tyranid-venom-cannon.webp",
+      "img": "systems/deathwatch/icons/weapons/tyranid-deathspitter.webp",
       "system": {
-        "class": "Heavy",
-        "dmg": "4d10+10",
-        "dmgType": "Impact",
-        "penetration": "6",
-        "range": "100",
-        "rof": "S/-/-",
+        "class": "Basic",
+        "dmg": "1d10+6",
+        "dmgType": "Energy",
+        "penetration": "4",
+        "range": "40",
+        "rof": "S/3/-",
         "clip": "—",
         "reload": "—",
         "equipped": true,
         "attachedQualities": [
-          { "id": "blast", "value": "6" },
           { "id": "living-ammunition" },
-          { "id": "toxic" }
+          { "id": "twin-linked" },
+          { "id": "tearing" }
         ],
         "attachedUpgrades": [],
-        "description": "<p>A massive bio-weapon that fires highly corrosive crystals coated with a metallic, venomous residue. On impact, the crystals shatter, creating a deadly cloud of toxic fragments.</p>",
+        "description": "<p>Twin deathspitters that shower targets with corrosive, maggot-like organisms that disintegrate in a spray of acidic slime on impact.</p>",
         "modifiers": []
       }
     },
     {
-      "_id": "enmyitem0000225",
-      "name": "Heavy Venom Cannon",
+      "_id": "enmyitem0000285",
+      "name": "Rending Claws",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/tyranid-venom-cannon.webp",
+      "img": "systems/deathwatch/icons/weapons/tyranid-rending-claws.webp",
       "system": {
-        "class": "Heavy",
-        "dmg": "4d10+10",
-        "dmgType": "Impact",
-        "penetration": "6",
-        "range": "100",
-        "rof": "S/-/-",
-        "clip": "—",
-        "reload": "—",
+        "class": "Melee",
+        "dmg": "1d10",
+        "dmgType": "Rending",
+        "penetration": "3",
+        "range": "",
+        "rof": "",
+        "clip": "",
+        "reload": "",
         "equipped": true,
-        "attachedQualities": [
-          { "id": "blast", "value": "6" },
-          { "id": "living-ammunition" },
-          { "id": "toxic" }
-        ],
+        "attachedQualities": [{ "id": "razor-sharp" }],
         "attachedUpgrades": [],
-        "description": "<p>A massive bio-weapon that fires highly corrosive crystals coated with a metallic, venomous residue. On impact, the crystals shatter, creating a deadly cloud of toxic fragments.</p>",
+        "description": "<p>Diamond-hard growths of bone capable of ripping through the thickest armour with frightening ease.</p>",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "enmyitem0000287",
+      "name": "Prehensile Tongue",
+      "type": "weapon",
+      "img": "systems/deathwatch/icons/weapons/tyranid-lash-whip.webp",
+      "system": {
+        "class": "Melee",
+        "dmg": "1d10",
+        "dmgType": "Rending",
+        "penetration": "3",
+        "range": "",
+        "rof": "",
+        "clip": "",
+        "reload": "",
+        "equipped": true,
+        "attachedQualities": [{ "id": "flexible" }, { "id": "snare" }],
+        "attachedUpgrades": [],
+        "description": "<p>A massive prehensile tongue that functions as a living lash whip, snaking around defences to strangle and ensnare prey.</p>",
         "modifiers": []
       }
     }
   ],
   "prototypeToken": {
-    "name": "Carnifex (Venomspitter)",
+    "name": "Carnifex (Bile-Beast)",
     "displayName": 30,
     "actorLink": false,
     "disposition": -1,

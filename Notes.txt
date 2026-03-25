@@ -60,17 +60,12 @@ Breaking a Horde
 • Hordes composed of enemies with the Fearless talent do not have to test to see if they break as their Magnitude is eroded: they have to be wiped out to the last.
 
 Copy the carnifex and make the 
-Venomspitter: 
-    +15BS, 
-    +10Per. 
-    Replace the Talents Two weapon wielder (melee) and Swift Attack with Two-weapon wielder (ballistic). Add the Talent Heightened Senses (Sight). 
-    Add the Trait Spore Cysts††. Replace Scything Talons and Bio-Plasma with two Heavy Venom Cannon (Heavy; 100m; S/–/–; 4d10+10 I; Pen 6; Clip —; Rld —; Blast (6), Living Ammunition, Toxic 1d10).
+Bile-Beast: 
+
+Remove the Talent Two-weapon wielder (melee). 
+Add the Traits Spore Cysts†† and Dorsal Chimneys†††. 
+Replace Scything Talons and Bio-Plasma with Deathspitters (Basic; 40m; S/3/–; 1d10+6 E; Pen 4; Clip —; Rld —; Living Ammunition, Twin-linked, Tearing), Rending claws (1d10+ 18 R; Pen 3; Razor Sharp) and Prehensile tongue (count as Lash Whip (1d10+21 R; Pen 3; Flexible, Snare)
 
 Add this to the description 
-    Spore Cysts: Fat spores bloated with vile pathogens develop in the creature’s carapace before breaking free and floating away. On any turn the Carnifex can take a Challenging (+0) Toughness Test as a Free Action to create a Virus grenade (3D10 I; Pen 0; Blast (2), Toxic) that drifts 1d5 metres per turn towards the loudest noise in the vicinity (randomly if indeterminate). If the Toughness Test 
-is failed, the Carnifex suffers 1d10 damage per degree of failure with no reduction for Toughness Bonus or armour.
-
-
-
-
-†††Dorsal Chimneys: Non-Tyranid creatures within 60 metres of a Bile-Beast must pass a Challenging (+0) Toughness Test each turn or suffer one level of fatigue even if in fully sealed armour. Characters and NPC’s in unsealed armour take a Hard(–20) Toughness Test instead. The belching dorsal chimneys also generate a smoke cloud that covers everything within 15 metres of the Bile-Beast.
+    Dorsal Chimneys: Non-Tyranid creatures within 60 metres of a Bile-Beast must pass a Challenging (+0) Toughness Test each turn or suffer one level of fatigue even if in fully sealed armour. Characters and NPC’s in unsealed armour take a Hard(–20) Toughness Test instead. The belching dorsal chimneys also generate a smoke cloud that covers everything within 15 metres of the Bile-Beast.
+    
