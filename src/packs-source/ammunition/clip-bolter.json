@@ -1,16 +1,15 @@
 {
   "_id": "clip00000000001",
-  "img": "systems/deathwatch/icons/ammo/ammo-bolter.webp",
   "name": "Bolter Rounds",
+  "type": "ammunition",
+  "img": "systems/deathwatch/icons/ammo/ammo-bolter.webp",
   "system": {
-    "capacity": {
-      "max": 28,
-      "value": 28
-    },
-    "description": "<p>The mass-reactive explosive bolt shell is among the deadliest kind of round in the Imperial arsenal. The Deathwatch takes great advantage of variations that have been made on this design over the years, yielding a wide variety of alternate rounds that still fire from a standard bolt weapon. The majority of bolt shell manufacturing capacity is reserved for the Adeptus Astartes, making them costly for others to obtain but a matter of course among Battle-Brothers.</p><p><b>Used with:</b> Any Bolt-class Pistol, Basic, or Heavy weapon.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "158",
+    "capacity": { "value": 28, "max": 28 },
     "quantity": 1,
+    "req": 0,
     "renown": "",
-    "req": 0
-  },
-  "type": "ammunition"
+    "description": "<p>The mass-reactive explosive bolt shell is among the deadliest kind of round in the Imperial arsenal. The Deathwatch takes great advantage of variations that have been made on this design over the years, yielding a wide variety of alternate rounds that still fire from a standard bolt weapon. The majority of bolt shell manufacturing capacity is reserved for the Adeptus Astartes, making them costly for others to obtain but a matter of course among Battle-Brothers.</p><p><b>Used with:</b> Any Bolt-class Pistol, Basic, or Heavy weapon.</p>"
+  }
 }

@@ -1,29 +1,25 @@
 {
   "_id": "flam00000000002",
-  "img": "systems/deathwatch/icons/weapons/flamer-hand.webp",
   "name": "Astartes Hand Flamer",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/flamer-hand.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "145",
     "class": "Pistol",
-    "clip": "4",
-    "description": "<p>This hand-held flamer is still capable of unleashing large blasts of flame, but is good for only a few shots before the fuel canister must be switched out.</p>",
     "dmg": "1d10+7",
     "dmgType": "Energy",
-    "equipped": false,
-    "modifiers": [],
-    "page": "145",
     "penetration": "4",
     "range": "10",
-    "reload": "2 Full",
-    "renown": "",
-    "req": 10,
     "rof": "S/-/-",
+    "clip": "4",
+    "reload": "2 Full",
+    "equipped": false,
     "wt": 6,
-    "attachedQualities": [
-      {
-        "id": "flame"
-      }
-    ]
-  },
-  "type": "weapon"
+    "req": 10,
+    "renown": "",
+    "attachedQualities": [{ "id": "flame" }],
+    "description": "<p>This hand-held flamer is still capable of unleashing large blasts of flame, but is good for only a few shots before the fuel canister must be switched out.</p>",
+    "modifiers": []
+  }
 }

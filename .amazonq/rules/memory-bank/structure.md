@@ -227,9 +227,13 @@ Handlebars templates for rendering:
 - Supports temporary and permanent modifications
 
 ### Compendium Build Pipeline
-- Source-controlled item data
-- Build script for compilation
-- Separation of source and distribution formats
+- Source files: `src/packs-source/` (JSON, version controlled)
+- Compiled packs: `src/packs/` (LevelDB, generated)
+- Build pipeline: `compactJson → prettier → validatePacks → compilePacks`
+- **compactJson.mjs**: Orders keys logically per item type, inlines short objects within 80 chars
+- **prettier**: Adds proper spacing to inlined objects, preserves compact form on save
+- **validatePacks.mjs**: Validates unique IDs, talent compendiumIds, quality keys, embedded item sync
+- **compilePacks.mjs**: Processes all directories in packs-source into LevelDB
 
 ### Foundry Adapter Pattern
 - **FoundryAdapter**: Wraps all Foundry VTT API calls for testability

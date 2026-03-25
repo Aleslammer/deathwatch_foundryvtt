@@ -3,11 +3,15 @@
   "type": "chapter",
   "img": "systems/deathwatch/icons/chapters/black_templars.webp",
   "system": {
-    "description": "<p>The Black Templars are a Crusading Chapter, and one of the most zealous of all Space Marines. They have forsworn the use of Librarians and eschew the Codex Astartes in favor of their own traditions.</p><p>Descended from the Imperial Fists, they are known for their righteous fury, close combat prowess, and eternal crusade against the enemies of the Emperor.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "38",
+    "description": "<p>The Black Templars are a Crusading Chapter, and one of the most zealous of all Space Marines. They have forsworn the use of Librarians and eschew the Codex Astartes in favor of their own traditions.</p><p>Descended from the Imperial Fists, they are known for their righteous fury, close combat prowess, and eternal crusade against the enemies of the Emperor.</p>",
     "skillCosts": {
-      "interrogation": { "costTrain": 200, "costMaster": 200, "costExpert": 200 }
+      "interrogation": {
+        "costTrain": 200,
+        "costMaster": 200,
+        "costExpert": 200
+      }
     },
     "talentCosts": {
       "tal00000000001": 800,

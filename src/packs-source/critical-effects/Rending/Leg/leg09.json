@@ -1,14 +1,12 @@
 {
-    "_id":  "rending-leg0009",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 09",
-    "system":  {
-                   "damageType":  "Rending",
-                   "description":  "With a meaty chop, the leg comes away at the hip. The target pitches to the ground howling in agony, before dying moments later.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Leg"
-               },
-    "type":  "critical-effect"
+  "_id": "rending-leg0009",
+  "name": "Level 09",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Rending",
+    "location": "Leg",
+    "description": "With a meaty chop, the leg comes away at the hip. The target pitches to the ground howling in agony, before dying moments later.",
+    "effects": []
+  }
 }

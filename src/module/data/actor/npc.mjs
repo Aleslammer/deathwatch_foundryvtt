@@ -69,6 +69,13 @@ export default class DeathwatchNPC extends DeathwatchActorBase {
     ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
     this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, actor.items);
 
+    // Apply weapon own modifiers after characteristics are computed
+    for (const item of actor.items) {
+      if (item.type === 'weapon') {
+        item.system._applyOwnModifiers();
+      }
+    }
+
     // Calculate movement from Agility Bonus
     const agBonus = this.characteristics?.ag?.mod || 0;
     if (!this.movement) this.movement = {};

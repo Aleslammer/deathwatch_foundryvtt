@@ -1,25 +1,25 @@
 {
   "_id": "tau000000002",
-  "img": "systems/deathwatch/icons/weapons/tau-missile-pod.webp",
   "name": "Missile Pod",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/tau-missile-pod.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "366",
     "class": "Basic",
-    "clip": "—",
-    "description": "<p>Tau Missile Pod</p>",
     "dmg": "3d10+8",
     "dmgType": "Explosive",
-    "attachedQualities": [],
-    "equipped": false,
-    "modifiers": [],
-    "page": "366",
     "penetration": "6",
     "range": "90",
-    "reload": "—",
-    "renown": "",
-    "req": 0,
     "rof": "S/2/-",
-    "wt": 0
-  },
-  "type": "weapon"
+    "clip": "—",
+    "reload": "—",
+    "equipped": false,
+    "wt": 0,
+    "req": 0,
+    "renown": "",
+    "attachedQualities": [],
+    "description": "<p>Tau Missile Pod</p>",
+    "modifiers": []
+  }
 }

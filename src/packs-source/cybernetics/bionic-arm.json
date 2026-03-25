@@ -3,10 +3,10 @@
   "type": "cybernetic",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "<p>A cybernetic replacement arm with enhanced strength capabilities.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "",
     "equipped": false,
+    "description": "<p>A cybernetic replacement arm with enhanced strength capabilities.</p>",
     "modifiers": [
       {
         "name": "Strength Enhancement",

@@ -1,34 +1,28 @@
 {
   "_id": "missile000000001",
-  "img": "systems/deathwatch/icons/weapons/missiles.webp",
   "name": "Astartes Frag Missile",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/missiles.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "150",
     "class": "Missile",
-    "clip": "1",
-    "description": "<p>The Adeptus Astartes fill their large fragmentation (or frag) grenades and missiles with powerful explosives and aerodynamic metallic shards. The high velocity shrapnel created when they detonate is deadly against common infantry.</p>",
     "dmg": "2d10",
     "dmgType": "Explosive",
-    "attachedQualities": [
-      {
-        "id": "blast",
-        "value": "5"
-      },
-      {
-        "id": "devastating",
-        "value": "1"
-      }
-    ],
-    "equipped": false,
-    "modifiers": [],
-    "page": "150",
     "penetration": "4",
     "range": "-",
-    "reload": "-",
-    "renown": "",
-    "req": 5,
     "rof": "-",
-    "wt": 2
-  },
-  "type": "weapon"
+    "clip": "1",
+    "reload": "-",
+    "equipped": false,
+    "wt": 2,
+    "req": 5,
+    "renown": "",
+    "attachedQualities": [
+      { "id": "blast", "value": "5" },
+      { "id": "devastating", "value": "1" }
+    ],
+    "description": "<p>The Adeptus Astartes fill their large fragmentation (or frag) grenades and missiles with powerful explosives and aerodynamic metallic shards. The high velocity shrapnel created when they detonate is deadly against common infantry.</p>",
+    "modifiers": []
+  }
 }

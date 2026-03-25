@@ -1,32 +1,25 @@
 {
   "_id": "melee0000000005",
-  "img": "systems/deathwatch/icons/weapons/poweraxe.webp",
   "name": "Astartes Power Axe",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/poweraxe.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "20",
     "class": "Melee",
-    "clip": "",
-    "description": "<p>Power axes allow for greater impact when striking than a power sword, but are less nimble in the hand. Their inferior defensive capabilities are often mitigated by pairing them with combat shields or even more sophisticated means of protection. Still, they have a reputation as a brutal and unsubtle weapon; the choice to employ one is often more personal than strategic.</p>",
     "dmg": "1d10+8",
     "dmgType": "Energy",
-    "equipped": false,
-    "modifiers": [],
-    "page": "20",
     "penetration": "7",
     "range": "",
-    "reload": "",
-    "renown": "Respected",
-    "req": 10,
     "rof": "",
+    "clip": "",
+    "reload": "",
+    "equipped": false,
     "wt": 20,
-    "attachedQualities": [
-      {
-        "id": "power-field"
-      },
-      {
-        "id": "unbalanced"
-      }
-    ]
-  },
-  "type": "weapon"
+    "req": 10,
+    "renown": "Respected",
+    "attachedQualities": [{ "id": "power-field" }, { "id": "unbalanced" }],
+    "description": "<p>Power axes allow for greater impact when striking than a power sword, but are less nimble in the hand. Their inferior defensive capabilities are often mitigated by pairing them with combat shields or even more sophisticated means of protection. Still, they have a reputation as a brutal and unsubtle weapon; the choice to employ one is often more personal than strategic.</p>",
+    "modifiers": []
+  }
 }

@@ -1,29 +1,25 @@
 {
   "_id": "flam00000000003",
-  "img": "systems/deathwatch/icons/weapons/flamer-heavy.webp",
   "name": "Astartes Heavy Flamer",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/flamer-heavy.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "145",
     "class": "Heavy",
-    "clip": "10",
-    "description": "<p>While the size and weight of heavy flamers makes them an unpopular choice among many Imperial forces, these are hardly deterrents to a Space Marine in power armour. Terminator squads and many vehicles make frequent use of the large saturation area of heavy flamers. The twin nozzles produce huge gouts of fire, enough to purge the densest terrain of xenos.</p>",
     "dmg": "1d10+12",
     "dmgType": "Energy",
-    "equipped": false,
-    "modifiers": [],
-    "page": "145",
     "penetration": "6",
     "range": "30",
-    "reload": "2 Full",
-    "renown": "",
-    "req": 15,
     "rof": "S/-/-",
+    "clip": "10",
+    "reload": "2 Full",
+    "equipped": false,
     "wt": 65,
-    "attachedQualities": [
-      {
-        "id": "flame"
-      }
-    ]
-  },
-  "type": "weapon"
+    "req": 15,
+    "renown": "",
+    "attachedQualities": [{ "id": "flame" }],
+    "description": "<p>While the size and weight of heavy flamers makes them an unpopular choice among many Imperial forces, these are hardly deterrents to a Space Marine in power armour. Terminator squads and many vehicles make frequent use of the large saturation area of heavy flamers. The twin nozzles produce huge gouts of fire, enough to purge the densest terrain of xenos.</p>",
+    "modifiers": []
+  }
 }

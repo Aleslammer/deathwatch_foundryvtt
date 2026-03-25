@@ -83,6 +83,7 @@ export default class DeathwatchEnemy extends DeathwatchActorBase {
     // Apply force weapon modifiers after psy rating is computed
     for (const item of actor.items) {
       if (item.type === 'weapon') {
+        item.system._applyOwnModifiers();
         item.system.applyForceWeaponModifiers();
       }
     }

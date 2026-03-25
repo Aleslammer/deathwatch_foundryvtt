@@ -1,14 +1,12 @@
 {
-    "_id":  "rending-head0005",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 05",
-    "system":  {
-                   "damageType":  "Rending",
-                   "description":  "The attack opens up the target\u0027s face, leaving him Stunned for 1d5 Rounds and inflicting 1d5 levels of Fatigue. If the target is wearing a helmet, the helmet comes off.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Head"
-               },
-    "type":  "critical-effect"
+  "_id": "rending-head0005",
+  "name": "Level 05",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Rending",
+    "location": "Head",
+    "description": "The attack opens up the target's face, leaving him Stunned for 1d5 Rounds and inflicting 1d5 levels of Fatigue. If the target is wearing a helmet, the helmet comes off.",
+    "effects": []
+  }
 }

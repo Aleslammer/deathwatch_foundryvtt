@@ -4,9 +4,9 @@
   "type": "weapon-quality",
   "img": "icons/svg/shield.svg",
   "system": {
-    "key": "reliable",
-    "description": "<p>Based on tried and true technology, Reliable weapons seldom fail. If a Reliable weapon Jams, roll 1d10 and only on a roll of 10 has it in fact Jammed. Otherwise, it just misses as normal.</p>",
     "book": "Deathwatch Core Rulebook",
-    "page": "143"
+    "page": "143",
+    "key": "reliable",
+    "description": "<p>Based on tried and true technology, Reliable weapons seldom fail. If a Reliable weapon Jams, roll 1d10 and only on a roll of 10 has it in fact Jammed. Otherwise, it just misses as normal.</p>"
   }
 }

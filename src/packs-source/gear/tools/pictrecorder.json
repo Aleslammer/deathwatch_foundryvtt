@@ -1,15 +1,15 @@
 {
   "_id": "pictrecorder001",
-  "img": "systems/deathwatch/icons/gear/picto-recorder.webp",
   "name": "Pict Recorder",
+  "type": "gear",
+  "img": "systems/deathwatch/icons/gear/picto-recorder.webp",
   "system": {
     "book": "Core Rulebook",
-    "description": "<p>Pict recorders (or simply picters) are relatively simple live-media recording devices, and some have holographic capabilities. Most also allow for playback as well as recording, and some are even built into dedicated pict-servitors so they can capture important battles, weapon tests, alien interrogations, and other dangerous events.</p>",
     "page": "175",
-    "renown": "",
+    "wt": 1,
     "req": 5,
+    "renown": "",
     "shortDescription": "Tool",
-    "wt": 1
-  },
-  "type": "gear"
+    "description": "<p>Pict recorders (or simply picters) are relatively simple live-media recording devices, and some have holographic capabilities. Most also allow for playback as well as recording, and some are even built into dedicated pict-servitors so they can capture important battles, weapon tests, alien interrogations, and other dangerous events.</p>"
+  }
 }

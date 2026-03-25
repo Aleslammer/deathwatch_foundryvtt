@@ -1,35 +1,29 @@
 {
   "_id": "tyranid000000003",
-  "img": "systems/deathwatch/icons/weapons/tyranid-deathspitter.webp",
   "name": "Deathspitter",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/tyranid-deathspitter.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "",
     "class": "Basic",
-    "clip": "—",
-    "description": "<p>A Deathspitter is a complex weapon symbiote that shoots maggot-like organisms at targets with a spasm of agonised muscle. Upon striking the target, the squirming projectile disintegrates in a spray of corrosive slime.</p>",
     "dmg": "1d10+12",
     "dmgType": "Energy",
-    "attachedQualities": [
-      {
-        "id": "proven"
-      },
-      {
-        "id": "tearing"
-      },
-      {
-        "id": "living-ammunition"
-      }
-    ],
-    "equipped": false,
-    "modifiers": [],
-    "page": "",
     "penetration": "4",
     "range": "40",
-    "reload": "—",
-    "renown": "",
-    "req": 0,
     "rof": "S/3/-",
-    "wt": 0
-  },
-  "type": "weapon"
+    "clip": "—",
+    "reload": "—",
+    "equipped": false,
+    "wt": 0,
+    "req": 0,
+    "renown": "",
+    "attachedQualities": [
+      { "id": "proven" },
+      { "id": "tearing" },
+      { "id": "living-ammunition" }
+    ],
+    "description": "<p>A Deathspitter is a complex weapon symbiote that shoots maggot-like organisms at targets with a spasm of agonised muscle. Upon striking the target, the squirming projectile disintegrates in a spray of corrosive slime.</p>",
+    "modifiers": []
+  }
 }

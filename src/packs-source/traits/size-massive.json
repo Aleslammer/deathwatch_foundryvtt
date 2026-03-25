@@ -1,11 +1,12 @@
 {
+  "_id": "trt000000000061",
   "name": "Size (Massive)",
   "type": "trait",
   "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
-    "description": "<p>This creature is Massive. Enemies gain +30 to hit it, and it suffers –30 to Concealment. Its base movement is Agility Bonus +3.</p>",
     "book": "Core Rulebook",
     "page": "134",
+    "description": "<p>This creature is Massive. Enemies gain +30 to hit it, and it suffers –30 to Concealment. Its base movement is Agility Bonus +3.</p>",
     "modifiers": [
       {
         "name": "Size (Massive)",
@@ -23,6 +24,5 @@
         "enabled": true
       }
     ]
-  },
-  "_id": "trt000000000061"
+  }
 }

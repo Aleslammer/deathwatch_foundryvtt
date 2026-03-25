@@ -3,9 +3,9 @@
   "type": "demeanour",
   "img": "icons/svg/book.svg",
   "system": {
-    "chapter": "Ultramarines",
     "book": "Core Rulebook",
     "page": "54",
-    "description": "<p>In all of their duties, from battle to study, the Ultramarines are thorough, analytical, and attentive to every detail. They are slow to anger and rarely make a rash decision. By constant recourse to the articles of faith enshrined within the Codex Astartes, the Ultramarines are able to face any eventuality with well practised battle drills and established doctrine.</p>"
+    "description": "<p>In all of their duties, from battle to study, the Ultramarines are thorough, analytical, and attentive to every detail. They are slow to anger and rarely make a rash decision. By constant recourse to the articles of faith enshrined within the Codex Astartes, the Ultramarines are able to face any eventuality with well practised battle drills and established doctrine.</p>",
+    "chapter": "Ultramarines"
   }
 }

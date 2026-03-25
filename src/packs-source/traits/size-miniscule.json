@@ -1,11 +1,12 @@
 {
+  "_id": "trt000000000056",
   "name": "Size (Miniscule)",
   "type": "trait",
   "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
-    "description": "<p>This creature is Miniscule. Enemies suffer –30 to hit it, and it gains +30 to Concealment. Its base movement is Agility Bonus –3.</p>",
     "book": "Core Rulebook",
     "page": "134",
+    "description": "<p>This creature is Miniscule. Enemies suffer –30 to hit it, and it gains +30 to Concealment. Its base movement is Agility Bonus –3.</p>",
     "modifiers": [
       {
         "name": "Size (Miniscule)",
@@ -23,6 +24,5 @@
         "enabled": true
       }
     ]
-  },
-  "_id": "trt000000000056"
+  }
 }

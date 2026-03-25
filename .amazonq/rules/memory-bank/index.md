@@ -19,7 +19,7 @@
 12. **enemies.md** - Enemy & horde compendium entries (Tyranid: Hormagaunt, Termagant)
 
 ## Key Metrics
-- **Tests**: 947 passing, 77 suites
+- **Tests**: 1005 passing, 81 suites
 - **Helper Classes**: 25+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -28,8 +28,9 @@
 ```bash
 npm test                                                    # Run all tests
 npm run test:coverage                                       # Coverage report
-npm run build:packs                                         # Compile compendium packs
-npm run build:all                                          # Validate + build packs + deploy
+npm run format:json                                         # Compact + Prettier JSON formatting
+npm run build:packs                                         # Compact + format + validate + compile
+npm run build:all                                           # build:packs + deploy
 ```
 
 ## Core Systems Summary
@@ -107,9 +108,10 @@ src/module/helpers/      25+ helper modules (including horde-combat.mjs)
 src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
-tests/                   947 tests across 77 suites
+builds/scripts/          Build, validation, formatting, and deployment scripts
+tests/                   1005 tests across 81 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 ```
 
 ---
-**Last Updated**: January 2025 (Termagant enemy/horde added, enemies.md created)
+**Last Updated**: January 2025 (Carnifex + Thornback enemies, JSON formatting pipeline, Multiple Arms +10 TG modifier)

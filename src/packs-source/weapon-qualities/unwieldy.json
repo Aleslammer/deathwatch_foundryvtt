@@ -4,10 +4,10 @@
   "type": "weapon-quality",
   "img": "icons/svg/item-bag.svg",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "143",
     "key": "unwieldy",
     "value": "",
-    "description": "<p>Huge and often top-heavy, Unwieldy weapons are too awkward to be used defensively. Unwieldy weapons cannot be used to Parry.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "143"
+    "description": "<p>Huge and often top-heavy, Unwieldy weapons are too awkward to be used defensively. Unwieldy weapons cannot be used to Parry.</p>"
   }
 }

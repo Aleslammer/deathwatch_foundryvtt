@@ -1,14 +1,12 @@
 {
-    "_id":  "energy-body0003",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 03",
-    "system":  {
-                   "damageType":  "Energy",
-                   "description":  "The attack cooks the flesh on the chest and abdomen, inflicting 2 levels of Fatigue and leaving the target Stunned for 1 Round.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Body"
-               },
-    "type":  "critical-effect"
+  "_id": "energy-body0003",
+  "name": "Level 03",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Energy",
+    "location": "Body",
+    "description": "The attack cooks the flesh on the chest and abdomen, inflicting 2 levels of Fatigue and leaving the target Stunned for 1 Round.",
+    "effects": []
+  }
 }

@@ -3,25 +3,65 @@
   "type": "specialty",
   "img": "systems/deathwatch/icons/specialty/techmarine.webp",
   "system": {
-    "description": "<p>Techmarines are trained by the Adeptus Mechanicus to maintain and repair the Chapter's wargear and vehicles. They serve as the bridge between the Chapter and the Machine Cult.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "52",
+    "description": "<p>Techmarines are trained by the Adeptus Mechanicus to maintain and repair the Chapter's wargear and vehicles. They serve as the bridge between the Chapter and the Machine Cult.</p>",
     "characteristicCosts": {
-      "ws": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "bs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "str": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "tg": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "ag": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
-      "int": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "per": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "wil": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
-      "fs": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 }
+      "ws": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "bs": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "str": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "tg": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "ag": {
+        "simple": 750,
+        "intermediate": 1500,
+        "trained": 2000,
+        "expert": 5000
+      },
+      "int": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "per": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "wil": {
+        "simple": 750,
+        "intermediate": 1500,
+        "trained": 2000,
+        "expert": 5000
+      },
+      "fs": {
+        "simple": 750,
+        "intermediate": 1500,
+        "trained": 2000,
+        "expert": 5000
+      }
     },
-    "skillCosts":{
-      "speak_language_techna_lingua": { "costTrain": 0 },
-      "tech_use": { "costTrain": 0 }
-    },
-
     "rankCosts": {
       "1": {
         "skills": {
@@ -67,9 +107,7 @@
         }
       },
       "4": {
-        "skills": {
-          "lore_forbidden_archeotech": { "costExpert": 400 }
-        },
+        "skills": { "lore_forbidden_archeotech": { "costExpert": 400 } },
         "talents": {
           "tal00000000028": 500,
           "tal00000000051": 400,
@@ -120,6 +158,10 @@
           "tal00000000257": 1000
         }
       }
+    },
+    "skillCosts": {
+      "speak_language_techna_lingua": { "costTrain": 0 },
+      "tech_use": { "costTrain": 0 }
     }
   }
 }

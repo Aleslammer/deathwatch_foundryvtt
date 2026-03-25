@@ -1,14 +1,12 @@
 {
-    "_id":  "impact-body0008",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 08",
-    "system":  {
-                   "damageType":  "Impact",
-                   "description":  "The force of the attack ruptures several of the target\u0027s organs and knocks him down, gasping in wretched pain. The target suffers Blood Loss and takes 1d10 levels of Fatigue.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Body"
-               },
-    "type":  "critical-effect"
+  "_id": "impact-body0008",
+  "name": "Level 08",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Impact",
+    "location": "Body",
+    "description": "The force of the attack ruptures several of the target's organs and knocks him down, gasping in wretched pain. The target suffers Blood Loss and takes 1d10 levels of Fatigue.",
+    "effects": []
+  }
 }

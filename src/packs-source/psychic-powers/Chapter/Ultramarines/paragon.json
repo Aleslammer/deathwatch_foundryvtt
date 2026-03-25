@@ -4,16 +4,16 @@
   "type": "psychic-power",
   "img": "systems/deathwatch/icons/psychic-powers/ultramarines.webp",
   "system": {
-    "action": "Full",
-    "opposed": "No",
+    "book": "Deathwatch Core Rulebook",
+    "page": "200",
+    "key": "paragon",
     "range": "5 metre radius x PR",
     "sustained": "Yes",
+    "action": "Full",
+    "opposed": "No",
     "cost": 500,
     "class": "Chapter",
-    "key": "paragon",
-    "chapterImg": "systems/deathwatch/icons/chapters/ultramarines.webp",
     "description": "<p>The Librarian lets his authority shine forth in a blaze of psychic energy, filling nearby allies with strength and resolve to emulate his glory. While this power is in effect, the Librarian can allow a number of allies equal to his PR within range of the power to use one of his characteristics. In effect, those benefiting from this power count as having a characteristic score equal to that of the Librarian, though if their own characteristic is higher they may choose to use that instead.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "200"
+    "chapterImg": "systems/deathwatch/icons/chapters/ultramarines.webp"
   }
 }

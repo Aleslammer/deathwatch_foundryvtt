@@ -4,16 +4,16 @@
   "type": "psychic-power",
   "img": "systems/deathwatch/icons/psychic-powers/blood-angel.webp",
   "system": {
-    "action": "Half",
-    "opposed": "No",
+    "book": "Deathwatch Core Rulebook",
+    "page": "196",
+    "key": "blood-lance",
     "range": "10 metres x PR",
     "sustained": "No",
+    "action": "Half",
+    "opposed": "No",
     "cost": 1000,
     "class": "Chapter",
-    "key": "blood-lance",
-    "chapterImg": "systems/deathwatch/icons/chapters/blood_angels.webp",
     "description": "<p>The Librarian throws out his arm and hurls a blazing crimson lance that impales anything in its path. The Blood Lance traces a straight line from the Librarian out to the extent of the power's range. Any creature (friend or foe) that the lance passes through suffers 1d10 x PR Rending damage that is not reduced by Toughness Bonus. Armour and cover protect as normal.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "196"
+    "chapterImg": "systems/deathwatch/icons/chapters/blood_angels.webp"
   }
 }

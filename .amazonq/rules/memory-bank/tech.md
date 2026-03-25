@@ -180,13 +180,20 @@ tests/
 
 ### Build Scripts
 - **Location**: `builds/scripts/`
+- **compactJson.mjs**: Smart JSON formatter (key ordering + inline compaction)
 - **compilePacks.mjs**: Converts source compendium data to LevelDB format
 - **copyLocal.mjs**: Node.js script for local deployment
+- **validatePacks.mjs**: Validates unique IDs, talent compendiumIds, weapon quality keys, embedded item sync
+- **sortTalentJsons.mjs**: Sorts talent JSON properties and ensures compendiumId is set
+- **validateTalentIds.mjs**: Verifies all talents have matching _id and compendiumId
 
 ### NPM Scripts
 ```json
 {
-  "build:packs": "node builds/scripts/compilePacks.mjs"
+  "format:json": "node builds/scripts/compactJson.mjs && prettier --write \"src/packs-source/**/*.json\"",
+  "build:packs": "compactJson + prettier + validatePacks + compilePacks",
+  "build:copy": "node builds/scripts/copyLocal.mjs",
+  "build:all": "npm run build:packs && npm run build:copy"
 }
 ```
 
@@ -197,6 +204,9 @@ tests/
   - LevelDB implementation for Node.js
   - Used for compendium pack compilation
   - Converts JSON source data to Foundry's database format
+- **jest**: ^29.7.0 — Test framework
+- **@jest/globals**: ^29.7.0 — Jest ES module support
+- **prettier**: ^3.8.1 — Code formatter (JSON formatting in build pipeline)
 
 ### Runtime Dependencies
 - None (relies on Foundry VTT platform)
@@ -262,7 +272,17 @@ Copies system files to local Foundry installation
 ### Editor Configuration
 - **File**: `.editorconfig`
 - **Purpose**: Consistent code formatting across editors
-- **Settings**: Indentation, line endings, charset
+- **Settings**: 2-space indent, LF line endings, UTF-8 charset
+
+### Prettier Configuration
+- **File**: `.prettierrc`
+- **Settings**: 2-space indent, LF, double quotes, no trailing commas
+- **Integration**: Runs in build pipeline after compactJson, format-on-save in VS Code
+- **VS Code**: `.vscode/settings.json` enables format-on-save with Prettier as default formatter
+
+### VS Code Workspace Settings
+- **File**: `.vscode/settings.json`
+- **Settings**: `editor.formatOnSave: true`, `editor.defaultFormatter: esbenp.prettier-vscode`
 
 ### Version Control
 - **System**: Git

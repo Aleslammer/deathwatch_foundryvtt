@@ -1,23 +1,23 @@
 {
   "_id": "clip00000000002",
-  "img": "systems/deathwatch/icons/ammo/ammo-hellfire.webp",
   "name": "Hellfire Rounds",
+  "type": "ammunition",
+  "img": "systems/deathwatch/icons/ammo/ammo-hellfire.webp",
   "system": {
-    "capacity": {
-      "max": 12,
-      "value": 12
-    },
-    "description": "<p>Originally designed to combat the Tyranid threat, hellfire rounds have a devastating effect on organic matter. Their cores are replaced with vials of mutagenic acid that eats through any living material with horrific speed.</p><p><b>Effects</b>: The weapon ignores Natural Armour and may inflict Righteous Fury on any damage die results of a 9 or 10. In addition, the weapon gains the Tearing Quality (if it did not already possess it). When used in a Heavy Bolter, it changes the weapon’s ROF to S/–/– and adds the Blast (3) Quality. When used against a Horde, Hellfire Rounds add one additional point of damage to the Horde’s Magnitude per hit.</p><p><b>Used With</b>: All bolt weapons.</p>",
+    "book": "Deathwatch Core Rulebook",
+    "page": "159",
+    "capacity": { "value": 12, "max": 12 },
     "quantity": 1,
-    "renown": "",
     "req": 25,
+    "renown": "",
+    "description": "<p>Originally designed to combat the Tyranid threat, hellfire rounds have a devastating effect on organic matter. Their cores are replaced with vials of mutagenic acid that eats through any living material with horrific speed.</p><p><b>Effects</b>: The weapon ignores Natural Armour and may inflict Righteous Fury on any damage die results of a 9 or 10. In addition, the weapon gains the Tearing Quality (if it did not already possess it). When used in a Heavy Bolter, it changes the weapon’s ROF to S/–/– and adds the Blast (3) Quality. When used against a Horde, Hellfire Rounds add one additional point of damage to the Horde’s Magnitude per hit.</p><p><b>Used With</b>: All bolt weapons.</p>",
     "modifiers": [
       {
         "name": "Hellfire Heavy Bolter RoF",
         "modifier": "S/-/-",
         "effectType": "weapon-rof",
-        "enabled": true,
-        "weaponClass": "heavy"
+        "weaponClass": "heavy",
+        "enabled": true
       },
       {
         "name": "Hellfire Righteous Fury",
@@ -29,8 +29,8 @@
         "name": "Hellfire Blast",
         "modifier": "3",
         "effectType": "weapon-blast",
-        "enabled": true,
-        "weaponClass": "heavy"
+        "weaponClass": "heavy",
+        "enabled": true
       },
       {
         "name": "Hellfire Anti-Horde",
@@ -45,6 +45,5 @@
         "enabled": true
       }
     ]
-  },
-  "type": "ammunition"
+  }
 }

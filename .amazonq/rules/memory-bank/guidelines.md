@@ -114,7 +114,7 @@ const mockActor = {
 ### Current State (Post-Refactoring)
 - **Total Lines**: ~2,618 lines across core modules
 - **Test Coverage**: 68%
-- **Test Count**: 947 tests across 77 suites
+- **Test Count**: 1005 tests across 81 suites
 - **Key Files**:
   - actor.mjs: ~60 lines (thin shell, delegates to DataModels)
   - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
@@ -156,6 +156,10 @@ const mockActor = {
 - **String Quotes**: Double quotes for strings, template literals for interpolation
 - **Blank Lines**: Single blank line between methods, two lines between major sections
 - **Trailing Commas**: Not used in object/array literals
+- **JSON Formatting**: Automated via `compactJson.mjs` + Prettier in build pipeline
+  - Short objects inlined when they fit within 80 chars at their indent level
+  - Keys ordered logically per item type (not alphabetically)
+  - Prettier handles spacing on format-on-save
 
 ### Documentation Standards
 - **JSDoc Comments**: Used for all public methods and classes
@@ -638,10 +642,23 @@ CONFIG.Item.dataModels['new-type'] = models.DeathwatchNewType;
 ### Compendium Build Process
 - Source files: `src/packs-source/` (JSON, version controlled)
 - Compiled packs: `src/packs/` (LevelDB, generated)
-- Build script: `builds/scripts/compilePacks.mjs`
-- Automatically processes all directories in packs-source
+- Build pipeline: `compactJson → prettier → validatePacks → compilePacks`
+- **compactJson.mjs**: Smart key ordering per item type + inline compaction (≤80 chars)
+- **prettier**: Adds spacing to inlined JSON, preserves compact form on subsequent saves
+- **validatePacks.mjs**: Unique IDs, talent compendiumIds, quality keys, embedded item sync
+- **compilePacks.mjs**: Processes all directories in packs-source into LevelDB
 - Creates folders from subdirectories
-- Supports both Item and RollTable types
+- Supports Item, Actor, and RollTable types
+
+### JSON Key Ordering (compactJson.mjs)
+Keys are ordered logically per item type, not alphabetically:
+- **weapon**: book/page → class/dmg/dmgType/pen → range/rof/clip/reload → equipped/wt → req/renown → qualities/upgrades → description → modifiers
+- **armor**: book/page → head/body/left_arm/right_arm/left_leg/right_leg → req/renown → histories → description → modifiers
+- **ammunition**: book/page → capacity → quantity → req/renown → description → modifiers
+- **talent**: book/page → prerequisite/benefit → description → cost/stackable → compendiumId → modifiers
+- **enemy/horde**: characteristics → wounds/fatigue → skills → psyRating → armor → modifiers → description
+- **modifier objects**: _id → name → modifier → type → effectType → valueAffected → enabled
+- **top-level**: _id → name → type → img → system → items → prototypeToken
 
 ### Compendium ID Requirements
 - **CRITICAL**: All `_id` fields must be unique across ALL compendium packs

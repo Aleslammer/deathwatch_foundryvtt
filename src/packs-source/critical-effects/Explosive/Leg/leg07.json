@@ -1,14 +1,12 @@
 {
-    "_id":  "explosive-leg0007",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 07",
-    "system":  {
-                   "damageType":  "Explosive",
-                   "description":  "The explosion reduces the target\u0027s leg into a hunk of smoking meat. The target must immediately make a Challenging (+0) Toughness Test or die from shock. On a successful Test, the target is still Stunned for 1d10 Rounds, takes 1d10 levels of Fatigue and suffers Blood Loss. He now has only one leg.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Leg"
-               },
-    "type":  "critical-effect"
+  "_id": "explosive-leg0007",
+  "name": "Level 07",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Explosive",
+    "location": "Leg",
+    "description": "The explosion reduces the target's leg into a hunk of smoking meat. The target must immediately make a Challenging (+0) Toughness Test or die from shock. On a successful Test, the target is still Stunned for 1d10 Rounds, takes 1d10 levels of Fatigue and suffers Blood Loss. He now has only one leg.",
+    "effects": []
+  }
 }

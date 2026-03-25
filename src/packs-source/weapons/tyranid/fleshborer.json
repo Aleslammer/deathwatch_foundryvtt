@@ -1,35 +1,29 @@
 {
   "_id": "tyranid000000005",
-  "img": "systems/deathwatch/icons/weapons/tyranid-fleshborer.webp",
   "name": "Fleshborer",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/tyranid-fleshborer.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "",
     "class": "Basic",
-    "clip": "—",
-    "description": "<p>A Fleshborer is a nest for razor-fanged borer beetles which it ejects towards enemies.</p>",
     "dmg": "1d10+9",
     "dmgType": "Rending",
-    "attachedQualities": [
-      {
-        "id": "proven"
-      },
-      {
-        "id": "tearing"
-      },
-      {
-        "id": "living-ammunition"
-      }
-    ],
-    "equipped": false,
-    "modifiers": [],
-    "page": "",
     "penetration": "3",
     "range": "20",
-    "reload": "—",
-    "renown": "",
-    "req": 0,
     "rof": "S/-/-",
-    "wt": 0
-  },
-  "type": "weapon"
+    "clip": "—",
+    "reload": "—",
+    "equipped": false,
+    "wt": 0,
+    "req": 0,
+    "renown": "",
+    "attachedQualities": [
+      { "id": "proven" },
+      { "id": "tearing" },
+      { "id": "living-ammunition" }
+    ],
+    "description": "<p>A Fleshborer is a nest for razor-fanged borer beetles which it ejects towards enemies.</p>",
+    "modifiers": []
+  }
 }

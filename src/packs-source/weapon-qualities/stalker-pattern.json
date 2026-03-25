@@ -4,10 +4,10 @@
   "type": "weapon-quality",
   "img": "icons/svg/item-bag.svg",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "160",
     "key": "stalker-pattern",
     "value": "",
-    "description": "<p>Stalker-pattern weapons are designed for stealth operations. When using Stalker Rounds, the weapon's damage penalty does not apply.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "160"
+    "description": "<p>Stalker-pattern weapons are designed for stealth operations. When using Stalker Rounds, the weapon's damage penalty does not apply.</p>"
   }
 }

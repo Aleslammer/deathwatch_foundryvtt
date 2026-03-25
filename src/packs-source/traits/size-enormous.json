@@ -1,11 +1,12 @@
 {
+  "_id": "trt000000000033",
   "name": "Size (Enormous)",
   "type": "trait",
   "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
-    "description": "<p>This creature is Enormous. Enemies gain +20 to hit it, and it suffers –20 to Concealment. Its base movement is Agility Bonus +2.</p>",
     "book": "Core Rulebook",
     "page": "134",
+    "description": "<p>This creature is Enormous. Enemies gain +20 to hit it, and it suffers –20 to Concealment. Its base movement is Agility Bonus +2.</p>",
     "modifiers": [
       {
         "name": "Size (Enormous)",
@@ -23,6 +24,5 @@
         "enabled": true
       }
     ]
-  },
-  "_id": "trt000000000033"
+  }
 }

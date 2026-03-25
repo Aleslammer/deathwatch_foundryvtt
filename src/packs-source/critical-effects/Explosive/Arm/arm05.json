@@ -1,14 +1,12 @@
 {
-    "_id":  "explosive-arm0005",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 05",
-    "system":  {
-                   "damageType":  "Explosive",
-                   "description":  "Fragments from the explosion tear into the target\u0027s hand, ripping away flesh and muscle alike. He must immediately Test Toughness or lose the hand. Even on a success, the hand is useless until medical attention is received. The target takes 1d5 levels of Fatigue.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Arm"
-               },
-    "type":  "critical-effect"
+  "_id": "explosive-arm0005",
+  "name": "Level 05",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Explosive",
+    "location": "Arm",
+    "description": "Fragments from the explosion tear into the target's hand, ripping away flesh and muscle alike. He must immediately Test Toughness or lose the hand. Even on a success, the hand is useless until medical attention is received. The target takes 1d5 levels of Fatigue.",
+    "effects": []
+  }
 }

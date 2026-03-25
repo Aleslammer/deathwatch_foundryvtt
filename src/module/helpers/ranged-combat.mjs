@@ -147,7 +147,6 @@ export class RangedCombatHelper {
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
-            const maxHits = roundsFired;
 
             const isAccurate = await WeaponQualityHelper.hasQuality(weapon, 'accurate');
             const isGyroStabilised = await WeaponQualityHelper.hasQuality(weapon, 'gyro-stabilised');
@@ -155,6 +154,8 @@ export class RangedCombatHelper {
             const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
             const isStorm = await WeaponQualityHelper.hasQuality(weapon, 'storm');
             const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
+            let maxHits = roundsFired;
+            if (isTwinLinked) maxHits += 1;
             const hasLivingAmmo = await WeaponQualityHelper.hasQuality(weapon, 'living-ammunition');
             const isPointBlank = rangeLabel === "Point Blank";
             

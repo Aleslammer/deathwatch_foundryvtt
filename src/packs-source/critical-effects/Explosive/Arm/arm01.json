@@ -1,14 +1,12 @@
 {
-    "_id":  "explosive-arm0001",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 01",
-    "system":  {
-                   "damageType":  "Explosive",
-                   "description":  "The attack throws the limb backwards, painfully jerking it away from the body, inflicting 1 level of Fatigue.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Arm"
-               },
-    "type":  "critical-effect"
+  "_id": "explosive-arm0001",
+  "name": "Level 01",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Explosive",
+    "location": "Arm",
+    "description": "The attack throws the limb backwards, painfully jerking it away from the body, inflicting 1 level of Fatigue.",
+    "effects": []
+  }
 }

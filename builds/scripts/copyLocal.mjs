@@ -44,4 +44,4 @@ for (const entry of fs.readdirSync(LOCAL_DIR)) {
 
 console.log(`Copying files to '${LOCAL_DIR}'`);
 const copied = copyRecursive(SOURCE_DIR, LOCAL_DIR);
-console.log(`\x1b[32mComplete! Copied ${copied} files\x1b[0m`);
+console.log(`\x1b[32mComplete! Copied ${copied} files at ${new Date().toLocaleTimeString()}\x1b[0m`);

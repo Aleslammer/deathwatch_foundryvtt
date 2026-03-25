@@ -3,9 +3,9 @@
   "type": "chapter",
   "img": "systems/deathwatch/icons/chapters/blood_angels.webp",
   "system": {
-    "description": "<p>The Blood Angels are one of the original Space Marine Legions, renowned for their nobility, artistry, and terrifying ferocity in battle. Founded by their Primarch, Sanguinius, they combine a refined, almost angelic culture with brutal close-combat prowess.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "41",
+    "description": "<p>The Blood Angels are one of the original Space Marine Legions, renowned for their nobility, artistry, and terrifying ferocity in battle. Founded by their Primarch, Sanguinius, they combine a refined, almost angelic culture with brutal close-combat prowess.</p>",
     "skillCosts": {
       "acrobatics": { "costTrain": 200, "costMaster": 600, "costExpert": 600 }
     },
