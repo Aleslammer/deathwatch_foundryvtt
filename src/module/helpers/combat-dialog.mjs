@@ -13,16 +13,18 @@ export class CombatDialogHelper {
       runningTarget = 0,
       miscModifier = 0,
       isAccurate = false,
+      isInaccurate = false,
       isGyroStabilised = false,
       isTwinLinked = false
     } = options;
 
-    const accurateBonus = (isAccurate && aim > 0) ? 10 : 0;
+    const effectiveAim = isInaccurate ? 0 : aim;
+    const accurateBonus = (isAccurate && !isInaccurate && aim > 0) ? 10 : 0;
     const twinLinkedBonus = isTwinLinked ? 20 : 0;
     const gyroRangeMod = isGyroStabilised ? this.applyGyroStabilisedRangeLimit(rangeMod) : rangeMod;
-    const modifiers = bsAdv + aim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus;
+    const modifiers = bsAdv + effectiveAim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus };
+    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus, effectiveAim };
   }
 
   static applyGyroStabilisedRangeLimit(rangeMod) {
@@ -75,7 +77,8 @@ export class CombatDialogHelper {
     return Math.min(calculatedHits, maxHits);
   }
 
-  static determineJamThreshold(autoFire) {
+  static determineJamThreshold(autoFire, isUnreliable = false) {
+    if (isUnreliable) return 91;
     if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO || autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
       return 94;
     }

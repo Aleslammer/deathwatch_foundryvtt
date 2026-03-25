@@ -104,6 +104,18 @@ describe('CombatDialogHelper', () => {
     it('returns 96 for single shot', () => {
       expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(96);
     });
+
+    it('returns 91 for unreliable weapon on single shot', () => {
+      expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.SINGLE, true)).toBe(91);
+    });
+
+    it('returns 91 for unreliable weapon on semi-auto', () => {
+      expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.SEMI_AUTO, true)).toBe(91);
+    });
+
+    it('returns 91 for unreliable weapon on full-auto', () => {
+      expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.FULL_AUTO, true)).toBe(91);
+    });
   });
 
   describe('parseRateOfFire', () => {

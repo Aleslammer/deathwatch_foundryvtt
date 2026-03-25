@@ -149,6 +149,7 @@ export class RangedCombatHelper {
             const roundsFired = CombatDialogHelper.determineRoundsFired(autoFire, rofParts);
 
             const isAccurate = await WeaponQualityHelper.hasQuality(weapon, 'accurate');
+            const isInaccurate = await WeaponQualityHelper.hasQuality(weapon, 'inaccurate');
             const isGyroStabilised = await WeaponQualityHelper.hasQuality(weapon, 'gyro-stabilised');
             const hasOverheats = await WeaponQualityHelper.hasQuality(weapon, 'overheats');
             const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
@@ -184,6 +185,7 @@ export class RangedCombatHelper {
               runningTarget,
               miscModifier: miscModifier + upgradeBSBonus,
               isAccurate,
+              isInaccurate,
               isGyroStabilised,
               isTwinLinked
             });
@@ -237,7 +239,8 @@ export class RangedCombatHelper {
                 });
               }
             }
-            const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire);
+            const isUnreliable = await WeaponQualityHelper.hasQuality(weapon, 'unreliable');
+            const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire, isUnreliable);
             let isJammed = !isHorde && !hasLivingAmmo && hitValue >= jamThreshold;
             const hasReliable = await WeaponQualityHelper.hasQuality(weapon, 'reliable');
             
