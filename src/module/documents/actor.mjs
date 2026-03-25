@@ -22,7 +22,7 @@ export class DeathwatchActor extends ActorConditionsMixin(Actor) {
       'prototypeToken.displayName': 20
     };
 
-    if (data.type === 'character') {
+    if (data.type === 'character' || data.type === 'horde') {
       updates['prototypeToken.actorLink'] = true;
       updates['prototypeToken.displayName'] = 30;
     }

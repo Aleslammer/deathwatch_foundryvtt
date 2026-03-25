@@ -497,5 +497,20 @@ describe('DeathwatchActor', () => {
         'prototypeToken.displayName': 20
       });
     });
+
+    it('sets actorLink and token name for horde type', async () => {
+      const data = { type: 'horde', name: 'Hormagaunt Horde' };
+      const options = {};
+      const user = {};
+      mockActor.updateSource = jest.fn();
+      
+      await mockActor._preCreate(data, options, user);
+      
+      expect(mockActor.updateSource).toHaveBeenCalledWith({
+        'prototypeToken.name': 'Hormagaunt Horde',
+        'prototypeToken.displayName': 30,
+        'prototypeToken.actorLink': true
+      });
+    });
   });
 });
