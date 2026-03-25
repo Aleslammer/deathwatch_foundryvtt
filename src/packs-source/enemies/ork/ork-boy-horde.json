@@ -23,10 +23,10 @@
       "intimidate": { "trained": true }
     },
     "psyRating": { "value": 0, "base": 0 },
-    "armor": 2,
     "modifiers": [],
     "conditions": {},
-    "description": "<p>A roaring mob of Ork Boyz, charging forward in a green tide of violence. Each Boy is a hulking brute armed with crude but deadly weapons, and together they form an overwhelming mass of muscle, tusks, and fury.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Armour:</strong> Flak armour (Body 2)</p><p><strong>Gear:</strong> Shiny bitz, really small Squigs</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 366</p>"
+    "description": "<p>A roaring mob of Ork Boyz, charging forward in a green tide of violence. Each Boy is a hulking brute armed with crude but deadly weapons, and together they form an overwhelming mass of muscle, tusks, and fury.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Armour:</strong> Flak armour (Body 2)</p><p><strong>Gear:</strong> Shiny bitz, really small Squigs</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 366</p>",
+    "gearArmor": 2
   },
   "items": [
     {

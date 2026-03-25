@@ -14,19 +14,19 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
 
   static defineSchema() {
     const schema = super.defineSchema();
-    schema.armor = new fields.NumberField({ initial: 0, min: 0, integer: true });
+    schema.gearArmor = new fields.NumberField({ initial: 0, min: 0, integer: true });
     return schema;
   }
 
   /** @override */
   getArmorValue(_location) {
-    return (this.armor || 0) + (this.naturalArmorValue || 0);
+    return (this.gearArmor || 0) + (this.naturalArmorValue || 0);
   }
 
   /** @override */
   getDefenses(_location) {
     return {
-      armorValue: (this.armor || 0) + (this.naturalArmorValue || 0),
+      armorValue: (this.gearArmor || 0) + (this.naturalArmorValue || 0),
       naturalArmorValue: this.naturalArmorValue || 0,
       toughnessBonus: this.characteristics?.tg?.baseMod || 0,
       unnaturalToughnessMultiplier: this.characteristics?.tg?.unnaturalMultiplier || 1
@@ -39,6 +39,12 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
    */
   calculateHitsReceived(options) {
     return HordeCombatHelper.calculateHordeHits(options);
+  }
+
+  /** @override */
+  prepareDerivedData() {
+    super.prepareDerivedData();
+    this.armor = (this.gearArmor || 0) + (this.naturalArmorValue || 0);
   }
 
   /**
@@ -55,7 +61,7 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
    */
   async receiveBatchDamage(hits) {
     const actor = this.parent;
-    const baseArmorValue = (this.armor || 0) + (this.naturalArmorValue || 0);
+    const baseArmorValue = (this.gearArmor || 0) + (this.naturalArmorValue || 0);
     const toughnessBonus = this.characteristics?.tg?.baseMod || 0;
     const unnaturalMultiplier = this.characteristics?.tg?.unnaturalMultiplier || 1;
     const effectiveTB = toughnessBonus * unnaturalMultiplier;

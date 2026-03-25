@@ -7,10 +7,10 @@ import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
 describe('DeathwatchHorde', () => {
 
   describe('defineSchema', () => {
-    it('includes armor field defaulting to 0', () => {
+    it('includes gearArmor field defaulting to 0', () => {
       const schema = DeathwatchHorde.defineSchema();
-      expect(schema.armor).toBeDefined();
-      expect(schema.armor.options.initial).toBe(0);
+      expect(schema.gearArmor).toBeDefined();
+      expect(schema.gearArmor.options.initial).toBe(0);
     });
 
     it('inherits wounds from base (used as magnitude)', () => {
@@ -60,7 +60,7 @@ describe('DeathwatchHorde', () => {
       horde.wounds = { value: 0, base: 30, max: 30 };
       horde.fatigue = { value: 0, max: 0 };
       horde.psyRating = { value: 0, base: 0 };
-      horde.armor = 3;
+      horde.gearArmor = 3;
       horde.parent = { items: [], effects: undefined, system: horde };
 
       horde.prepareDerivedData();
@@ -90,7 +90,7 @@ describe('DeathwatchHorde combat methods', () => {
 
   beforeEach(() => {
     horde = new DeathwatchHorde();
-    horde.armor = 4;
+    horde.gearArmor = 4;
     horde.characteristics = {
       ws: { base: 30, value: 30 },
       bs: { base: 25, value: 25 },
@@ -111,7 +111,7 @@ describe('DeathwatchHorde combat methods', () => {
   });
 
   it('getArmorValue returns 0 when armor is 0', () => {
-    horde.armor = 0;
+    horde.gearArmor = 0;
     expect(horde.getArmorValue('Body')).toBe(0);
   });
 
@@ -149,7 +149,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('delegates to receiveDamage on horde DataModel', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 3;
+    horde.gearArmor = 3;
     horde.wounds = { value: 5, max: 30 };
     horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
     const hordeActor = {
@@ -167,7 +167,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('applies magnitudeBonusDamage for extra magnitude loss per hit', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 3;
+    horde.gearArmor = 3;
     horde.wounds = { value: 5, max: 30 };
     horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
     const hordeActor = {
@@ -187,7 +187,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('does not apply magnitudeBonusDamage when armor absorbs all damage', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 8;
+    horde.gearArmor = 8;
     horde.wounds = { value: 5, max: 30 };
     horde.characteristics = { tg: { baseMod: 4, unnaturalMultiplier: 1 } };
     const hordeActor = {
@@ -206,7 +206,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('does not reduce magnitude when armor absorbs all damage', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 8;
+    horde.gearArmor = 8;
     horde.wounds = { value: 5, max: 30 };
     horde.characteristics = { tg: { baseMod: 4, unnaturalMultiplier: 1 } };
     const hordeActor = {
@@ -224,7 +224,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('shows destroyed message when magnitude reaches max', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 0;
+    horde.gearArmor = 0;
     horde.wounds = { value: 29, max: 30 };
     horde.characteristics = { tg: { baseMod: 2, unnaturalMultiplier: 1 } };
     const hordeActor = {
@@ -243,7 +243,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('batch applies multiple hits with single update', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 3;
+    horde.gearArmor = 3;
     horde.wounds = { value: 0, max: 30 };
     horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
     const hordeActor = { name: 'Test Horde', system: horde };
@@ -265,7 +265,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('batch shows hit table for multiple hits', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 3;
+    horde.gearArmor = 3;
     horde.wounds = { value: 0, max: 30 };
     horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
     const hordeActor = { name: 'Test Horde', system: horde };
@@ -283,7 +283,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('batch all absorbed posts single message with no update', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 8;
+    horde.gearArmor = 8;
     horde.wounds = { value: 0, max: 30 };
     horde.characteristics = { tg: { baseMod: 4, unnaturalMultiplier: 1 } };
     const hordeActor = { name: 'Armored Horde', system: horde };
@@ -301,7 +301,7 @@ describe('CombatHelper.applyDamage with horde', () => {
 
   it('batch includes magnitudeBonusDamage per penetrating hit', async () => {
     const horde = new DeathwatchHorde();
-    horde.armor = 3;
+    horde.gearArmor = 3;
     horde.wounds = { value: 0, max: 30 };
     horde.characteristics = { tg: { baseMod: 3, unnaturalMultiplier: 1 } };
     const hordeActor = { name: 'Test Horde', system: horde };

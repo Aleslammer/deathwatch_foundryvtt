@@ -25,10 +25,10 @@
       "swim": { "trained": true, "mastered": true }
     },
     "psyRating": { "value": 0, "base": 0 },
-    "armor": 3,
     "modifiers": [],
     "conditions": {},
-    "description": "<p>A chittering swarm of Termagants, the most numerous of Tyranid bioforms. Each creature carries a living Fleshborer weapon that fires borer beetles at the enemy. While individually fragile, their overwhelming numbers and ranged firepower make them deadly.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Traits:</strong> Tyranid, Natural Armour (3), Improved Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Dark Sight</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>"
+    "description": "<p>A chittering swarm of Termagants, the most numerous of Tyranid bioforms. Each creature carries a living Fleshborer weapon that fires borer beetles at the enemy. While individually fragile, their overwhelming numbers and ranged firepower make them deadly.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Traits:</strong> Tyranid, Natural Armour (3), Improved Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Dark Sight</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "gearArmor": 0
   },
   "items": [
     {

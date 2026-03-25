@@ -25,10 +25,10 @@
       "swim": { "trained": true, "mastered": true }
     },
     "psyRating": { "value": 0, "base": 0 },
-    "armor": 2,
     "modifiers": [],
     "conditions": {},
-    "description": "<p>A seething mass of Hormagaunts, bounding forward on powerful legs to overwhelm the enemy through sheer numbers. Each creature is a fast-moving assault organism armed with razor-sharp scything talons.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>"
+    "description": "<p>A seething mass of Hormagaunts, bounding forward on powerful legs to overwhelm the enemy through sheer numbers. Each creature is a fast-moving assault organism armed with razor-sharp scything talons.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "gearArmor": 0
   },
   "items": [
     {

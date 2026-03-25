@@ -35,10 +35,16 @@
         <div style="flex: 0 0 106px; text-align: center;">
           <div class="fatigue-box">
             <h4 class="box-title">Armor</h4>
-            <div class="fatigue-center">{{system.armor}}</div>
-            <input class="fatigue-center-input" name="system.armor" type="text" value="{{system.armor}}" data-dtype="Number" title="Horde Armor Value" />
-            <div class="fatigue-modifiers flexrow">
-              <span class="fatigue-max">&nbsp;</span>
+            <div class="horde-armor-center">{{system.armor}}</div>
+            <div class="horde-armor-split flexrow">
+              <div class="horde-armor-half" title="Gear Armor (editable)">
+                <span class="horde-armor-label">Gear</span>
+                <input type="text" name="system.gearArmor" value="{{system.gearArmor}}" data-dtype="Number" title="Armor from gear" />
+              </div>
+              <div class="horde-armor-half natural" title="Natural Armor (from traits)">
+                <span class="horde-armor-label">Natural</span>
+                <span class="horde-armor-value">{{system.naturalArmorValue}}</span>
+              </div>
             </div>
           </div>
         </div>
