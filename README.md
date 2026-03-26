@@ -69,9 +69,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 ## Installation
 
 ### From Foundry VTT
-1. Open Foundry VTT and navigate to **Game Systems**
-2. Click **Install System**
-3. Paste the manifest URL and click **Install**
+> **TBD** — Manifest URL installation is not yet available. Use manual installation below.
 
 ### Manual Installation
 1. Clone or download this repository
