@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import DeathwatchWeapon from '../../src/module/data/item/weapon.mjs';
 
 describe('DeathwatchWeapon - Effective Weight', () => {

@@ -317,7 +317,7 @@ Ammunition can have `magnitude-bonus-damage` modifier:
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 1021 tests passing across 83 suites
+- Overall: 1060 tests passing across 81 suites
 
 ## Force Weapon Integration
 

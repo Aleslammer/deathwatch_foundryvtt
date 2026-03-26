@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { WeaponQualityHelper } from '../../src/module/helpers/weapon-quality-helper.mjs';
 
 describe('WeaponQualityHelper.getBlastValue', () => {

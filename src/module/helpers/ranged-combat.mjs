@@ -5,6 +5,52 @@ import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { WeaponUpgradeHelper } from "./weapon-upgrade-helper.mjs";
 
 export class RangedCombatHelper {
+  /**
+   * Calculate ammo expenditure based on rounds fired and weapon qualities.
+   * @param {number} roundsFired - Base rounds fired
+   * @param {boolean} isStorm - Whether weapon has Storm quality
+   * @param {boolean} isTwinLinked - Whether weapon has Twin-Linked quality
+   * @returns {number}
+   */
+  static calculateAmmoExpenditure(roundsFired, isStorm = false, isTwinLinked = false) {
+    let ammo = roundsFired;
+    if (isStorm) ammo *= 2;
+    if (isTwinLinked) ammo *= 2;
+    return ammo;
+  }
+
+  /**
+   * Check if ammunition has a premature detonation modifier and if the roll triggers it.
+   * @param {Object} weapon - Weapon item
+   * @param {Object} actor - Actor document
+   * @param {number} hitValue - The attack roll result
+   * @returns {{ detonates: boolean, threshold: number }}
+   */
+  static checkPrematureDetonation(weapon, actor, hitValue) {
+    let threshold = 101;
+    if (weapon.system.loadedAmmo && actor) {
+      const ammo = actor.items.get(weapon.system.loadedAmmo);
+      if (ammo?.system.modifiers) {
+        for (const mod of ammo.system.modifiers) {
+          if (mod.enabled !== false && mod.effectType === 'premature-detonation') {
+            threshold = parseInt(mod.modifier) || 101;
+            break;
+          }
+        }
+      }
+    }
+    return { detonates: hitValue >= threshold, threshold };
+  }
+
+  /**
+   * Calculate maximum hits accounting for Twin-Linked bonus.
+   * @param {number} roundsFired - Base rounds fired
+   * @param {boolean} isTwinLinked - Whether weapon has Twin-Linked quality
+   * @returns {number}
+   */
+  static calculateMaxHits(roundsFired, isTwinLinked = false) {
+    return isTwinLinked ? roundsFired + 1 : roundsFired;
+  }
   static calculateThrownWeaponRange(weapon, actor) {
     if (weapon.system.class?.toLowerCase() !== 'thrown') {
       return null;
@@ -155,8 +201,7 @@ export class RangedCombatHelper {
             const isScatter = await WeaponQualityHelper.hasQuality(weapon, 'scatter');
             const isStorm = await WeaponQualityHelper.hasQuality(weapon, 'storm');
             const isTwinLinked = await WeaponQualityHelper.hasQuality(weapon, 'twin-linked');
-            let maxHits = roundsFired;
-            if (isTwinLinked) maxHits += 1;
+            let maxHits = RangedCombatHelper.calculateMaxHits(roundsFired, isTwinLinked);
             const hasLivingAmmo = await WeaponQualityHelper.hasQuality(weapon, 'living-ammunition');
             const isPointBlank = rangeLabel === "Point Blank";
             
@@ -193,21 +238,7 @@ export class RangedCombatHelper {
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
             
-            // Check for premature detonation from ammunition
-            let hasPrematureDetonation = false;
-            let detonationThreshold = 101;
-            if (weapon.system.loadedAmmo) {
-              const ammo = actor.items.get(weapon.system.loadedAmmo);
-              if (ammo?.system.modifiers) {
-                for (const mod of ammo.system.modifiers) {
-                  if (mod.enabled !== false && mod.effectType === 'premature-detonation') {
-                    detonationThreshold = parseInt(mod.modifier) || 101;
-                    break;
-                  }
-                }
-              }
-            }
-            hasPrematureDetonation = hitValue >= detonationThreshold;
+            const { detonates: hasPrematureDetonation } = RangedCombatHelper.checkPrematureDetonation(weapon, actor, hitValue);
             
             let hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
@@ -308,9 +339,7 @@ export class RangedCombatHelper {
               const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
               if (loadedAmmo) {
                 const currentValue = loadedAmmo.system.capacity.value;
-                let ammoExpended = roundsFired;
-                if (isStorm) ammoExpended *= 2;
-                if (isTwinLinked) ammoExpended *= 2;
+                const ammoExpended = RangedCombatHelper.calculateAmmoExpenditure(roundsFired, isStorm, isTwinLinked);
                 const newAmmoValue = Math.max(0, currentValue - ammoExpended);
                 await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
                 if (newAmmoValue === 0) {

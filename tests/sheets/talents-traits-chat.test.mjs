@@ -1,6 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
-
 describe('Talents and Traits - Chat Posting', () => {
   let mockActor;
   let mockTalent;

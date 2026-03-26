@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { CombatDialogHelper } from '../../src/module/helpers/combat-dialog.mjs';
 import { RATE_OF_FIRE_MODIFIERS } from '../../src/module/helpers/constants.mjs';
 

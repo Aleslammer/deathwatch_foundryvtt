@@ -19,7 +19,7 @@
 12. **enemies.md** - Enemy & horde compendium entries, faction-based ID conventions
 
 ## Key Metrics
-- **Tests**: 1021 passing, 83 suites
+- **Tests**: 1060 passing, 81 suites
 - **Helper Classes**: 25+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -109,7 +109,7 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1021 tests across 83 suites
+tests/                   1060 tests across 81 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 ```
 

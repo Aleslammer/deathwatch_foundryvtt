@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
 
 function prepareCharacterData(actor) {

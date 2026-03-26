@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { ModifierCollector } from '../../src/module/helpers/modifier-collector.mjs';
 
 describe('ModifierCollector', () => {

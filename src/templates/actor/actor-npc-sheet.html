@@ -11,25 +11,10 @@
           <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 3px; border: 1px solid #999; cursor: pointer;" />
         </div>
         <div style="flex: 0 0 125px; text-align: center;">
-          <div class="wounds-box {{woundColorClass}}">
-            <h4 class="box-title">Wounds</h4>
-            <div class="wounds-center">{{system.wounds.value}}</div>
-            <input class="wounds-center-input" name="system.wounds.value" type="text" value="{{system.wounds.value}}" data-dtype="Number" title="Current Wounds" />
-            <div class="wounds-modifiers flexrow">
-              <span class="wounds-max" title="{{#if system.wounds.modifiers.length}}Modified Max Wounds&#10;&#10;Base: {{system.wounds.base}}&#10;{{#each system.wounds.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}} ({{this.source}})&#10;{{/each}}Total: {{system.wounds.max}}{{else}}Modified Max Wounds{{/if}}">{{system.wounds.max}}</span>
-              <input class="wounds-base" name="system.wounds.base" type="text" value="{{system.wounds.base}}" data-dtype="Number" placeholder="0" title="Base Max Wounds" />
-            </div>
-          </div>
+          {{> "systems/deathwatch/templates/actor/parts/actor-wounds.html"}}
         </div>
         <div style="flex: 0 0 125px; text-align: center;">
-          <div class="fatigue-box {{#if system.fatigue.unconscious}}unconscious{{/if}}">
-            <h4 class="box-title">Fatigue</h4>
-            <div class="fatigue-center">{{system.fatigue.value}}</div>
-            <input class="fatigue-center-input" name="system.fatigue.value" type="text" value="{{system.fatigue.value}}" data-dtype="Number" title="Current Fatigue" />
-            <div class="fatigue-modifiers flexrow">
-              <span class="fatigue-max" title="Max Fatigue = Toughness Bonus&#10;{{#if system.fatigue.unconscious}}UNCONSCIOUS (Fatigue > TB){{else if (gt system.fatigue.value 0)}}-10 penalty to all tests{{/if}}">{{system.fatigue.max}}</span>
-            </div>
-          </div>
+          {{> "systems/deathwatch/templates/actor/parts/actor-fatigue.html"}}
         </div>
         <div style="flex: 1;"></div>
       </div>
@@ -46,49 +31,17 @@
   {{!-- Sheet Body --}}
   <section class="sheet-body">
 
-    {{!-- Characteristics Tab --}}
+    {{!-- Attributes Tab --}}
     <div class="tab characteristics" data-group="primary" data-tab="characteristics">
       <div style="display: flex; gap: 20px; align-items: flex-start; height: 100%;">
-        {{!-- Left Column: Characteristics and Movement --}}
         <div>
           <div style="display: grid; grid-template-columns: auto auto auto; column-gap: 5px; row-gap: 20px; align-content: start;">
-            {{#each system.characteristics as |characteristic key|}}
-            <div class="characteristic" data-characteristic="{{key}}">
-              <div class="characteristic-header flexrow">
-                <input class="characteristic-damage" name="system.characteristics.{{key}}.damage" type="text" title="Damage" value="{{#if characteristic.damage}}{{characteristic.damage}}{{/if}}" data-dtype="Number" placeholder="0"/>
-                <input class="characteristic-penalty" name="system.characteristics.{{key}}.penalty" type="text" title="Penalty" value="{{#if characteristic.penalty}}{{characteristic.penalty}}{{/if}}" data-dtype="Number" placeholder="0"/>
-              </div>
-              <h4 class="characteristic-name box-title rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" data-tooltip="{{#if characteristic.modifiers.length}}<strong>Modifiers:</strong><br>{{#each characteristic.modifiers}}{{this.name}}: {{numberFormat this.value decimals=0 sign=true}}<br>{{/each}}{{/if}}">{{characteristic.label}}</h4>
-              <div class="characteristic-modifiers flexrow">
-                <span class="characteristic-mod rollable" data-roll-type="characteristic" data-roll="d100" data-characteristic="{{key}}" data-label="{{characteristic.label}}" title="{{#if characteristic.bonusModifiers.length}}Characteristic Bonus&#10;&#10;Base: {{numberFormat characteristic.baseMod decimals=0 sign=true}}&#10;{{#each characteristic.bonusModifiers}}{{this.name}}: {{#if this.display}}{{this.display}}{{else}}{{numberFormat this.value decimals=0 sign=true}}{{/if}} ({{this.source}})&#10;{{/each}}Total: {{numberFormat characteristic.mod decimals=0 sign=true}}{{/if}}">{{numberFormat characteristic.mod decimals=0 sign=true}}</span>
-                <div class="characteristic-center">{{characteristic.value}}</div>
-                <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
-              </div>
-              <div class="characteristic-advances flexrow" style="font-size: 0.7em; margin-top: 2px; justify-content: center; gap: 4px;">
-                <input type="checkbox" name="system.characteristics.{{key}}.advances.simple" {{checked characteristic.advances.simple}} title="Simple (+5)" />
-                <input type="checkbox" name="system.characteristics.{{key}}.advances.intermediate" {{checked characteristic.advances.intermediate}} title="Intermediate (+5)" />
-                <input type="checkbox" name="system.characteristics.{{key}}.advances.trained" {{checked characteristic.advances.trained}} title="Trained (+5)" />
-                <input type="checkbox" name="system.characteristics.{{key}}.advances.expert" {{checked characteristic.advances.expert}} title="Expert (+5)" />
-              </div>
-            </div>
-            {{/each}}
+            {{> "systems/deathwatch/templates/actor/parts/actor-characteristics.html"}}
           </div>
-          
-          {{!-- Movement Box --}}
           <div style="display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
-            <div class="movement-box" style="overflow: visible;">
-              <h4 class="box-title">Movement</h4>
-              <table style="width: 100%; font-size: 0.8em; margin: 0; padding: 0; background: transparent; border: none;">
-                <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Half:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{movementValue system.movement.half}}{{else}}0m{{/if}}</td></tr>
-                <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Full:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{movementValue system.movement.full}}{{else}}0m{{/if}}</td></tr>
-                <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Charge:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{movementValue system.movement.charge}}{{else}}0m{{/if}}</td></tr>
-                <tr style="background: transparent; border: none;"><td style="text-align: left; padding: 2px 4px; background: transparent; border: none;">Run:</td><td style="text-align: right; padding: 2px 4px; background: transparent; border: none;">{{#if system.movement}}{{movementValue system.movement.run}}{{else}}0m{{/if}}</td></tr>
-              </table>
-            </div>
+            {{> "systems/deathwatch/templates/actor/parts/actor-movement.html"}}
           </div>
         </div>
-
-        {{!-- Right Column: Skills --}}
         <div style="flex: 1; overflow-y: auto; max-height: calc(100vh - 435px); border: 1px solid #999; border-radius: 3px; padding: 0;">
           {{> "systems/deathwatch/templates/actor/parts/actor-skills.html"}}
         </div>
@@ -100,7 +53,7 @@
       {{editor system.description target="system.description" rollData=rollData button=true owner=owner editable=editable}}
     </div>
 
-    {{!-- Active Effects Tab --}}
+    {{!-- Effects Tab --}}
     <div class="tab effects flexcol" data-group="primary" data-tab="effects">
       {{> "systems/deathwatch/templates/actor/parts/actor-effects.html"}}
     </div>

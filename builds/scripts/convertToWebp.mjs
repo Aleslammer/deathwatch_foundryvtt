@@ -1,8 +1,21 @@
-import { readdirSync, statSync, unlinkSync } from "fs";
-import { join, extname, basename } from "path";
+import { readdirSync, statSync, unlinkSync, readFileSync, existsSync } from "fs";
+import { join, extname, basename, dirname, resolve } from "path";
 import { execSync } from "child_process";
+import { fileURLToPath } from "url";
 
-const CWEBP = "C:\\Source\\libs\\libwebp-1.6.0\\bin\\cwebp.exe";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const envPath = resolve(__dirname, "../../.env");
+let CWEBP = null;
+
+if (existsSync(envPath)) {
+  const match = readFileSync(envPath, "utf-8").match(/^CWEBP_PATH=(.+)$/m);
+  if (match) CWEBP = match[1].trim();
+}
+
+if (!CWEBP) {
+  console.error("CWEBP_PATH not set. Add to .env: CWEBP_PATH=C:\\path\\to\\cwebp.exe");
+  process.exit(1);
+}
 const dir = process.argv[2];
 
 if (!dir) {

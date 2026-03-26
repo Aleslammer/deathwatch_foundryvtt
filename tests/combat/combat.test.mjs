@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { CombatHelper } from '../../src/module/helpers/combat.mjs';
 import { RANGE_MODIFIERS, AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from '../../src/module/helpers/constants.mjs';
 

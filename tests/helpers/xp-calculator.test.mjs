@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { XPCalculator } from '../../src/module/helpers/xp-calculator.mjs';
 
 describe('XPCalculator', () => {

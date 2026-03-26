@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { CombatHelper } from '../../src/module/helpers/combat.mjs';
 
 describe('Volatile Weapon Quality', () => {

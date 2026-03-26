@@ -3,6 +3,7 @@ export default {
   transform: {},
   testMatch: ['**/tests/**/*.test.mjs'],
   moduleFileExtensions: ['mjs', 'js'],
+  setupFiles: ['./tests/setup.mjs'],
   collectCoverageFrom: [
     'src/module/**/*.mjs',
     '!src/module/helpers/foundry-adapter.mjs'

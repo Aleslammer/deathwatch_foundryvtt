@@ -1,5 +1,4 @@
-/* Modifier Dialog Styling - Reduced Specificity */
-.dw-dialog,
+/* Modifier Dialog Styling */
 .deathwatch .modifier-dialog {
   background: linear-gradient(135deg, var(--dw-color-bg-gradient-start) 0%, var(--dw-color-bg-gradient-end) 100%);
   border: var(--dw-border-width) solid var(--dw-color-border-groove);
@@ -10,26 +9,22 @@
   color: var(--dw-color-text-dark);
 }
 
-.dw-dialog__form-group,
 .deathwatch .modifier-dialog .form-group {
   margin-bottom: var(--dw-spacing-xl);
 }
 
-.dw-dialog__form-group--row,
 .deathwatch .modifier-dialog .form-group.modifier-row {
   display: flex;
   align-items: center;
   gap: var(--dw-spacing-lg);
 }
 
-.dw-dialog__form-group--row label,
 .deathwatch .modifier-dialog .form-group.modifier-row label {
   flex: 0 0 auto;
   margin-bottom: 0;
   min-width: 120px;
 }
 
-.dw-dialog__label,
 .deathwatch .modifier-dialog label {
   display: block;
   font-weight: 600;
@@ -38,7 +33,6 @@
   font-size: 0.9em;
 }
 
-.dw-dialog__difficulty-grid,
 .deathwatch .modifier-dialog .difficulty-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -46,7 +40,6 @@
   margin-bottom: var(--dw-spacing-xl);
 }
 
-.dw-dialog__difficulty-option,
 .deathwatch .modifier-dialog .difficulty-option {
   display: flex;
   align-items: center;
@@ -59,20 +52,17 @@
   font-size: 0.85em;
 }
 
-.dw-dialog__difficulty-option:hover,
 .deathwatch .modifier-dialog .difficulty-option:hover {
   background: var(--dw-color-bg-hover);
   border-color: var(--dw-color-primary);
   box-shadow: var(--dw-shadow-sm);
 }
 
-.dw-dialog__difficulty-option input[type="checkbox"],
 .deathwatch .modifier-dialog .difficulty-option input[type="checkbox"] {
   margin-right: var(--dw-spacing-md);
   accent-color: var(--dw-color-primary);
 }
 
-.dw-dialog__select,
 .deathwatch .modifier-dialog select {
   width: 100%;
   padding: var(--dw-spacing-md) 12px;
@@ -85,21 +75,18 @@
   cursor: pointer;
 }
 
-.dw-dialog__select:focus,
 .deathwatch .modifier-dialog select:focus {
   outline: none;
   border-color: var(--dw-color-primary);
   box-shadow: var(--dw-shadow-focus);
 }
 
-.dw-dialog__select option,
 .deathwatch .modifier-dialog select option {
   padding: var(--dw-spacing-sm);
   background: var(--dw-color-bg-primary);
   color: var(--dw-color-text-light);
 }
 
-.dw-dialog__input,
 .deathwatch .modifier-dialog input[type="text"] {
   width: 100%;
   padding: var(--dw-spacing-md) 12px;
@@ -111,20 +98,17 @@
   transition: border-color 0.2s ease;
 }
 
-.dw-dialog__form-group--row .dw-dialog__input,
 .deathwatch .modifier-dialog .form-group.modifier-row input[type="text"] {
   flex: 1;
   width: auto;
 }
 
-.dw-dialog__input:focus,
 .deathwatch .modifier-dialog input[type="text"]:focus {
   outline: none;
   border-color: var(--dw-color-primary);
   box-shadow: var(--dw-shadow-focus);
 }
 
-.dw-dialog__buttons,
 .deathwatch .modifier-dialog .dialog-buttons {
   display: flex;
   justify-content: flex-end;
@@ -132,7 +116,6 @@
   margin-top: var(--dw-spacing-xxl);
 }
 
-.dw-dialog__button,
 .deathwatch .modifier-dialog .dialog-button {
   padding: var(--dw-spacing-md) 16px;
   border: none;
@@ -145,25 +128,21 @@
   letter-spacing: 0.5px;
 }
 
-.dw-dialog__button--roll,
 .deathwatch .modifier-dialog .dialog-button.roll {
   background: var(--dw-color-primary);
   color: white;
 }
 
-.dw-dialog__button--roll:hover,
 .deathwatch .modifier-dialog .dialog-button.roll:hover {
   background: var(--dw-color-primary-hover);
   box-shadow: var(--dw-shadow-sm);
 }
 
-.dw-dialog__button--cancel,
 .deathwatch .modifier-dialog .dialog-button.cancel {
   background: var(--dw-color-secondary);
   color: white;
 }
 
-.dw-dialog__button--cancel:hover,
 .deathwatch .modifier-dialog .dialog-button.cancel:hover {
   background: var(--dw-color-secondary-hover);
   box-shadow: var(--dw-shadow-sm);

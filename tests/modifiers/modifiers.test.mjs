@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { ModifierHelper } from '../../src/module/helpers/modifiers.mjs';
 import { MODIFIER_TYPES, EFFECT_TYPES, CHARACTERISTICS, CHARACTERISTIC_LABELS } from '../../src/module/helpers/constants.mjs';
 import { DWConfig } from '../../src/module/helpers/config.mjs';

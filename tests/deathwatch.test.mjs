@@ -1,6 +1,4 @@
 import { jest } from '@jest/globals';
-import './setup.mjs';
-
 let initCallback;
 let readyCallback;
 let renderChatCallback;

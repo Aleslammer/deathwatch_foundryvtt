@@ -23,8 +23,8 @@ npm run test:coverage
 
 ### Test Setup
 - **Setup File**: `tests/setup.mjs`
-- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields)
-- **Loaded**: Automatically before each test file
+- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields) and provide mock factories (`createMockActor`, `createMockWeapon`)
+- **Loaded**: Automatically via `setupFiles` in `jest.config.mjs`
 
 ### Coverage Reports
 - **HTML Report**: `coverage/lcov-report/index.html`
@@ -113,9 +113,8 @@ tests/
 │   └── item-models.test.mjs
 ├── integration/                       # Integration tests
 │   └── characteristic-damage-integration.test.mjs
-├── kraken-rounds.test.mjs             # Ammunition tests
-├── stalker-rounds.test.mjs
-├── vengeance-rounds.test.mjs
+├── ammunition/                        # Ammunition round tests
+│   └── ammunition-rounds.test.mjs
 ├── deathwatch.test.mjs                # Main entry point test
 └── README.md                          # Testing documentation
 ```

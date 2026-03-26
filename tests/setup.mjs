@@ -170,3 +170,80 @@ global.Combat = class Combat {
   rollInitiative() {}
   updateEmbeddedDocuments() {}
 };
+
+
+// ── Mock Factories ────────────────────────────────────────────────────────
+
+/**
+ * Create a mock actor with sensible defaults.
+ * @param {Object} overrides - Properties to merge into the mock
+ */
+global.createMockActor = (overrides = {}) => {
+  const base = {
+    name: 'Test Actor',
+    type: 'character',
+    system: {
+      characteristics: {
+        ws: { value: 40, base: 40, mod: 4, advances: {} },
+        bs: { value: 40, base: 40, mod: 4, advances: {} },
+        str: { value: 40, base: 40, mod: 4, advances: {} },
+        tg: { value: 40, base: 40, mod: 4, advances: {} },
+        ag: { value: 40, base: 40, mod: 4, advances: {} },
+        int: { value: 40, base: 40, mod: 4, advances: {} },
+        per: { value: 40, base: 40, mod: 4, advances: {} },
+        wil: { value: 40, base: 40, mod: 4, advances: {} },
+        fs: { value: 40, base: 40, mod: 4, advances: {} }
+      },
+      wounds: { value: 0, base: 20, max: 20 },
+      fatigue: { value: 0, max: 0 },
+      modifiers: [],
+      conditions: {},
+      psyRating: { value: 0, base: 0 }
+    },
+    items: new Map(),
+    update: jest.fn(),
+    getActiveTokens: jest.fn(() => [])
+  };
+  return mergeDeep(base, overrides);
+};
+
+/**
+ * Create a mock weapon with sensible defaults.
+ * @param {Object} overrides - Properties to merge into the mock
+ */
+global.createMockWeapon = (overrides = {}) => {
+  const base = {
+    name: 'Test Weapon',
+    type: 'weapon',
+    img: '',
+    system: {
+      class: 'Basic',
+      dmg: '1d10+5',
+      dmgType: 'Impact',
+      penetration: '4',
+      range: '100',
+      rof: 'S/3/-',
+      clip: '28',
+      reload: 'Full',
+      equipped: true,
+      jammed: false,
+      loadedAmmo: null,
+      attachedQualities: [],
+      attachedUpgrades: [],
+      modifiers: []
+    }
+  };
+  return mergeDeep(base, overrides);
+};
+
+function mergeDeep(target, source) {
+  const result = { ...target };
+  for (const key of Object.keys(source)) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && typeof source[key].mockImplementation !== 'function') {
+      result[key] = mergeDeep(target[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+}

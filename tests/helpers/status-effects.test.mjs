@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { DW_STATUS_EFFECTS } from '../../src/module/helpers/status-effects.mjs';
 
 describe('DW_STATUS_EFFECTS', () => {

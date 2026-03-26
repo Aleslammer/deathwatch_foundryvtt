@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { ItemHandlers } from '../../src/module/helpers/item-handlers.mjs';
 
 describe('ItemHandlers', () => {

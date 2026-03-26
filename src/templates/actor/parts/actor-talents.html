@@ -1,0 +1,27 @@
+<div class="talents-section">
+  <h3 class="section-header">Talents</h3>
+  <ol class="items-list talents-list">
+    <li class="item flexrow items-header">
+      <div class="item-name">Name</div>
+      <div class="item-benefit">Benefit</div>
+      <div class="item-prerequisite">Prerequisite</div>
+      <div class="item-controls">
+        <a class="item-control item-create" title="Create Talent" data-type="talent"><i class="fas fa-plus"></i></a>
+      </div>
+    </li>
+    {{#each talents as |item id|}}
+    <li class="item flexrow" data-item-id="{{item._id}}" draggable="true">
+      <div class="item-name">
+        <div class="item-image" style="background-image: url({{item.img}})"></div>
+        <h4 class="talent-show" style="cursor: pointer;">{{item.name}}</h4>
+        {{#if (eq item.system.effectiveCost -1)}}
+        <i class="fas fa-exclamation-triangle" style="color: #ff6b6b; margin-left: 5px; font-size: 12px;" title="This talent has -1 XP cost. Character may not be eligible to take this talent."></i>
+        {{/if}}
+      </div>
+      <div class="item-benefit">{{item.system.benefit}}</div>
+      <div class="item-prerequisite">{{item.system.prerequisite}}</div>
+      {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
+    </li>
+    {{/each}}
+  </ol>
+</div>

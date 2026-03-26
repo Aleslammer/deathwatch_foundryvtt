@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { RighteousFuryHelper } from '../../src/module/helpers/righteous-fury-helper.mjs';
 import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
 

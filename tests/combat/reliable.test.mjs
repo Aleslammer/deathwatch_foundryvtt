@@ -1,6 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
-
 describe('Reliable Quality', () => {
   it('prevents jam on 1d10 roll of 1-9', async () => {
     // This would be tested in integration tests with the full ranged-combat flow

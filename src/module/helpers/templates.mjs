@@ -13,6 +13,15 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/deathwatch/templates/actor/actor-horde-sheet.html",
 
     // Actor partials.
+    "systems/deathwatch/templates/actor/parts/actor-characteristics.html",
+    "systems/deathwatch/templates/actor/parts/actor-movement.html",
+    "systems/deathwatch/templates/actor/parts/actor-wounds.html",
+    "systems/deathwatch/templates/actor/parts/actor-fatigue.html",
+    "systems/deathwatch/templates/actor/parts/actor-psy-rating.html",
+    "systems/deathwatch/templates/actor/parts/actor-talents.html",
+    "systems/deathwatch/templates/actor/parts/actor-traits.html",
+    "systems/deathwatch/templates/actor/parts/actor-augmentations.html",
+    "systems/deathwatch/templates/actor/parts/actor-biography-fields.html",
     "systems/deathwatch/templates/actor/parts/actor-skills.html",
     "systems/deathwatch/templates/actor/parts/actor-items.html",
     "systems/deathwatch/templates/actor/parts/actor-psychic-powers.html",

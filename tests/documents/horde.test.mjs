@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import DeathwatchHorde from '../../src/module/data/actor/horde.mjs';
 import { CombatHelper } from '../../src/module/helpers/combat.mjs';
 import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';

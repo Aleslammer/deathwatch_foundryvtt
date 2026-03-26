@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { DeathwatchItemSheet } from '../../src/module/sheets/item-sheet.mjs';
 
 // Mock jQuery

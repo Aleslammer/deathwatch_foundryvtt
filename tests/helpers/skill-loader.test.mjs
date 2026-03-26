@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { SkillLoader } from '../../src/module/helpers/skill-loader.mjs';
 
 describe('SkillLoader', () => {

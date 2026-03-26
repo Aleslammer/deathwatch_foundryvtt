@@ -67,8 +67,19 @@ src/
 │   ├── armor/
 │   ├── gear/
 │   └── weapons/
-├── styles/                         # CSS styling
-│   └── deathwatch.css
+├── styles/                    # Modular CSS (variables, 8 component files)
+│   ├── variables.css
+│   ├── base.css
+│   ├── deathwatch.css           # Entry point, imports all others
+│   └── components/
+│       ├── characteristics.css
+│       ├── dialogs.css
+│       ├── items.css
+│       ├── modifiers.css
+│       ├── sheets.css
+│       ├── skills.css
+│       ├── tooltips.css
+│       └── wounds.css
 ├── templates/                      # Handlebars HTML templates
 │   ├── actor/                      # Character/NPC sheets
 │   └── item/                       # Item sheets
@@ -198,8 +209,26 @@ Contains only type lists — all field definitions live in DataModel classes:
 
 ### 8. UI Templates (`templates/`)
 Handlebars templates for rendering:
-- Actor sheets (character/NPC views)
+- Actor sheets (character, NPC, enemy, horde)
 - Item sheets (weapon/armor/gear configuration)
+- 17 shared partials in `templates/actor/parts/`:
+  - `actor-characteristics.html` — characteristic grid (used by 4 sheets)
+  - `actor-movement.html` — movement box (used by 4 sheets)
+  - `actor-wounds.html` — wounds/magnitude box with configurable label (used by 4 sheets)
+  - `actor-fatigue.html` — fatigue box (used by 4 sheets)
+  - `actor-psy-rating.html` — psy rating box with conditional visibility (used by 3 sheets)
+  - `actor-talents.html` — talents list (used by 3 sheets)
+  - `actor-traits.html` — traits list (used by 3 sheets)
+  - `actor-augmentations.html` — implants + cybernetics (used by 3 sheets)
+  - `actor-biography-fields.html` — gender/age/complexion/hair (used by 3 sheets)
+  - `actor-skills.html` — skills table
+  - `actor-items.html` — gear tab (weapons, armor, gear, ammunition)
+  - `actor-psychic-powers.html` — psychic powers tab
+  - `actor-effects.html` — active effects tab
+  - `actor-armor.html` — armor diagram
+  - `item-controls.html` — edit/delete buttons
+  - `item-equipped.html` — equipped checkbox
+  - `item-image.html` — item thumbnail
 
 ## Architectural Patterns
 

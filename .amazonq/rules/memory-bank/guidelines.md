@@ -51,7 +51,6 @@ expect(spent).toBe(12800); // Now passes with correct code
 ### Test Structure
 ```javascript
 import { jest } from '@jest/globals';
-import './setup.mjs';
 import { YourClass } from '../src/module/path/to/file.mjs';
 
 describe('YourClass', () => {
@@ -66,6 +65,8 @@ describe('YourClass', () => {
   });
 });
 ```
+
+**Note:** `setup.mjs` runs automatically via `setupFiles` in `jest.config.mjs` — no need to import it in test files. Global mock factories `createMockActor(overrides)` and `createMockWeapon(overrides)` are available in all tests.
 
 ### What to Test
 - **Calculation methods**: Range modifiers, hit calculations, damage calculations
@@ -87,19 +88,15 @@ describe('YourClass', () => {
 
 ### Mocking Patterns
 ```javascript
-// Mock Foundry globals (in setup.mjs)
+// setup.mjs runs automatically via jest.config.mjs setupFiles
+// Global mock factories available in all tests:
+const actor = createMockActor({ system: { wounds: { value: 10, max: 20 } } });
+const weapon = createMockWeapon({ system: { dmg: '2d10+5', class: 'Melee' } });
+
+// Mock Foundry globals (defined in setup.mjs)
 global.game = { packs: new Map(), settings: { get: jest.fn() } };
 global.ui = { notifications: { warn: jest.fn(), info: jest.fn() } };
 global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
-global.Item = class Item { static createDocuments = jest.fn(); };
-
-// Mock actor in tests
-const mockActor = {
-  name: 'Test Actor',
-  system: { wounds: { value: 10, max: 20 } },
-  update: jest.fn(),
-  items: { get: jest.fn(), filter: jest.fn() }
-};
 ```
 
 ### Edge Cases to Test
@@ -114,12 +111,12 @@ const mockActor = {
 ### Current State (Post-Refactoring)
 - **Total Lines**: ~2,618 lines across core modules
 - **Test Coverage**: 68%
-- **Test Count**: 1021 tests across 83 suites
+- **Test Count**: 1060 tests across 81 suites
 - **Key Files**:
   - actor.mjs: ~60 lines (thin shell, delegates to DataModels)
   - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
   - combat.mjs: 395 lines (uses ChatMessageBuilder)
-  - CSS: 9 modular files (~1100 lines total)
+  - CSS: 10 modular files (~900 lines total)
 
 ### Architecture Patterns Established
 1. **Helper Classes**: Extract business logic into focused static classes

@@ -5,7 +5,7 @@ to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
-cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
+cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
 TODO: Weapon Quality Flame  
@@ -54,3 +54,7 @@ Hordes
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
 
+Psychic Combat
+    TODO: we have no combat system for psychic Powers
+        Perils etc...
+    TODO: Tyranids have special rules bot core rules and in mark of the xenos
