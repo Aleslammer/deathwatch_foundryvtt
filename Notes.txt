@@ -58,3 +58,32 @@ Psychic Combat
     TODO: we have no combat system for psychic Powers
         Perils etc...
     TODO: Tyranids have special rules bot core rules and in mark of the xenos
+
+
+Hive Tyrant
+
+Book: Core Rulebook
+Page: 369
+
+Descrption:The Master of the battle-swarm, the Hive Tyrant is a massively 
+built and powerful creature which serves in some part as a 
+‘leader’ of the Tyranid attack on the ground. Akin in power to 
+a living tank, able to rip through armour plate like wet paper 
+and wreak indiscriminate slaughter, they are also incredibly 
+fast and lithe. Some may even possess wings and extreme 
+biomorphic mutations, often taking the place of unwholesome 
+weapons which may burn or strangle their victims at range. 
+Each is also a powerful psychic node for the greater Tyranid 
+Hive Mind, not merely providing the swarm with a strategic 
+focus and overriding purpose, but also harnessing the Hive 
+Mind’s raw power offensively to drive fragile human minds 
+insane with fear and burn out the brains of enemy psykers 
+who would match their paltry powers against it. 
+
+Ws Bs s T ag int Per WP fel
+78 33 60 53 45 45 49 70 ––
+Wounds: 120
+Skills: Awareness (Per), Climb (S), Swim (S).
+Talents: Ambidextrous, Combat Master, Crushing Blow, Fearless, Heightened Senses (All), Psy Rating (8), Two Weapon Wielder (Melee), Swift Attack, Lightning Attack.
+Traits: Brutal Charge, Dark Sight, Fear 4 (Terrifying), Natural Armour (10), Multiple Arms, Unnatural Strength (×3), Unnatural Toughness (×3), Improved Natural Weapons (Scything Talons), Shadow in the Warp, Size (Massive), Synapse Creature, Tyranid.
+Weapons: Scything Talons (1d10+4 R; Pen 3).
