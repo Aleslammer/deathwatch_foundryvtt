@@ -4,7 +4,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 
 ![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
 ![Version](https://img.shields.io/badge/Version-0.0.2-blue)
-![Tests](https://img.shields.io/badge/Tests-976%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-1021%20passing-brightgreen)
 
 ---
 
@@ -38,7 +38,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 
 ### Psychic Powers
 - Psy Rating system with modifier support (visible for Librarian specialty)
-- 58 psychic powers across Codex, Divination, Telepathy, and Chapter disciplines
+- 68 psychic powers across Codex, Divination, Telepathy, Chapter, and Tyranid disciplines
 - Force weapon integration: passive damage/penetration bonus + active channeling via opposed Willpower
 
 ### Compendium Packs
@@ -58,10 +58,10 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 | Cybernetics | 1 | Mechanical augmentations |
 | Weapon Qualities | 36 | Accurate, Tearing, Melta, Force, etc. |
 | Weapon Upgrades | 14 | Sights, stabilisers, attachments |
-| Psychic Powers | 58 | Codex, Divination, Telepathy, Chapter |
+| Psychic Powers | 68 | Codex, Divination, Telepathy, Chapter, Tyranid |
 | Demeanours | 19 | Personality traits |
 | Critical Effects | 160 | By damage type (Energy, Explosive, Impact, Rending) |
-| Enemies | 4 | Tyranid enemies with horde variants |
+| Enemies | 14 | Tyranid and Ork enemies with horde variants |
 | Roll Tables | 2 | Scatter, Haywire Field Effects |
 
 ---
@@ -97,7 +97,7 @@ npm install
 
 | Command | Description |
 |---------|-------------|
-| `npm test` | Run all tests (976 tests across 80 suites) |
+| `npm test` | Run all tests (1021 tests across 83 suites) |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
 | `npm run build:packs` | Validate and compile compendium packs |

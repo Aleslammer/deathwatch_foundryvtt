@@ -604,7 +604,7 @@ Grants +10 Toughness to any creature with the Multiple Arms trait.
 - Post-multiplier + Unnatural ordering: ✓
 
 ### Test Count
-- Total: 947 tests
+- Total: 1021 tests
 - Modifier-specific: ~85 tests
 - All passing ✓
 
