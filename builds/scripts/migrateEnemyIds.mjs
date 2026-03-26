@@ -25,6 +25,7 @@ const FACTIONS = [
       "carnifex-venomspitter.json":   { num: "07", type: "enmy" },
       "carnifex-bile-beast.json":     { num: "08", type: "enmy" },
       "purestrain-genestealer.json":  { num: "09", type: "enmy" },
+      "broodlord.json":                { num: "10", type: "enmy" },
       "hormagaunt-horde.json":        { num: "01", type: "hord" },
       "termagant-horde.json":         { num: "02", type: "hord" },
     }

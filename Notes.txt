@@ -41,10 +41,10 @@ TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-
 TODO: Automated Animations - Can we use this for things?
 
 Enemies:
-    TODO: Tyranid Psychic Powers in Mark of Xenos PG 29
     TODO: continue with xenos
     TODO: Add more orks
         Create images
+    
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
@@ -54,46 +54,3 @@ Hordes
     TODO: Update to support psychic attacks (pg 360)
     TODO: can we expand the size traits?   Can we incorporate that into something?
 
-
-
-Back to Tyranids
-
-Purestrain Genestealer
-Book: Mark of the Xenos
-Page 39
-
-Description: Genestealers are terrifying close combat horrors with the 
-individual strength and speed to tear apart even an armoured 
-Space Marine if they can get close enough to land a telling 
-blow. They stand almost six feet in height, even hunched over 
-as they are on hind legs, their four arms ending in claws, talons 
-or other bio-weapons capable of cutting through ceramite 
-and plasteel with equal ease. Cunning and independent, 
-Genestealers are also one of the few Tyranid creatures which 
-can exist away from the nurturing and controlling influence 
-of the Hive Mind, using their own innate intelligence and 
-brood telepathy to form tight-knit groups. These groups can 
-survive for decades or even centuries on worlds, hiding their 
-presence and infecting more and more of the population until 
-the time to strike arrives, usually coinciding with the arrival 
-of the hive fleet and the wholesale invasion and consumption 
-of the world itself.
-Purestrain Genestealers are Genestealers which have been 
-spawned not through the process of infecting hosts but 
-rather by the hive ships themselves in great bio-factories and 
-birthing vats. Not polluted or altered by “inferior” genetic 
-material, they are markedly stronger and faster than a normal 
-Genestealer and possess a wider variety of adaptive bio
-morphs. This is intentional, as Purestrain Genestealers are 
-the creatures from which all other Genestealers are born, and 
-even a single Purestrain Genestealer can create a vast brood 
-from a local population given time and enough raw material. 
-
-Purestrain Genestealer (Elite) Profile
-WS bS S T Ag Int Per WP Fel
-65 0 45 40 40 35 60 45 0
-Wounds: 20
-Skills: AAwareness (Per) +10, Climb (S) +10, Dodge (Ag) +10, Swim (S) +10.
-Talents: Ambidextrous, Fearless, Hard Target, Leap Up, Lightning Attack, Lightning Reflexes, Step Aside, Swift Attack.
-Traits: Dark Sight, Fear 2 (Frightening), Improved Natural Weapons (Rending Claws), Multiple Arms, Natural Armour (4), Unnatural Agility, Unnatural Speed, Unnatural Strength, Unnatural Toughness,  Tyranid
-Weapons: Rending Claws (1d10+4 R; Pen 5, Razor Sharp)

@@ -162,6 +162,23 @@ Where `{number}` matches the actor number and `{seq}` is a zero-padded sequentia
 **Token:** 1x1 (default)
 **Source:** Mark of the Xenos, p. 39
 
+#### Broodlord
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00010` | `broodlord.json` |
+
+**Stats:** WS 75, BS 0, S 45, T 40, AG 50, INT 45, PER 60, WP 55, Fel 0
+**Wounds:** 50
+**Psy Rating:** 5
+**Skills:** Awareness +10, Climb +10, Dodge +10, Swim +10
+**Talents:** Ambidextrous, Fearless, Hard Target, Leap Up, Lightning Attack, Lightning Reflexes, Step Aside, Swift Attack
+**Traits:** Dark Sight, Fear 2 (Frightening), Improved Natural Weapons (Rending Claws), Multiple Arms, Natural Armour (6), Unnatural Agility (×2), Unnatural Speed, Unnatural Strength (×3), Unnatural Toughness (×3), Tyranid
+**Weapons:** Rending Claws (1d10+4 R, Pen 5, Melee, Razor Sharp)
+**Psychic Powers:** Hypnotic Gaze (embedded), plus 2 selectable Tyranid Psychic Powers (Mark of the Xenos, p. 29)
+**Differences from Purestrain Genestealer:** +10 WS, +10 AG, +10 INT, +10 WIL, +30 Wounds, Natural Armour 4→6, Unnatural STR/TG ×2→×3, Psy Rating 5
+**Token:** 1x1 (default)
+**Source:** Mark of the Xenos, p. 39
+
 ### Ork (`enemies/ork/`)
 
 #### Ork Boy
