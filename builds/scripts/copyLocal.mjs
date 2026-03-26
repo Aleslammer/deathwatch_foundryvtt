@@ -1,7 +1,23 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const LOCAL_DIR = '\\\\thebrewery\\Foundry\\Data\\systems\\deathwatch';
+// Load LOCAL_DIR from .env file in project root
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.resolve(__dirname, '../../.env');
+let LOCAL_DIR;
+
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf-8');
+  const match = envContent.match(/^LOCAL_DIR=(.+)$/m);
+  if (match) LOCAL_DIR = match[1].trim();
+}
+
+if (!LOCAL_DIR) {
+  console.error('\x1b[31mLOCAL_DIR not set. Create a .env file in the project root with:\x1b[0m');
+  console.error('\x1b[31mLOCAL_DIR=\\\\server\\Foundry\\Data\\systems\\deathwatch\x1b[0m');
+  process.exit(1);
+}
 const SOURCE_DIR = path.resolve('./src');
 
 const EXCLUDE_PATTERNS = ['packs-source'];
