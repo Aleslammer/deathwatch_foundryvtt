@@ -46,6 +46,7 @@ const FACTIONS = [
       "broodlord.json":                { num: "10", type: "enmy" },
       "hive-tyrant.json":               { num: "11", type: "enmy" },
       "gargoyle.json":                  { num: "12", type: "enmy" },
+      "lictor.json":                    { num: "13", type: "enmy" },
       "hormagaunt-horde.json":        { num: "01", type: "hord" },
       "termagant-horde.json":         { num: "02", type: "hord" },
       "gargoyle-horde.json":          { num: "03", type: "hord" },

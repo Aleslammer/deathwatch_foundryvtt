@@ -220,6 +220,8 @@ export class RangedCombatHelper {
               telescopicRangeMod = 0;
             }
             
+            const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetToken?.actor);
+
             const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
               bs,
               bsAdv: 0,
@@ -229,6 +231,7 @@ export class RangedCombatHelper {
               rangeMod: telescopicRangeMod,
               runningTarget,
               miscModifier: miscModifier + upgradeBSBonus,
+              sizeModifier,
               isAccurate,
               isInaccurate,
               isGyroStabilised,
@@ -325,7 +328,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackRangeLabel = rangeLabel;
             CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
 
-            const modifierParts = CombatDialogHelper.buildModifierParts(bs, 0, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers);
+            const modifierParts = CombatDialogHelper.buildModifierParts(bs, 0, aim, autoFire, calledShot, gyroRangeMod, runningTarget, miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers, sizeModifier, sizeLabel);
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
 

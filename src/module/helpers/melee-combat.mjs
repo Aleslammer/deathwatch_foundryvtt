@@ -17,9 +17,9 @@ export class MeleeCombatHelper {
    * @param {boolean} options.isDefensive - Whether weapon has Defensive quality
    * @returns {{ modifiers: number, clampedModifiers: number, targetNumber: number, defensivePenalty: number }}
    */
-  static buildMeleeModifiers({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, isDefensive = false } = {}) {
+  static buildMeleeModifiers({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, sizeModifier = 0, isDefensive = false } = {}) {
     const defensivePenalty = isDefensive ? -10 : 0;
-    const modifiers = aim + allOut + charge + calledShot + runningTarget + miscModifier + defensivePenalty;
+    const modifiers = aim + allOut + charge + calledShot + runningTarget + miscModifier + defensivePenalty + sizeModifier;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
     const targetNumber = ws + clampedModifiers;
     return { modifiers, clampedModifiers, targetNumber, defensivePenalty };
@@ -30,7 +30,7 @@ export class MeleeCombatHelper {
    * @param {Object} options
    * @returns {string[]}
    */
-  static buildMeleeModifierParts({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, defensivePenalty = 0 } = {}) {
+  static buildMeleeModifierParts({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, defensivePenalty = 0, sizeModifier = 0, sizeLabel = "" } = {}) {
     const parts = [`${ws} WS`];
     if (aim !== 0) parts.push(`+${aim} Aim`);
     if (allOut !== 0) parts.push(`+${allOut} All Out Attack`);
@@ -39,6 +39,7 @@ export class MeleeCombatHelper {
     if (calledShot !== 0) parts.push(`${calledShot} Called Shot`);
     if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
     if (miscModifier !== 0) parts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+    if (sizeModifier !== 0) parts.push(`${sizeModifier >= 0 ? '+' : ''}${sizeModifier} ${sizeLabel || 'Target Size'}`);
     return parts;
   }
   /* istanbul ignore next */
@@ -108,8 +109,12 @@ export class MeleeCombatHelper {
             const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
+            const targetToken = game.user.targets.first();
+            const targetActor = targetToken?.actor;
+            const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
+
             const { targetNumber, defensivePenalty } = MeleeCombatHelper.buildMeleeModifiers({
-              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier,
+              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, sizeModifier,
               isDefensive: weapon.attachedQualities?.some(q => q.system.key === 'defensive')
             });
 
@@ -122,8 +127,6 @@ export class MeleeCombatHelper {
             const degreesOfSuccess = success ? CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber) : 0;
             let hitsTotal = success ? 1 : 0;
 
-            const targetToken = game.user.targets.first();
-            const targetActor = targetToken?.actor;
             if (targetActor && hitsTotal > 0) {
               const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
               hitsTotal = targetActor.system.calculateHitsReceived({
@@ -138,7 +141,7 @@ export class MeleeCombatHelper {
             CombatHelper.lastAttackAim = aim;
 
             const modifierParts = MeleeCombatHelper.buildMeleeModifierParts({
-              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, defensivePenalty
+              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, defensivePenalty, sizeModifier, sizeLabel
             });
 
             let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);

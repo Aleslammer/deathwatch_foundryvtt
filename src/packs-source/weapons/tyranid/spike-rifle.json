@@ -2,7 +2,7 @@
   "_id": "tyranid000000012",
   "name": "Spike Rifle",
   "type": "weapon",
-  "img": "systems/deathwatch/icons/weapons/tyranid-spikerifle.webp",
+  "img": "systems/deathwatch/icons/weapons/tyranid-spike-rifle.webp",
   "system": {
     "book": "Mark of the Xenos",
     "page": "28",

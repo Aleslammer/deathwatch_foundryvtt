@@ -127,7 +127,7 @@ function validateWeaponQualityIds() {
 }
 
 function syncEmbeddedItems() {
-  const SYNC_DIRS = ['traits', 'talents'];
+  const SYNC_DIRS = ['traits', 'talents', 'psychic-powers'];
   const ACTOR_DIRS = ['enemies'];
 
   // Build lookup of compendium source items by _id

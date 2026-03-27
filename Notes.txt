@@ -60,44 +60,66 @@ Psychic Combat
     TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 
-Gargoyle
+Lictor
 
 Book: Mark of the Xenos
-Page: 36
+Page: 37
 
-Descrption:Not dissimilar in appearance to a Termagant, albeit 
-with the addition of wings, a Gargoyle is individually weak, 
-and relies as much on its speed and ranged weapons as it does 
-tooth and claw. However, in great numbers (as Gargoyles are 
-almost always encountered) they can make as fearsome a foe 
-as any Tyranid. The primary goal of Gargoyles, in their role 
-as part of the Tyranid vanguard, is, it seems, to sow confusion. 
-They achieve this by peppering foes with their fleshborers 
-and then darting away before retaliatory fire can find them, 
-always staying out of arm’s reach and using their speed to 
-move from target to target before they can be outmatched.
-Enclosed Spaces: Gargoyles are feral creatures and sometime 
-become trapped in places where they cannot fly, and go crazy 
-in an effort to escape. A Gargoyle which becomes trapped in 
-an enclosed space (i.e., where it cannot spread its wings or 
-use its Flyer movement) gains the Frenzy and Furious Assault 
-Talents until it escapes or dies.
+Descrption: Lictors are the lone hunters of the Tyranid swarm, roving 
+ahead of the hive fleet, seeking out prey and leading the 
+Hive Mind to concentrations of enemies. As tall as a Tyranid 
+Warrior, Lictors are distinct in appearance from other Tyranid 
+creatures in a number of ways, such as a pair of long mantis
+like claws extending over the creature’s shoulders which it can 
+use for climbing and impaling its prey; long, drooping feeder 
+tendrils that hang from its maw and greatly increase its senses, 
+and shimmering chameleonic scales which allow it to hide with 
+ease. A natural predator, the Lictor is patient and stealthy and 
+can move past even the most alert foes, or spend days hiding 
+immobile, waiting for a chance to strike once its prey’s guard is 
+down. This behaviour has given the Lictor an almost mythical 
+reputation amongst its foes, as a ghost-like horror which can 
+strike at any time and place, before vanishing into thin air just 
+as easily.
 
 Ws Bs s T ag int Per WP fel
-30 33 32 30 40 10 40 30 –
-Wounds: 9
-Skills: Acrobatics (Ag), Awareness (Per), Climb (S), Contortionist (Ag), Dodge (Ag).
-Talents: Death from Above, Leap Up
-Traits: Dark Sight, Flyer (20), Natural Armour (3), Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Tyranid.
-Weapons: Fleshborer, Teeth and Claws (1d10+3 R; Pen 3, Primitive)
+65 — 65 40 40 25 45 45 –
+Wounds: 40
+Skills: Acrobatics (Ag), Awareness (Per) +20, Climb (S) +20, Concealment (Ag) +20, Contortionist (Ag) +10, Dodge (Ag) +10, Shadowing (Ag) +20, Silent Move (Ag) +20, Survival (Int) +20, Swim (S), Tracking (Int) +20.
+Talents: Ambidextrous, Assassin Strike, Berserk Charge, Blind Fighting, Catfall, Combat Master, Crushing Blow, Fearless, Furious Assault, Hard Target, Heightened Sense (Hearing, Sight, Smell, Taste, Touch), Leap Up, Lightning Attack, Sprint, Step Aside, Swift Attack.
+Traits: Dark Sight, Fear 3 (Horrifying), Instinctive Behaviour (Lurk), Natural Armour (6), Multiple Arms, Size (Hulking), Unnatural Agility (x2), Unnatural Strength (x2), Unnatural Perception (x2), Unnatural Toughness (x2), Improved Natural Weapons (Scything Talons), Size  (Enormous), Tyranid
+Weapons: Scything Talons (but add Toxic), Rending Claw (But add Razor Sharp and Toxic)
 
 Special Abilities: 
-Blinding Venom: Attacks in melee from a Gargoyle have a 
-chance of blinding its foes. If a blow from a Gargoyle with its 
-Teeth and Claws strikes an opponent’s head, they must make 
-an Easy (+20) Toughness Test or become Blinded for 1d5 
-turns. Enclosed helmets (such as those on a suit of power 
-armour, negate this ability). 
+Flesh Hooks: Lictors have dozens of 
+tiny hooks which they can fire from 
+their chests to snare prey and drag their 
+victims toward them. These allow 
+a Lictor to initiate a Grapple (see 
+page 240 in the Deathwatch 
+Rulebook) with a target up to 
+10m away. With every successful 
+Opposed Strength Test the Lictor 
+makes as part of the Grapple action, 
+the target is pulled closer by 1m plus 
+1m for each degree of success. 
 
-Gargoyle Hordes: Gargoyles make ideal horde creatures and 
-can use the Horde rules
+Chameleonic Scales: A Lictor is 
+covered in chameleonic scales which shimmer and shift to 
+match its surroundings and can make it practically invisible to the naked eye, plus most other 
+methods of visual detection such as infrared and ultraviolet 
+scopes. Whenever a Lictor uses its Concealment Skill to 
+hide, all tests to detect it visually suffer a –30 penalty. In 
+addition, the scales allow the Lictor to make Concealment 
+Tests as a Half Action rather than a Full Action and it can 
+even do so even when being observed or when there is no  
+nearby cover.
+
+Memory Devourer: When a Lictor devours the brain of its 
+prey, it can learn some of its memories. Once the Lictor has 
+eaten a brain, it gains access to all of the victim’s recent, most 
+distinct memories (usually the location of friendly troops 
+or defences). If the Lictor wishes to learn something very 
+specific from the victim, such as an old memory or one the 
+victim does not remember well, it must make an Easy (+20)
+IntelligenceTest.
