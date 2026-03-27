@@ -1,11 +1,29 @@
 /**
- * Migrate enemy/horde IDs from generic format to faction-based format.
- * 
- * New format:
- *   Enemy actors:  enmytyranid00001
- *   Horde actors:  hordtyranid00001
- *   Enemy items:   eityranid00XX0YY  (XX = enemy number, YY = item seq)
- *   Horde items:   hityranid00XX0YY
+ * Manual developer utility — assigns faction-based IDs to all enemy/horde actors
+ * and their embedded items. Run directly when adding or reordering enemies:
+ *
+ *   node builds/scripts/migrateEnemyIds.mjs
+ *
+ * This is NOT called by any npm script or build pipeline. It is safe to re-run
+ * at any time (idempotent). After running, use `npm run build:packs` to format,
+ * validate, and compile.
+ *
+ * To add a new enemy:
+ *   1. Create the JSON file in the faction subfolder
+ *   2. Add an entry to the FACTIONS array below with the next sequential number
+ *   3. Run this script
+ *   4. Run `npm run build:packs`
+ *
+ * To add a new faction:
+ *   1. Create subfolder: src/packs-source/enemies/{faction}/
+ *   2. Add a new object to the FACTIONS array with dir, faction key, and files
+ *   3. Run this script
+ *
+ * ID format (all 16 characters):
+ *   Enemy actors:  enmy{faction}{pad}{num}    e.g. enmytyranid00001
+ *   Horde actors:  hord{faction}{pad}{num}    e.g. hordtyranid00001
+ *   Enemy items:   ei{faction}{num}{pad}0{seq} e.g. eityranid0100001
+ *   Horde items:   hi{faction}{num}{pad}0{seq} e.g. hityranid0100001
  */
 import fs from "fs";
 import path from "path";
@@ -27,8 +45,10 @@ const FACTIONS = [
       "purestrain-genestealer.json":  { num: "09", type: "enmy" },
       "broodlord.json":                { num: "10", type: "enmy" },
       "hive-tyrant.json":               { num: "11", type: "enmy" },
+      "gargoyle.json":                  { num: "12", type: "enmy" },
       "hormagaunt-horde.json":        { num: "01", type: "hord" },
       "termagant-horde.json":         { num: "02", type: "hord" },
+      "gargoyle-horde.json":          { num: "03", type: "hord" },
     }
   },
   {

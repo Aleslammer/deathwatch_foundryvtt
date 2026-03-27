@@ -60,30 +60,44 @@ Psychic Combat
     TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 
-Hive Tyrant
+Gargoyle
 
-Book: Core Rulebook
-Page: 369
+Book: Mark of the Xenos
+Page: 36
 
-Descrption:The Master of the battle-swarm, the Hive Tyrant is a massively 
-built and powerful creature which serves in some part as a 
-‘leader’ of the Tyranid attack on the ground. Akin in power to 
-a living tank, able to rip through armour plate like wet paper 
-and wreak indiscriminate slaughter, they are also incredibly 
-fast and lithe. Some may even possess wings and extreme 
-biomorphic mutations, often taking the place of unwholesome 
-weapons which may burn or strangle their victims at range. 
-Each is also a powerful psychic node for the greater Tyranid 
-Hive Mind, not merely providing the swarm with a strategic 
-focus and overriding purpose, but also harnessing the Hive 
-Mind’s raw power offensively to drive fragile human minds 
-insane with fear and burn out the brains of enemy psykers 
-who would match their paltry powers against it. 
+Descrption:Not dissimilar in appearance to a Termagant, albeit 
+with the addition of wings, a Gargoyle is individually weak, 
+and relies as much on its speed and ranged weapons as it does 
+tooth and claw. However, in great numbers (as Gargoyles are 
+almost always encountered) they can make as fearsome a foe 
+as any Tyranid. The primary goal of Gargoyles, in their role 
+as part of the Tyranid vanguard, is, it seems, to sow confusion. 
+They achieve this by peppering foes with their fleshborers 
+and then darting away before retaliatory fire can find them, 
+always staying out of arm’s reach and using their speed to 
+move from target to target before they can be outmatched.
+Enclosed Spaces: Gargoyles are feral creatures and sometime 
+become trapped in places where they cannot fly, and go crazy 
+in an effort to escape. A Gargoyle which becomes trapped in 
+an enclosed space (i.e., where it cannot spread its wings or 
+use its Flyer movement) gains the Frenzy and Furious Assault 
+Talents until it escapes or dies.
 
 Ws Bs s T ag int Per WP fel
-78 33 60 53 45 45 49 70 ––
-Wounds: 120
-Skills: Awareness (Per), Climb (S), Swim (S).
-Talents: Ambidextrous, Combat Master, Crushing Blow, Fearless, Heightened Senses (All), Psy Rating (8), Two Weapon Wielder (Melee), Swift Attack, Lightning Attack.
-Traits: Brutal Charge, Dark Sight, Fear 4 (Terrifying), Natural Armour (10), Multiple Arms, Unnatural Strength (×3), Unnatural Toughness (×3), Improved Natural Weapons (Scything Talons), Shadow in the Warp, Size (Massive), Synapse Creature, Tyranid.
-Weapons: Scything Talons (1d10+4 R; Pen 3).
+30 33 32 30 40 10 40 30 –
+Wounds: 9
+Skills: Acrobatics (Ag), Awareness (Per), Climb (S), Contortionist (Ag), Dodge (Ag).
+Talents: Death from Above, Leap Up
+Traits: Dark Sight, Flyer (20), Natural Armour (3), Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Tyranid.
+Weapons: Fleshborer, Teeth and Claws (1d10+3 R; Pen 3, Primitive)
+
+Special Abilities: 
+Blinding Venom: Attacks in melee from a Gargoyle have a 
+chance of blinding its foes. If a blow from a Gargoyle with its 
+Teeth and Claws strikes an opponent’s head, they must make 
+an Easy (+20) Toughness Test or become Blinded for 1d5 
+turns. Enclosed helmets (such as those on a suit of power 
+armour, negate this ability). 
+
+Gargoyle Hordes: Gargoyles make ideal horde creatures and 
+can use the Horde rules
