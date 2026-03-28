@@ -7,7 +7,7 @@ if (typeof process !== 'undefined' && process.versions?.node) {
   const { dirname, join } = await import('path');
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  skillDefinitions = JSON.parse(readFileSync(join(__dirname, '../data/skills.json'), 'utf-8'));
+  skillDefinitions = JSON.parse(readFileSync(join(__dirname, '../../data/skills.json'), 'utf-8'));
 }
 
 export class SkillLoader {

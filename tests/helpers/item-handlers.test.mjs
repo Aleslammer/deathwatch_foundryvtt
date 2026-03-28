@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { ItemHandlers } from '../../src/module/helpers/item-handlers.mjs';
+import { ItemHandlers } from '../../src/module/helpers/ui/item-handlers.mjs';
 
 describe('ItemHandlers', () => {
   beforeEach(() => {

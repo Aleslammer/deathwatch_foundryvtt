@@ -1,7 +1,7 @@
 import DeathwatchDataModel from '../base-document.mjs';
-import { CombatDialogHelper } from '../../helpers/combat-dialog.mjs';
+import { CombatDialogHelper } from '../../helpers/combat/combat-dialog.mjs';
 import { FoundryAdapter } from '../../helpers/foundry-adapter.mjs';
-import { ChatMessageBuilder } from '../../helpers/chat-message-builder.mjs';
+import { ChatMessageBuilder } from '../../helpers/ui/chat-message-builder.mjs';
 
 const { fields } = foundry.data;
 

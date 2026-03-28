@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { PsychicCombatHelper } from '../../src/module/helpers/psychic-combat.mjs';
+import { PsychicCombatHelper } from '../../src/module/helpers/combat/psychic-combat.mjs';
 import { POWER_LEVELS } from '../../src/module/helpers/constants.mjs';
 
 describe('PsychicCombatHelper', () => {

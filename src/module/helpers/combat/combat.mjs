@@ -1,12 +1,12 @@
-import { RANGE_MODIFIERS } from "./constants.mjs";
+import { RANGE_MODIFIERS } from "../constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
-import { CanvasHelper, FoundryAdapter } from "./foundry-adapter.mjs";
-import { ChatMessageBuilder } from "./chat-message-builder.mjs";
+import { CanvasHelper, FoundryAdapter } from "../foundry-adapter.mjs";
+import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";
 import { RangedCombatHelper } from "./ranged-combat.mjs";
 import { MeleeCombatHelper } from "./melee-combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
-import { debug } from "./debug.mjs";
+import { debug } from "../debug.mjs";
 import { HordeCombatHelper } from "./horde-combat.mjs";
 
 export class CombatHelper {

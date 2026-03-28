@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { RollDialogBuilder } from '../../src/module/helpers/roll-dialog-builder.mjs';
+import { RollDialogBuilder } from '../../src/module/helpers/ui/roll-dialog-builder.mjs';
 import { DWConfig } from '../../src/module/helpers/config.mjs';
 
 describe('RollDialogBuilder', () => {

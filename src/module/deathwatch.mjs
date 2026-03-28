@@ -7,13 +7,13 @@ import * as models from './data/_module.mjs';
 import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
 import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
 // Import helper/utility classes and constants.
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
+import { preloadHandlebarsTemplates } from "./helpers/ui/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
-import { initializeHandlebars } from "./helpers/handlebars.js";
-import { CombatHelper } from "./helpers/combat.mjs";
-import { CriticalEffectsHelper } from "./helpers/critical-effects.mjs";
+import { initializeHandlebars } from "./helpers/ui/handlebars.js";
+import { CombatHelper } from "./helpers/combat/combat.mjs";
+import { CriticalEffectsHelper } from "./helpers/combat/critical-effects.mjs";
 import { InitiativeHelper } from "./helpers/initiative.mjs";
-import { SkillLoader } from "./helpers/skill-loader.mjs";
+import { SkillLoader } from "./helpers/character/skill-loader.mjs";
 import { DW_STATUS_EFFECTS } from "./helpers/status-effects.mjs";
 
 

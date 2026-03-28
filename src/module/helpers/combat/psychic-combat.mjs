@@ -1,7 +1,7 @@
-import { POWER_LEVELS, POWER_LEVEL_LABELS } from "./constants.mjs";
+import { POWER_LEVELS, POWER_LEVEL_LABELS } from "../constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
-import { ModifierCollector } from "./modifier-collector.mjs";
-import { FoundryAdapter } from "./foundry-adapter.mjs";
+import { ModifierCollector } from "../character/modifier-collector.mjs";
+import { FoundryAdapter } from "../foundry-adapter.mjs";
 
 /**
  * Helper class for psychic power Focus Power Tests.

@@ -1,4 +1,4 @@
-import { FoundryAdapter } from "./foundry-adapter.mjs";
+import { FoundryAdapter } from "../foundry-adapter.mjs";
 
 export class WeaponUpgradeHelper {
   static async getUpgrades(weapon) {

@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { CriticalEffectsHelper } from '../../src/module/helpers/critical-effects.mjs';
+import { CriticalEffectsHelper } from '../../src/module/helpers/combat/critical-effects.mjs';
 
 describe('CriticalEffectsHelper', () => {
   beforeEach(() => {
