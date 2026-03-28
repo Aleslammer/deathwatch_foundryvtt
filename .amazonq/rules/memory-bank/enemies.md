@@ -179,13 +179,107 @@ Where `{number}` matches the actor number and `{seq}` is a zero-padded sequentia
 **Token:** 1x1 (default)
 **Source:** Mark of the Xenos, p. 39
 
-### Ork (`enemies/ork/`)
+#### Hive Tyrant
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00011` | `hive-tyrant.json` |
+
+**Stats:** WS 78, BS 33, S 60, T 53, AG 45, INT 45, PER 49, WP 70, Fel 0
+**Wounds:** 120
+**Psy Rating:** 8
+**Talents:** Ambidextrous, Combat Master, Crushing Blow, Fearless, Heightened Senses (All), Two-Weapon Wielder (Melee), Swift Attack, Lightning Attack
+**Traits:** Brutal Charge, Dark Sight, Fear 4 (Terrifying), Natural Armour (10), Multiple Arms, Unnatural Strength (×3), Unnatural Toughness (×3), Improved Natural Weapons, Shadow in the Warp, Size (Massive), Synapse Creature, Tyranid
+**Psychic Powers:** Catalyst, Psychic Scream, The Horror
+**Special:** Death Shock (shockwave on death affects nearby Tyranids)
+**Token:** 3×3 (Massive)
+**Source:** Deathwatch Core Rulebook, p. 369
+
+#### Gargoyle
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00012` | `gargoyle.json` |
+| Horde | `hordtyranid00003` | `gargoyle-horde.json` |
+
+**Stats:** WS 30, BS 33, S 32, T 30, AG 40, INT 10, PER 40, WP 30, Fel 0
+**Wounds:** 9 (Enemy), Magnitude 30 (Horde)
+**Talents:** Death From Above, Leap Up
+**Traits:** Dark Sight, Flyer (20), Natural Armour (3), Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Tyranid
+**Weapons:** Fleshborer (1d10+9 R, Pen 3), Teeth and Claws (1d10+3 R, Pen 3, Primitive)
+**Special:** Blinding Venom (head hits blind on failed TG test), Enclosed Spaces (gains Frenzy/Furious Assault)
+**Source:** Mark of the Xenos, p. 36
+
+#### Lictor
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00013` | `lictor.json` |
+
+**Stats:** WS 65, BS 0, S 65, T 40, AG 40, INT 25, PER 45, WP 45, Fel 0
+**Wounds:** 40
+**Skills:** 11 skills, many at +20 (Awareness, Climb, Concealment, Shadowing, Silent Move, Survival, Tracking)
+**Talents:** 16 talents (Ambidextrous through Swift Attack)
+**Traits:** Dark Sight, Fear 3, Instinctive Behaviour (Lurk), Natural Armour (6), Multiple Arms, Unnatural Agility/Strength/Perception/Toughness (×2), Improved Natural Weapons, Size (Enormous), Tyranid
+**Weapons:** Scything Talons (Toxic), Rending Claws (Razor Sharp + Toxic)
+**Special:** Flesh Hooks (10m grapple), Chameleonic Scales (-30 to detect), Memory Devourer
+**Token:** 2×2 (Enormous)
+**Source:** Mark of the Xenos, p. 37
+
+#### Ravener
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00014` | `ravener.json` |
+
+**Stats:** WS 60, BS 0, S 45, T 40, AG 50, INT 17, PER 50, WP 35, Fel 0
+**Wounds:** 40
+**Talents:** Fearless, Heightened Senses (All), Sprint, Swift Attack, Lightning Attack
+**Traits:** Dark Sight, Fear 3, Burrower, Instinctive Behaviour (Feed), Natural Armour (6), Multiple Arms, Unnatural Strength/Toughness (×2), Improved Natural Weapons, Size (Enormous), Tyranid, Unnatural Senses (30m)
+**Weapons:** Scything Talons, Rending Claws (equipped), Devourer, Deathspitter, Spine Fists (unequipped)
+**Special:** Extraordinary Senses (never worse than -30 PER), Surprise Strike (auto-surprise from burrowing)
+**Token:** 2×2 (Enormous)
+**Source:** Mark of the Xenos, p. 41
+
+#### Ripper Swarm
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00015` | `ripper-swarm.json` |
+| Horde | `hordtyranid00004` | `ripper-swarm-horde.json` |
+
+**Stats:** WS 35, BS 0, S 25, T 30, AG 40, INT 10, PER 30, WP 30, Fel 0
+**Wounds:** 10 (Enemy), Magnitude 30 (Horde)
+**Talents:** Fearless, Heightened Senses (Smell); Horde adds Swift Attack
+**Traits:** Burrower (1), Crawler, Dark Sight, Improved Natural Weapons (Mandibles), Instinctive Behaviour (Feed), Natural Armour (2), Size (Puny), Tyranid; Horde adds Overwhelming, Fear 1
+**Weapons:** Mandibles (1d5+3 R, Pen 3); Horde adds Tearing
+**Special:** Tenacious Grappler (-10 WS instead of -20), Biomorphs (optional Toxic/Flyer/Unnatural TG)
+**Source:** Mark of the Xenos, p. 43
+
+#### Spinespitter
+| Variant | ID | File |
+|---------|-----|------|
+| Enemy | `enmytyranid00016` | `spinespitter.json` |
+| Horde | `hordtyranid00005` | `spinespitter-horde.json` |
+
+**Stats:** Same as Ripper Swarm but BS 30
+**Differences from Ripper Swarm:** +30 BS, adds Spinespitter ranged weapon
+**Weapons:** Mandibles + Spinespitter (Pistol, 20m, -/3/-, 1d10+1 I, Pen 0, Living Ammunition)
+**Source:** Mark of the Xenos, p. 43
 
 #### Ork Boy
 | Variant | ID | File |
 |---------|-----|------|
 | Enemy | `enmyork000000001` | `ork-boy.json` |
 | Horde | `hordork000000001` | `ork-boy-horde.json` |
+
+## Tyranid Psychic Powers
+10 powers in `packs-source/psychic-powers/Tyranid/`:
+- Hypnotic Gaze (`psy00000000059`) — Broodlord unique, opposed WP, immobilize target
+- Catalyst (`psy00000000060`) — Horde gains 10+1d10 Magnitude
+- Dominion (`psy00000000061`) — Double synapse range, +10 WP to Tyranids
+- Leech Essence (`psy00000000062`) — Drain life from target, heal self
+- Onslaught (`psy00000000063`) — Grant free action to brood
+- Paroxysm (`psy00000000064`) — Reduce target WS/BS to 10
+- Psychic Scream (`psy00000000065`) — 1d10+8 Impact to head, Shocking
+- The Horror (`psy00000000066`) — Cohesion damage, fear-based flee
+- Warp Blast (`psy00000000067`) — 1d10 Energy x PR, area effect
+- Warp Lance (`psy00000000068`) — 2d10 Energy x PR, single target
 
 ## Horde vs Enemy Differences
 When creating a horde variant from an enemy:
