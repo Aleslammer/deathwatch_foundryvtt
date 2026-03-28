@@ -44,6 +44,9 @@ Enemies:
     TODO: Still Need to add Tyranids
             Trygon, Warrior Prime, Tyrant Guard, Venonthrope, Zoanthrope
     TODO: Add more orks
+        Add images
+        Additional Ork profiles, rules, and equipment can be found in creatures anatheMa, a supplement for Dark heresy, and Into the storM, a rogue traDer supplement. 
+        These additional sources for information can be very valuable for a GM who wants to involve Orks more heavily in his Deathwatch campaign.
         
     
 
@@ -60,56 +63,54 @@ Psychic Combat
     TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 
-Ripper swarm
+bIG MEK WURRZOG
 
 Book: Mark of the Xenos
-Page: 43
+Page: 59
 
-Descrption: These small harvesting organisms are extremely varied but 
-the most numerous are those known to Adepts as the Tyranicus 
-Omniphagea, more commonly known to Imperial forces as 
-Rippers. Rippers have serpentine bodies, around half a metre 
-long, that terminate in a broad head above a set of vestigial 
-gripping claws. The head is split by a wide maw filled with 
-rows of exceedingly sharp ripping hooks and razor-edged 
-boney ridges. The Ripper’s powerful jaws can bite through 
-f
-lesh and bone with alarming ease, and they have been known 
-to gnaw their way through plasteel to reach food. 
-Rippers are energetic and fearless organisms, quite capable 
-of pulling down creatures many times their own size, from a 
-rampaging Grox to an armed man. Huge swarms of Rippers 
-are often seen on the battlefield, advancing behind Tyranid 
-assault forces. These gorge themselves on the fallen, tearing 
-apart the wounded and cannibalising the dead. It might appear 
-that an armoured Space Marine would be safe from the attacks 
-of individual Rippers, but en masse they can immobilise and 
-drag down even the strongest Battle-Brother.
+Descrption: Some Orks possess a natural gift for engineering and 
+tinkering with technology. These Orks are known as Meks or 
+Mekaniaks, and it is they who build, modify, and maintain the 
+machines and weapons of the greenskin race. Meks are often 
+obsessed with creating ever more elaborate and powerful 
+machines of war to unleash upon the enemy.
+Some particularly visionary Meks gather a number of 
+acolytes, followers, and other Meks under their authority. 
+These Orks become known as Big Meks, and they are true 
+masters of Orky technology. Big Mek Wurrzog is one such 
+Ork, and he has gathered a small warband around him and 
+his workshop, located somewhere in the Slinnar Drift region 
+of the Jericho Reach. 
+Wurrzog has a fascination with the technology of the Tau 
+Empire, and his band of Orks has made a number of raids 
+against the Velk’han Sept. The Big Mek has, in fact, crafted a 
+special “kustom” force field by looting one of the Tau Shield 
+Drones and modifying it (often by applying various whacks 
+with his wrench). He keeps the drone on a chained tether 
+to keep its protection for himself. Wurrzog has somehow 
+discovered the presence of a number of Deathwatch Watch 
+Stations, and he is currently planning a particularly “kunning” 
+raid to try and capture some of the Deathwatch’s esoteric 
+wargear for his own purposes.
 
 Ws Bs s T ag int Per WP fel
-35 — 25 30 40 10 30 30 –
-Wounds: 10
-Skills:  Awareness (Per), Climb (S), Dodge (Ag), Silent Move (Ag), Swim (S), Tracking (Int) +10.
-Talents:   Fearless, Heightened Senses (Smell).
-Traits:  Burrower (1), Crawler, Dark Sight, Improved Natural Weapons (Mandibles), Instinctive Behaviour (Feed), Natural Armour (2), Size (Puny), Tyranid.
-Weapons:   Mandibles (1d5+3 R; Pen 3)
+45 20 45 45 33 43 35 30 25
+Wounds: 55
+Skills: Awareness, Command (Fel) +10, Demolitions (Int) +20, Intimidate (S) +20, Security (Int) +10, Tech-Use (Int) +20.
+Talents: Basic Weapon Training (Primitive, SP), Bulging Biceps, Crushing Blow, Exotic Weapon Proficiency (Any Ork Weapon), Furious Assault, Hardy, Iron Jaw, Lightning Attack, Melee Weapon Training (Chain, Primitive), Pistol Weapon Training (Primitive, SP), Swift Attack, Street Fighting,  True Grit.
+Traits: Brutal Charge, Fear (2), Make It Work, Might Makes Right, Mob Rule, Size (Hulking), Sturdy, Unnatural Strength (x2) Unnatural Toughness (x2)
+Armour: ‘Eavy armour (Body 6, Arms and Legs 4, Head 6)
+Weapons: Kustom mega-blasta (40m; S/–/–; 1d10+18 E; Pen 9; Reload Full; Overheat, Inaccurate, Recharge, Unreliable), Slugga (20m; S/3/–; 1d10+9 I; Pen 2; Clip 18; Reload Full; Inaccurate, Unreliable), ‘uge orky wrench (1d10+15 R; Pen 2; Concussive, Unbalanced).
+Gear: Speshul Force Field (see sidebar below), set of brutishly effective tools, 30 Ork Teeth (“teef ”), lots of shiny bitz, six oil cans.
 
-Special Abilities: 
-Horde: Rippers can be used as a Horde (see the Horde rules on 
-page 359 of the Deathwatch Rulebook). While in a Horde, 
-Rippers gain the Rampage, Relentless, and Overwhelming 
-Traits, the Swift Attack Talent, and their attacks gain the 
-Tearing quality. A Horde of Rippers has the Fear 1 (Disturbing) 
-Trait. Alter the Size Trait as appropriate for Horde magnitude.
-
-Biomorphs: At the GM’s discretion, Rippers may be given 
-any of the following Traits:
-• Toxic (1d10)
-• Flyer (3) 
-• Unnatural Toughness (x2)
-
-Tenacious Grappler: Rippers drag down their prey by 
-grappling with it so that others can latch on more easily. 
-When attempting to grapple an opponent armed with a 
-melee weapon, Rippers suffer a –10 to their WS instead of 
-the normal –20.
+Special Abilities:
+wurrzog’s speshul ForCe FIeld
+Wurrzog built this device from a looted Tau Shield Drone 
+he keeps attached to a thick chain. The Drone wobbles 
+a lot more since being “looted,” but its power output 
+has been modified by Wurrzog’s tinkering. This device 
+follows the rules for Force Fields (see page 166 in the 
+Deathwatch Rulebook) with a strength of 35, but also 
+provides the same benefit to other Orks or Ork vehicles 
+within 15 metres. The Speshul Force Field does not work 
+against melee attacks, and overloads on a roll of 01–05.

@@ -62,6 +62,9 @@ const FACTIONS = [
     faction: "ork",
     files: {
       "ork-boy.json":       { num: "01", type: "enmy" },
+      "ork-meganob.json":   { num: "02", type: "enmy" },
+      "ork-warboss.json":    { num: "03", type: "enmy" },
+      "big-mek-wurrzog.json": { num: "04", type: "enmy" },
       "ork-boy-horde.json": { num: "01", type: "hord" },
     }
   }
