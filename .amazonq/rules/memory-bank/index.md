@@ -20,7 +20,7 @@
 13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
 
 ## Key Metrics
-- **Tests**: 1138 passing, 82 suites
+- **Tests**: 1152 passing, 82 suites
 - **Helper Classes**: 26+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -121,10 +121,10 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1138 tests across 82 suites
+tests/                   1152 tests across 82 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Psychic combat Phase 1-2 complete, 1138 tests)
+**Last Updated**: January 2025 (Psychic combat Phase 1-3 complete, helpers reorganized, 1152 tests)

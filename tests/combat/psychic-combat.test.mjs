@@ -411,4 +411,113 @@ describe('PsychicCombatHelper', () => {
       expect(line).toContain('FATIGUE');
     });
   });
+
+  // ── resolveOpposedTest ──────────────────────────────────────────────────
+
+  describe('resolveOpposedTest', () => {
+    it('psyker wins when target fails', () => {
+      const result = PsychicCombatHelper.resolveOpposedTest(3, 35, 42);
+      expect(result.targetSuccess).toBe(false);
+      expect(result.targetDoS).toBe(0);
+      expect(result.psykerWins).toBe(true);
+      expect(result.netDoS).toBe(3);
+    });
+
+    it('psyker wins when psyker has more DoS', () => {
+      const result = PsychicCombatHelper.resolveOpposedTest(4, 50, 35);
+      expect(result.targetSuccess).toBe(true);
+      expect(result.targetDoS).toBe(1);
+      expect(result.psykerWins).toBe(true);
+      expect(result.netDoS).toBe(3);
+    });
+
+    it('target resists when target has equal DoS', () => {
+      const result = PsychicCombatHelper.resolveOpposedTest(2, 50, 30);
+      expect(result.targetDoS).toBe(2);
+      expect(result.psykerWins).toBe(false);
+      expect(result.netDoS).toBe(0);
+    });
+
+    it('target resists when target has more DoS', () => {
+      const result = PsychicCombatHelper.resolveOpposedTest(1, 50, 10);
+      expect(result.targetDoS).toBe(4);
+      expect(result.psykerWins).toBe(false);
+      expect(result.netDoS).toBe(-3);
+    });
+
+    it('applies misc modifier to target number', () => {
+      // WP 35 + misc 20 = target 55
+      const result = PsychicCombatHelper.resolveOpposedTest(2, 35, 50, 20);
+      expect(result.targetNumber).toBe(55);
+      expect(result.targetSuccess).toBe(true);
+      expect(result.targetDoS).toBe(0);
+    });
+
+    it('negative misc modifier reduces target number', () => {
+      // WP 50 + misc -20 = target 30
+      const result = PsychicCombatHelper.resolveOpposedTest(2, 50, 35, -20);
+      expect(result.targetNumber).toBe(30);
+      expect(result.targetSuccess).toBe(false);
+    });
+
+    it('target roll exactly equal to target number succeeds', () => {
+      const result = PsychicCombatHelper.resolveOpposedTest(1, 40, 40);
+      expect(result.targetSuccess).toBe(true);
+      expect(result.targetDoS).toBe(0);
+      expect(result.psykerWins).toBe(true);
+    });
+
+    it('psyker with 0 DoS loses to target with 0 DoS (target resists on tie)', () => {
+      const result = PsychicCombatHelper.resolveOpposedTest(0, 40, 40);
+      expect(result.psykerWins).toBe(false);
+      expect(result.netDoS).toBe(0);
+    });
+  });
+
+  // ── buildOpposedResultMessage ─────────────────────────────────────────
+
+  describe('buildOpposedResultMessage', () => {
+    it('shows POWER MANIFESTS when psyker wins', () => {
+      const result = { targetSuccess: false, targetDoS: 0, psykerWins: true, netDoS: 3, targetNumber: 35 };
+      const msg = PsychicCombatHelper.buildOpposedResultMessage('Ork Boy', 35, 42, result, 'Compel', 3);
+      expect(msg).toContain('POWER MANIFESTS');
+      expect(msg).toContain('3 net DoS');
+      expect(msg).toContain('Ork Boy');
+      expect(msg).toContain('Compel');
+    });
+
+    it('shows POWER RESISTED when target wins', () => {
+      const result = { targetSuccess: true, targetDoS: 3, psykerWins: false, netDoS: -1, targetNumber: 50 };
+      const msg = PsychicCombatHelper.buildOpposedResultMessage('Ork Boy', 50, 20, result, 'Compel', 2);
+      expect(msg).toContain('POWER RESISTED');
+      expect(msg).toContain('Ork Boy');
+    });
+
+    it('shows target roll result and DoS', () => {
+      const result = { targetSuccess: true, targetDoS: 2, psykerWins: false, netDoS: 0, targetNumber: 50 };
+      const msg = PsychicCombatHelper.buildOpposedResultMessage('Target', 50, 30, result, 'Dominate', 2);
+      expect(msg).toContain('rolled 30');
+      expect(msg).toContain('SUCCESS');
+      expect(msg).toContain('2 DoS');
+    });
+
+    it('shows FAILED for target when target fails', () => {
+      const result = { targetSuccess: false, targetDoS: 0, psykerWins: true, netDoS: 2, targetNumber: 35 };
+      const msg = PsychicCombatHelper.buildOpposedResultMessage('Target', 35, 50, result, 'Compel', 2);
+      expect(msg).toContain('FAILED');
+      expect(msg).toContain('0 DoS');
+    });
+
+    it('includes psyker DoS in message', () => {
+      const result = { targetSuccess: false, targetDoS: 0, psykerWins: true, netDoS: 5, targetNumber: 30 };
+      const msg = PsychicCombatHelper.buildOpposedResultMessage('Target', 30, 50, result, 'Compel', 5);
+      expect(msg).toContain('5 Degrees of Success');
+    });
+
+    it('singular degree for psyker with 1 DoS', () => {
+      const result = { targetSuccess: false, targetDoS: 0, psykerWins: true, netDoS: 1, targetNumber: 30 };
+      const msg = PsychicCombatHelper.buildOpposedResultMessage('Target', 30, 50, result, 'Compel', 1);
+      expect(msg).toContain('1 Degree of Success');
+    });
+  });
 });

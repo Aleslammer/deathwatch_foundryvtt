@@ -166,6 +166,50 @@ export class PsychicCombatHelper {
   }
 
   /**
+   * Resolve an opposed Willpower test between psyker and target.
+   * @param {number} psykerDoS - Psyker's degrees of success from Focus Power Test
+   * @param {number} targetWP - Target's Willpower value
+   * @param {number} targetRoll - Target's d100 roll result
+   * @param {number} targetMiscMod - Target's misc modifier (optional)
+   * @returns {{ targetSuccess: boolean, targetDoS: number, psykerWins: boolean, netDoS: number }}
+   */
+  static resolveOpposedTest(psykerDoS, targetWP, targetRoll, targetMiscMod = 0) {
+    const targetNumber = targetWP + targetMiscMod;
+    const targetSuccess = targetRoll <= targetNumber;
+    const targetDoS = targetSuccess ? Math.floor((targetNumber - targetRoll) / 10) : 0;
+    const psykerWins = psykerDoS > targetDoS;
+    const netDoS = psykerDoS - targetDoS;
+    return { targetSuccess, targetDoS, psykerWins, netDoS, targetNumber };
+  }
+
+  /**
+   * Build the opposed test result chat message.
+   * @param {string} targetName
+   * @param {number} targetWP
+   * @param {number} targetRoll
+   * @param {{ targetSuccess: boolean, targetDoS: number, psykerWins: boolean, netDoS: number, targetNumber: number }} result
+   * @param {string} powerName
+   * @param {number} psykerDoS
+   * @returns {string} HTML content
+   */
+  static buildOpposedResultMessage(targetName, targetWP, targetRoll, result, powerName, psykerDoS) {
+    let msg = `<strong>⚔ Opposed Willpower Test — ${powerName}</strong>`;
+    msg += `<br>Psyker: ${psykerDoS} Degree${psykerDoS !== 1 ? "s" : ""} of Success`;
+    msg += `<br><strong>${targetName}</strong> WP ${result.targetNumber}: rolled ${targetRoll}`;
+    if (result.targetSuccess) {
+      msg += ` — <strong style="color: green;">SUCCESS</strong> (${result.targetDoS} DoS)`;
+    } else {
+      msg += ` — <strong style="color: red;">FAILED</strong> (0 DoS)`;
+    }
+    if (result.psykerWins) {
+      msg += `<br><strong style="color: #9900cc;">POWER MANIFESTS</strong> (${result.netDoS} net DoS)`;
+    } else {
+      msg += `<br><strong style="color: green;">POWER RESISTED</strong> by ${targetName}`;
+    }
+    return msg;
+  }
+
+  /**
    * Look up a roll table by name from world tables or compendium.
    * @param {string} tableName
    * @returns {Promise<RollTable|null>}
@@ -341,6 +385,18 @@ export class PsychicCombatHelper {
 
             const speaker = FoundryAdapter.getChatSpeaker(actor);
             await FoundryAdapter.sendRollToChat(hitRoll, speaker, flavor);
+
+            // Add Oppose button for opposed powers when psyker succeeds
+            if (success && power.system.opposed?.toLowerCase() === "yes") {
+              const targetToken = game.user.targets?.first();
+              const targetName = targetToken?.actor?.name || "Target";
+              const targetId = targetToken?.actor?.id || "";
+              const targetWP = targetToken?.actor?.system?.characteristics?.wil?.value || 0;
+              const sceneId = targetToken?.document?.parent?.id || "";
+              const tokenId = targetToken?.document?.id || "";
+              const opposeContent = `<button class="psychic-oppose-btn" data-power-name="${power.name}" data-psyker-dos="${dos}" data-target-name="${targetName}" data-target-id="${targetId}" data-target-wp="${targetWP}" data-scene-id="${sceneId}" data-token-id="${tokenId}">⚔ Opposed Willpower Test: ${targetName} (WP ${targetWP})</button>`;
+              await FoundryAdapter.createChatMessage(opposeContent, speaker);
+            }
 
             await this.handlePhenomenaAndFatigue(effects, psychicMods.noPerils, psychicMods.noPerilsSource, actor);
           }

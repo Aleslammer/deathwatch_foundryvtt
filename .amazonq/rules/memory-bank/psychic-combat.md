@@ -13,6 +13,7 @@ Automates the Focus Power workflow for psykers (Librarians, Tyranid creatures wi
 - **templates/actor/parts/actor-psychic-powers.html**: ⚡ "Use Power" button per power (bolt icon)
 - **helpers/constants.mjs**: `POWER_LEVELS`, `POWER_LEVEL_LABELS`, `PSYCHIC_TEST` and `NO_PERILS` effect types
 - **helpers/character/modifier-collector.mjs**: Existing `collectAllModifiers()` collects `psychic-test` and `no-perils` modifiers
+- **deathwatch.mjs**: `.psychic-oppose-btn` chat button handler for opposed test dialog
 
 ## Focus Power Test Rules (Core Rulebook p. 185–188)
 
@@ -39,6 +40,30 @@ Target = Willpower + WP Bonus (up to 5 × ePR) + psychic-test modifiers + misc m
 
 ### Doubles Detection
 Roll has doubles when both digits match: 11, 22, 33, ..., 99, 100 (treated as 00).
+
+## Opposed Willpower Tests
+
+Powers with `opposed: "Yes"` trigger an opposed test flow after a successful Focus Power Test:
+
+1. Psyker succeeds Focus Power Test → "⚔ Opposed Willpower Test" button appears in chat
+2. GM clicks button → dialog opens with target's WP (pre-filled from targeted token)
+3. GM can **auto-roll** (leave manual field blank) or **manually enter** the target's d100 result
+4. Dialog also has a misc modifier field for situational bonuses/penalties
+5. Result compares psyker DoS vs target DoS:
+   - Psyker DoS > Target DoS → POWER MANIFESTS (net DoS shown)
+   - Target DoS ≥ Psyker DoS → POWER RESISTED (tie goes to defender)
+
+### Opposed Powers
+| Power | Class |
+|-------|-------|
+| Compel | Telepathy |
+| Dominate | Telepathy |
+| Mind Probe | Telepathy |
+| Mind Scan | Telepathy |
+| Hypnotic Gaze | Tyranid |
+| Leech Essence | Tyranid |
+| Paroxysm | Tyranid |
+| The Horror | Tyranid |
 
 ## New Modifier Effect Types
 
@@ -71,6 +96,8 @@ Boolean flag — suppresses Perils of the Warp cascade.
 | `buildFocusPowerLabel(...)` | Chat header (power name, target, ePR, success/fail) |
 | `buildFocusPowerFlavor(label, parts, phenomenaLine)` | Collapsible `<details>` modifier breakdown |
 | `buildPhenomenaLine(effects, powerLevel)` | ⚡/💀 status lines |
+| `resolveOpposedTest(psykerDoS, targetWP, targetRoll, miscMod)` | Opposed WP test: DoS comparison, net DoS |
+| `buildOpposedResultMessage(...)` | Chat HTML for opposed result (manifests/resisted) |
 
 ## Dialog Layout
 - Power image centered at top (100×100px, matching ranged/melee pattern)
@@ -92,12 +119,17 @@ SUCCESS (5 Degrees of Success)
   +25 Psy Rating Bonus
 ```
 
+### Opposed Test Chat Flow
+1. Focus Power result message (with ⚔ Oppose button if opposed + success)
+2. GM clicks Oppose → dialog with Target WP, Misc Mod, Manual Roll field
+3. Result message: "⚔ Opposed Willpower Test — [Power Name]" with POWER MANIFESTS or POWER RESISTED
+
 ## Stored State
 - `PsychicCombatHelper.lastFocusPowerTarget` — stored for Phase 4 Righteous Fury confirmation
 
 ## Test Coverage
 
-### File: `tests/combat/psychic-combat.test.mjs` — 67 tests
+### File: `tests/combat/psychic-combat.test.mjs` — 81 tests
 
 | Describe Block | Tests |
 |---------------|-------|
@@ -109,6 +141,8 @@ SUCCESS (5 Degrees of Success)
 | buildFocusPowerLabel | 6 |
 | buildFocusPowerFlavor | 4 |
 | buildPhenomenaLine | 5 |
+| resolveOpposedTest | 8 |
+| buildOpposedResultMessage | 6 |
 
 ## Future Phases
 
@@ -116,7 +150,7 @@ SUCCESS (5 Degrees of Success)
 |-------|--------|-------------|
 | 1 | ✅ Complete | Focus Power dialog, WP roll, chat output |
 | 2 | ✅ Complete | Phenomena/Perils table integration, fatigue |
-| 3 | Planned | Opposed Willpower Tests (powers with `opposed: "Yes"`) |
+| 3 | ✅ Complete | Opposed Willpower Tests (powers with `opposed: "Yes"`) |
 | 4 | Planned | Power-specific effects (damage, buffs, horde hits, Righteous Fury) |
 
 Planning docs: `docs/psychic-combat/` (00-overview through 04-power-effects)

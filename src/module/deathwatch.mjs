@@ -11,6 +11,7 @@ import { preloadHandlebarsTemplates } from "./helpers/ui/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
 import { initializeHandlebars } from "./helpers/ui/handlebars.js";
 import { CombatHelper } from "./helpers/combat/combat.mjs";
+import { PsychicCombatHelper } from "./helpers/combat/psychic-combat.mjs";
 import { CriticalEffectsHelper } from "./helpers/combat/critical-effects.mjs";
 import { InitiativeHelper } from "./helpers/initiative.mjs";
 import { SkillLoader } from "./helpers/character/skill-loader.mjs";
@@ -406,6 +407,79 @@ Hooks.on('renderChatMessage', (message, html) => {
         }
         
         await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
+    });
+
+    html.find('.psychic-oppose-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const powerName = button.data('powerName');
+        const psykerDoS = parseInt(button.data('psykerDos')) || 0;
+        const targetName = button.data('targetName') || 'Target';
+        const targetWP = parseInt(button.data('targetWp')) || 0;
+        const targetId = button.data('targetId');
+        const sceneId = button.data('sceneId');
+        const tokenId = button.data('tokenId');
+
+        const target = (sceneId && tokenId)
+            ? game.scenes.get(sceneId)?.tokens.get(tokenId)?.actor
+            : (targetId ? game.actors.get(targetId) : null);
+
+        const content = `
+          <div style="margin-bottom: 8px;"><strong>Opposed Willpower Test: ${targetName}</strong></div>
+          <div class="form-group">
+            <label>Target WP:</label>
+            <input type="number" id="opposeTargetWP" value="${targetWP}" style="width: 60px;" />
+          </div>
+          <div class="form-group">
+            <label>Misc Modifier:</label>
+            <input type="number" id="opposeMiscMod" value="0" style="width: 60px;" />
+          </div>
+          <div class="form-group">
+            <label>Manual Roll (leave blank to auto-roll):</label>
+            <input type="number" id="opposeManualRoll" min="1" max="100" placeholder="Auto" style="width: 60px;" />
+          </div>
+        `;
+
+        new Dialog({
+            title: `Opposed Test: ${powerName}`,
+            content,
+            buttons: {
+                resolve: {
+                    label: "Resolve",
+                    callback: async (html) => {
+                        const wp = parseInt(html.find('#opposeTargetWP').val()) || 0;
+                        const miscMod = parseInt(html.find('#opposeMiscMod').val()) || 0;
+                        const manualRoll = html.find('#opposeManualRoll').val();
+
+                        let targetRoll;
+                        let rollObj = null;
+                        if (manualRoll && manualRoll.trim() !== '') {
+                            targetRoll = parseInt(manualRoll);
+                        } else {
+                            rollObj = await new Roll('1d100').evaluate();
+                            targetRoll = rollObj.total;
+                        }
+
+                        const result = PsychicCombatHelper.resolveOpposedTest(psykerDoS, wp, targetRoll, miscMod);
+                        const msg = PsychicCombatHelper.buildOpposedResultMessage(targetName, wp, targetRoll, result, powerName, psykerDoS);
+
+                        if (rollObj) {
+                            await rollObj.toMessage({
+                                speaker: ChatMessage.getSpeaker({ actor: target }),
+                                flavor: msg,
+                                rollMode: game.settings.get('core', 'rollMode')
+                            });
+                        } else {
+                            await ChatMessage.create({
+                                content: msg + `<br><em>(Manual roll: ${targetRoll})</em>`,
+                                speaker: ChatMessage.getSpeaker({ actor: target })
+                            });
+                        }
+                    }
+                },
+                cancel: { label: "Cancel" }
+            },
+            default: "resolve"
+        }).render(true);
     });
 });
 
