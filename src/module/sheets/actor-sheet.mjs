@@ -1,6 +1,7 @@
 import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { DWConfig } from "../helpers/config.mjs";
 import { CombatHelper } from "../helpers/combat.mjs";
+import { PsychicCombatHelper } from "../helpers/psychic-combat.mjs";
 import { ModifierHelper } from "../helpers/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/chat-message-builder.mjs";
@@ -483,6 +484,14 @@ export class DeathwatchActorSheet extends ActorSheet {
       const itemId = li.data('itemId');
       const power = this.actor.items.get(itemId);
       if (power) ChatMessageBuilder.createItemCard(power, this.actor);
+    });
+
+    // Use psychic power (Focus Power Test)
+    html.find('.psychic-power-use').click(ev => {
+      const li = $(ev.currentTarget).closest('.item');
+      const itemId = li.data('itemId');
+      const power = this.actor.items.get(itemId);
+      if (power) PsychicCombatHelper.focusPowerDialog(this.actor, power);
     });
 
     // Show special ability in chat
