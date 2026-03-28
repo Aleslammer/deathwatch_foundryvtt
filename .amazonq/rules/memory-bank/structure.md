@@ -53,6 +53,10 @@ src/
 │   │       └── weapon.mjs          # DeathwatchWeapon (migrateData, prepareDerivedData)
 │   ├── documents/                  # Document classes (thin shells: Actor, Item)
 │   ├── helpers/                    # Utility functions
+│   │   ├── combat/                # Combat logic (10 files)
+│   │   ├── character/             # Character data computation (6 files)
+│   │   ├── ui/                    # UI/presentation helpers (5 files)
+│   │   └── (root)                 # Core infrastructure (7 files)
 │   ├── modifiers/                  # Modifier system
 │   ├── sheets/                     # UI sheet implementations
 │   └── deathwatch.mjs              # Main entry point
@@ -128,33 +132,44 @@ src/
   - All derived data computation moved to respective DataModel classes
 
 ### 4. Helper Modules (`module/helpers/`)
-- **xp-calculator.mjs**: XP and rank calculations (pure functions)
-- **modifier-collector.mjs**: Modifier collection and application
-- **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
-- **chat-message-builder.mjs**: Chat message formatting and creation
-- **item-handlers.mjs**: Item categorization and processing
-- **weapon-quality-helper.mjs**: Weapon quality detection and lookup
-- **weapon-upgrade-helper.mjs**: Weapon upgrade detection and modifier collection
-- **combat.mjs**: Core combat logic (hit locations, damage application, routing)
-- **ranged-combat.mjs**: Ranged weapon attack dialog and logic
-- **melee-combat.mjs**: Melee weapon attack dialog and logic
-- **horde-combat.mjs**: Horde-specific combat mechanics (magnitude, hit calculation)
-- **combat-dialog.mjs**: Combat dialog utilities (pure functions)
-- **righteous-fury-helper.mjs**: Righteous Fury mechanics
-- **wound-helper.mjs**: Wound calculation utilities
-- **rank-helper.mjs**: Rank progression utilities
-- **skill-loader.mjs**: Skill data loading
+
+Organized into three subfolders plus core infrastructure at root:
+
+#### Root (Core Infrastructure)
 - **config.mjs**: System configuration (DWConfig object)
-- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers)
-- **critical-effects.mjs**: Critical damage effects
+- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers, power levels)
 - **debug.mjs**: Debug logging with feature flags
 - **effects.mjs**: Active effects and modifiers
 - **foundry-adapter.mjs**: Foundry API wrapper for testability
-- **handlebars.js**: Custom Handlebars helpers
 - **initiative.mjs**: Initiative rolling
-- **modifiers.mjs**: Modifier CRUD operations
-- **templates.mjs**: Template preloading
 - **status-effects.mjs**: Status effect management
+
+#### `combat/` (Combat Logic)
+- **combat.mjs**: Core combat logic (hit locations, damage application, routing)
+- **combat-dialog.mjs**: Combat dialog utilities (pure functions)
+- **ranged-combat.mjs**: Ranged weapon attack dialog and logic
+- **melee-combat.mjs**: Melee weapon attack dialog and logic
+- **psychic-combat.mjs**: Psychic power Focus Power Test (dialog, phenomena, perils)
+- **horde-combat.mjs**: Horde-specific combat mechanics (magnitude, hit calculation)
+- **righteous-fury-helper.mjs**: Righteous Fury mechanics
+- **critical-effects.mjs**: Critical damage effects
+- **weapon-quality-helper.mjs**: Weapon quality detection and lookup
+- **weapon-upgrade-helper.mjs**: Weapon upgrade detection and modifier collection
+
+#### `character/` (Character Data)
+- **modifier-collector.mjs**: Modifier collection and application
+- **modifiers.mjs**: Modifier CRUD operations
+- **xp-calculator.mjs**: XP and rank calculations (pure functions)
+- **skill-loader.mjs**: Skill data loading
+- **rank-helper.mjs**: Rank progression utilities
+- **wound-helper.mjs**: Wound calculation utilities
+
+#### `ui/` (Presentation)
+- **chat-message-builder.mjs**: Chat message formatting and creation
+- **roll-dialog-builder.mjs**: Roll dialog HTML generation and parsing
+- **item-handlers.mjs**: Item categorization and processing
+- **templates.mjs**: Template preloading
+- **handlebars.js**: Custom Handlebars helpers
 
 ### 5. Sheet Classes (`module/sheets/`)
 - **actor-sheet.mjs**: Character and NPC sheet UI logic
@@ -276,7 +291,7 @@ Handlebars templates for rendering:
 - Keeps platform-specific code isolated and maintainable
 
 ### Current Architecture (Post-Refactoring)
-- Clean separation: documents, sheets, helpers
+- Clean separation: documents, sheets, helpers (combat/, character/, ui/)
 - Helper classes for business logic (XPCalculator, ModifierCollector, etc.)
 - Modular CSS with variables and low specificity
 - Handlebars partials for reusable templates

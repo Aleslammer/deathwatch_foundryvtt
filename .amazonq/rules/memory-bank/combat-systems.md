@@ -6,13 +6,13 @@ The combat system is split into separate modules for ranged and melee combat, wi
 ## Architecture
 
 ### Core Combat Files
-- **combat.mjs**: Core combat logic and routing
+- **combat/combat.mjs**: Core combat logic and routing
   - Hit location determination
   - Damage application (delegates to actor DataModel via `receiveDamage()`)
   - Righteous Fury handling
   - Weapon attack routing (delegates to ranged/melee)
   - Horde batch damage routing
-- **ranged-combat.mjs**: Ranged weapon attack dialog and logic
+- **combat/ranged-combat.mjs**: Ranged weapon attack dialog and logic
   - BS-based attack rolls (uses fully computed `bs.value`)
   - Rate of fire (Single/Semi-Auto/Full-Auto)
   - Aim modifiers
@@ -20,22 +20,28 @@ The combat system is split into separate modules for ranged and melee combat, wi
   - Ammunition tracking
   - Jamming mechanics
   - Horde hit calculation via `calculateHitsReceived()`
-- **melee-combat.mjs**: Melee weapon attack dialog and logic
+- **combat/melee-combat.mjs**: Melee weapon attack dialog and logic
   - WS-based attack rolls (uses fully computed `ws.value`)
   - All Out Attack modifier
   - Charge modifier
   - Called Shot and Running Target penalties
   - Degrees of Success displayed in chat
   - Horde hit calculation via `calculateHitsReceived()`
-- **horde-combat.mjs**: Horde-specific combat mechanics
+- **combat/horde-combat.mjs**: Horde-specific combat mechanics
   - Horde hit calculation (blast, flame, melee DoS, ranged)
   - Magnitude reduction per penetrating hit
   - Horde damage bonus dice
-- **combat-dialog.mjs**: Pure function helpers for combat calculations
+- **combat/combat-dialog.mjs**: Pure function helpers for combat calculations
   - Modifier building
   - Hit calculation
   - Damage calculation
   - Jam threshold determination
+- **combat/psychic-combat.mjs**: Psychic power Focus Power Test dialog and logic
+  - WP-based Focus Power Tests with 5 × ePR bonus
+  - Power levels (Fettered/Unfettered/Push)
+  - Phenomena/Perils table integration
+  - Fatigue on Push + doubles
+  - psychic-test and no-perils modifier support
 
 ## Weapon Attack Routing
 

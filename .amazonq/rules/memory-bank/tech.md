@@ -44,6 +44,7 @@ tests/
 │   ├── horde-combat.test.mjs
 │   ├── critical-effects.test.mjs
 │   ├── force-weapon-channeling.test.mjs
+│   ├── psychic-combat.test.mjs
 │   ├── gyro-stabilised.test.mjs
 │   ├── lightning-claws.test.mjs
 │   ├── melta.test.mjs

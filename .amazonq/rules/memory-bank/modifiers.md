@@ -47,6 +47,8 @@ The modifier system allows items, talents, chapters, and other effects to modify
 ### 1. Characteristic Modifiers
 Modify character characteristics with damage tracking.
 
+**effectType:** `characteristic`
+
 **Structure:**
 ```json
 {
@@ -289,6 +291,45 @@ Disable specific movement types entirely (set to "N/A").
 - Terminator Armor cannot Run
 - Heavy equipment preventing certain movement types
 - Conditions that restrict movement
+
+### 10. Psychic Test Modifiers
+Modify Focus Power Test target number.
+
+**Structure:**
+```json
+{
+  "name": "Psychic Hood",
+  "modifier": 10,
+  "effectType": "psychic-test",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Additive bonus/penalty to Focus Power Test target number
+- Collected by `PsychicCombatHelper.collectPsychicModifiers()` at dialog time
+- Displayed as dedicated line in chat modifier breakdown
+- No `valueAffected` needed
+
+### 11. No Perils Modifier
+Suppresses Perils of the Warp cascade from Psychic Phenomena.
+
+**Structure:**
+```json
+{
+  "name": "Warp Stabiliser",
+  "modifier": "1",
+  "effectType": "no-perils",
+  "enabled": true
+}
+```
+
+**Behavior:**
+- Boolean flag — presence of any enabled modifier = Perils suppressed
+- Modifier value ignored (same pattern as `ignores-natural-armour`)
+- Phenomena still trigger normally
+- When Phenomena table result is 75+, Perils roll is skipped
+- Chat shows: "🛡 Perils of the Warp suppressed by [source name]"
 
 ## Modifier Sources
 

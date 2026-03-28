@@ -17,10 +17,11 @@
 10. **ammunition-modifiers.md** - Ammunition effects (damage, RoF, blast, characteristic damage)
 11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 12. **enemies.md** - Enemy & horde compendium entries, faction-based ID conventions
+13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
 
 ## Key Metrics
-- **Tests**: 1071 passing, 81 suites
-- **Helper Classes**: 25+ modules
+- **Tests**: 1138 passing, 82 suites
+- **Helper Classes**: 26+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
 
@@ -44,7 +45,7 @@ npm run build:all                                           # build:packs + depl
 - **Polymorphic Combat**: `DeathwatchActorBase` defines combat methods (`getArmorValue`, `getDefenses`, `calculateHitsReceived`, `receiveDamage`, `canRighteousFury`) overridden by Horde and Character
 
 ### Modifiers
-- **Types**: characteristic, characteristic-post-multiplier, skill, initiative, wounds, armor, psy-rating, movement, movement-restriction
+- **Types**: characteristic, characteristic-post-multiplier, skill, initiative, wounds, armor, psy-rating, movement, movement-restriction, psychic-test, no-perils
 - **Sources**: Actor, equipped items, chapters, armor histories, ammunition
 - **Pattern**: `ModifierCollector.collectAllModifiers(actor)` → apply methods
 
@@ -53,6 +54,14 @@ npm run build:all                                           # build:packs + depl
 - **Melee**: WS-based (uses computed `ws.value`), all-out attack, charge, DoS displayed in chat
 - **Shared**: Hit locations, damage application (polymorphic), Righteous Fury
 - **Horde**: Magnitude-based damage, batch damage application, special hit rules (blast/flame/melee DoS)
+
+### Psychic Combat
+- **Focus Power Test**: WP + (up to 5 × ePR) + psychic-test modifiers + misc, capped at 90. Roll 91+ always fails.
+- **Power Levels**: Fettered (ePR = ceil(PR/2), no Phenomena), Unfettered (full PR, Phenomena on doubles), Push (PR+3, auto Phenomena, Fatigue on doubles)
+- **Phenomena/Perils**: Auto-draws from roll tables. Perils only via Phenomena cascade (result 75+).
+- **Modifier Support**: `psychic-test` (additive WP bonus) and `no-perils` (suppresses Perils cascade)
+- **Helper**: `PsychicCombatHelper` in `psychic-combat.mjs` — 7 pure functions + dialog + table integration
+- **Planning**: `docs/psychic-combat/` (4 phase docs, Phases 1-2 complete)
 
 ### Weapon Qualities
 - **Detection**: `.some(q => (typeof q === 'string' ? q : q.id) === key)`
@@ -104,14 +113,18 @@ npm run build:all                                           # build:packs + depl
 ```
 src/module/data/         TypeDataModel classes (base-document, actor/*.mjs, item/*.mjs)
 src/module/documents/    Actor, Item (thin shells), ActorConditions
-src/module/helpers/      25+ helper modules (including horde-combat.mjs)
+src/module/helpers/      Core infrastructure (constants, config, debug, foundry-adapter)
+src/module/helpers/combat/    Combat logic (10 files: combat, ranged, melee, psychic, horde, etc.)
+src/module/helpers/character/ Character data (6 files: modifiers, XP, skills, wounds, rank)
+src/module/helpers/ui/        UI helpers (5 files: chat, dialogs, items, templates, handlebars)
 src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1071 tests across 81 suites
+tests/                   1138 tests across 82 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
+docs/psychic-combat/     Psychic combat planning (4 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Tyranid enemies through Spinespitter, size hit modifiers, Tyranid psychic powers)
+**Last Updated**: January 2025 (Psychic combat Phase 1-2 complete, 1138 tests)
