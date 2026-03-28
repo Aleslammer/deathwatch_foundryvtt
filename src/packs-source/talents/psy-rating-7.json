@@ -13,6 +13,7 @@
     "compendiumId": "tal00000000279",
     "modifiers": [
       {
+        "_id": "a15fda2a24179e50",
         "name": "Psy Rating 7",
         "modifier": "1",
         "effectType": "psy-rating",

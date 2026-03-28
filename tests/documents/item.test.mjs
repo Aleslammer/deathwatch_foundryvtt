@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { DeathwatchItem } from '../../src/module/documents/item.mjs';
 
 describe('DeathwatchItem', () => {

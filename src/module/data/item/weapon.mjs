@@ -52,6 +52,50 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
     }
   }
 
+  static CHAR_KEYS = ['ws', 'bs', 'str', 'tg', 'ag', 'int', 'per', 'wil', 'fs'];
+
+  _resolveCharBonus(formula) {
+    const actor = this.parent?.actor;
+    if (!actor) return parseInt(formula) || 0;
+
+    const match = formula.match(/^([a-z]+)b(x(\d+))?([+-]\d+)?$/);
+    if (!match) return parseInt(formula) || 0;
+
+    const charKey = match[1];
+    if (!DeathwatchWeapon.CHAR_KEYS.includes(charKey)) return parseInt(formula) || 0;
+
+    const bonus = actor.system?.characteristics?.[charKey]?.mod || 0;
+    const multiplier = match[3] ? parseInt(match[3]) : 1;
+    const offset = match[4] ? parseInt(match[4]) : 0;
+    return (bonus * multiplier) + offset;
+  }
+
+  _applyOwnModifiers() {
+    if (!Array.isArray(this.modifiers)) return;
+
+    const weaponClass = (this.class || '').toLowerCase();
+
+    for (const mod of this.modifiers) {
+      if (mod.enabled === false) continue;
+      if (mod.weaponClass && weaponClass !== mod.weaponClass.toLowerCase()) continue;
+
+      if (mod.effectType === 'weapon-damage') {
+        const dmgMod = this._resolveCharBonus(mod.modifier);
+        const baseDmg = this.effectiveDamage || this.dmg;
+        if (baseDmg && dmgMod !== 0) {
+          this.effectiveDamage = `${baseDmg} ${dmgMod >= 0 ? '+' : ''}${dmgMod}`;
+        }
+      } else if (mod.effectType === 'weapon-rof') {
+        this.effectiveRof = mod.modifier;
+      } else if (mod.effectType === 'weapon-blast') {
+        this.effectiveBlast = parseInt(mod.modifier) || 0;
+      } else if (mod.effectType === 'weapon-penetration') {
+        const basePen = parseInt(this.effectivePenetration ?? this.penetration ?? 0);
+        this.effectivePenetration = Math.max(basePen, parseInt(mod.modifier) || 0);
+      }
+    }
+  }
+
   /**
    * Called from actor _prepareCharacterData() after psy rating is computed.
    */
@@ -115,8 +159,6 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
 
     if (damageOverride && baseDmg) {
       this.effectiveDamage = damageOverride;
-    } else {
-      delete this.effectiveDamage;
     }
 
     if (baseRange === 0) {
@@ -142,11 +184,6 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
 
     const ammo = actor.items.get(this.loadedAmmo);
     if (!ammo || !Array.isArray(ammo.system.modifiers)) {
-      delete this.effectiveDamage;
-      delete this.effectiveRof;
-      delete this.effectiveBlast;
-      delete this.effectivePenetration;
-      delete this.effectiveRange;
       return;
     }
 
@@ -157,11 +194,6 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
     const weaponClass = (this.class || '').toLowerCase();
 
     if (!baseDmg && !baseRof) {
-      delete this.effectiveDamage;
-      delete this.effectiveRof;
-      delete this.effectiveBlast;
-      delete this.effectivePenetration;
-      delete this.effectiveRange;
       return;
     }
 
@@ -209,41 +241,30 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
     }
 
     if (damageModifier !== 0 && baseDmg) {
-      this.effectiveDamage = `${baseDmg} ${damageModifier >= 0 ? '+' : ''}${damageModifier}`;
-    } else {
-      delete this.effectiveDamage;
+      const base = this.effectiveDamage || baseDmg;
+      this.effectiveDamage = `${base} ${damageModifier >= 0 ? '+' : ''}${damageModifier}`;
     }
 
     if (rofOverride && baseRof) {
       this.effectiveRof = rofOverride;
-    } else {
-      delete this.effectiveRof;
     }
 
     if (blastValue !== null) {
       this.effectiveBlast = blastValue;
-    } else {
-      delete this.effectiveBlast;
     }
 
     if (penOverride !== null) {
       this.effectivePenetration = Math.max(basePen, penOverride);
     } else if (penModifier !== 0) {
       this.effectivePenetration = Math.max(0, basePen + penModifier);
-    } else {
-      delete this.effectivePenetration;
     }
 
     if (baseRange > 0 && (rangeAdditive !== 0 || rangeMultiplier !== 1)) {
       this.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
-    } else {
-      delete this.effectiveRange;
     }
 
     if (fellingValue !== null) {
       this.effectiveFelling = fellingValue;
-    } else {
-      delete this.effectiveFelling;
     }
   }
 }

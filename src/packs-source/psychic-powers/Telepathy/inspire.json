@@ -4,15 +4,15 @@
   "type": "psychic-power",
   "img": "systems/deathwatch/icons/psychic-powers/telepathy.webp",
   "system": {
-    "action": "Half",
-    "opposed": "No",
+    "book": "Deathwatch Core Rulebook",
+    "page": "190",
+    "key": "inspire",
     "range": "5 metre radius x PR",
     "sustained": "Yes",
+    "action": "Half",
+    "opposed": "No",
     "cost": 500,
     "class": "Telepathy",
-    "key": "inspire",
-    "description": "<p>The psyker can bolster his comrades by sending out waves of reassurance and calm. A number of targets equal to the psyker's PR immediately overcome the effects of Pinning and gain a +10 resistance against Fear. This effect lasts as long as the targets stay within range of the psyker, and the psyker maintains the power.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "190"
+    "description": "<p>The psyker can bolster his comrades by sending out waves of reassurance and calm. A number of targets equal to the psyker's PR immediately overcome the effects of Pinning and gain a +10 resistance against Fear. This effect lasts as long as the targets stay within range of the psyker, and the psyker maintains the power.</p>"
   }
 }

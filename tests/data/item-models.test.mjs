@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import DeathwatchDataModel from '../../src/module/data/base-document.mjs';
 import DeathwatchItemBase from '../../src/module/data/item/base-item.mjs';
 import DeathwatchGear from '../../src/module/data/item/gear.mjs';

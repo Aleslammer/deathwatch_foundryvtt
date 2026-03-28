@@ -1,14 +1,12 @@
 {
-    "_id":  "rending-head0001",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 01",
-    "system":  {
-                   "damageType":  "Rending",
-                   "description":  "The attack tears skin from the target\u0027s face dealing 1 level of Fatigue. If the target is wearing a helmet, there is no effect.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Head"
-               },
-    "type":  "critical-effect"
+  "_id": "rending-head0001",
+  "name": "Level 01",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Rending",
+    "location": "Head",
+    "description": "The attack tears skin from the target's face dealing 1 level of Fatigue. If the target is wearing a helmet, there is no effect.",
+    "effects": []
+  }
 }

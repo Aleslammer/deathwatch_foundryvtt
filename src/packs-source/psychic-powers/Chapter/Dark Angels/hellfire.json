@@ -4,16 +4,16 @@
   "type": "psychic-power",
   "img": "systems/deathwatch/icons/psychic-powers/dark-angels.webp",
   "system": {
-    "action": "Half",
-    "opposed": "No",
+    "book": "Deathwatch Core Rulebook",
+    "page": "197",
+    "key": "hellfire",
     "range": "50 metres x PR",
     "sustained": "No",
+    "action": "Half",
+    "opposed": "No",
     "cost": 1000,
     "class": "Chapter",
-    "key": "hellfire",
-    "chapterImg": "systems/deathwatch/icons/chapters/dark_angels.webp",
     "description": "<p>The Librarian summons a torrent of psychic fire to burn and char his foes. He may pick a point within range and engulf it in a cloud of flame with a radius of 2 metres x PR. All those within the area will suffer 1d10 Energy damage x PR. In addition, all those within the area of effect must make Challenging (+0) Agility Tests or be set on fire (see page 260).</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "197"
+    "chapterImg": "systems/deathwatch/icons/chapters/dark_angels.webp"
   }
 }

@@ -1,11 +1,12 @@
 {
+  "_id": "trt000000000025",
   "name": "Natural Armour",
   "type": "trait",
   "img": "systems/deathwatch/icons/generic/traits.webp",
   "system": {
-    "description": "<p>This creature has a naturally tough hide or an exoskeleton, affording it some protection against attacks. This trait always includes a numeric value to indicate how many Armour Points the creature gains to all locations.</p>",
     "book": "Core Rulebook",
     "page": "133",
+    "description": "<p>This creature has a naturally tough hide or an exoskeleton, affording it some protection against attacks. This trait always includes a numeric value to indicate how many Armour Points the creature gains to all locations.</p>",
     "modifiers": [
       {
         "_id": "natural-armour-mod",
@@ -16,6 +17,5 @@
         "enabled": true
       }
     ]
-  },
-  "_id": "trt000000000025"
+  }
 }

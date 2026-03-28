@@ -1,5 +1,4 @@
-/* Items Lists - Reduced Specificity */
-.dw-items-header,
+/* Items Lists */
 .deathwatch .items-header {
   height: 28px;
   margin: var(--dw-spacing-xs) 0;
@@ -10,13 +9,11 @@
   font-weight: bold;
 }
 
-.dw-items-header > *,
 .deathwatch .items-header > * {
   font-size: var(--dw-font-size-lg);
   text-align: center;
 }
 
-.dw-items-header__name,
 .deathwatch .items-header .item-name {
   font-weight: bold;
   padding-left: 5px;
@@ -25,7 +22,6 @@
 }
 
 /* Section headers */
-.dw-section-header,
 .deathwatch .section-header {
   margin: 15px 0 10px 0;
   padding: 0 0 8px 0;
@@ -78,7 +74,6 @@
   display: none;
 }
 
-.dw-items-list,
 .deathwatch .items-list {
   list-style: none;
   margin: 0;
@@ -88,14 +83,6 @@
   color: var(--dw-color-text-secondary);
 }
 
-.dw-items-list__item-list,
-.deathwatch .items-list .item-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.dw-item__name,
 .deathwatch .items-list .item-name {
   flex: 2;
   margin: 0;
@@ -106,8 +93,6 @@
   display: flex;
 }
 
-.dw-item__name h3,
-.dw-item__name h4,
 .deathwatch .items-list .item-name h3,
 .deathwatch .items-list .item-name h4 {
   margin: 0;
@@ -115,38 +100,32 @@
   overflow-x: hidden;
 }
 
-.dw-item__controls,
 .deathwatch .items-list .item-controls {
   display: flex;
   flex: 0 0 100px;
   justify-content: flex-end;
 }
 
-.dw-item__controls a,
 .deathwatch .items-list .item-controls a {
   font-size: var(--dw-font-size-sm);
   text-align: center;
   margin: 0 6px;
 }
 
-.dw-item,
 .deathwatch .items-list .item {
   align-items: center;
   padding: 0 var(--dw-spacing-xs);
   border-bottom: var(--dw-border-width) solid var(--dw-color-border);
 }
 
-.dw-item:last-child,
 .deathwatch .items-list .item:last-child {
   border-bottom: none;
 }
 
-.dw-item .dw-item__name,
 .deathwatch .items-list .item .item-name {
   color: var(--dw-color-text-primary);
 }
 
-.dw-item__image,
 .deathwatch .items-list .item .item-name .item-image {
   flex: 0 0 30px;
   height: 30px;
@@ -155,12 +134,10 @@
   margin-right: 5px;
 }
 
-.dw-item__image img,
 .deathwatch .items-list .item .item-name .item-image img {
   display: block;
 }
 
-.dw-item__prop,
 .deathwatch .items-list .item-prop {
   text-align: center;
   border-left: var(--dw-border-width) solid var(--dw-color-border);
@@ -168,17 +145,7 @@
   font-size: var(--dw-font-size-sm);
 }
 
-.deathwatch .items-list .items-header {
-  height: 28px;
-  margin: var(--dw-spacing-xs) 0;
-  padding: 0;
-  align-items: center;
-  background: var(--dw-color-bg-tertiary);
-  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
-  font-weight: bold;
-}
-
-.deathwatch .items-list .items-header>* {
+.deathwatch .items-list .items-header > * {
   font-size: var(--dw-font-size-sm);
   text-align: center;
 }

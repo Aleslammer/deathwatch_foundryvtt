@@ -120,6 +120,17 @@ export const RANGE_MODIFIERS = {
   EXTREME: -30       // >= 3x weapon range
 };
 
+// Size Hit Modifiers (applied to attacker when targeting creature of this size)
+export const SIZE_HIT_MODIFIERS = {
+  "Miniscule": -30,
+  "Puny": -20,
+  "Scrawny": -10,
+  "Average": 0,
+  "Hulking": 10,
+  "Enormous": 20,
+  "Massive": 30
+};
+
 // XP Constants
 export const XP_CONSTANTS = {
   STARTING_XP: 12000,

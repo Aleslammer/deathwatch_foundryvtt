@@ -5,9 +5,11 @@ to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
-cls;npm run build:packs;node builds/scripts/validateTalentIds.mjs;.\builds\scripts\CopyLocal.ps1
+cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
+TODO: Weapon Quality Flame  
+    Has an entirely new attack dynamic PG 142 core rule book.   You dont make a BS test
 
 Traits
     TODO: if a target has a trait size can we auto apply modifier?
@@ -39,18 +41,75 @@ TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-
 TODO: Automated Animations - Can we use this for things?
 
 Enemies:
+    TODO: Still Need to add Tyranids
+            Trygon, Warrior Prime, Tyrant Guard, Venonthrope, Zoanthrope
+    TODO: Add more orks
+        
+    
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects    
 
 Hordes
-    TODO: Update to support psychic attacks (pg 360)
-    TODO: can we expand the size traits?   Can we incorporate that into something?
+    TODO: Update to support psychic attacks (pg 360)    
+
+Psychic Combat
+    TODO: we have no combat system for psychic Powers
+        Perils etc...
+    TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 
-Breaking a Horde
-• When a Horde’s Magnitude is reduced by 25% in a turn, it must make a Willpower Test when it is its turn to act again. If it passes, it may continue to act. If it fails, it breaks and flees at its highest move value. 
-• If the Horde’s Magnitude is less than 50% of its starting value, it suffers a –10 to the Willpower Test. If the Horde’s Magnitude is less than 25% of its starting value, it will automatically break. 
-• Hordes composed of enemies with the Fearless talent do not have to test to see if they break as their Magnitude is eroded: they have to be wiped out to the last.
+Ripper swarm
 
+Book: Mark of the Xenos
+Page: 43
+
+Descrption: These small harvesting organisms are extremely varied but 
+the most numerous are those known to Adepts as the Tyranicus 
+Omniphagea, more commonly known to Imperial forces as 
+Rippers. Rippers have serpentine bodies, around half a metre 
+long, that terminate in a broad head above a set of vestigial 
+gripping claws. The head is split by a wide maw filled with 
+rows of exceedingly sharp ripping hooks and razor-edged 
+boney ridges. The Ripper’s powerful jaws can bite through 
+f
+lesh and bone with alarming ease, and they have been known 
+to gnaw their way through plasteel to reach food. 
+Rippers are energetic and fearless organisms, quite capable 
+of pulling down creatures many times their own size, from a 
+rampaging Grox to an armed man. Huge swarms of Rippers 
+are often seen on the battlefield, advancing behind Tyranid 
+assault forces. These gorge themselves on the fallen, tearing 
+apart the wounded and cannibalising the dead. It might appear 
+that an armoured Space Marine would be safe from the attacks 
+of individual Rippers, but en masse they can immobilise and 
+drag down even the strongest Battle-Brother.
+
+Ws Bs s T ag int Per WP fel
+35 — 25 30 40 10 30 30 –
+Wounds: 10
+Skills:  Awareness (Per), Climb (S), Dodge (Ag), Silent Move (Ag), Swim (S), Tracking (Int) +10.
+Talents:   Fearless, Heightened Senses (Smell).
+Traits:  Burrower (1), Crawler, Dark Sight, Improved Natural Weapons (Mandibles), Instinctive Behaviour (Feed), Natural Armour (2), Size (Puny), Tyranid.
+Weapons:   Mandibles (1d5+3 R; Pen 3)
+
+Special Abilities: 
+Horde: Rippers can be used as a Horde (see the Horde rules on 
+page 359 of the Deathwatch Rulebook). While in a Horde, 
+Rippers gain the Rampage, Relentless, and Overwhelming 
+Traits, the Swift Attack Talent, and their attacks gain the 
+Tearing quality. A Horde of Rippers has the Fear 1 (Disturbing) 
+Trait. Alter the Size Trait as appropriate for Horde magnitude.
+
+Biomorphs: At the GM’s discretion, Rippers may be given 
+any of the following Traits:
+• Toxic (1d10)
+• Flyer (3) 
+• Unnatural Toughness (x2)
+
+Tenacious Grappler: Rippers drag down their prey by 
+grappling with it so that others can latch on more easily. 
+When attempting to grapple an opponent armed with a 
+melee weapon, Rippers suffer a –10 to their WS instead of 
+the normal –20.

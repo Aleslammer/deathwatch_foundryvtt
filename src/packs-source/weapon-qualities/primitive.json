@@ -4,10 +4,10 @@
   "type": "weapon-quality",
   "img": "icons/svg/item-bag.svg",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "143",
     "key": "primitive",
     "value": "",
-    "description": "<p>Crude and basic in design, these kinds of weapons, while still deadly, are less effective against modern armour. All Armour Points are doubled against hits from Primitive weapons unless the armour also has the Primitive Quality. Non-Primitive armour doubles its AP before being reduced by Penetration.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "143"
+    "description": "<p>Crude and basic in design, these kinds of weapons, while still deadly, are less effective against modern armour. All Armour Points are doubled against hits from Primitive weapons unless the armour also has the Primitive Quality. Non-Primitive armour doubles its AP before being reduced by Penetration.</p>"
   }
 }

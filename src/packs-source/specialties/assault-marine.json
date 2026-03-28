@@ -3,26 +3,66 @@
   "type": "specialty",
   "img": "systems/deathwatch/icons/specialty/assaultmarine.webp",
   "system": {
-    "description": "<p>Assault Marines are close combat specialists who use jump packs to rapidly close with the enemy. They excel at shock assaults and are often the first to engage the foe in melee combat.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "48",
+    "description": "<p>Assault Marines are close combat specialists who use jump packs to rapidly close with the enemy. They excel at shock assaults and are often the first to engage the foe in melee combat.</p>",
     "characteristicCosts": {
-      "ws": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "bs": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
-      "str": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "tg": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "ag": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "int": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
-      "per": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "wil": { "simple": 750, "intermediate": 1500, "trained": 2000, "expert": 5000 },
-      "fs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 }
+      "ws": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "bs": {
+        "simple": 750,
+        "intermediate": 1500,
+        "trained": 2000,
+        "expert": 5000
+      },
+      "str": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "tg": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "ag": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "int": {
+        "simple": 750,
+        "intermediate": 1500,
+        "trained": 2000,
+        "expert": 5000
+      },
+      "per": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "wil": {
+        "simple": 750,
+        "intermediate": 1500,
+        "trained": 2000,
+        "expert": 5000
+      },
+      "fs": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      }
     },
-    "skillCosts":{
-      "pilot_personal": { "costTrain": 0 }
-    },
-    "talentCosts": {
-      "tal00000000252": 0
-    },
+    "talentCosts": { "tal00000000252": 0 },
     "rankCosts": {
       "1": {
         "skills": {},
@@ -35,9 +75,7 @@
         }
       },
       "2": {
-        "skills": {
-          "pilot_personal": { "costMaster": 500 }
-        },
+        "skills": { "pilot_personal": { "costMaster": 500 } },
         "talents": {
           "tal00000000044": 600,
           "tal00000000146": 500,
@@ -67,9 +105,7 @@
         }
       },
       "5": {
-        "skills": {
-          "acrobatics": { "costMaster": 400 }
-        },
+        "skills": { "acrobatics": { "costMaster": 400 } },
         "talents": {
           "tal00000000013": 500,
           "tal00000000046": 900,
@@ -86,9 +122,7 @@
         }
       },
       "7": {
-        "skills": {
-          "acrobatics": { "costExpert": 400 }
-        },
+        "skills": { "acrobatics": { "costExpert": 400 } },
         "talents": {
           "tal00000000043": 400,
           "tal00000000053": 600,
@@ -104,6 +138,7 @@
           "tal00000000273": 1000
         }
       }
-    }
+    },
+    "skillCosts": { "pilot_personal": { "costTrain": 0 } }
   }
 }

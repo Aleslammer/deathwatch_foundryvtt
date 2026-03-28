@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { CombatDialogHelper } from '../../src/module/helpers/combat-dialog.mjs';
 import { ChatMessageBuilder } from '../../src/module/helpers/chat-message-builder.mjs';
 

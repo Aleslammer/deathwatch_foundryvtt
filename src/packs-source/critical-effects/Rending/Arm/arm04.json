@@ -1,14 +1,12 @@
 {
-    "_id":  "rending-arm0004",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 04",
-    "system":  {
-                   "damageType":  "Rending",
-                   "description":  "The attack flays the skin from the limb, filling the air with blood and the sounds of his screaming. The target falls prone from the agony and takes 2 levels of Fatigue. The limb is useless for 1d10 Rounds.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Arm"
-               },
-    "type":  "critical-effect"
+  "_id": "rending-arm0004",
+  "name": "Level 04",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Rending",
+    "location": "Arm",
+    "description": "The attack flays the skin from the limb, filling the air with blood and the sounds of his screaming. The target falls prone from the agony and takes 2 levels of Fatigue. The limb is useless for 1d10 Rounds.",
+    "effects": []
+  }
 }

@@ -4,16 +4,16 @@
   "type": "psychic-power",
   "img": "systems/deathwatch/icons/psychic-powers/ultramarines.webp",
   "system": {
-    "action": "Full",
-    "opposed": "Yes",
+    "book": "Deathwatch Core Rulebook",
+    "page": "200",
+    "key": "word-of-the-emperor",
     "range": "10 metres x PR",
     "sustained": "No",
+    "action": "Full",
+    "opposed": "Yes",
     "cost": 1500,
     "class": "Chapter",
-    "key": "word-of-the-emperor",
-    "chapterImg": "systems/deathwatch/icons/chapters/ultramarines.webp",
     "description": "<p>The Librarian recites a sanctified prayer to the Emperor, speaking holy words that burn the minds of the unfaithful and cast out the spirits of the Warp. This power can affect a number of targets equal to the Librarian's PR. Those affected will become Stunned (see page 261) for one Round. Targets with the Daemonic Trait are affected much more seriously by this power and will suffer 1d10 Explosive damage x PR and must make a Warp Instability Test. Finally, creatures targeted by this power suffering from Possession (see page 134) may immediately make a Challenging (+0) Willpower Test to break free.</p>",
-    "book": "Deathwatch Core Rulebook",
-    "page": "200"
+    "chapterImg": "systems/deathwatch/icons/chapters/ultramarines.webp"
   }
 }

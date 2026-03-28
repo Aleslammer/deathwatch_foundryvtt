@@ -104,6 +104,18 @@ describe('CombatDialogHelper', () => {
     it('returns 96 for single shot', () => {
       expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.SINGLE)).toBe(96);
     });
+
+    it('returns 91 for unreliable weapon on single shot', () => {
+      expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.SINGLE, true)).toBe(91);
+    });
+
+    it('returns 91 for unreliable weapon on semi-auto', () => {
+      expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.SEMI_AUTO, true)).toBe(91);
+    });
+
+    it('returns 91 for unreliable weapon on full-auto', () => {
+      expect(CombatDialogHelper.determineJamThreshold(RATE_OF_FIRE_MODIFIERS.FULL_AUTO, true)).toBe(91);
+    });
   });
 
   describe('parseRateOfFire', () => {
@@ -473,6 +485,86 @@ describe('buildArmorAbsorbMessage', () => {
     expect(msg).toContain('Damage: 8');
     expect(msg).toContain('Armor: 10');
     expect(msg).toContain('TB: 5');
+  });
+});
+
+describe('getTargetSizeModifier', () => {
+  it('returns 0 for null actor', () => {
+    const result = CombatDialogHelper.getTargetSizeModifier(null);
+    expect(result.modifier).toBe(0);
+    expect(result.label).toBe("");
+  });
+
+  it('returns 0 for actor with no size trait', () => {
+    const actor = { items: [{ type: 'trait', name: 'Dark Sight' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(0);
+  });
+
+  it('returns +20 for Enormous', () => {
+    const actor = { items: [{ type: 'trait', name: 'Size (Enormous)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(20);
+    expect(result.label).toBe('Target Size (Enormous)');
+  });
+
+  it('returns +30 for Massive', () => {
+    const actor = { items: [{ type: 'trait', name: 'Size (Massive)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(30);
+    expect(result.label).toBe('Target Size (Massive)');
+  });
+
+  it('returns +10 for Hulking', () => {
+    const actor = { items: [{ type: 'trait', name: 'Size (Hulking)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(10);
+    expect(result.label).toBe('Target Size (Hulking)');
+  });
+
+  it('returns -10 for Scrawny', () => {
+    const actor = { items: [{ type: 'trait', name: 'Size (Scrawny)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(-10);
+    expect(result.label).toBe('Target Size (Scrawny)');
+  });
+
+  it('returns -30 for Miniscule', () => {
+    const actor = { items: [{ type: 'trait', name: 'Size (Miniscule)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(-30);
+    expect(result.label).toBe('Target Size (Miniscule)');
+  });
+
+  it('returns 0 for Average', () => {
+    const actor = { items: [{ type: 'trait', name: 'Size (Average)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(0);
+  });
+
+  it('ignores non-trait items named Size', () => {
+    const actor = { items: [{ type: 'talent', name: 'Size (Enormous)' }] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(0);
+  });
+
+  it('works with Map-based items collection', () => {
+    const items = new Map();
+    items.set('t1', { type: 'trait', name: 'Size (Massive)' });
+    const actor = { items };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(30);
+  });
+
+  it('finds size trait among other traits', () => {
+    const actor = { items: [
+      { type: 'trait', name: 'Dark Sight' },
+      { type: 'trait', name: 'Tyranid' },
+      { type: 'trait', name: 'Size (Enormous)' },
+      { type: 'trait', name: 'Natural Armour (8)' }
+    ] };
+    const result = CombatDialogHelper.getTargetSizeModifier(actor);
+    expect(result.modifier).toBe(20);
   });
 });
 

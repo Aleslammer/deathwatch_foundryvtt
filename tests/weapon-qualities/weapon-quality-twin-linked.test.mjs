@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { CombatDialogHelper } from '../../src/module/helpers/combat-dialog.mjs';
 import { RATE_OF_FIRE_MODIFIERS } from '../../src/module/helpers/constants.mjs';
 
@@ -70,6 +69,26 @@ describe('Twin-Linked Weapon Quality', () => {
     it('respects maxHits cap', () => {
       const hits = CombatDialogHelper.calculateHits(10, 50, 2, RATE_OF_FIRE_MODIFIERS.FULL_AUTO, false, false, false, true);
       expect(hits).toBe(2);
+    });
+  });
+
+  describe('maxHits capping', () => {
+    it('single shot gets 2 hits when maxHits accounts for twin-linked (+1)', () => {
+      // ranged-combat.mjs passes maxHits = roundsFired + 1 for twin-linked
+      const hits = CombatDialogHelper.calculateHits(30, 50, 2, RATE_OF_FIRE_MODIFIERS.SINGLE, false, false, false, true);
+      expect(hits).toBe(2);
+    });
+
+    it('single shot clamped to 1 if maxHits not adjusted', () => {
+      // Without the +1 adjustment, the extra hit gets clamped
+      const hits = CombatDialogHelper.calculateHits(30, 50, 1, RATE_OF_FIRE_MODIFIERS.SINGLE, false, false, false, true);
+      expect(hits).toBe(1);
+    });
+
+    it('semi-auto respects maxHits + 1', () => {
+      // 2 DoS = 1 base + 1 twin-linked + 1 semi-auto = 3, maxHits = 3+1 = 4
+      const hits = CombatDialogHelper.calculateHits(30, 50, 4, RATE_OF_FIRE_MODIFIERS.SEMI_AUTO, false, false, false, true);
+      expect(hits).toBe(3);
     });
   });
 });

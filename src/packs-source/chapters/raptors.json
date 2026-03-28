@@ -3,14 +3,18 @@
   "type": "chapter",
   "img": "systems/deathwatch/icons/chapters/raptors.webp",
   "system": {
-    "description": "<p>The Raptors are a successor Chapter known for their pragmatic approach to warfare and expertise in stealth operations. They favor camouflage, reconnaissance, and precision strikes.</p><p>Unlike many Chapters, they eschew glory and honor in favor of tactical efficiency, using concealment and marksmanship to eliminate threats with minimal casualties.</p>",
     "book": "Honour The Chapter",
     "page": "82",
+    "description": "<p>The Raptors are a successor Chapter known for their pragmatic approach to warfare and expertise in stealth operations. They favor camouflage, reconnaissance, and precision strikes.</p><p>Unlike many Chapters, they eschew glory and honor in favor of tactical efficiency, using concealment and marksmanship to eliminate threats with minimal casualties.</p>",
     "skillCosts": {
       "acrobatics": { "costTrain": 100, "costMaster": 100, "costExpert": 100 },
       "concealment": { "costTrain": 100, "costMaster": 200, "costExpert": 300 },
       "silent_move": { "costTrain": 100, "costMaster": 200, "costExpert": 300 },
-      "tactics_recon_and_stealth": { "costTrain": 100, "costMaster": 200, "costExpert": 300 }
+      "tactics_recon_and_stealth": {
+        "costTrain": 100,
+        "costMaster": 200,
+        "costExpert": 300
+      }
     },
     "talentCosts": {
       "tal00000000013": 400,
@@ -19,6 +23,7 @@
     },
     "modifiers": [
       {
+        "_id": "9a37521a6b316bec",
         "name": "Chapter Bonus",
         "modifier": 5,
         "effectType": "characteristic",
@@ -26,6 +31,7 @@
         "enabled": true
       },
       {
+        "_id": "03aff384888de9cb",
         "name": "Chapter Bonus",
         "modifier": 5,
         "effectType": "characteristic",

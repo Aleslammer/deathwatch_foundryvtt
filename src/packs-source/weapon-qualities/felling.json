@@ -4,10 +4,10 @@
   "type": "weapon-quality",
   "img": "icons/svg/sword.svg",
   "system": {
-    "description": "<p>Felling weapons are designed to bring down even the toughest opponents. A weapon with the Felling (X) quality reduces the target's Unnatural Toughness multiplier by X (minimum 1) when calculating damage reduction.</p><p>For example, a Felling (2) weapon against a target with Unnatural Toughness x4 would reduce it to x2.</p>",
-    "value": "2",
-    "key": "felling",
     "book": "Deathwatch Core Rulebook",
-    "page": "143"
+    "page": "143",
+    "key": "felling",
+    "value": "2",
+    "description": "<p>Felling weapons are designed to bring down even the toughest opponents. A weapon with the Felling (X) quality reduces the target's Unnatural Toughness multiplier by X (minimum 1) when calculating damage reduction.</p><p>For example, a Felling (2) weapon against a target with Unnatural Toughness x4 would reduce it to x2.</p>"
   }
 }

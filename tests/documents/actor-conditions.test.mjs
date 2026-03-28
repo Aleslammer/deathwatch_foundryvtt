@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { ActorConditionsMixin } from '../../src/module/documents/actor-conditions.mjs';
 
 class MockActor {

@@ -3,22 +3,64 @@
   "type": "specialty",
   "img": "systems/deathwatch/icons/specialty/apothecary.webp",
   "system": {
-    "description": "<p>Apothecaries are the keepers of the Chapter's gene-seed and the healers of the Space Marines. They are responsible for harvesting the progenoid glands from fallen battle-brothers and tending to the wounded.</p>",
     "book": "Deathwatch Core Rulebook",
     "page": "47",
+    "description": "<p>Apothecaries are the keepers of the Chapter's gene-seed and the healers of the Space Marines. They are responsible for harvesting the progenoid glands from fallen battle-brothers and tending to the wounded.</p>",
     "characteristicCosts": {
-      "ws": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "bs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "str": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "tg": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "ag": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "int": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "per": { "simple": 200, "intermediate": 500, "trained": 1000, "expert": 1500 },
-      "wil": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 },
-      "fs": { "simple": 500, "intermediate": 1000, "trained": 1500, "expert": 2000 }
-    },
-    "skillCosts":{
-      "medicae": { "costTrain": 0 }
+      "ws": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "bs": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "str": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "tg": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "ag": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "int": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "per": {
+        "simple": 200,
+        "intermediate": 500,
+        "trained": 1000,
+        "expert": 1500
+      },
+      "wil": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      },
+      "fs": {
+        "simple": 500,
+        "intermediate": 1000,
+        "trained": 1500,
+        "expert": 2000
+      }
     },
     "rankCosts": {
       "1": {
@@ -35,7 +77,7 @@
           "tal00000000212": 500
         }
       },
-      "2": { 
+      "2": {
         "skills": {
           "chem_use": { "costMaster": 400 },
           "interrogation": { "costMaster": 200 },
@@ -45,7 +87,7 @@
         },
         "talents": {}
       },
-      "3": { 
+      "3": {
         "skills": {
           "chem_use": { "costExpert": 400 },
           "interrogation": { "costExpert": 200 },
@@ -56,30 +98,24 @@
         },
         "talents": {}
       },
-      "4": { 
+      "4": {
         "skills": {
           "lore_scholastic_beasts": { "costExpert": 200 },
           "lore_scholastic_chymistry": { "costExpert": 200 },
           "lore_forbidden_mutants": { "costTrain": 400 }
         },
-        "talents": {
-          "tal00000000251": 600
-        }
+        "talents": { "tal00000000251": 600 }
       },
-      "5": { 
-        "skills": {
-          "lore_forbidden_mutants": { "costMaster": 400 }
-        },
+      "5": {
+        "skills": { "lore_forbidden_mutants": { "costMaster": 400 } },
         "talents": {
           "tal00000000050": 1000,
           "tal00000000136": 1000,
           "tal00000000139": 300
         }
       },
-      "6": { 
-        "skills": {
-          "lore_forbidden_mutants": { "costExpert": 400 }
-        },
+      "6": {
+        "skills": { "lore_forbidden_mutants": { "costExpert": 400 } },
         "talents": {
           "tal00000000043": 400,
           "tal00000000203": 800,
@@ -87,7 +123,7 @@
           "tal00000000252": 500
         }
       },
-      "7": { 
+      "7": {
         "skills": {},
         "talents": {
           "tal00000000155": 800,
@@ -95,7 +131,7 @@
           "tal00000000244": 1000
         }
       },
-      "8": { 
+      "8": {
         "skills": {},
         "talents": {
           "tal00000000088": 800,
@@ -103,6 +139,7 @@
           "tal00000000244": 1000
         }
       }
-    }
+    },
+    "skillCosts": { "medicae": { "costTrain": 0 } }
   }
 }

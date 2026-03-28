@@ -1,14 +1,12 @@
 {
-    "_id":  "rending-body0004",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 04",
-    "system":  {
-                   "damageType":  "Rending",
-                   "description":  "A torrent of blood spills from the deep cuts, making the ground slick with gore. All characters attempting to move through this pool of blood must succeed on an Agility Test or fall Prone. The target takes 1d5 levels of Fatigue.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Body"
-               },
-    "type":  "critical-effect"
+  "_id": "rending-body0004",
+  "name": "Level 04",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Rending",
+    "location": "Body",
+    "description": "A torrent of blood spills from the deep cuts, making the ground slick with gore. All characters attempting to move through this pool of blood must succeed on an Agility Test or fall Prone. The target takes 1d5 levels of Fatigue.",
+    "effects": []
+  }
 }

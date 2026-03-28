@@ -3,14 +3,14 @@
   "type": "weapon-upgrade",
   "img": "systems/deathwatch/icons/generic/weapon-upgrade.webp",
   "system": {
-    "description": "<p>A whirring chain attachment that allows the weapon to count as a Chainsword in close combat. Note: This attachment lacks the Balanced Quality.</p><p><strong>Upgrades:</strong> Any Basic ranged weapon</p>",
-    "key": "astartes-melee-attachment-chain",
-    "singleShotOnly": false,
     "book": "Deathwatch Core Rulebook",
     "page": "157",
-    "renown": "",
+    "key": "astartes-melee-attachment-chain",
+    "singleShotOnly": false,
     "req": 9,
+    "renown": "",
     "wt": 8,
+    "description": "<p>A whirring chain attachment that allows the weapon to count as a Chainsword in close combat. Note: This attachment lacks the Balanced Quality.</p><p><strong>Upgrades:</strong> Any Basic ranged weapon</p>",
     "modifiers": []
   }
 }

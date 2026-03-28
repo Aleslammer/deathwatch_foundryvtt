@@ -203,3 +203,65 @@
   border-radius: 0;
   text-align: center;
 }
+
+/* Horde Armor Box Styles */
+.deathwatch .horde-armor-center {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: var(--dw-font-size-xxl);
+  font-weight: bold;
+}
+
+.deathwatch .horde-armor-split {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  display: flex;
+  border-top: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+}
+
+.deathwatch .horde-armor-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.deathwatch .horde-armor-half.natural {
+  border-left: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
+  background: rgba(144, 238, 144, 0.15);
+}
+
+.deathwatch .horde-armor-half .horde-armor-label {
+  font-size: 0.55em;
+  color: #666;
+  line-height: 1;
+  position: absolute;
+  top: 1px;
+}
+
+.deathwatch .horde-armor-half input[type="text"] {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: var(--dw-font-size-sm);
+  font-weight: bold;
+  padding-top: 6px;
+}
+
+.deathwatch .horde-armor-half .horde-armor-value {
+  font-size: var(--dw-font-size-sm);
+  font-weight: bold;
+  padding-top: 6px;
+}

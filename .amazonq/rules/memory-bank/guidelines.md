@@ -51,7 +51,6 @@ expect(spent).toBe(12800); // Now passes with correct code
 ### Test Structure
 ```javascript
 import { jest } from '@jest/globals';
-import './setup.mjs';
 import { YourClass } from '../src/module/path/to/file.mjs';
 
 describe('YourClass', () => {
@@ -66,6 +65,8 @@ describe('YourClass', () => {
   });
 });
 ```
+
+**Note:** `setup.mjs` runs automatically via `setupFiles` in `jest.config.mjs` — no need to import it in test files. Global mock factories `createMockActor(overrides)` and `createMockWeapon(overrides)` are available in all tests.
 
 ### What to Test
 - **Calculation methods**: Range modifiers, hit calculations, damage calculations
@@ -87,19 +88,15 @@ describe('YourClass', () => {
 
 ### Mocking Patterns
 ```javascript
-// Mock Foundry globals (in setup.mjs)
+// setup.mjs runs automatically via jest.config.mjs setupFiles
+// Global mock factories available in all tests:
+const actor = createMockActor({ system: { wounds: { value: 10, max: 20 } } });
+const weapon = createMockWeapon({ system: { dmg: '2d10+5', class: 'Melee' } });
+
+// Mock Foundry globals (defined in setup.mjs)
 global.game = { packs: new Map(), settings: { get: jest.fn() } };
 global.ui = { notifications: { warn: jest.fn(), info: jest.fn() } };
 global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
-global.Item = class Item { static createDocuments = jest.fn(); };
-
-// Mock actor in tests
-const mockActor = {
-  name: 'Test Actor',
-  system: { wounds: { value: 10, max: 20 } },
-  update: jest.fn(),
-  items: { get: jest.fn(), filter: jest.fn() }
-};
 ```
 
 ### Edge Cases to Test
@@ -114,12 +111,12 @@ const mockActor = {
 ### Current State (Post-Refactoring)
 - **Total Lines**: ~2,618 lines across core modules
 - **Test Coverage**: 68%
-- **Test Count**: 947 tests across 77 suites
+- **Test Count**: 1071 tests across 81 suites
 - **Key Files**:
   - actor.mjs: ~60 lines (thin shell, delegates to DataModels)
   - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
   - combat.mjs: 395 lines (uses ChatMessageBuilder)
-  - CSS: 9 modular files (~1100 lines total)
+  - CSS: 10 modular files (~900 lines total)
 
 ### Architecture Patterns Established
 1. **Helper Classes**: Extract business logic into focused static classes
@@ -156,6 +153,10 @@ const mockActor = {
 - **String Quotes**: Double quotes for strings, template literals for interpolation
 - **Blank Lines**: Single blank line between methods, two lines between major sections
 - **Trailing Commas**: Not used in object/array literals
+- **JSON Formatting**: Automated via `compactJson.mjs` + Prettier in build pipeline
+  - Short objects inlined when they fit within 80 chars at their indent level
+  - Keys ordered logically per item type (not alphabetically)
+  - Prettier handles spacing on format-on-save
 
 ### Documentation Standards
 - **JSDoc Comments**: Used for all public methods and classes
@@ -638,10 +639,23 @@ CONFIG.Item.dataModels['new-type'] = models.DeathwatchNewType;
 ### Compendium Build Process
 - Source files: `src/packs-source/` (JSON, version controlled)
 - Compiled packs: `src/packs/` (LevelDB, generated)
-- Build script: `builds/scripts/compilePacks.mjs`
-- Automatically processes all directories in packs-source
+- Build pipeline: `compactJson → prettier → validatePacks → compilePacks`
+- **compactJson.mjs**: Smart key ordering per item type + inline compaction (≤80 chars)
+- **prettier**: Adds spacing to inlined JSON, preserves compact form on subsequent saves
+- **validatePacks.mjs**: Unique IDs, talent compendiumIds, quality keys, embedded item sync
+- **compilePacks.mjs**: Processes all directories in packs-source into LevelDB
 - Creates folders from subdirectories
-- Supports both Item and RollTable types
+- Supports Item, Actor, and RollTable types
+
+### JSON Key Ordering (compactJson.mjs)
+Keys are ordered logically per item type, not alphabetically:
+- **weapon**: book/page → class/dmg/dmgType/pen → range/rof/clip/reload → equipped/wt → req/renown → qualities/upgrades → description → modifiers
+- **armor**: book/page → head/body/left_arm/right_arm/left_leg/right_leg → req/renown → histories → description → modifiers
+- **ammunition**: book/page → capacity → quantity → req/renown → description → modifiers
+- **talent**: book/page → prerequisite/benefit → description → cost/stackable → compendiumId → modifiers
+- **enemy/horde**: characteristics → wounds/fatigue → skills → psyRating → armor → modifiers → description
+- **modifier objects**: _id → name → modifier → type → effectType → valueAffected → enabled
+- **top-level**: _id → name → type → img → system → items → prototypeToken
 
 ### Compendium ID Requirements
 - **CRITICAL**: All `_id` fields must be unique across ALL compendium packs
@@ -652,6 +666,11 @@ CONFIG.Item.dataModels['new-type'] = models.DeathwatchNewType;
   - Armor: `armr00000000###`
   - Talents: `tal000000000###`
   - Traits: `trt000000000###`
+  - Enemies: `enmy{faction}{pad}{num}` (e.g., `enmytyranid00001`, `enmyork000000001`)
+  - Hordes: `hord{faction}{pad}{num}` (e.g., `hordtyranid00001`)
+  - Enemy items: `ei{faction}{num}{pad}0{seq}` (e.g., `eityranid0100001`)
+  - Horde items: `hi{faction}{num}{pad}0{seq}` (e.g., `hityranid0100001`)
+  - See `enemies.md` for full faction-based ID convention details
 - **Talents MUST have compendiumId**: All talent items must have `system.compendiumId` set to match their `_id`
   - Used by XPCalculator and chapter/specialty cost overrides
   - Run `node builds/scripts/sortTalentJsons.mjs` to ensure compendiumId is set

@@ -4,10 +4,10 @@
   "type": "special-ability",
   "img": "systems/deathwatch/icons/generic/special-ability.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "73",
     "key": "wings-of-angels",
     "description": "<p>The Assault Marine may add 20 metres the movement rate of his Jump Pack with a successful Challenging (+0) Pilot (Personal) Test. When making a Charge whilst using this ability, the Space Marine adds an additional 1d5 Damage to any melee attacks. This ability only functions when in Solo Mode.</p>",
-    "specialty": "Assault Marine",
-    "book": "Deathwatch Core Rulebook",
-    "page": "73"
+    "specialty": "Assault Marine"
   }
 }

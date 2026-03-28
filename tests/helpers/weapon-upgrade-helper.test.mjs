@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { WeaponUpgradeHelper } from '../../src/module/helpers/weapon-upgrade-helper.mjs';
 
 describe('WeaponUpgradeHelper', () => {

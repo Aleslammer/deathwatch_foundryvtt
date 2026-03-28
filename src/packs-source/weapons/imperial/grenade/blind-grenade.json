@@ -1,24 +1,24 @@
 {
   "_id": "grenade000000001",
-  "img": "systems/deathwatch/icons/weapons/blind-grenade.webp",
   "name": "Astartes Blind Grenade",
+  "type": "weapon",
+  "img": "systems/deathwatch/icons/weapons/blind-grenade.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
+    "page": "150",
     "class": "Thrown",
-    "clip": "1",
-    "description": "<p>Blind grenades explode with a burst of dense dark grey smoke including IR bafflers and broad-band EM spectrum chaff, all designed to block eyesight and even advanced visual detection. The effect is short-lived, but while it lasts provides excellent cover for advancing forces. The effects of this grenade last for 1d10 Rounds (shorter in conditions such as prevailing winds or industrial ventilation)..</p>",
     "dmg": "-",
     "dmgType": "Explosive",
-    "equipped": false,
-    "modifiers": [],
-    "page": "150",
     "penetration": "0",
     "range": "SBx3",
-    "reload": "-",
-    "renown": "",
-    "req": 10,
     "rof": "S/-/-",
-    "wt": 0.8
-  },
-  "type": "weapon"
+    "clip": "1",
+    "reload": "-",
+    "equipped": false,
+    "wt": 0.8,
+    "req": 10,
+    "renown": "",
+    "description": "<p>Blind grenades explode with a burst of dense dark grey smoke including IR bafflers and broad-band EM spectrum chaff, all designed to block eyesight and even advanced visual detection. The effect is short-lived, but while it lasts provides excellent cover for advancing forces. The effects of this grenade last for 1d10 Rounds (shorter in conditions such as prevailing winds or industrial ventilation)..</p>",
+    "modifiers": []
+  }
 }

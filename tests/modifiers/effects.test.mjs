@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { onManageActiveEffect, prepareActiveEffectCategories } from '../../src/module/helpers/effects.mjs';
 
 describe('Effects', () => {

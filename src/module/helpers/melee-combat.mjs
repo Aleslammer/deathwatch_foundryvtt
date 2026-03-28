@@ -4,6 +4,44 @@ import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 
 export class MeleeCombatHelper {
+  /**
+   * Calculate melee attack modifiers and target number.
+   * @param {Object} options
+   * @param {number} options.ws - Weapon Skill value
+   * @param {number} options.aim - Aim modifier
+   * @param {number} options.allOut - All Out Attack modifier
+   * @param {number} options.charge - Charge modifier
+   * @param {number} options.calledShot - Called Shot penalty
+   * @param {number} options.runningTarget - Running Target penalty
+   * @param {number} options.miscModifier - Misc modifier
+   * @param {boolean} options.isDefensive - Whether weapon has Defensive quality
+   * @returns {{ modifiers: number, clampedModifiers: number, targetNumber: number, defensivePenalty: number }}
+   */
+  static buildMeleeModifiers({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, sizeModifier = 0, isDefensive = false } = {}) {
+    const defensivePenalty = isDefensive ? -10 : 0;
+    const modifiers = aim + allOut + charge + calledShot + runningTarget + miscModifier + defensivePenalty + sizeModifier;
+    const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
+    const targetNumber = ws + clampedModifiers;
+    return { modifiers, clampedModifiers, targetNumber, defensivePenalty };
+  }
+
+  /**
+   * Build modifier breakdown parts for chat display.
+   * @param {Object} options
+   * @returns {string[]}
+   */
+  static buildMeleeModifierParts({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, defensivePenalty = 0, sizeModifier = 0, sizeLabel = "" } = {}) {
+    const parts = [`${ws} WS`];
+    if (aim !== 0) parts.push(`+${aim} Aim`);
+    if (allOut !== 0) parts.push(`+${allOut} All Out Attack`);
+    if (charge !== 0) parts.push(`+${charge} Charge`);
+    if (defensivePenalty !== 0) parts.push(`${defensivePenalty} Defensive`);
+    if (calledShot !== 0) parts.push(`${calledShot} Called Shot`);
+    if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
+    if (miscModifier !== 0) parts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+    if (sizeModifier !== 0) parts.push(`${sizeModifier >= 0 ? '+' : ''}${sizeModifier} ${sizeLabel || 'Target Size'}`);
+    return parts;
+  }
   /* istanbul ignore next */
   static async attackDialog(actor, weapon) {
     const ws = actor.system.characteristics.ws.value || 0;
@@ -71,11 +109,14 @@ export class MeleeCombatHelper {
             const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
-            const modifiers = aim + allOut + charge + calledShot + runningTarget + miscModifier;
-            const isDefensive = weapon.attachedQualities?.some(q => q.system.key === 'defensive');
-            const defensivePenalty = isDefensive ? -10 : 0;
-            const clampedModifiers = Math.max(-60, Math.min(60, modifiers + defensivePenalty));
-            const targetNumber = ws + clampedModifiers;
+            const targetToken = game.user.targets.first();
+            const targetActor = targetToken?.actor;
+            const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
+
+            const { targetNumber, defensivePenalty } = MeleeCombatHelper.buildMeleeModifiers({
+              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, sizeModifier,
+              isDefensive: weapon.attachedQualities?.some(q => q.system.key === 'defensive')
+            });
 
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
@@ -86,8 +127,6 @@ export class MeleeCombatHelper {
             const degreesOfSuccess = success ? CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber) : 0;
             let hitsTotal = success ? 1 : 0;
 
-            const targetToken = game.user.targets.first();
-            const targetActor = targetToken?.actor;
             if (targetActor && hitsTotal > 0) {
               const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
               hitsTotal = targetActor.system.calculateHitsReceived({
@@ -101,15 +140,9 @@ export class MeleeCombatHelper {
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
 
-            const modifierParts = [];
-            modifierParts.push(`${ws} WS`);
-            if (aim !== 0) modifierParts.push(`+${aim} Aim`);
-            if (allOut !== 0) modifierParts.push(`+${allOut} All Out Attack`);
-            if (charge !== 0) modifierParts.push(`+${charge} Charge`);
-            if (defensivePenalty !== 0) modifierParts.push(`${defensivePenalty} Defensive`);
-            if (calledShot !== 0) modifierParts.push(`${calledShot} Called Shot`);
-            if (runningTarget !== 0) modifierParts.push(`${runningTarget} Running Target`);
-            if (miscModifier !== 0) modifierParts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+            const modifierParts = MeleeCombatHelper.buildMeleeModifierParts({
+              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, defensivePenalty, sizeModifier, sizeLabel
+            });
 
             let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
             if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;

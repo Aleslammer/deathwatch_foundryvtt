@@ -1,14 +1,12 @@
 {
-    "_id":  "energy-head0010",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 10",
-    "system":  {
-                   "damageType":  "Energy",
-                   "description":  "As above, except the target\u0027s entire body catches fire and runs off headless 2d10 metres in a random direction (use the scatter diagram on page 248). Anything flammable it passes, including characters, must make an Agility Test or catch fire (see Special Damage, page 260).",
-                   "effects":  [
-
-                               ],
-                   "location":  "Head"
-               },
-    "type":  "critical-effect"
+  "_id": "energy-head0010",
+  "name": "Level 10",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Energy",
+    "location": "Head",
+    "description": "As above, except the target's entire body catches fire and runs off headless 2d10 metres in a random direction (use the scatter diagram on page 248). Anything flammable it passes, including characters, must make an Agility Test or catch fire (see Special Damage, page 260).",
+    "effects": []
+  }
 }

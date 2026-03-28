@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { InitiativeHelper } from '../../src/module/helpers/initiative.mjs';
 
 describe('InitiativeHelper', () => {

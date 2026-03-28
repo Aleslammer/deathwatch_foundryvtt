@@ -1,14 +1,12 @@
 {
-    "_id":  "explosive-head0010",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 10",
-    "system":  {
-                   "damageType":  "Explosive",
-                   "description":  "As above, except such is the unspeakably appalling manner in which the target was killed, that any of the target\u0027s allies who are within two metres of where the target stood, must make an immediate Challenging (+0) Willpower Test or spend their next Turn fleeing from the attacker.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Head"
-               },
-    "type":  "critical-effect"
+  "_id": "explosive-head0010",
+  "name": "Level 10",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Explosive",
+    "location": "Head",
+    "description": "As above, except such is the unspeakably appalling manner in which the target was killed, that any of the target's allies who are within two metres of where the target stood, must make an immediate Challenging (+0) Willpower Test or spend their next Turn fleeing from the attacker.",
+    "effects": []
+  }
 }

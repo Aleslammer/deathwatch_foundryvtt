@@ -143,6 +143,13 @@ const success = hitValue <= targetNumber;
 
 ## Shared Combat Logic
 
+### Target Size Modifiers
+Both ranged and melee attacks automatically apply hit modifiers based on the target's Size trait:
+- Miniscule: -30, Puny: -20, Scrawny: -10, Average: 0, Hulking: +10, Enormous: +20, Massive: +30
+- Detected via `CombatDialogHelper.getTargetSizeModifier(targetActor)` scanning target's traits
+- Shown as dedicated line in chat modifier breakdown (e.g., "+20 Target Size (Enormous)")
+- Defined in `SIZE_HIT_MODIFIERS` constant in `constants.mjs`
+
 ### Hit Location Determination
 ```javascript
 static determineHitLocation(attackRoll) {
@@ -317,7 +324,7 @@ Ammunition can have `magnitude-bonus-damage` modifier:
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 947 tests passing across 77 suites
+- Overall: 1071 tests passing across 81 suites
 
 ## Force Weapon Integration
 

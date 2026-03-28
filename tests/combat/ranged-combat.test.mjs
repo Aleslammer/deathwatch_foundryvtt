@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { RangedCombatHelper } from '../../src/module/helpers/ranged-combat.mjs';
 import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from '../../src/module/helpers/constants.mjs';
 
@@ -65,6 +64,101 @@ describe('RangedCombatHelper', () => {
 
     it('should be a function', () => {
       expect(typeof RangedCombatHelper.attackDialog).toBe('function');
+    });
+  });
+
+  describe('calculateAmmoExpenditure', () => {
+    it('returns rounds fired with no qualities', () => {
+      expect(RangedCombatHelper.calculateAmmoExpenditure(3)).toBe(3);
+    });
+
+    it('returns 1 for single shot', () => {
+      expect(RangedCombatHelper.calculateAmmoExpenditure(1)).toBe(1);
+    });
+
+    it('doubles for Storm', () => {
+      expect(RangedCombatHelper.calculateAmmoExpenditure(3, true, false)).toBe(6);
+    });
+
+    it('doubles for Twin-Linked', () => {
+      expect(RangedCombatHelper.calculateAmmoExpenditure(3, false, true)).toBe(6);
+    });
+
+    it('quadruples for Storm + Twin-Linked', () => {
+      expect(RangedCombatHelper.calculateAmmoExpenditure(3, true, true)).toBe(12);
+    });
+
+    it('handles single shot with Storm', () => {
+      expect(RangedCombatHelper.calculateAmmoExpenditure(1, true, false)).toBe(2);
+    });
+  });
+
+  describe('checkPrematureDetonation', () => {
+    it('returns false when no ammo loaded', () => {
+      const weapon = { system: { loadedAmmo: null } };
+      const result = RangedCombatHelper.checkPrematureDetonation(weapon, null, 95);
+      expect(result.detonates).toBe(false);
+      expect(result.threshold).toBe(101);
+    });
+
+    it('returns false when ammo has no detonation modifier', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [] } })) } };
+      const result = RangedCombatHelper.checkPrematureDetonation(weapon, actor, 95);
+      expect(result.detonates).toBe(false);
+    });
+
+    it('returns true when roll meets threshold', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [
+        { effectType: 'premature-detonation', modifier: '91', enabled: true }
+      ] } })) } };
+      const result = RangedCombatHelper.checkPrematureDetonation(weapon, actor, 91);
+      expect(result.detonates).toBe(true);
+      expect(result.threshold).toBe(91);
+    });
+
+    it('returns false when roll is below threshold', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [
+        { effectType: 'premature-detonation', modifier: '96', enabled: true }
+      ] } })) } };
+      const result = RangedCombatHelper.checkPrematureDetonation(weapon, actor, 90);
+      expect(result.detonates).toBe(false);
+    });
+
+    it('ignores disabled detonation modifier', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [
+        { effectType: 'premature-detonation', modifier: '91', enabled: false }
+      ] } })) } };
+      const result = RangedCombatHelper.checkPrematureDetonation(weapon, actor, 95);
+      expect(result.detonates).toBe(false);
+    });
+
+    it('handles ammo not found on actor', () => {
+      const weapon = { system: { loadedAmmo: 'ammo1' } };
+      const actor = { items: { get: jest.fn(() => null) } };
+      const result = RangedCombatHelper.checkPrematureDetonation(weapon, actor, 95);
+      expect(result.detonates).toBe(false);
+    });
+  });
+
+  describe('calculateMaxHits', () => {
+    it('returns rounds fired without Twin-Linked', () => {
+      expect(RangedCombatHelper.calculateMaxHits(3)).toBe(3);
+    });
+
+    it('adds 1 for Twin-Linked', () => {
+      expect(RangedCombatHelper.calculateMaxHits(3, true)).toBe(4);
+    });
+
+    it('returns 1 for single shot without Twin-Linked', () => {
+      expect(RangedCombatHelper.calculateMaxHits(1)).toBe(1);
+    });
+
+    it('returns 2 for single shot with Twin-Linked', () => {
+      expect(RangedCombatHelper.calculateMaxHits(1, true)).toBe(2);
     });
   });
 });

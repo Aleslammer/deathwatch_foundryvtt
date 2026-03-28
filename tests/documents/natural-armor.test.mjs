@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import DeathwatchActorBase from '../../src/module/data/actor/base-actor.mjs';
 
 describe('DeathwatchActorBase - Natural Armor', () => {

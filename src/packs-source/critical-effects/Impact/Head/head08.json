@@ -1,14 +1,12 @@
 {
-    "_id":  "impact-head0008",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 08",
-    "system":  {
-                   "damageType":  "Impact",
-                   "description":  "Blood pours from the target\u0027s noise, mouth, ears and eyes as the attack pulverises his brain. He does not survive the experience.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Head"
-               },
-    "type":  "critical-effect"
+  "_id": "impact-head0008",
+  "name": "Level 08",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Impact",
+    "location": "Head",
+    "description": "Blood pours from the target's noise, mouth, ears and eyes as the attack pulverises his brain. He does not survive the experience.",
+    "effects": []
+  }
 }

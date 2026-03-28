@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { ChatMessageBuilder } from '../../src/module/helpers/chat-message-builder.mjs';
 
 describe('ChatMessageBuilder', () => {

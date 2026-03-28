@@ -21,8 +21,10 @@
         <div class="skill-item flexrow">
           <div class="skill-name rollable" data-roll-type="skill" data-skill="{{key}}" data-label="{{lookup ../config.Skills key}}{{#if skill.descriptor}} ({{skill.descriptor}}){{/if}}">
             {{lookup ../config.Skills key}}
+            {{#if (eq ../../actor.type "character")}}
             {{#if (or (and skill.trained (eq skill.costTrain -1)) (and skill.mastered (eq skill.costMaster -1)) (and skill.expert (eq skill.costExpert -1)))}}
             <i class="fas fa-exclamation-triangle" style="color: #ff6b6b; margin-left: 5px; font-size: 10px;" title="This skill has a training level with -1 XP cost. Character may not be eligible for this training level."></i>
+            {{/if}}
             {{/if}}
           </div>
           <div class="skill-descriptor">
@@ -62,8 +64,10 @@
         <div class="skill-item flexrow">
           <div class="skill-name rollable" data-roll-type="skill" data-skill="{{key}}" data-label="{{lookup ../config.Skills key}}{{#if skill.descriptor}} ({{skill.descriptor}}){{/if}}">
             {{lookup ../config.Skills key}}
+            {{#if (eq ../../actor.type "character")}}
             {{#if (or (and skill.trained (eq skill.costTrain -1)) (and skill.mastered (eq skill.costMaster -1)) (and skill.expert (eq skill.costExpert -1)))}}
             <i class="fas fa-exclamation-triangle" style="color: #ff6b6b; margin-left: 5px; font-size: 10px;" title="This skill has a training level with -1 XP cost. Character may not be eligible for this training level."></i>
+            {{/if}}
             {{/if}}
           </div>
           <div class="skill-descriptor">

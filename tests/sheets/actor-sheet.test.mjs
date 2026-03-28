@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
 
 global.$ = jest.fn((selector) => ({

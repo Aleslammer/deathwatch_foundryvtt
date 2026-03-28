@@ -1,6 +1,28 @@
-import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "./constants.mjs";
+import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, SIZE_HIT_MODIFIERS } from "./constants.mjs";
 
 export class CombatDialogHelper {
+
+  /**
+   * Extract the size hit modifier from a target actor by scanning its traits.
+   * @param {Object} targetActor - The target actor document
+   * @returns {{ modifier: number, label: string }}
+   */
+  static getTargetSizeModifier(targetActor) {
+    if (!targetActor?.items) return { modifier: 0, label: "" };
+    const items = targetActor.items instanceof Map
+      ? Array.from(targetActor.items.values())
+      : (targetActor.items.filter ? targetActor.items.filter(() => true) : []);
+    for (const item of items) {
+      if (item.type !== "trait") continue;
+      const match = item.name.match(/^Size\s*\((.+)\)$/i);
+      if (match) {
+        const size = match[1].trim();
+        const modifier = SIZE_HIT_MODIFIERS[size] ?? 0;
+        if (modifier !== 0) return { modifier, label: `Target Size (${size})` };
+      }
+    }
+    return { modifier: 0, label: "" };
+  }
   
   static buildAttackModifiers(options) {
     const {
@@ -12,24 +34,27 @@ export class CombatDialogHelper {
       rangeMod = 0,
       runningTarget = 0,
       miscModifier = 0,
+      sizeModifier = 0,
       isAccurate = false,
+      isInaccurate = false,
       isGyroStabilised = false,
       isTwinLinked = false
     } = options;
 
-    const accurateBonus = (isAccurate && aim > 0) ? 10 : 0;
+    const effectiveAim = isInaccurate ? 0 : aim;
+    const accurateBonus = (isAccurate && !isInaccurate && aim > 0) ? 10 : 0;
     const twinLinkedBonus = isTwinLinked ? 20 : 0;
     const gyroRangeMod = isGyroStabilised ? this.applyGyroStabilisedRangeLimit(rangeMod) : rangeMod;
-    const modifiers = bsAdv + aim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus;
+    const modifiers = bsAdv + effectiveAim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus + sizeModifier;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus };
+    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus, effectiveAim };
   }
 
   static applyGyroStabilisedRangeLimit(rangeMod) {
     return Math.max(rangeMod, -10);
   }
 
-  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0, upgradeModifiers = []) {
+  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0, upgradeModifiers = [], sizeModifier = 0, sizeLabel = "") {
     const parts = [];
     parts.push(`${bs} Base BS`);
     if (bsAdv !== 0) parts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
@@ -41,6 +66,7 @@ export class CombatDialogHelper {
     if (autoRangeMod !== 0) parts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
     if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
     if (miscModifier !== 0) parts.push(`${miscModifier >= 0 ? '+' : ''}${miscModifier} Misc`);
+    if (sizeModifier !== 0) parts.push(`${sizeModifier >= 0 ? '+' : ''}${sizeModifier} ${sizeLabel || 'Target Size'}`);
     for (const mod of upgradeModifiers) {
       if (mod.effectType === 'characteristic' && mod.valueAffected === 'bs') {
         const value = parseInt(mod.modifier) || 0;
@@ -75,7 +101,8 @@ export class CombatDialogHelper {
     return Math.min(calculatedHits, maxHits);
   }
 
-  static determineJamThreshold(autoFire) {
+  static determineJamThreshold(autoFire, isUnreliable = false) {
+    if (isUnreliable) return 91;
     if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO || autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
       return 94;
     }

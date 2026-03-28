@@ -1,14 +1,12 @@
 {
-    "_id":  "explosive-leg0009",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 09",
-    "system":  {
-                   "damageType":  "Explosive",
-                   "description":  "The leg explodes in an eruption of blood, killing the target immediately and sending tiny fragments of bone, clothing, and armour hurtling off in all directions. Anyone within two metres of the target takes 1d10+2 Impact Damage.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Leg"
-               },
-    "type":  "critical-effect"
+  "_id": "explosive-leg0009",
+  "name": "Level 09",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Explosive",
+    "location": "Leg",
+    "description": "The leg explodes in an eruption of blood, killing the target immediately and sending tiny fragments of bone, clothing, and armour hurtling off in all directions. Anyone within two metres of the target takes 1d10+2 Impact Damage.",
+    "effects": []
+  }
 }

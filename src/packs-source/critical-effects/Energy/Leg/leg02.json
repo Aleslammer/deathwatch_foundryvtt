@@ -1,14 +1,12 @@
 {
-    "_id":  "energy-leg0002",
-    "img":  "systems/deathwatch/icons/tables/critical-damage.webp",
-    "name":  "Level 02",
-    "system":  {
-                   "damageType":  "Energy",
-                   "description":  "A grazing strike against the leg slows the target for a bit. The target halves all movement for 1 Round.",
-                   "effects":  [
-
-                               ],
-                   "location":  "Leg"
-               },
-    "type":  "critical-effect"
+  "_id": "energy-leg0002",
+  "name": "Level 02",
+  "type": "critical-effect",
+  "img": "systems/deathwatch/icons/tables/critical-damage.webp",
+  "system": {
+    "damageType": "Energy",
+    "location": "Leg",
+    "description": "A grazing strike against the leg slows the target for a bit. The target halves all movement for 1 Round.",
+    "effects": []
+  }
 }

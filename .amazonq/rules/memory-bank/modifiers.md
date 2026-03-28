@@ -537,6 +537,21 @@ static applyWoundModifiers(wounds, modifiers) {
 }
 ```
 
+### Trait Modifiers
+Traits can have modifiers just like other items. Traits are always active (no equipped check).
+
+**Example — Multiple Arms:**
+```json
+{
+  "name": "Multiple Arms",
+  "modifier": 10,
+  "effectType": "characteristic",
+  "valueAffected": "tg",
+  "enabled": true
+}
+```
+Grants +10 Toughness to any creature with the Multiple Arms trait.
+
 ### Temporary Debuffs
 ```json
 {
@@ -589,7 +604,7 @@ static applyWoundModifiers(wounds, modifiers) {
 - Post-multiplier + Unnatural ordering: ✓
 
 ### Test Count
-- Total: 947 tests
+- Total: 1071 tests
 - Modifier-specific: ~85 tests
 - All passing ✓
 

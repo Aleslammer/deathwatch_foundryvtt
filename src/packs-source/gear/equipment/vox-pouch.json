@@ -1,17 +1,17 @@
 {
   "_id": "gear00000000004",
-  "img": "systems/deathwatch/icons/generic/gear.webp",
   "name": "Vox Pouch",
+  "type": "gear",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
   "system": {
     "book": "Rites of Battle",
-    "description": "<p>Holds one standard hand-held Astartes vox unit.</p><p>Attaches to Astartes Combat Webbing.</p>",
-    "equipped": false,
-    "modifiers": [],
     "page": "144",
-    "renown": "",
+    "equipped": false,
+    "wt": 0.5,
     "req": 3,
+    "renown": "",
     "shortDescription": "Equipment",
-    "wt": 0.5
-  },
-  "type": "gear"
+    "description": "<p>Holds one standard hand-held Astartes vox unit.</p><p>Attaches to Astartes Combat Webbing.</p>",
+    "modifiers": []
+  }
 }

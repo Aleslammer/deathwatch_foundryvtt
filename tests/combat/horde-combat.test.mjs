@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals';
-import '../setup.mjs';
 import { HordeCombatHelper } from '../../src/module/helpers/horde-combat.mjs';
 
 describe('HordeCombatHelper', () => {
