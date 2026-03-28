@@ -41,9 +41,10 @@ TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-
 TODO: Automated Animations - Can we use this for things?
 
 Enemies:
-    TODO: continue with xenos
+    TODO: Still Need to add Tyranids
+            Trygon, Warrior Prime, Tyrant Guard, Venonthrope, Zoanthrope
     TODO: Add more orks
-        Create images
+        
     
 
 Armor:
@@ -51,8 +52,7 @@ Armor:
           164 - Terminator Armour has forcefield like effects    
 
 Hordes
-    TODO: Update to support psychic attacks (pg 360)
-    TODO: can we expand the size traits?   Can we incorporate that into something?
+    TODO: Update to support psychic attacks (pg 360)    
 
 Psychic Combat
     TODO: we have no combat system for psychic Powers
@@ -60,66 +60,56 @@ Psychic Combat
     TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 
-Lictor
+Ripper swarm
 
 Book: Mark of the Xenos
-Page: 37
+Page: 43
 
-Descrption: Lictors are the lone hunters of the Tyranid swarm, roving 
-ahead of the hive fleet, seeking out prey and leading the 
-Hive Mind to concentrations of enemies. As tall as a Tyranid 
-Warrior, Lictors are distinct in appearance from other Tyranid 
-creatures in a number of ways, such as a pair of long mantis
-like claws extending over the creature’s shoulders which it can 
-use for climbing and impaling its prey; long, drooping feeder 
-tendrils that hang from its maw and greatly increase its senses, 
-and shimmering chameleonic scales which allow it to hide with 
-ease. A natural predator, the Lictor is patient and stealthy and 
-can move past even the most alert foes, or spend days hiding 
-immobile, waiting for a chance to strike once its prey’s guard is 
-down. This behaviour has given the Lictor an almost mythical 
-reputation amongst its foes, as a ghost-like horror which can 
-strike at any time and place, before vanishing into thin air just 
-as easily.
+Descrption: These small harvesting organisms are extremely varied but 
+the most numerous are those known to Adepts as the Tyranicus 
+Omniphagea, more commonly known to Imperial forces as 
+Rippers. Rippers have serpentine bodies, around half a metre 
+long, that terminate in a broad head above a set of vestigial 
+gripping claws. The head is split by a wide maw filled with 
+rows of exceedingly sharp ripping hooks and razor-edged 
+boney ridges. The Ripper’s powerful jaws can bite through 
+f
+lesh and bone with alarming ease, and they have been known 
+to gnaw their way through plasteel to reach food. 
+Rippers are energetic and fearless organisms, quite capable 
+of pulling down creatures many times their own size, from a 
+rampaging Grox to an armed man. Huge swarms of Rippers 
+are often seen on the battlefield, advancing behind Tyranid 
+assault forces. These gorge themselves on the fallen, tearing 
+apart the wounded and cannibalising the dead. It might appear 
+that an armoured Space Marine would be safe from the attacks 
+of individual Rippers, but en masse they can immobilise and 
+drag down even the strongest Battle-Brother.
 
 Ws Bs s T ag int Per WP fel
-65 — 65 40 40 25 45 45 –
-Wounds: 40
-Skills: Acrobatics (Ag), Awareness (Per) +20, Climb (S) +20, Concealment (Ag) +20, Contortionist (Ag) +10, Dodge (Ag) +10, Shadowing (Ag) +20, Silent Move (Ag) +20, Survival (Int) +20, Swim (S), Tracking (Int) +20.
-Talents: Ambidextrous, Assassin Strike, Berserk Charge, Blind Fighting, Catfall, Combat Master, Crushing Blow, Fearless, Furious Assault, Hard Target, Heightened Sense (Hearing, Sight, Smell, Taste, Touch), Leap Up, Lightning Attack, Sprint, Step Aside, Swift Attack.
-Traits: Dark Sight, Fear 3 (Horrifying), Instinctive Behaviour (Lurk), Natural Armour (6), Multiple Arms, Size (Hulking), Unnatural Agility (x2), Unnatural Strength (x2), Unnatural Perception (x2), Unnatural Toughness (x2), Improved Natural Weapons (Scything Talons), Size  (Enormous), Tyranid
-Weapons: Scything Talons (but add Toxic), Rending Claw (But add Razor Sharp and Toxic)
+35 — 25 30 40 10 30 30 –
+Wounds: 10
+Skills:  Awareness (Per), Climb (S), Dodge (Ag), Silent Move (Ag), Swim (S), Tracking (Int) +10.
+Talents:   Fearless, Heightened Senses (Smell).
+Traits:  Burrower (1), Crawler, Dark Sight, Improved Natural Weapons (Mandibles), Instinctive Behaviour (Feed), Natural Armour (2), Size (Puny), Tyranid.
+Weapons:   Mandibles (1d5+3 R; Pen 3)
 
 Special Abilities: 
-Flesh Hooks: Lictors have dozens of 
-tiny hooks which they can fire from 
-their chests to snare prey and drag their 
-victims toward them. These allow 
-a Lictor to initiate a Grapple (see 
-page 240 in the Deathwatch 
-Rulebook) with a target up to 
-10m away. With every successful 
-Opposed Strength Test the Lictor 
-makes as part of the Grapple action, 
-the target is pulled closer by 1m plus 
-1m for each degree of success. 
+Horde: Rippers can be used as a Horde (see the Horde rules on 
+page 359 of the Deathwatch Rulebook). While in a Horde, 
+Rippers gain the Rampage, Relentless, and Overwhelming 
+Traits, the Swift Attack Talent, and their attacks gain the 
+Tearing quality. A Horde of Rippers has the Fear 1 (Disturbing) 
+Trait. Alter the Size Trait as appropriate for Horde magnitude.
 
-Chameleonic Scales: A Lictor is 
-covered in chameleonic scales which shimmer and shift to 
-match its surroundings and can make it practically invisible to the naked eye, plus most other 
-methods of visual detection such as infrared and ultraviolet 
-scopes. Whenever a Lictor uses its Concealment Skill to 
-hide, all tests to detect it visually suffer a –30 penalty. In 
-addition, the scales allow the Lictor to make Concealment 
-Tests as a Half Action rather than a Full Action and it can 
-even do so even when being observed or when there is no  
-nearby cover.
+Biomorphs: At the GM’s discretion, Rippers may be given 
+any of the following Traits:
+• Toxic (1d10)
+• Flyer (3) 
+• Unnatural Toughness (x2)
 
-Memory Devourer: When a Lictor devours the brain of its 
-prey, it can learn some of its memories. Once the Lictor has 
-eaten a brain, it gains access to all of the victim’s recent, most 
-distinct memories (usually the location of friendly troops 
-or defences). If the Lictor wishes to learn something very 
-specific from the victim, such as an old memory or one the 
-victim does not remember well, it must make an Easy (+20)
-IntelligenceTest.
+Tenacious Grappler: Rippers drag down their prey by 
+grappling with it so that others can latch on more easily. 
+When attempting to grapple an opponent armed with a 
+melee weapon, Rippers suffer a –10 to their WS instead of 
+the normal –20.

@@ -48,9 +48,13 @@ const FACTIONS = [
       "gargoyle.json":                  { num: "12", type: "enmy" },
       "lictor.json":                    { num: "13", type: "enmy" },
       "ravener.json":                   { num: "14", type: "enmy" },
+      "ripper-swarm.json":              { num: "15", type: "enmy" },
+      "spinespitter.json":              { num: "16", type: "enmy" },
       "hormagaunt-horde.json":        { num: "01", type: "hord" },
       "termagant-horde.json":         { num: "02", type: "hord" },
       "gargoyle-horde.json":          { num: "03", type: "hord" },
+      "ripper-swarm-horde.json":       { num: "04", type: "hord" },
+      "spinespitter-horde.json":        { num: "05", type: "hord" },
     }
   },
   {
