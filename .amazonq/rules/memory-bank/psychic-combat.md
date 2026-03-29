@@ -151,7 +151,8 @@ SUCCESS (5 Degrees of Success)
 | 1 | ✅ Complete | Focus Power dialog, WP roll, chat output |
 | 2 | ✅ Complete | Phenomena/Perils table integration, fatigue |
 | 3 | ✅ Complete | Opposed Willpower Tests (powers with `opposed: "Yes"`) |
-| 4 | Planned | Power-specific effects (damage, buffs, horde hits, Righteous Fury) |
+| 4 | ✅ 4a Complete | Psychic status effects (Dominated, Compelled, Terrified, Immobilized, Paroxysm) |
+| 4b | ✅ Complete | Damage powers (PR substitution, auto-roll, horde hits, Righteous Fury) |
 
 Planning docs: `docs/psychic-combat/` (00-overview through 04-power-effects)
 

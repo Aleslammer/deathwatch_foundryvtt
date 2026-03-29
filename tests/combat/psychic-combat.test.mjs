@@ -412,6 +412,42 @@ describe('PsychicCombatHelper', () => {
     });
   });
 
+  // ── substitutePR ─────────────────────────────────────────────────────
+
+  describe('substitutePR', () => {
+    it('replaces PR in damage formula', () => {
+      expect(PsychicCombatHelper.substitutePR('1d10*PR', 5)).toBe('1d10*5');
+    });
+
+    it('replaces multiple PR occurrences', () => {
+      expect(PsychicCombatHelper.substitutePR('PR+PR', 3)).toBe('3+3');
+    });
+
+    it('replaces PR in penetration formula', () => {
+      expect(PsychicCombatHelper.substitutePR('2*PR', 5)).toBe('2*5');
+    });
+
+    it('handles formula without PR', () => {
+      expect(PsychicCombatHelper.substitutePR('1d10+8', 5)).toBe('1d10+8');
+    });
+
+    it('returns empty string for empty formula', () => {
+      expect(PsychicCombatHelper.substitutePR('', 5)).toBe('');
+    });
+
+    it('returns empty string for null formula', () => {
+      expect(PsychicCombatHelper.substitutePR(null, 5)).toBe('');
+    });
+
+    it('handles PR at start of formula', () => {
+      expect(PsychicCombatHelper.substitutePR('PR', 8)).toBe('8');
+    });
+
+    it('handles 5*PR pattern', () => {
+      expect(PsychicCombatHelper.substitutePR('5*PR', 4)).toBe('5*4');
+    });
+  });
+
   // ── resolveOpposedTest ──────────────────────────────────────────────────
 
   describe('resolveOpposedTest', () => {

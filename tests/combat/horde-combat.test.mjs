@@ -71,6 +71,24 @@ describe('HordeCombatHelper', () => {
       });
     });
 
+    describe('Psychic powers', () => {
+      it('hits equal to effective PR', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 5 })).toBe(5);
+      });
+
+      it('PR 0 gives 0 hits', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 0 })).toBe(0);
+      });
+
+      it('high PR gives many hits', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 11 })).toBe(11);
+      });
+
+      it('ignores blast/flame/melee options', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 5, blastValue: 10, isFlame: true, isMelee: true })).toBe(5);
+      });
+    });
+
     describe('Ranged attacks (non-blast, non-flame)', () => {
       it('uses base hits for normal ranged', () => {
         expect(HordeCombatHelper.calculateHordeHits({ baseHits: 3 })).toBe(3);

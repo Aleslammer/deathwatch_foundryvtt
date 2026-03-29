@@ -16,10 +16,26 @@ export const ActorConditionsMixin = (superclass) => class extends superclass {
         statuses: [conditionId]
       }]);
       
-      // Add modifiers to actor if status effect has them
-      if (effect.modifiers?.length > 0) {
+      let modifiersToApply = [];
+
+      if (effect.dynamicModifiers) {
+        // Compute dynamic WS/BS reduction to 10
+        const ws = this.system.characteristics?.ws?.value || 0;
+        const bs = this.system.characteristics?.bs?.value || 0;
+        const wsMod = Math.min(0, -(ws - 10));
+        const bsMod = Math.min(0, -(bs - 10));
+        if (wsMod !== 0) modifiersToApply.push({ name: `${effect.name} (WS)`, modifier: wsMod, effectType: "characteristic", valueAffected: "ws" });
+        if (bsMod !== 0) modifiersToApply.push({ name: `${effect.name} (BS)`, modifier: bsMod, effectType: "characteristic", valueAffected: "bs" });
+        if (effect.staticModifiers) {
+          modifiersToApply.push(...effect.staticModifiers);
+        }
+      } else if (effect.modifiers?.length > 0) {
+        modifiersToApply = [...effect.modifiers];
+      }
+
+      if (modifiersToApply.length > 0) {
         const currentModifiers = this.system.modifiers || [];
-        const newModifiers = effect.modifiers.map(m => ({
+        const newModifiers = modifiersToApply.map(m => ({
           ...m,
           _statusId: conditionId,
           source: effect.name,

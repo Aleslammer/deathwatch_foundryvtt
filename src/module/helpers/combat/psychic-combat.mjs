@@ -2,6 +2,8 @@ import { POWER_LEVELS, POWER_LEVEL_LABELS } from "../constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { ModifierCollector } from "../character/modifier-collector.mjs";
 import { FoundryAdapter } from "../foundry-adapter.mjs";
+import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";
+import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
 
 /**
  * Helper class for psychic power Focus Power Tests.
@@ -163,6 +165,17 @@ export class PsychicCombatHelper {
       lines.push('💀 <strong>FATIGUE</strong> — Doubles on Push! (+1 Fatigue)');
     }
     return lines.join("<br>");
+  }
+
+  /**
+   * Substitute PR placeholder in a formula with the effective Psy Rating.
+   * @param {string} formula - Formula containing "PR" (e.g., "1d10*PR", "2*PR")
+   * @param {number} effectivePR - The effective Psy Rating value
+   * @returns {string} Formula with PR replaced
+   */
+  static substitutePR(formula, effectivePR) {
+    if (!formula) return "";
+    return formula.replace(/PR/g, String(effectivePR));
   }
 
   /**
@@ -399,11 +412,81 @@ export class PsychicCombatHelper {
             }
 
             await this.handlePhenomenaAndFatigue(effects, psychicMods.noPerils, psychicMods.noPerilsSource, actor);
+
+            // Roll damage for powers with damageFormula
+            if (success && power.system.damageFormula) {
+              await this._rollPsychicDamage(actor, power, effectivePR, targetNumber, dos);
+            }
           }
         },
         cancel: { label: "Cancel" }
       },
       default: "focus"
     }).render(true);
+  }
+
+  /**
+   * Roll psychic power damage after a successful Focus Power Test.
+   * @param {Object} actor - Actor document
+   * @param {Object} power - Psychic power item
+   * @param {number} effectivePR - Effective Psy Rating used
+   * @param {number} targetNumber - Focus Power target number (for Righteous Fury)
+   * @param {number} dos - Degrees of success
+   */
+  /* istanbul ignore next */
+  static async _rollPsychicDamage(actor, power, effectivePR, targetNumber, dos) {
+    const damageFormula = this.substitutePR(power.system.damageFormula, effectivePR);
+    const penetration = power.system.penetrationFormula
+      ? parseInt(this.substitutePR(power.system.penetrationFormula, effectivePR)) || 0
+      : 0;
+    const damageType = power.system.damageType || "Energy";
+
+    const targetToken = game.user.targets?.first();
+    const targetActor = targetToken?.actor;
+    const tokenInfo = targetToken?.document ? { sceneId: targetToken.document.parent.id, tokenId: targetToken.document.id } : null;
+
+    // Horde hit calculation
+    let numHits = 1;
+    if (targetActor?.type === "horde") {
+      numHits = targetActor.system.calculateHitsReceived({
+        isPsychic: true,
+        effectivePR
+      });
+    }
+
+    const isHordeTarget = targetActor?.type === "horde";
+    const hordeHitResults = [];
+
+    for (let i = 0; i < numHits; i++) {
+      const roll = await FoundryAdapter.evaluateRoll(damageFormula);
+      let totalDamage = roll.total;
+
+      // Righteous Fury check
+      if (actor.system.canRighteousFury?.() && RighteousFuryHelper.hasNaturalTen(roll, 10) && targetNumber > 0) {
+        const { totalDamage: furyDamage } = await RighteousFuryHelper.processFuryChain(
+          actor, null, damageFormula, targetNumber, "Body", false, 10
+        );
+        totalDamage += furyDamage;
+      }
+
+      if (isHordeTarget) {
+        hordeHitResults.push({ damage: totalDamage, penetration, location: "Body", damageType });
+      } else {
+        const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(
+          totalDamage, penetration, "Body", targetActor.id, damageType,
+          false, false, dos, false, false, false, false, false,
+          null, null, tokenInfo
+        ) : "";
+
+        const hitInfo = numHits > 1 ? ` (${i + 1}/${numHits})` : "";
+        const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${power.name}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
+        const speaker = FoundryAdapter.getChatSpeaker(actor);
+        await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+      }
+    }
+
+    if (isHordeTarget && hordeHitResults.length > 0) {
+      await targetActor.system.receiveBatchDamage(hordeHitResults);
+    }
   }
 }
