@@ -66,7 +66,11 @@ const FACTIONS = [
       "ork-warboss.json":    { num: "03", type: "enmy" },
       "big-mek-wurrzog.json": { num: "04", type: "enmy" },
       "gretchen.json":      { num: "05", type: "enmy" },
+      "squig.json":          { num: "06", type: "enmy" },
+      "kommando.json":       { num: "07", type: "enmy" },
+      "mad-dok.json":        { num: "08", type: "enmy" },
       "ork-boy-horde.json": { num: "01", type: "hord" },
+      "squig-horde.json":   { num: "02", type: "hord" },
     }
   }
 ];
