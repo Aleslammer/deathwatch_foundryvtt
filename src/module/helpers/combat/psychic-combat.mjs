@@ -179,6 +179,18 @@ export class PsychicCombatHelper {
   }
 
   /**
+   * Check if an actor is a Tyranid psyker (has the Tyranid trait).
+   * Tyranid psykers skip Phenomena/Perils tables and instead take 1d10 Energy backlash damage.
+   * @param {Object} actor - Actor document
+   * @returns {boolean}
+   */
+  static isTyranidPsyker(actor) {
+    if (!actor?.items) return false;
+    const items = actor.items instanceof Map ? Array.from(actor.items.values()) : (actor.items.filter ? actor.items.filter(() => true) : []);
+    return items.some(i => i.type === 'trait' && i.name?.toLowerCase() === 'tyranid');
+  }
+
+  /**
    * Resolve an opposed Willpower test between psyker and target.
    * @param {number} psykerDoS - Psyker's degrees of success from Focus Power Test
    * @param {number} targetWP - Target's Willpower value
@@ -279,21 +291,35 @@ export class PsychicCombatHelper {
   /* istanbul ignore next */
   static async handlePhenomenaAndFatigue(effects, noPerils, noPerilsSource, actor) {
     if (effects.phenomena) {
-      const draw = await this.rollPhenomena();
+      if (this.isTyranidPsyker(actor)) {
+        // Tyranid backlash: 1d10 Energy damage, ignores armor and TB
+        const backlashRoll = await FoundryAdapter.evaluateRoll('1d10');
+        const backlashDamage = backlashRoll.total;
+        const currentWounds = actor.system.wounds?.value || 0;
+        await FoundryAdapter.updateDocument(actor, {
+          'system.wounds.value': currentWounds + backlashDamage
+        });
+        const speaker = FoundryAdapter.getChatSpeaker(actor);
+        await FoundryAdapter.sendRollToChat(backlashRoll, speaker,
+          `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${actor.name}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
+        );
+      } else {
+        const draw = await this.rollPhenomena();
 
-      // Check for Perils cascade (Phenomena result 75+)
-      if (draw?.results?.[0]) {
-        const result = draw.results[0];
-        const range = result.range;
-        if (range && range[0] >= 75) {
-          if (noPerils) {
-            const speaker = FoundryAdapter.getChatSpeaker(actor);
-            await FoundryAdapter.createChatMessage(
-              `🛡 <strong>Perils of the Warp suppressed</strong> by ${noPerilsSource}`,
-              speaker
-            );
-          } else {
-            await this.rollPerils();
+        // Check for Perils cascade (Phenomena result 75+)
+        if (draw?.results?.[0]) {
+          const result = draw.results[0];
+          const range = result.range;
+          if (range && range[0] >= 75) {
+            if (noPerils) {
+              const speaker = FoundryAdapter.getChatSpeaker(actor);
+              await FoundryAdapter.createChatMessage(
+                `\uD83D\uDEE1 <strong>Perils of the Warp suppressed</strong> by ${noPerilsSource}`,
+                speaker
+              );
+            } else {
+              await this.rollPerils();
+            }
           }
         }
       }

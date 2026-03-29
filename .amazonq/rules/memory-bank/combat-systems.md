@@ -42,6 +42,7 @@ The combat system is split into separate modules for ranged and melee combat, wi
   - Phenomena/Perils table integration
   - Fatigue on Push + doubles
   - psychic-test and no-perils modifier support
+  - Tyranid psyker backlash (1d10 Energy instead of Phenomena/Perils tables)
 - **combat/fire-helper.mjs**: Fire damage effects and extinguish tests
   - On Fire round processing (1d10 damage, +1 fatigue, WP test)
   - Power Armour auto-pass for WP test
@@ -362,7 +363,7 @@ Pure functions:
 - **combat-dialog.test.mjs**: Combat dialog helper tests
 - **horde-combat.test.mjs**: Horde combat mechanics tests (including psychic hits)
 - **horde.test.mjs**: Horde DataModel tests (receiveBatchDamage, getDefenses)
-- **psychic-combat.test.mjs**: Psychic combat tests (81 tests)
+- **psychic-combat.test.mjs**: Psychic combat tests (97 tests)
 - **fire-helper.test.mjs**: Fire helper tests (28 tests)
 
 ### Coverage
@@ -372,7 +373,7 @@ Pure functions:
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 1071 tests passing across 81 suites
+- Overall: 1244 tests passing across 83 suites
 
 ## Force Weapon Integration
 

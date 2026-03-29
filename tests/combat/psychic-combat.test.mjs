@@ -412,6 +412,48 @@ describe('PsychicCombatHelper', () => {
     });
   });
 
+  // ── isTyranidPsyker ──────────────────────────────────────────────────
+
+  describe('isTyranidPsyker', () => {
+    it('returns true when actor has Tyranid trait', () => {
+      const actor = { items: [{ type: 'trait', name: 'Tyranid' }] };
+      expect(PsychicCombatHelper.isTyranidPsyker(actor)).toBe(true);
+    });
+
+    it('returns true case-insensitive', () => {
+      const actor = { items: [{ type: 'trait', name: 'tyranid' }] };
+      expect(PsychicCombatHelper.isTyranidPsyker(actor)).toBe(true);
+    });
+
+    it('returns false when no Tyranid trait', () => {
+      const actor = { items: [{ type: 'trait', name: 'Dark Sight' }] };
+      expect(PsychicCombatHelper.isTyranidPsyker(actor)).toBe(false);
+    });
+
+    it('returns false for non-trait items named Tyranid', () => {
+      const actor = { items: [{ type: 'talent', name: 'Tyranid' }] };
+      expect(PsychicCombatHelper.isTyranidPsyker(actor)).toBe(false);
+    });
+
+    it('returns false for null actor', () => {
+      expect(PsychicCombatHelper.isTyranidPsyker(null)).toBe(false);
+    });
+
+    it('returns false for actor with no items', () => {
+      expect(PsychicCombatHelper.isTyranidPsyker({ items: null })).toBe(false);
+    });
+
+    it('handles Map-based items collection', () => {
+      const items = new Map();
+      items.set('t1', { type: 'trait', name: 'Tyranid' });
+      expect(PsychicCombatHelper.isTyranidPsyker({ items })).toBe(true);
+    });
+
+    it('returns false for empty items', () => {
+      expect(PsychicCombatHelper.isTyranidPsyker({ items: [] })).toBe(false);
+    });
+  });
+
   // ── substitutePR ─────────────────────────────────────────────────────
 
   describe('substitutePR', () => {

@@ -41,6 +41,9 @@ Target = Willpower + WP Bonus (up to 5 × ePR) + psychic-test modifiers + misc m
 ### Doubles Detection
 Roll has doubles when both digits match: 11, 22, 33, ..., 99, 100 (treated as 00).
 
+### Tyranid Psyker Backlash
+Tyranid creatures with the Tyranid trait skip both Phenomena and Perils tables entirely. Instead, when phenomena would trigger, they take 1d10 Energy damage (ignores armor & TB) as the Hive Mind backlashes. Detected via `isTyranidPsyker(actor)` which checks for a trait named "Tyranid".
+
 ## Opposed Willpower Tests
 
 Powers with `opposed: "Yes"` trigger an opposed test flow after a successful Focus Power Test:
@@ -96,6 +99,8 @@ Boolean flag — suppresses Perils of the Warp cascade.
 | `buildFocusPowerLabel(...)` | Chat header (power name, target, ePR, success/fail) |
 | `buildFocusPowerFlavor(label, parts, phenomenaLine)` | Collapsible `<details>` modifier breakdown |
 | `buildPhenomenaLine(effects, powerLevel)` | ⚡/💀 status lines |
+| `isTyranidPsyker(actor)` | Detects Tyranid trait for Hive Mind backlash rule |
+| `substitutePR(formula, effectivePR)` | Replace PR in damage/pen formulas |
 | `resolveOpposedTest(psykerDoS, targetWP, targetRoll, miscMod)` | Opposed WP test: DoS comparison, net DoS |
 | `buildOpposedResultMessage(...)` | Chat HTML for opposed result (manifests/resisted) |
 
@@ -129,7 +134,7 @@ SUCCESS (5 Degrees of Success)
 
 ## Test Coverage
 
-### File: `tests/combat/psychic-combat.test.mjs` — 89 tests
+### File: `tests/combat/psychic-combat.test.mjs` — 97 tests
 
 | Describe Block | Tests |
 |---------------|-------|
@@ -141,6 +146,7 @@ SUCCESS (5 Degrees of Success)
 | buildFocusPowerLabel | 6 |
 | buildFocusPowerFlavor | 4 |
 | buildPhenomenaLine | 5 |
+| isTyranidPsyker | 8 |
 | substitutePR | 8 |
 | resolveOpposedTest | 8 |
 | buildOpposedResultMessage | 6 |
