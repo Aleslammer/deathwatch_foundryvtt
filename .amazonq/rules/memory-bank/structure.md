@@ -155,6 +155,7 @@ Organized into three subfolders plus core infrastructure at root:
 - **critical-effects.mjs**: Critical damage effects
 - **weapon-quality-helper.mjs**: Weapon quality detection and lookup
 - **weapon-upgrade-helper.mjs**: Weapon upgrade detection and modifier collection
+- **fire-helper.mjs**: Fire damage, On Fire round effects, extinguish tests
 
 #### `character/` (Character Data)
 - **modifier-collector.mjs**: Modifier collection and application

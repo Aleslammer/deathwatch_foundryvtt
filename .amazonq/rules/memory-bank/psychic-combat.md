@@ -129,7 +129,7 @@ SUCCESS (5 Degrees of Success)
 
 ## Test Coverage
 
-### File: `tests/combat/psychic-combat.test.mjs` — 81 tests
+### File: `tests/combat/psychic-combat.test.mjs` — 89 tests
 
 | Describe Block | Tests |
 |---------------|-------|
@@ -141,6 +141,7 @@ SUCCESS (5 Degrees of Success)
 | buildFocusPowerLabel | 6 |
 | buildFocusPowerFlavor | 4 |
 | buildPhenomenaLine | 5 |
+| substitutePR | 8 |
 | resolveOpposedTest | 8 |
 | buildOpposedResultMessage | 6 |
 

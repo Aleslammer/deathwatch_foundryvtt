@@ -20,7 +20,7 @@
 13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
 
 ## Key Metrics
-- **Tests**: 1184 passing, 82 suites
+- **Tests**: 1220 passing, 83 suites
 - **Helper Classes**: 26+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -60,7 +60,7 @@ npm run build:all                                           # build:packs + depl
 - **Power Levels**: Fettered (ePR = ceil(PR/2), no Phenomena), Unfettered (full PR, Phenomena on doubles), Push (PR+3, auto Phenomena, Fatigue on doubles)
 - **Phenomena/Perils**: Auto-draws from roll tables. Perils only via Phenomena cascade (result 75+).
 - **Modifier Support**: `psychic-test` (additive WP bonus) and `no-perils` (suppresses Perils cascade)
-- **Helper**: `PsychicCombatHelper` in `psychic-combat.mjs` — 7 pure functions + dialog + table integration
+- **Helper**: `PsychicCombatHelper` in `combat/psychic-combat.mjs` — 7 pure functions + dialog + table integration
 - **Planning**: `docs/psychic-combat/` (4 phase docs, Phases 1-2 complete)
 
 ### Weapon Qualities
@@ -121,10 +121,10 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1184 tests across 82 suites
+tests/                   1220 tests across 83 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Psychic combat Phase 1-3 complete, Phase 4a status effects, Phase 4b damage powers, helpers reorganized, 1184 tests)
+**Last Updated**: January 2025 (Psychic combat Phase 1-3 complete, Phase 4a status effects, Phase 4b damage powers, helpers reorganized, flame/fire system, 1220 tests)

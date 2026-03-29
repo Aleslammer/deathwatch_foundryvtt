@@ -42,6 +42,11 @@ The combat system is split into separate modules for ranged and melee combat, wi
   - Phenomena/Perils table integration
   - Fatigue on Push + doubles
   - psychic-test and no-perils modifier support
+- **combat/fire-helper.mjs**: Fire damage effects and extinguish tests
+  - On Fire round processing (1d10 damage, +1 fatigue, WP test)
+  - Power Armour auto-pass for WP test
+  - Extinguish test (Hard −20 AG + misc modifier)
+  - Combat tracker hook with confirmation dialog
 
 ## Weapon Attack Routing
 
@@ -283,7 +288,7 @@ export const RANGE_MODIFIERS = {
 ## Horde Combat
 
 ### Overview
-Hordes use Magnitude instead of individual wounds. Each hit that penetrates armor+TB reduces Magnitude by 1. Special rules apply for blast, flame, and melee attacks.
+Hordes use Magnitude instead of individual wounds. Each hit that penetrates armor+TB reduces Magnitude by 1. Special rules apply for blast, flame, melee, and psychic attacks.
 
 ### HordeCombatHelper (`horde-combat.mjs`)
 
@@ -313,15 +318,52 @@ Ammunition can have `magnitude-bonus-damage` modifier:
 - Collapsible details table for multi-hit attacks (penetrating vs absorbed)
 - "HORDE DESTROYED" when magnitude reaches max
 
+## Flame & Fire System
+
+### Flame Weapon Attack
+Weapons with the `flame` quality bypass the normal BS attack dialog:
+- `getWeaponAttackType()` detects flame quality and routes to `_flameWeaponRoll()`
+- Rolls damage once, posts to chat with range/pen/type info
+- No attack roll needed — all targets in 30° cone must test Agility
+- GM uses 🔥 Flame Attack macro to apply damage per target
+
+### 🔥 Flame Attack Macro (GM)
+Auto-created on first GM login. Dialog with Damage, Penetration, Damage Type, and Range fields.
+- **Individual targets**: Applies damage, rolls catch fire Agility test, applies On Fire status on fail
+- **Horde targets**: Calculates hits as `ceil(range/4) + 1d5`, rolls damage per hit, applies via `receiveBatchDamage()`
+
+### On Fire Round Processing
+**Combat tracker hook**: When turn advances to a character with On Fire condition, confirmation dialog appears.
+- **Apply Fire**: 1d10 Energy damage to Body (ignores armor), +1 Fatigue, Willpower test
+- **Skip**: Bypasses for out-of-game reasons
+- **WP Test**: Auto-pass for Power Armour. Fail = can only run and scream (no extinguish)
+- **Extinguish button**: Only shown on WP success. Opens dialog with misc modifier, rolls Hard (−20) AG test
+- **Success**: Removes On Fire status effect
+
+### 🔥 On Fire Round Macro (GM)
+Auto-created fallback for out-of-combat fire. Target a token, click macro, same sequence runs.
+
+### FireHelper (`combat/fire-helper.mjs`)
+Pure functions:
+- `hasPowerArmor(actor)` — detects equipped Power Armour
+- `buildOnFireMessage(...)` — builds chat HTML with damage, fatigue, WP result, extinguish button
+- `resolveExtinguishTest(ag, roll, miscMod)` — Hard (−20) AG test with misc modifier
+- `buildExtinguishFlavor(...)` — extinguish result chat HTML
+
+### Shared resolveActor()
+`resolveActor(button, actorIdAttr)` is a module-level function in `deathwatch.mjs` used by all chat button handlers. Resolves synthetic token actors for unlinked tokens via scene+token IDs, falls back to `game.actors.get()` for linked actors.
+
 ## Testing
 
 ### Test Files
-- **combat.test.mjs**: Core combat logic tests (hit locations, damage, routing)
+- **combat.test.mjs**: Core combat logic tests (hit locations, damage, routing, flame detection)
 - **ranged-combat.test.mjs**: Ranged combat helper tests
 - **melee-combat.test.mjs**: Melee combat helper tests
 - **combat-dialog.test.mjs**: Combat dialog helper tests
-- **horde-combat.test.mjs**: Horde combat mechanics tests
+- **horde-combat.test.mjs**: Horde combat mechanics tests (including psychic hits)
 - **horde.test.mjs**: Horde DataModel tests (receiveBatchDamage, getDefenses)
+- **psychic-combat.test.mjs**: Psychic combat tests (81 tests)
+- **fire-helper.test.mjs**: Fire helper tests (28 tests)
 
 ### Coverage
 - Core combat logic: Well tested

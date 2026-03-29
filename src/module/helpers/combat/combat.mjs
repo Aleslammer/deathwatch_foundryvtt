@@ -73,13 +73,45 @@ export class CombatHelper {
     await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
   }
 
+  /**
+   * Determine the attack type for a weapon.
+   * @param {Object} weapon - Weapon item
+   * @returns {Promise<string>} 'melee', 'flame', or 'ranged'
+   */
+  static async getWeaponAttackType(weapon) {
+    if (weapon.system.class?.toLowerCase().includes('melee')) return 'melee';
+    if (await WeaponQualityHelper.hasQuality(weapon, 'flame')) return 'flame';
+    return 'ranged';
+  }
+
   /* istanbul ignore next */
   static async weaponAttackDialog(actor, weapon) {
-    const isMelee = weapon.system.class?.toLowerCase().includes('melee');
-    if (isMelee) {
-      return MeleeCombatHelper.attackDialog(actor, weapon);
-    }
+    const attackType = await this.getWeaponAttackType(weapon);
+    if (attackType === 'melee') return MeleeCombatHelper.attackDialog(actor, weapon);
+    if (attackType === 'flame') return this._flameWeaponRoll(actor, weapon);
     return RangedCombatHelper.attackDialog(actor, weapon);
+  }
+
+  /**
+   * Roll damage for a flame weapon and post to chat. No attack roll needed.
+   * GM uses the Flame Attack macro to apply damage to individual targets.
+   * @param {Object} actor - Actor document
+   * @param {Object} weapon - Weapon item
+   */
+  /* istanbul ignore next */
+  static async _flameWeaponRoll(actor, weapon) {
+    const dmg = weapon.system.effectiveDamage || weapon.system.dmg;
+    if (!dmg) return FoundryAdapter.showNotification('warn', 'This weapon has no damage value.');
+
+    const penetration = weapon.system.effectivePenetration ?? weapon.system.penetration ?? 0;
+    const dmgType = weapon.system.dmgType || 'Energy';
+    const range = weapon.system.effectiveRange || weapon.system.range || '—';
+
+    const roll = await FoundryAdapter.evaluateRoll(dmg);
+    const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD25 ${weapon.name}</strong><br><strong>Range:</strong> ${range}m | <strong>Damage:</strong> ${roll.total} | <strong>Pen:</strong> ${penetration} | <strong>Type:</strong> ${dmgType}<br><em>No attack roll — all targets in 30° cone must test Agility to dodge. Use \uD83D\uDD25 Flame Attack macro to apply damage per target.</em>`;
+
+    const speaker = FoundryAdapter.getChatSpeaker(actor);
+    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
   }
 
   static determineHitLocation(attackRoll) {

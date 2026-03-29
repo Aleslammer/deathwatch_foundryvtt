@@ -45,6 +45,7 @@ tests/
 │   ├── critical-effects.test.mjs
 │   ├── force-weapon-channeling.test.mjs
 │   ├── psychic-combat.test.mjs
+│   ├── fire-helper.test.mjs
 │   ├── gyro-stabilised.test.mjs
 │   ├── lightning-claws.test.mjs
 │   ├── melta.test.mjs

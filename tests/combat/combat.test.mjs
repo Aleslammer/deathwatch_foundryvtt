@@ -408,6 +408,56 @@ describe('CombatHelper', () => {
     });
   });
 
+  describe('getWeaponAttackType', () => {
+    beforeEach(() => {
+      const mockPack = {
+        getDocument: jest.fn(async (id) => {
+          const docs = {
+            'flame': { system: { key: 'flame' } },
+            'tearing': { system: { key: 'tearing' } }
+          };
+          return docs[id] || null;
+        })
+      };
+      global.game.packs = new Map([['deathwatch.weapon-qualities', mockPack]]);
+    });
+
+    it('returns melee for melee weapons', async () => {
+      const weapon = { system: { class: 'Melee', attachedQualities: [] } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('melee');
+    });
+
+    it('returns melee case-insensitive', async () => {
+      const weapon = { system: { class: 'MELEE', attachedQualities: [] } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('melee');
+    });
+
+    it('returns flame for weapons with flame quality', async () => {
+      const weapon = { system: { class: 'Basic', attachedQualities: [{ id: 'flame' }] } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('flame');
+    });
+
+    it('returns ranged for normal ranged weapons', async () => {
+      const weapon = { system: { class: 'Basic', attachedQualities: [{ id: 'tearing' }] } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('ranged');
+    });
+
+    it('returns ranged for weapons without class', async () => {
+      const weapon = { system: { attachedQualities: [] } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('ranged');
+    });
+
+    it('returns ranged for weapons with no qualities', async () => {
+      const weapon = { system: { class: 'Pistol' } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('ranged');
+    });
+
+    it('melee takes priority over flame', async () => {
+      const weapon = { system: { class: 'Melee', attachedQualities: [{ id: 'flame' }] } };
+      expect(await CombatHelper.getWeaponAttackType(weapon)).toBe('melee');
+    });
+  });
+
   describe('static properties', () => {
     it('initializes lastAttackRoll as null', () => {
       expect(CombatHelper.lastAttackRoll).toBeNull();
