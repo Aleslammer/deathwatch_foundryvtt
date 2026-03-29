@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { ModifierCollector } from '../../src/module/helpers/modifier-collector.mjs';
+import { ModifierCollector } from '../../src/module/helpers/character/modifier-collector.mjs';
 
 describe('ModifierCollector - Characteristic Damage', () => {
   beforeEach(() => {

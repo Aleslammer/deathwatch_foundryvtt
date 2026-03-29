@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { RighteousFuryHelper } from '../../src/module/helpers/righteous-fury-helper.mjs';
-import { CombatHelper } from '../../src/module/helpers/combat.mjs';
+import { RighteousFuryHelper } from '../../src/module/helpers/combat/righteous-fury-helper.mjs';
+import { CombatHelper } from '../../src/module/helpers/combat/combat.mjs';
 
 describe('Righteous Fury Threshold', () => {
   describe('RighteousFuryHelper.hasNaturalTen', () => {

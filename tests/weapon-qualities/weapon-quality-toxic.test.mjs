@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { CombatDialogHelper } from '../../src/module/helpers/combat-dialog.mjs';
+import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
 
 describe('Toxic Weapon Quality', () => {
   describe('buildDamageMessage', () => {

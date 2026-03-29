@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { RighteousFuryHelper } from '../../src/module/helpers/righteous-fury-helper.mjs';
+import { RighteousFuryHelper } from '../../src/module/helpers/combat/righteous-fury-helper.mjs';
 import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
 
 describe('RighteousFuryHelper', () => {

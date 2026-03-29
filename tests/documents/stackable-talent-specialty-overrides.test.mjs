@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { DeathwatchActor } from '../../src/module/documents/actor.mjs';
 import DeathwatchCharacter from '../../src/module/data/actor/character.mjs';
-import { XPCalculator } from '../../src/module/helpers/xp-calculator.mjs';
+import { XPCalculator } from '../../src/module/helpers/character/xp-calculator.mjs';
 
 function prepareCharacterData(actor) {
   const model = new DeathwatchCharacter();

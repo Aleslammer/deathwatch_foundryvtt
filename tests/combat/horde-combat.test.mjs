@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { HordeCombatHelper } from '../../src/module/helpers/horde-combat.mjs';
+import { HordeCombatHelper } from '../../src/module/helpers/combat/horde-combat.mjs';
 
 describe('HordeCombatHelper', () => {
 
@@ -68,6 +68,24 @@ describe('HordeCombatHelper', () => {
 
       it('Power Field adds 1 even with 0 DoS', () => {
         expect(HordeCombatHelper.calculateHordeHits({ isMelee: true, degreesOfSuccess: 0, hasPowerField: true })).toBe(2);
+      });
+    });
+
+    describe('Psychic powers', () => {
+      it('hits equal to effective PR', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 5 })).toBe(5);
+      });
+
+      it('PR 0 gives 0 hits', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 0 })).toBe(0);
+      });
+
+      it('high PR gives many hits', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 11 })).toBe(11);
+      });
+
+      it('ignores blast/flame/melee options', () => {
+        expect(HordeCombatHelper.calculateHordeHits({ isPsychic: true, effectivePR: 5, blastValue: 10, isFlame: true, isMelee: true })).toBe(5);
       });
     });
 

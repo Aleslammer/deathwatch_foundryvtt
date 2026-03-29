@@ -1,5 +1,5 @@
-import { debug } from "./debug.mjs";
-import { CHARACTERISTIC_CONSTANTS } from './constants.mjs';
+import { debug } from "../debug.mjs";
+import { CHARACTERISTIC_CONSTANTS } from '../constants.mjs';
 
 export class ModifierCollector {
   static collectAllModifiers(actor) {

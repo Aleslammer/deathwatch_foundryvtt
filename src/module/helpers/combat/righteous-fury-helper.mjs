@@ -1,5 +1,5 @@
-import { FoundryAdapter } from "./foundry-adapter.mjs";
-import { ChatMessageBuilder } from "./chat-message-builder.mjs";
+import { FoundryAdapter } from "../foundry-adapter.mjs";
+import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";
 
 export class RighteousFuryHelper {
   static hasNaturalTen(roll, furyThreshold = 10) {

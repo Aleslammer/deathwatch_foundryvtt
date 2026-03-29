@@ -26,8 +26,15 @@ export class HordeCombatHelper {
       isMelee = false,
       degreesOfSuccess = 0,
       hasPowerField = false,
-      baseHits = 1
+      baseHits = 1,
+      isPsychic = false,
+      effectivePR = 0
     } = options;
+
+    // Psychic powers: hits = effective PR
+    if (isPsychic) {
+      return Math.max(0, effectivePR);
+    }
 
     // Blast weapons hit a number of times equal to Blast value
     if (blastValue > 0) {

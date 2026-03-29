@@ -22,6 +22,18 @@
         <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">XP Cost:</label>
         <input type="number" name="system.cost" value="{{system.cost}}" placeholder="0" data-dtype="Number" style="margin-top: 2px; width: 100px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Damage:</label>
+        <input type="text" name="system.damageFormula" value="{{system.damageFormula}}" placeholder="e.g., 1d10*PR" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Penetration:</label>
+        <input type="text" name="system.penetrationFormula" value="{{system.penetrationFormula}}" placeholder="e.g., PR, 2*PR" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 80px;">Dmg Type:</label>
+        <input type="text" name="system.damageType" value="{{system.damageType}}" placeholder="e.g., Energy, Impact" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
     </div>
     {{#if system.chapterImg}}
     <img class="chapter-img" src="{{system.chapterImg}}" title="Chapter" height="60" width="60" style="position: absolute; bottom: 8px; left: 8px; border: 2px solid rgba(255,255,255,0.5); border-radius: 4px;" />

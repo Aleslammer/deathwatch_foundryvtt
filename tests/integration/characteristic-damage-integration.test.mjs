@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { CombatHelper } from '../../src/module/helpers/combat.mjs';
+import { CombatHelper } from '../../src/module/helpers/combat/combat.mjs';
 
 describe('Characteristic Damage Integration', () => {
   let mockActor, mockWeapon, mockAmmo;

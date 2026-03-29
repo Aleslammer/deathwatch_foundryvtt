@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { CombatDialogHelper } from '../../src/module/helpers/combat-dialog.mjs';
-import { ChatMessageBuilder } from '../../src/module/helpers/chat-message-builder.mjs';
+import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
+import { ChatMessageBuilder } from '../../src/module/helpers/ui/chat-message-builder.mjs';
 
 describe('Force Weapon Channeling', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { WeaponQualityHelper } from '../../src/module/helpers/weapon-quality-helper.mjs';
+import { WeaponQualityHelper } from '../../src/module/helpers/combat/weapon-quality-helper.mjs';
 
 describe('Living Ammunition Weapon Quality', () => {
   beforeEach(() => {
