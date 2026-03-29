@@ -5,14 +5,10 @@ to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
-cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
-TODO: Weapon Quality Flame  
-    Has an entirely new attack dynamic PG 142 core rule book.   You dont make a BS test
 
 Traits
-    TODO: if a target has a trait size can we auto apply modifier?
     TODO: review traits if they need modifiers
 
 Talents
@@ -47,72 +43,49 @@ Enemies:
         Add images
         Additional Ork profiles, rules, and equipment can be found in creatures anatheMa, a supplement for Dark heresy, and Into the storM, a rogue traDer supplement. 
         These additional sources for information can be very valuable for a GM who wants to involve Orks more heavily in his Deathwatch campaign.
-        
-    
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects    
 
 Hordes
-    TODO: Update to support psychic attacks (pg 360)    
 
 Psychic Combat
-    TODO: we have no combat system for psychic Powers
-        Perils etc...
-    TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 Combat:
-    TODO: we need to alter Flame damage.   There is no "Hit" component like BS and WS.....
 
-bIG MEK WURRZOG
+Gretchen
 
-Book: Mark of the Xenos
-Page: 59
+Book: Dark Heresy: Creatures Anathema
+Page: 100
 
-Descrption: Some Orks possess a natural gift for engineering and 
-tinkering with technology. These Orks are known as Meks or 
-Mekaniaks, and it is they who build, modify, and maintain the 
-machines and weapons of the greenskin race. Meks are often 
-obsessed with creating ever more elaborate and powerful 
-machines of war to unleash upon the enemy.
-Some particularly visionary Meks gather a number of 
-acolytes, followers, and other Meks under their authority. 
-These Orks become known as Big Meks, and they are true 
-masters of Orky technology. Big Mek Wurrzog is one such 
-Ork, and he has gathered a small warband around him and 
-his workshop, located somewhere in the Slinnar Drift region 
-of the Jericho Reach. 
-Wurrzog has a fascination with the technology of the Tau 
-Empire, and his band of Orks has made a number of raids 
-against the Velk’han Sept. The Big Mek has, in fact, crafted a 
-special “kustom” force field by looting one of the Tau Shield 
-Drones and modifying it (often by applying various whacks 
-with his wrench). He keeps the drone on a chained tether 
-to keep its protection for himself. Wurrzog has somehow 
-discovered the presence of a number of Deathwatch Watch 
-Stations, and he is currently planning a particularly “kunning” 
-raid to try and capture some of the Deathwatch’s esoteric 
-wargear for his own purposes.
+Descrption: Amongst the most numerous of all the greenskins are the 
+sub–race called Gretchin or Grots. Weak–willed, weak
+limbed, wretched little creatures, Gretchin serve little purpose 
+amongst other Orks than to be bullied, cajoled, and exploited. 
+They serve their Ork masters with as good grace as they can 
+muster, scuttling about and doing what they are told out of 
+fear and awe.
+Gretchin are much smaller than their orkish cousins, 
+standing a little under half their height. In many ways, they 
+are similar to Orks in physiology, if not physique. Their heads 
+are bald and bulging, adorned with wide ears and jaws filled 
+with sharp, pointy teeth rather than huge tusks.
+Gretchin have a keen sense of self–preservation. This 
+can take many forms, from hiding and running, to running 
+and hiding. They have a low cunning and are sneaky to the 
+extreme, often reasoning that if they are going to have to stab 
+an enemy, it might as well be in the back.
+Any encounter with Orks is likely to include Gretchin 
+too, as these put–upon slaves and servants accompany their 
+masters to war. Gretchin do the carrying, fetching, and 
+guarding whilst their masters get on with the real business 
+of war.
 
 Ws Bs s T ag int Per WP fel
-45 20 45 45 33 43 35 30 25
-Wounds: 55
-Skills: Awareness, Command (Fel) +10, Demolitions (Int) +20, Intimidate (S) +20, Security (Int) +10, Tech-Use (Int) +20.
-Talents: Basic Weapon Training (Primitive, SP), Bulging Biceps, Crushing Blow, Exotic Weapon Proficiency (Any Ork Weapon), Furious Assault, Hardy, Iron Jaw, Lightning Attack, Melee Weapon Training (Chain, Primitive), Pistol Weapon Training (Primitive, SP), Swift Attack, Street Fighting,  True Grit.
-Traits: Brutal Charge, Fear (2), Make It Work, Might Makes Right, Mob Rule, Size (Hulking), Sturdy, Unnatural Strength (x2) Unnatural Toughness (x2)
-Armour: ‘Eavy armour (Body 6, Arms and Legs 4, Head 6)
-Weapons: Kustom mega-blasta (40m; S/–/–; 1d10+18 E; Pen 9; Reload Full; Overheat, Inaccurate, Recharge, Unreliable), Slugga (20m; S/3/–; 1d10+9 I; Pen 2; Clip 18; Reload Full; Inaccurate, Unreliable), ‘uge orky wrench (1d10+15 R; Pen 2; Concussive, Unbalanced).
-Gear: Speshul Force Field (see sidebar below), set of brutishly effective tools, 30 Ork Teeth (“teef ”), lots of shiny bitz, six oil cans.
-
-Special Abilities:
-wurrzog’s speshul ForCe FIeld
-Wurrzog built this device from a looted Tau Shield Drone 
-he keeps attached to a thick chain. The Drone wobbles 
-a lot more since being “looted,” but its power output 
-has been modified by Wurrzog’s tinkering. This device 
-follows the rules for Force Fields (see page 166 in the 
-Deathwatch Rulebook) with a strength of 35, but also 
-provides the same benefit to other Orks or Ork vehicles 
-within 15 metres. The Speshul Force Field does not work 
-against melee attacks, and overloads on a roll of 01–05.
+18 34 18 19 36 33 37 22 24
+Wounds: 7
+Skills: Concealment (Ag), Dodge (Ag), Search (Int), Shadowing (Ag), Silent Move (Ag).
+Talents: Basic Weapon Training (Primitive, SP), Heightened Senses (Hearing), Melee Weapon Training (Primitive), Pistol Weapon Training (Primitive). 
+Traits: Mob Rule, Size (Scrawny), Unnatural Toughness (x2).
+Weapons: Slugga, sneaky boot knife (1d5+1 R; Primitive).
