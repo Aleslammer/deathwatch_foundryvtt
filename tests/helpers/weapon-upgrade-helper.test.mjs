@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { WeaponUpgradeHelper } from '../../src/module/helpers/weapon-upgrade-helper.mjs';
+import { WeaponUpgradeHelper } from '../../src/module/helpers/combat/weapon-upgrade-helper.mjs';
 
 describe('WeaponUpgradeHelper', () => {
   beforeEach(() => {

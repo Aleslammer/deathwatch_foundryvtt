@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { preloadHandlebarsTemplates } from '../../src/module/helpers/templates.mjs';
+import { preloadHandlebarsTemplates } from '../../src/module/helpers/ui/templates.mjs';
 
 describe('Templates', () => {
   let loadTemplatesMock;

@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { WeaponQualityHelper } from '../../src/module/helpers/weapon-quality-helper.mjs';
-import { CombatDialogHelper } from '../../src/module/helpers/combat-dialog.mjs';
+import { WeaponQualityHelper } from '../../src/module/helpers/combat/weapon-quality-helper.mjs';
+import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
 
 describe('Lightning Claws', () => {
   beforeEach(() => {

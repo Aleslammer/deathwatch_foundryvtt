@@ -19,6 +19,9 @@ export default class DeathwatchPsychicPower extends DeathwatchItemBase {
     schema.cost = new fields.NumberField({ initial: 0, min: 0, integer: true });
     schema.class = new fields.StringField({ initial: "", blank: true });
     schema.chapterImg = new fields.StringField({ initial: "", blank: true });
+    schema.damageFormula = new fields.StringField({ initial: "", blank: true });
+    schema.penetrationFormula = new fields.StringField({ initial: "", blank: true });
+    schema.damageType = new fields.StringField({ initial: "", blank: true });
     return schema;
   }
 }

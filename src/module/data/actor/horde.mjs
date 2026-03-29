@@ -1,5 +1,5 @@
 import DeathwatchEnemy from './enemy.mjs';
-import { HordeCombatHelper } from '../../helpers/horde-combat.mjs';
+import { HordeCombatHelper } from '../../helpers/combat/horde-combat.mjs';
 import { FoundryAdapter } from '../../helpers/foundry-adapter.mjs';
 
 const { fields } = foundry.data;

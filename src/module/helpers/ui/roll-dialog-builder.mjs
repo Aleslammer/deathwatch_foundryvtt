@@ -1,4 +1,4 @@
-import { DWConfig } from "./config.mjs";
+import { DWConfig } from "../config.mjs";
 
 export class RollDialogBuilder {
   static buildModifierDialog() {

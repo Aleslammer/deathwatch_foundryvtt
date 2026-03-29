@@ -7,14 +7,16 @@ import * as models from './data/_module.mjs';
 import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
 import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
 // Import helper/utility classes and constants.
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
+import { preloadHandlebarsTemplates } from "./helpers/ui/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
-import { initializeHandlebars } from "./helpers/handlebars.js";
-import { CombatHelper } from "./helpers/combat.mjs";
-import { CriticalEffectsHelper } from "./helpers/critical-effects.mjs";
+import { initializeHandlebars } from "./helpers/ui/handlebars.js";
+import { CombatHelper } from "./helpers/combat/combat.mjs";
+import { PsychicCombatHelper } from "./helpers/combat/psychic-combat.mjs";
+import { CriticalEffectsHelper } from "./helpers/combat/critical-effects.mjs";
 import { InitiativeHelper } from "./helpers/initiative.mjs";
-import { SkillLoader } from "./helpers/skill-loader.mjs";
+import { SkillLoader } from "./helpers/character/skill-loader.mjs";
 import { DW_STATUS_EFFECTS } from "./helpers/status-effects.mjs";
+import { FireHelper } from "./helpers/combat/fire-helper.mjs";
 
 
 /* -------------------------------------------- */
@@ -31,7 +33,9 @@ Hooks.once('init', async function () {
     game.deathwatch = {
         DeathwatchActor,
         DeathwatchItem,
-        rollItemMacro
+        rollItemMacro,
+        flameAttack,
+        applyOnFireEffects
     };
 
     // Add custom constants for configuration.
@@ -135,6 +139,28 @@ Hooks.once('init', async function () {
         }
     });
 
+    // Check for On Fire condition when combat turn advances
+    Hooks.on('updateCombat', async (combat, changed) => {
+        if (!game.user.isGM) return;
+        if (!("turn" in changed) && !("round" in changed)) return;
+        const combatant = combat.combatants.get(combat.current.combatantId);
+        if (!combatant?.actor?.hasCondition?.('on-fire')) return;
+
+        const actor = combatant.actor;
+        new Dialog({
+            title: `\uD83D\uDD25 ${actor.name} is On Fire!`,
+            content: `<p><strong>${actor.name}</strong> is On Fire! Apply fire damage and effects?</p>`,
+            buttons: {
+                apply: {
+                    label: '\uD83D\uDD25 Apply Fire',
+                    callback: () => applyOnFireEffects(actor)
+                },
+                skip: { label: 'Skip' }
+            },
+            default: 'apply'
+        }).render(true);
+    });
+
     // Auto-assign enemy/horde actors to an "Enemies" folder
     Hooks.on('createActor', async (actor, options, userId) => {
         if (game.user.id !== userId) return;
@@ -169,24 +195,53 @@ Hooks.once('ready', async function () {
         if (config.skipDefeated === undefined) {
             game.settings.set("core", "combatTrackerConfig", { ...config, skipDefeated: true });
         }
+
+        // Auto-create Flame Attack macro for GM
+        const flameMacroCommand = 'game.deathwatch.flameAttack();';
+        const existingFlame = game.macros.find(m => m.name === '🔥 Flame Attack' && m.command === flameMacroCommand);
+        if (!existingFlame) {
+            await Macro.create({
+                name: '🔥 Flame Attack',
+                type: 'script',
+                img: 'icons/svg/fire.svg',
+                command: flameMacroCommand,
+                flags: { 'deathwatch.systemMacro': true }
+            });
+        }
+        // Auto-create On Fire macro for GM
+        const onFireMacroCommand = 'const t = game.user.targets.first()?.actor; if (t) game.deathwatch.applyOnFireEffects(t); else ui.notifications.warn("Target a token first.");';
+        const existingOnFire = game.macros.find(m => m.name === '\uD83D\uDD25 On Fire Round' && m.flags?.deathwatch?.systemMacro);
+        if (!existingOnFire) {
+            await Macro.create({
+                name: '\uD83D\uDD25 On Fire Round',
+                type: 'script',
+                img: 'icons/svg/fire.svg',
+                command: onFireMacroCommand,
+                flags: { 'deathwatch.systemMacro': true }
+            });
+        }
     }
 });
 
-Hooks.on('renderChatMessage', (message, html) => {
-    /**
-     * Resolve an actor from button data. For unlinked tokens, resolves the
-     * synthetic token actor so damage is applied to the token, not the base actor.
-     */
-    function resolveActor(button, actorIdAttr = 'targetId') {
-        const sceneId = button.data('sceneId');
-        const tokenId = button.data('tokenId');
-        if (sceneId && tokenId) {
-            const tokenDoc = game.scenes.get(sceneId)?.tokens.get(tokenId);
-            if (tokenDoc?.actor) return tokenDoc.actor;
-        }
-        const actorId = button.data(actorIdAttr);
-        return actorId ? game.actors.get(actorId) : null;
+/**
+ * Resolve an actor from button data. For unlinked tokens, resolves the
+ * synthetic token actor so damage is applied to the token, not the base actor.
+ * @param {jQuery} button - The clicked button element
+ * @param {string} [actorIdAttr='targetId'] - Data attribute name for actor ID
+ * @returns {Actor|null}
+ */
+function resolveActor(button, actorIdAttr = 'targetId') {
+    const sceneId = button.data('sceneId');
+    const tokenId = button.data('tokenId');
+    if (sceneId && tokenId) {
+        const tokenDoc = game.scenes.get(sceneId)?.tokens.get(tokenId);
+        if (tokenDoc?.actor) return tokenDoc.actor;
     }
+    const actorId = button.data(actorIdAttr);
+    return actorId ? game.actors.get(actorId) : null;
+}
+
+Hooks.on('renderChatMessage', (message, html) => {
 
     html.find('.apply-damage-btn').click(async (ev) => {
         const button = $(ev.currentTarget);
@@ -407,8 +462,322 @@ Hooks.on('renderChatMessage', (message, html) => {
         
         await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
     });
+
+    html.find('.extinguish-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const actor = resolveActor(button, 'actorId');
+        if (!actor) {
+            ui.notifications.warn('Actor not found!');
+            return;
+        }
+
+        const ag = actor.system.characteristics?.ag?.value || 0;
+        const content = `
+          <div style="margin-bottom: 8px;"><strong>Extinguish Attempt: ${actor.name}</strong></div>
+          <div class="form-group">
+            <label>AG: ${ag} | Base Target: ${ag - 20} (Hard \u221220)</label>
+          </div>
+          <div class="form-group">
+            <label>Misc Modifier:</label>
+            <input type="number" id="extinguishMod" value="0" style="width: 60px;" />
+          </div>
+        `;
+
+        new Dialog({
+            title: `\uD83D\uDD25 Extinguish: ${actor.name}`,
+            content,
+            buttons: {
+                roll: {
+                    label: 'Roll',
+                    callback: async (html) => {
+                        const miscMod = parseInt(html.find('#extinguishMod').val()) || 0;
+                        const roll = await new Roll('1d100').evaluate();
+                        const result = FireHelper.resolveExtinguishTest(ag, roll.total, miscMod);
+                        const flavor = FireHelper.buildExtinguishFlavor(actor.name, ag, roll.total, result, miscMod);
+
+                        if (result.success) {
+                            await actor.setCondition('on-fire', false);
+                        }
+
+                        await roll.toMessage({
+                            speaker: ChatMessage.getSpeaker({ actor }),
+                            flavor,
+                            rollMode: game.settings.get('core', 'rollMode')
+                        });
+                    }
+                },
+                cancel: { label: 'Cancel' }
+            },
+            default: 'roll'
+        }).render(true);
+    });
+
+    html.find('.psychic-oppose-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const powerName = button.data('powerName');
+        const psykerDoS = parseInt(button.data('psykerDos')) || 0;
+        const targetName = button.data('targetName') || 'Target';
+        const targetWP = parseInt(button.data('targetWp')) || 0;
+        const targetId = button.data('targetId');
+        const sceneId = button.data('sceneId');
+        const tokenId = button.data('tokenId');
+
+        const target = (sceneId && tokenId)
+            ? game.scenes.get(sceneId)?.tokens.get(tokenId)?.actor
+            : (targetId ? game.actors.get(targetId) : null);
+
+        const content = `
+          <div style="margin-bottom: 8px;"><strong>Opposed Willpower Test: ${targetName}</strong></div>
+          <div class="form-group">
+            <label>Target WP:</label>
+            <input type="number" id="opposeTargetWP" value="${targetWP}" style="width: 60px;" />
+          </div>
+          <div class="form-group">
+            <label>Misc Modifier:</label>
+            <input type="number" id="opposeMiscMod" value="0" style="width: 60px;" />
+          </div>
+          <div class="form-group">
+            <label>Manual Roll (leave blank to auto-roll):</label>
+            <input type="number" id="opposeManualRoll" min="1" max="100" placeholder="Auto" style="width: 60px;" />
+          </div>
+        `;
+
+        new Dialog({
+            title: `Opposed Test: ${powerName}`,
+            content,
+            buttons: {
+                resolve: {
+                    label: "Resolve",
+                    callback: async (html) => {
+                        const wp = parseInt(html.find('#opposeTargetWP').val()) || 0;
+                        const miscMod = parseInt(html.find('#opposeMiscMod').val()) || 0;
+                        const manualRoll = html.find('#opposeManualRoll').val();
+
+                        let targetRoll;
+                        let rollObj = null;
+                        if (manualRoll && manualRoll.trim() !== '') {
+                            targetRoll = parseInt(manualRoll);
+                        } else {
+                            rollObj = await new Roll('1d100').evaluate();
+                            targetRoll = rollObj.total;
+                        }
+
+                        const result = PsychicCombatHelper.resolveOpposedTest(psykerDoS, wp, targetRoll, miscMod);
+                        const msg = PsychicCombatHelper.buildOpposedResultMessage(targetName, wp, targetRoll, result, powerName, psykerDoS);
+
+                        if (rollObj) {
+                            await rollObj.toMessage({
+                                speaker: ChatMessage.getSpeaker({ actor: target }),
+                                flavor: msg,
+                                rollMode: game.settings.get('core', 'rollMode')
+                            });
+                        } else {
+                            await ChatMessage.create({
+                                content: msg + `<br><em>(Manual roll: ${targetRoll})</em>`,
+                                speaker: ChatMessage.getSpeaker({ actor: target })
+                            });
+                        }
+                    }
+                },
+                cancel: { label: "Cancel" }
+            },
+            default: "resolve"
+        }).render(true);
+    });
 });
 
+
+/* -------------------------------------------- */
+/*  On Fire Effects                             */
+/* -------------------------------------------- */
+
+/**
+ * Apply On Fire effects to an actor: 1d10 Energy damage (ignores armor),
+ * +1 Fatigue, Willpower test to act normally, and extinguish button.
+ * @param {Object} actor - Actor document
+ */
+async function applyOnFireEffects(actor) {
+    const name = actor.name;
+    const speaker = ChatMessage.getSpeaker({ actor });
+
+    // Resolve token info for unlinked token support
+    const token = actor.getActiveTokens?.()?.[0];
+    const sceneId = token?.document?.parent?.id || '';
+    const tokenId = token?.document?.id || '';
+
+    // 1d10 Energy damage to Body (ignores armor)
+    const damageRoll = await new Roll('1d10').evaluate();
+    const damage = damageRoll.total;
+    const currentWounds = actor.system.wounds?.value || 0;
+    const maxWounds = actor.system.wounds?.max || 0;
+    await actor.update({ 'system.wounds.value': currentWounds + damage });
+
+    // +1 Fatigue
+    const currentFatigue = actor.system.fatigue?.value || 0;
+    const newFatigue = currentFatigue + 1;
+    await actor.update({ 'system.fatigue.value': newFatigue });
+
+    // Willpower test
+    const wp = actor.system.characteristics?.wil?.value || 0;
+    let wpResult;
+    if (FireHelper.hasPowerArmor(actor)) {
+        wpResult = { autoPass: true };
+    } else {
+        const wpRoll = await new Roll('1d100').evaluate();
+        wpResult = { roll: wpRoll.total, success: wpRoll.total <= wp, wp };
+    }
+
+    const content = FireHelper.buildOnFireMessage(name, damage, currentWounds, maxWounds, newFatigue, wpResult, actor.id, sceneId, tokenId);
+    await ChatMessage.create({ content, speaker });
+}
+
+/* -------------------------------------------- */
+/*  Flame Attack Macro                          */
+/* -------------------------------------------- */
+
+/**
+ * GM macro for flame weapon attacks. Opens a dialog for damage/pen,
+ * GM targets a token and clicks Burn. Applies damage, rolls catch fire
+ * Agility test, and applies On Fire status if failed.
+ */
+async function flameAttack() {
+    const content = `
+      <div class="form-group">
+        <label>Damage:</label>
+        <input type="text" id="flameDamage" placeholder="e.g., 1d10+4" />
+      </div>
+      <div class="form-group">
+        <label>Penetration:</label>
+        <input type="number" id="flamePen" value="0" />
+      </div>
+      <div class="form-group">
+        <label>Damage Type:</label>
+        <input type="text" id="flameDmgType" value="Energy" />
+      </div>
+      <div class="form-group">
+        <label>Weapon Range (m):</label>
+        <input type="number" id="flameRange" value="20" min="1" />
+      </div>
+    `;
+
+    new Dialog({
+        title: '\uD83D\uDD25 Flame Attack',
+        content,
+        buttons: {
+            burn: {
+                label: '\uD83D\uDD25 Burn',
+                callback: async (html) => {
+                    const damageFormula = html.find('#flameDamage').val()?.trim();
+                    if (!damageFormula) {
+                        ui.notifications.warn('Enter a damage formula.');
+                        return;
+                    }
+                    const penetration = parseInt(html.find('#flamePen').val()) || 0;
+                    const damageType = html.find('#flameDmgType').val()?.trim() || 'Energy';
+                    const weaponRange = parseInt(html.find('#flameRange').val()) || 20;
+
+                    const targetToken = game.user.targets.first();
+                    if (!targetToken?.actor) {
+                        ui.notifications.warn('Target a token before clicking Burn.');
+                        return;
+                    }
+                    const targetActor = targetToken.actor;
+                    const targetName = targetActor.name;
+                    const isHorde = targetActor.type === 'horde';
+
+                    if (isHorde) {
+                        // Horde: ceil(range/4) + 1d5 hits, each rolled separately
+                        const staticHits = Math.ceil(weaponRange / 4);
+                        const flameRoll = await new Roll('1d5').evaluate();
+                        const totalHits = staticHits + flameRoll.total;
+
+                        await flameRoll.toMessage({
+                            speaker: ChatMessage.getSpeaker(),
+                            flavor: `<strong>\uD83D\uDD25 Flame vs Horde: ${targetName}</strong><br>Hits: ${staticHits} (range ${weaponRange}/4) + ${flameRoll.total} (1d5) = <strong>${totalHits} hits</strong>`
+                        });
+
+                        const hordeHitResults = [];
+                        for (let i = 0; i < totalHits; i++) {
+                            const roll = await new Roll(damageFormula).evaluate();
+                            hordeHitResults.push({ damage: roll.total, penetration, location: 'Body', damageType });
+                        }
+                        await targetActor.system.receiveBatchDamage(hordeHitResults);
+                    } else {
+                        // Individual target: Agility dodge test first
+                        const ag = targetActor.system.characteristics?.ag?.value || 0;
+
+                        const dodgeContent = `
+                          <div style="margin-bottom: 8px;"><strong>\uD83D\uDD25 Dodge Flame: ${targetName}</strong></div>
+                          <div class="form-group">
+                            <label>AG: ${ag}</label>
+                          </div>
+                          <div class="form-group">
+                            <label>Misc Modifier:</label>
+                            <input type="number" id="dodgeMod" value="0" style="width: 60px;" />
+                          </div>
+                        `;
+
+                        new Dialog({
+                            title: `\uD83D\uDD25 Dodge Flame: ${targetName}`,
+                            content: dodgeContent,
+                            buttons: {
+                                roll: {
+                                    label: 'Roll Dodge',
+                                    callback: async (dodgeHtml) => {
+                                        const dodgeMod = parseInt(dodgeHtml.find('#dodgeMod').val()) || 0;
+                                        const dodgeRoll = await new Roll('1d100').evaluate();
+                                        const dodgeResult = FireHelper.resolveDodgeFlameTest(ag, dodgeRoll.total, dodgeMod);
+                                        const dodgeFlavor = FireHelper.buildDodgeFlameFlavor(targetName, ag, dodgeResult, dodgeMod);
+
+                                        await dodgeRoll.toMessage({
+                                            speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+                                            flavor: dodgeFlavor,
+                                            rollMode: game.settings.get('core', 'rollMode')
+                                        });
+
+                                        if (!dodgeResult.success) {
+                                            // Apply damage
+                                            const damageRoll = await new Roll(damageFormula).evaluate();
+                                            const damage = damageRoll.total;
+                                            const locRoll = await new Roll('1d100').evaluate();
+                                            const location = CombatHelper.determineHitLocation(locRoll.total);
+
+                                            await CombatHelper.applyDamage(targetActor, {
+                                                damage, penetration, location, damageType,
+                                                felling: 0, isPrimitive: false, isRazorSharp: false,
+                                                degreesOfSuccess: 0, isScatter: false, isLongOrExtremeRange: false,
+                                                isShocking: false, isToxic: false, isMeltaRange: false
+                                            });
+
+                                            // Catch Fire test
+                                            const catchFireRoll = await new Roll('1d100').evaluate();
+                                            const catchResult = FireHelper.resolveCatchFireTest(ag, catchFireRoll.total);
+                                            const catchFlavor = FireHelper.buildCatchFireFlavor(targetName, ag, catchResult);
+
+                                            if (!catchResult.success) {
+                                                await targetActor.setCondition('on-fire', true);
+                                            }
+
+                                            await catchFireRoll.toMessage({
+                                                speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+                                                flavor: catchFlavor,
+                                                rollMode: game.settings.get('core', 'rollMode')
+                                            });
+                                        }
+                                    }
+                                },
+                                cancel: { label: 'Cancel' }
+                            },
+                            default: 'roll'
+                        }).render(true);
+                    }
+                }
+            },
+            cancel: { label: 'Cancel' }
+        },
+        default: 'burn'
+    }).render(true);
+}
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */

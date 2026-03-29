@@ -1,4 +1,4 @@
-import { XP_CONSTANTS } from './constants.mjs';
+import { XP_CONSTANTS } from '../constants.mjs';
 
 /**
  * XP calculation utilities for character progression

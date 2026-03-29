@@ -1,4 +1,4 @@
-import { ModifierHelper } from "../helpers/modifiers.mjs";
+import { ModifierHelper } from "../helpers/character/modifiers.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications

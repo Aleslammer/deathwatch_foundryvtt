@@ -62,6 +62,8 @@ Psychic Combat
         Perils etc...
     TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
+Combat:
+    TODO: we need to alter Flame damage.   There is no "Hit" component like BS and WS.....
 
 bIG MEK WURRZOG
 

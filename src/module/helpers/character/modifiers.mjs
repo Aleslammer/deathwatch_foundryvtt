@@ -1,5 +1,5 @@
-import { DWConfig } from "./config.mjs";
-import { CHARACTERISTICS, CHARACTERISTIC_LABELS, MODIFIER_TYPES, EFFECT_TYPES, EFFECT_TYPE_LABELS } from "./constants.mjs";
+import { DWConfig } from "../config.mjs";
+import { CHARACTERISTICS, CHARACTERISTIC_LABELS, MODIFIER_TYPES, EFFECT_TYPES, EFFECT_TYPE_LABELS } from "../constants.mjs";
 
 // Effect types that don't need a valueAffected field
 const NO_VALUE_AFFECTED = new Set([

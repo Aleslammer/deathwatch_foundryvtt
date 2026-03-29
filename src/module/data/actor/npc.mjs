@@ -1,6 +1,6 @@
 import DeathwatchActorBase from './base-actor.mjs';
-import { ModifierCollector } from '../../helpers/modifier-collector.mjs';
-import { SkillLoader } from '../../helpers/skill-loader.mjs';
+import { ModifierCollector } from '../../helpers/character/modifier-collector.mjs';
+import { SkillLoader } from '../../helpers/character/skill-loader.mjs';
 
 const { fields } = foundry.data;
 

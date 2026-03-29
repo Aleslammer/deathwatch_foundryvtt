@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { WoundHelper } from '../../src/module/helpers/wound-helper.mjs';
+import { WoundHelper } from '../../src/module/helpers/character/wound-helper.mjs';
 
 describe('WoundHelper', () => {
   beforeEach(() => {

@@ -57,7 +57,9 @@ export const EFFECT_TYPES = {
   CHARACTERISTIC_DAMAGE: 'characteristic-damage',
   MAGNITUDE_BONUS_DAMAGE: 'magnitude-bonus-damage',
   PREMATURE_DETONATION: 'premature-detonation',
-  IGNORES_NATURAL_ARMOUR: 'ignores-natural-armour'
+  IGNORES_NATURAL_ARMOUR: 'ignores-natural-armour',
+  PSYCHIC_TEST: 'psychic-test',
+  NO_PERILS: 'no-perils'
 };
 
 // Effect type labels for UI display
@@ -85,7 +87,9 @@ export const EFFECT_TYPE_LABELS = {
   [EFFECT_TYPES.CHARACTERISTIC_DAMAGE]: 'Characteristic Damage',
   [EFFECT_TYPES.MAGNITUDE_BONUS_DAMAGE]: 'Magnitude Bonus Damage',
   [EFFECT_TYPES.PREMATURE_DETONATION]: 'Premature Detonation',
-  [EFFECT_TYPES.IGNORES_NATURAL_ARMOUR]: 'Ignores Natural Armour'
+  [EFFECT_TYPES.IGNORES_NATURAL_ARMOUR]: 'Ignores Natural Armour',
+  [EFFECT_TYPES.PSYCHIC_TEST]: 'Psychic Test',
+  [EFFECT_TYPES.NO_PERILS]: 'No Perils of the Warp'
 };
 
 // Combat Modifiers
@@ -148,4 +152,17 @@ export const ROLL_CONSTANTS = {
   D100_MAX: 100,
   D10_MAX: 10,
   DEGREES_DIVISOR: 10
+};
+
+// Psychic Power Levels
+export const POWER_LEVELS = {
+  FETTERED: 'fettered',
+  UNFETTERED: 'unfettered',
+  PUSH: 'push'
+};
+
+export const POWER_LEVEL_LABELS = {
+  [POWER_LEVELS.FETTERED]: 'Fettered',
+  [POWER_LEVELS.UNFETTERED]: 'Unfettered',
+  [POWER_LEVELS.PUSH]: 'Push'
 };

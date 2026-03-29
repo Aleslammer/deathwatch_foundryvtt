@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { XPCalculator } from '../../src/module/helpers/xp-calculator.mjs';
+import { XPCalculator } from '../../src/module/helpers/character/xp-calculator.mjs';
 
 describe('XPCalculator', () => {
   describe('calculateRank', () => {
