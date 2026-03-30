@@ -69,8 +69,12 @@ const FACTIONS = [
       "squig.json":          { num: "06", type: "enmy" },
       "kommando.json":       { num: "07", type: "enmy" },
       "mad-dok.json":        { num: "08", type: "enmy" },
+      "bomb-squig.json":     { num: "09", type: "enmy" },
+      "guard-squig.json":    { num: "10", type: "enmy" },
+      "runtherd.json":       { num: "11", type: "enmy" },
       "ork-boy-horde.json": { num: "01", type: "hord" },
       "squig-horde.json":   { num: "02", type: "hord" },
+      "snotling-horde.json": { num: "03", type: "hord" },
     }
   }
 ];

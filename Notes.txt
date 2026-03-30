@@ -54,46 +54,39 @@ Psychic Combat
 
 Combat:
 
-Mad Dok
+Rontherd
 
 Book: Rogue Trader: The Koronus Bestiary
-Page: 75
+Page: 81
 
-Descrption: To say that Ork physiology is resilient would be something 
-of an understatement; missing limbs, gaping holes, and even 
-smashed heads can all be repaired by the insane science of 
-the Mad Dok. These masters of the saw and stitch have 
-perfected the art of putting an Ork back together again after 
-it returns from the battlefield. 
-A Mad Dok is one of the Odd Boyz—Orks who embrace 
-one of the paths of their society focused on something other 
-than warfare (though even then, almost all Odd Boyz inventions 
-and achievements are used solely for war). From the earliest days 
-of sentience, the Dok spends its time experimenting on other 
-greenskins. He usually begins his tinkering on Snotlings, as they 
-are the easiest to capture, but he then quickly moves on to Grots 
-and other Orks. As the Dok gains more and more notoriety, he 
-soon finds himself with willing volunteers instead of having to 
-seek out and capture subjects. When these “‘eksperimentz” are 
-complete, an Ork considers itself to be vastly improved over its 
-regular brethren. Many of Orks sport shiny metal skulls, cyborg 
-bodies, integrated weapon arms, and other upgrades thanks 
-to the Dok’s tinkering; those who did not fair so well on the 
-operating table are often left mindless and drooling hulks.
-Most Kaptins tend to keep a personal Dok in their Nobz retinue 
-to tend to their battle wounds. While patching up the Kaptin, this 
-personal “physician” is often overcome with an inexplicable need 
-to enhance his leader in addition to ministering to his wounds. 
-Most Kaptins view their new additions with a sense of pride; if, 
-that is, they survive to become conscious of these modifications.
+Descrption: Ork Runtherds specialise in corralling and training Grots, 
+primarily to drive them forward into enemy fire. Needless to 
+say, many Gretchin would rather avoid this, so the Runtherd 
+applies encouragement involving weapons fire and application 
+of their Grot Prods or grabba-sticks. Some Runtherds, 
+realising that the Grots are more willing should they actually 
+have a chance of surviving, outfit their herdz with ramshackle, 
+blunderbuss-style weapons. In reality, this rarely helps them, 
+but for a Grot in combat it is better than nothing. Despite 
+what would appear as an odious chore at best, Runtherds are 
+proud of their occupation and know they contribute 
+greatly to the wellbeing of their tribe or ship. 
+Maintaining a well-trained population of 
+Gretchin is a respectable position for an Ork, 
+and Runtherds do their best to keep the little 
+Grots properly in line. 
 
 Ws Bs s T ag int Per WP fel
-40 19 49 50 39 29 34 32 34
-Wounds: 25
-Skills:   Command (Fel) +10, Intimidate (S) +10, Medicae (Int) +10, Tech-Use (Int) +10.
-Talents:  Air of Authority, Bulging Biceps, Crushing Blow, Furious Assault, Hardy, Iron Discipline, Iron Jaw, Lightning Reflexes, Master Chirurgeon, True Grit.
-Armor: flak
-Traits: : Brutal Charge, Fear 1, Size (Hulking), Make it Work, Mob Rule, Sturdy, Unnatural Strength (x2), Unnatural Toughness (x2).
-Weapons:   Slugga (20m; S/3/-; 1d10+4 I; Pen 0; Clip 18; Reload Full; Inaccurate, Unreliable) or Shoota (60m; S/3/10; 1d10+4I; Pen 0; Clip 30; Reload Full; Inaccurate, Unreliable), Dok’s Tools (1d10+8 I; Pen 2; Tearing), Urty Syringe (1d10+4 R; Pen 3; Tearing, Toxic).
-Gear:   2 Ammo clips, 2d10 Ork teeth (“teef ”), Grot Orderly (adds +5 to any Medicae Skill Tests)
+37 19 46 44 30 24 32 26 21
+Wounds: 15
+Skills:  Awareness (Per), Intimidate (S)
+Talents: Bulging Biceps, Crushing Blow, Furious Assault, Grot Wrangler†, Hardy, Iron Jaw, True Grit.
+Traits: Brutal Charge, Make it Work, Mob Rule, Sturdy, Size (Hulking), Unnatural Toughness (x2).
+Weapons:  Slugga  Choppa  Grot Prod (1d5+8 I; Pen 0; Shocking).
+Armors: Flak
 
+New Talent
+Grot Wrangler: Runtherds are very good at getting Gretchin and Snotlings to 
+perform their assigned tasks, no matter how dangerous or downright suicidal 
+they might be. He has the Command (Fel) and Wrangling (Int) Skills, both 
+with a +20 bonus, when used to direct these lesser orkoid beings. 
