@@ -51,6 +51,9 @@ Orks:
     TODO: Images - Squigs are bipedal not quadrapeds. Change the Bomb and Guard squig
     TODO: Images do not have proeprty token backgrounds
 
+Gameplay:
+    TODO: Update the drag and drop macros to allow for pre-loading modfiers...
+
 Hordes
 
 Psychic Combat

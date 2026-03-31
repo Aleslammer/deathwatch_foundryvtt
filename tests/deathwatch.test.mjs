@@ -114,9 +114,22 @@ describe('deathwatch.mjs', () => {
       Item.fromDropData = jest.fn();
     });
 
+    it('returns false for Item drops to prevent default', () => {
+      const data = { type: 'Item', uuid: 'Compendium.pack.item' };
+      const result = hotbarDropCallback({}, data, 1);
+      expect(result).toBe(false);
+    });
+
+    it('does not return false for non-Item drops', () => {
+      const data = { type: 'Macro', uuid: 'some-macro' };
+      const result = hotbarDropCallback({}, data, 1);
+      expect(result).toBeUndefined();
+    });
+
     it('warns for non-owned items', async () => {
       const data = { type: 'Item', uuid: 'Compendium.pack.item' };
-      await hotbarDropCallback({}, data, 1);
+      hotbarDropCallback({}, data, 1);
+      await new Promise(resolve => setTimeout(resolve, 0));
       expect(ui.notifications.warn).toHaveBeenCalledWith('You can only create macro buttons for owned Items');
     });
 
@@ -128,7 +141,8 @@ describe('deathwatch.mjs', () => {
       Macro.create.mockResolvedValue(mockMacro);
 
       const data = { type: 'Item', uuid: 'Actor.actor1.Item.item1' };
-      await hotbarDropCallback({}, data, 1);
+      hotbarDropCallback({}, data, 1);
+      await new Promise(resolve => setTimeout(resolve, 0));
 
       expect(Macro.create).toHaveBeenCalledWith(expect.objectContaining({
         name: 'Test Item',
@@ -152,9 +166,10 @@ describe('deathwatch.mjs', () => {
       expect(ui.notifications.warn).toHaveBeenCalled();
     });
 
-    it('rolls item if found', async () => {
+    it('rolls non-weapon item if found', async () => {
       const mockItem = {
-        name: 'Test Item',
+        name: 'Test Gear',
+        type: 'gear',
         parent: { id: 'actor-1' },
         roll: jest.fn()
       };
@@ -164,6 +179,39 @@ describe('deathwatch.mjs', () => {
       await new Promise(resolve => setTimeout(resolve, 0));
       
       expect(mockItem.roll).toHaveBeenCalled();
+    });
+
+    it('opens attack/damage dialog for weapons instead of rolling', async () => {
+      const mockItem = {
+        name: 'Bolter',
+        type: 'weapon',
+        img: 'bolter.png',
+        parent: { id: 'actor-1' },
+        roll: jest.fn()
+      };
+      Item.fromDropData.mockResolvedValue(mockItem);
+      
+      game.deathwatch.rollItemMacro('Actor.actor1.Item.item1');
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
+      expect(mockItem.roll).not.toHaveBeenCalled();
+    });
+
+    it('opens focus power dialog for psychic powers instead of rolling', async () => {
+      const mockPower = {
+        name: 'Smite',
+        type: 'psychic-power',
+        img: 'smite.png',
+        system: { action: 'Half', range: '20m', opposed: 'No', sustained: 'No', damage: '1d10+5', damageType: 'Energy', penetration: 4, description: '' },
+        parent: { id: 'actor-1', system: { characteristics: { wil: { value: 50 } }, psyRating: { value: 3 } }, items: [] },
+        roll: jest.fn()
+      };
+      Item.fromDropData.mockResolvedValue(mockPower);
+      
+      game.deathwatch.rollItemMacro('Actor.actor1.Item.item1');
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
+      expect(mockPower.roll).not.toHaveBeenCalled();
     });
   });
 });

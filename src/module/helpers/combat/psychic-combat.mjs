@@ -490,7 +490,7 @@ export class PsychicCombatHelper {
       // Righteous Fury check
       if (actor.system.canRighteousFury?.() && RighteousFuryHelper.hasNaturalTen(roll, 10) && targetNumber > 0) {
         const { totalDamage: furyDamage } = await RighteousFuryHelper.processFuryChain(
-          actor, null, damageFormula, targetNumber, "Body", false, 10
+          actor, null, damageFormula, targetNumber, "Body", false, 10, targetActor
         );
         totalDamage += furyDamage;
       }

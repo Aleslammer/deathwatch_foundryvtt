@@ -187,7 +187,12 @@ Hooks.once('init', async function () {
 
 Hooks.once('ready', async function () {
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-    Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
+    Hooks.on("hotbarDrop", (bar, data, slot) => {
+        if (data.type === "Item") {
+            createItemMacro(data, slot);
+            return false;
+        }
+    });
 
     // Set Skip Defeated default on first load (respects manual changes after)
     if (game.user.isGM) {
@@ -816,25 +821,44 @@ async function createItemMacro(data, slot) {
 }
 
 /**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
+ * Execute a macro for an owned item. Weapons show Attack/Damage dialog,
+ * psychic powers open Focus Power Test, other items use generic roll.
  * @param {string} itemUuid
  */
 function rollItemMacro(itemUuid) {
-    // Reconstruct the drop data so that we can load the item.
-    const dropData = {
-        type: 'Item',
-        uuid: itemUuid
-    };
-    // Load the item from the uuid.
+    const dropData = { type: 'Item', uuid: itemUuid };
     Item.fromDropData(dropData).then(item => {
-        // Determine if the item loaded and if it's an owned item.
         if (!item || !item.parent) {
             const itemName = item?.name ?? itemUuid;
             return ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
         }
 
-        // Trigger the item roll
+        if (item.type === 'weapon') {
+            new Dialog({
+                title: item.name,
+                content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${item.name}</strong></p>`,
+                buttons: {
+                    attack: {
+                        icon: '<i class="fas fa-crosshairs"></i>',
+                        label: "Attack",
+                        callback: () => CombatHelper.weaponAttackDialog(item.parent, item)
+                    },
+                    damage: {
+                        icon: '<i class="fas fa-burst"></i>',
+                        label: "Damage",
+                        callback: () => CombatHelper.weaponDamageRoll(item.parent, item)
+                    }
+                },
+                default: "attack"
+            }).render(true);
+            return;
+        }
+
+        if (item.type === 'psychic-power') {
+            PsychicCombatHelper.focusPowerDialog(item.parent, item);
+            return;
+        }
+
         item.roll();
     });
 }
