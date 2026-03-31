@@ -20,7 +20,7 @@
 13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
 
 ## Key Metrics
-- **Tests**: 1244 passing, 83 suites
+- **Tests**: 1335 passing, 87 suites
 - **Helper Classes**: 26+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -52,8 +52,10 @@ npm run build:all                                           # build:packs + depl
 ### Combat
 - **Ranged**: BS-based (uses computed `bs.value`), RoF (Single/Semi/Full), aim, range modifiers, jamming
 - **Melee**: WS-based (uses computed `ws.value`), all-out attack, charge, DoS displayed in chat
-- **Shared**: Hit locations, damage application (polymorphic), Righteous Fury
+- **Shared**: Hit locations, damage application (polymorphic), Righteous Fury, Called Shot location selection
 - **Horde**: Magnitude-based damage, batch damage application, special hit rules (blast/flame/melee DoS)
+- **Deathwatch Training**: Auto-confirms Righteous Fury vs xenos targets (requires talent + `classification === 'xenos'`)
+- **Attack Resolution**: Pure functions `resolveRangedAttack()` and `resolveMeleeAttack()` extracted for testability
 
 ### Psychic Combat
 - **Focus Power Test**: WP + (up to 5 × ePR) + psychic-test modifiers + misc, capped at 90. Roll 91+ always fails.
@@ -121,10 +123,10 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1244 tests across 83 suites
+tests/                   1335 tests across 87 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Psychic combat Phase 1-3 complete, Phase 4a status effects, Phase 4b damage powers, helpers reorganized, flame/fire system, 1220 tests)
+**Last Updated**: January 2025 (Hotbar weapon/psychic macros, psychic Righteous Fury auto-confirm fix, 1335 tests)

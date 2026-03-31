@@ -65,6 +65,12 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Enemies (Tyranid: Hormagaunt, Termagant — each with enemy and horde variants)
 - All items include book references and page numbers
 
+### Hotbar Macros
+- Drag weapons from Gear tab to hotbar → click for Attack/Damage choice dialog
+- Drag psychic powers from Psychic Powers tab to hotbar → click opens Focus Power Test directly
+- Other items fall through to generic item roll (posts description to chat)
+- Macros use item UUID, so they work across sessions
+
 ### Lore and Knowledge System
 - Common Lore (Adeptus Astartes, Deathwatch, Imperium, etc.)
 - Forbidden Lore (Daemonology, Heresy, Xenos, etc.)

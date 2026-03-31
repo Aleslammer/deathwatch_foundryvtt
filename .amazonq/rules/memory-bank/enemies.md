@@ -291,6 +291,16 @@ When creating a horde variant from an enemy:
 - Icon uses `_horde` suffix (e.g., `termagant_horde.webp`)
 - Token name appends " Horde"
 
+## Enemy Classification
+All enemy and horde actors have a `classification` field in `system`:
+- `"human"` — Human enemies (default for base actor)
+- `"xenos"` — Aliens (Tyranids, Orks, Tau, etc.) (default for enemy/horde DataModel)
+- `"chaos"` — Chaos enemies
+
+**Purpose:** Used by Deathwatch Training talent for Righteous Fury auto-confirm (only triggers vs xenos).
+**UI:** Dropdown on enemy/horde/NPC sheet headers.
+**Schema:** `DeathwatchActorBase` has `classification` with initial `"human"`. `DeathwatchEnemy` overrides initial to `"xenos"`. All compendium enemies have `classification` set explicitly.
+
 ## Icon Requirements
 Each enemy needs artwork at:
 - `src/icons/enemies/{faction}/{name}.webp` — individual enemy

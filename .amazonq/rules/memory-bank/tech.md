@@ -51,7 +51,11 @@ tests/
 │   ├── melta.test.mjs
 │   ├── overheats.test.mjs
 │   ├── power-fist.test.mjs
-│   └── reliable.test.mjs
+│   ├── reliable.test.mjs
+│   ├── resolve-ranged-attack.test.mjs
+│   ├── resolve-melee-attack.test.mjs
+│   ├── called-shot.test.mjs
+│   └── deathwatch-training.test.mjs
 ├── documents/                         # Document tests
 │   ├── actor.test.mjs
 │   ├── actor-conditions.test.mjs

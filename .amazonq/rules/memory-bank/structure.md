@@ -104,7 +104,7 @@ src/
 - **base-document.mjs**: `DeathwatchDataModel` — root class extending `foundry.abstract.TypeDataModel`
   - Shared template methods: `equippedTemplate()`, `requisitionTemplate()`, `capacityTemplate()`, `keyTemplate()`
 - **actor/base-actor.mjs**: `DeathwatchActorBase` — base for all actor types
-  - Shared fields: `wounds` (value, base, max), `fatigue` (value, max)
+  - Shared fields: `wounds` (value, base, max), `fatigue` (value, max), `classification` (StringField, initial "human")
   - Polymorphic combat methods: `getArmorValue()`, `getDefenses()`, `calculateHitsReceived()`, `receiveDamage()`, `canRighteousFury()`
 - **actor/character.mjs**: `DeathwatchCharacter` — full PC data with `prepareDerivedData()`
   - Schema: 9 characteristics (each with value, base, bonus, damage, advances), biography, progression, modifiers, conditions, psyRating, skills, legacy fields
@@ -114,6 +114,7 @@ src/
   - `prepareDerivedData()`: XP from CR calculation
 - **actor/enemy.mjs**: `DeathwatchEnemy` — full enemy data (characteristics, skills, psy rating, movement)
   - Extends DeathwatchActorBase, same prepareDerivedData pattern as NPC but with psy rating and force weapons
+  - Overrides `classification` initial to `"xenos"`
 - **actor/horde.mjs**: `DeathwatchHorde` — magnitude-based horde
   - Extends DeathwatchEnemy, adds single `armor` field
   - Overrides: `getArmorValue()`, `getDefenses()`, `calculateHitsReceived()`, `receiveDamage()`, `receiveBatchDamage()`
@@ -317,6 +318,14 @@ deathwatch.mjs (Entry Point)
     │
     └─→ Configuration (config.mjs, constants.mjs)
 ```
+
+### Hotbar Macro System
+- **hotbarDrop hook**: Returns `false` synchronously for Item drops to prevent Foundry's default "Display Item" macro
+- **createItemMacro()**: Creates script macro with `game.deathwatch.rollItemMacro(uuid)` command, assigns to hotbar slot
+- **rollItemMacro()**: Resolves item from UUID, routes by type:
+  - `weapon` → Attack/Damage Dialog → `CombatHelper.weaponAttackDialog()` or `weaponDamageRoll()`
+  - `psychic-power` → `PsychicCombatHelper.focusPowerDialog()` directly
+  - Other → `item.roll()` (posts description to chat)
 
 ### Data Flow
 1. **Initialization**: deathwatch.mjs loads all modules

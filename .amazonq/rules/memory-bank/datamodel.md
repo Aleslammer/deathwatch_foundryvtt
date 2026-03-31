@@ -167,7 +167,7 @@ NPC DataModel with characteristics, skills, wounds, and modifiers. Simplified ve
 ### DeathwatchEnemy (Phase 4)
 Enemy DataModel. Same as character but without chapters, specialties, rank, XP, fate points, renown, special abilities, demeanours, past events. Extends DeathwatchActorBase.
 
-**Schema fields:** 9 characteristics (with value, base, bonus, damage, advances), skills (ObjectField), modifiers (ArrayField), conditions (ObjectField), description (HTMLField), biography fields (gender, age, complexion, hair), psyRating (SchemaField: value, base).
+**Schema fields:** 9 characteristics (with value, base, bonus, damage, advances), skills (ObjectField), modifiers (ArrayField), conditions (ObjectField), description (HTMLField), biography fields (gender, age, complexion, hair), psyRating (SchemaField: value, base). Overrides `classification` initial to `"xenos"`.
 
 **prepareDerivedData():**
 1. Loads skills via `SkillLoader.loadSkills()`
