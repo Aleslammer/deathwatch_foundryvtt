@@ -27,7 +27,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>Hormagaunts are fast-moving Tyranid assault organisms. They bound forward on powerful legs, leaping over obstacles to close with the enemy and tear them apart with their scything talons. They are among the most numerous of Tyranid bioforms and are often the first wave of a Tyranid assault.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>"
+    "description": "<p>Hormagaunts are fast-moving Tyranid assault organisms. They bound forward on powerful legs, leaping over obstacles to close with the enemy and tear them apart with their scything talons. They are among the most numerous of Tyranid bioforms and are often the first wave of a Tyranid assault.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "classification": "xenos"
   },
   "items": [
     {

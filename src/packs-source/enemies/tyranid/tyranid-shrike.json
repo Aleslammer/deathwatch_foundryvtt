@@ -25,7 +25,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>Shrikes are winged Tyranid Warriors that serve as fast-moving synapse nodes, swooping over the battlefield to relay the Hive Mind's commands to distant broods. Identical to their ground-bound kin in strength and resilience, Shrikes possess large membranous wings that allow them to fly at terrifying speed. They often lead Gargoyle broods or strike at vulnerable flanks, using their mobility to exploit gaps in enemy lines.</p><p><strong>Traits:</strong> Dark Sight, Fear 3 (Horrifying), Flyer (10), Natural Armour (8), Multiple Arms, Unnatural Strength (×2), Unnatural Toughness (×2), Improved Natural Weapons (Scything Talons or Rending Claws), Shadow in the Warp, Size (Enormous), Synapse Creature, Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>"
+    "description": "<p>Shrikes are winged Tyranid Warriors that serve as fast-moving synapse nodes, swooping over the battlefield to relay the Hive Mind's commands to distant broods. Identical to their ground-bound kin in strength and resilience, Shrikes possess large membranous wings that allow them to fly at terrifying speed. They often lead Gargoyle broods or strike at vulnerable flanks, using their mobility to exploit gaps in enemy lines.</p><p><strong>Traits:</strong> Dark Sight, Fear 3 (Horrifying), Flyer (10), Natural Armour (8), Multiple Arms, Unnatural Strength (×2), Unnatural Toughness (×2), Improved Natural Weapons (Scything Talons or Rending Claws), Shadow in the Warp, Size (Enormous), Synapse Creature, Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>",
+    "classification": "xenos"
   },
   "items": [
     {

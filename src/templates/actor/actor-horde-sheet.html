@@ -5,6 +5,11 @@
     <div class="header-fields" style="width: 100%;">
       <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
         <h1 class="charname" style="flex: 1; margin: 0;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+        <select name="system.classification" style="width: 90px; font-size: 0.85em;" title="Enemy Classification">
+          <option value="human" {{#if (eq system.classification "human")}}selected{{/if}}>Human</option>
+          <option value="xenos" {{#if (eq system.classification "xenos")}}selected{{/if}}>Xenos</option>
+          <option value="chaos" {{#if (eq system.classification "chaos")}}selected{{/if}}>Chaos</option>
+        </select>
       </div>
       <div style="display: flex; gap: 10px; align-items: flex-start;">
         <div style="flex: 0 0 100px; text-align: center;">

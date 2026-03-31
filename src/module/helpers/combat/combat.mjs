@@ -367,7 +367,7 @@ export class CombatHelper {
               if (isHordeTarget) {
                 if (actor.system.canRighteousFury() && RighteousFuryHelper.hasNaturalTen(roll, furyThreshold) && targetNumber > 0) {
                   const { totalDamage: furyDamage } = await RighteousFuryHelper.processFuryChain(
-                    actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold
+                    actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold, targetToken?.actor
                   );
                   totalDamage += furyDamage;
                 }
@@ -389,7 +389,7 @@ export class CombatHelper {
               
                 if (actor.system.canRighteousFury() && RighteousFuryHelper.hasNaturalTen(roll, furyThreshold) && targetNumber > 0) {
                   const { totalDamage: furyDamage, furyCount } = await RighteousFuryHelper.processFuryChain(
-                    actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold
+                    actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold, targetToken?.actor
                   );
                 
                   totalDamage += furyDamage;

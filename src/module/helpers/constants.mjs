@@ -159,6 +159,19 @@ export const ROLL_CONSTANTS = {
   DEGREES_DIVISOR: 10
 };
 
+// Enemy Classifications
+export const ENEMY_CLASSIFICATIONS = {
+  HUMAN: 'human',
+  XENOS: 'xenos',
+  CHAOS: 'chaos'
+};
+
+export const ENEMY_CLASSIFICATION_LABELS = {
+  [ENEMY_CLASSIFICATIONS.HUMAN]: 'Human',
+  [ENEMY_CLASSIFICATIONS.XENOS]: 'Xenos',
+  [ENEMY_CLASSIFICATIONS.CHAOS]: 'Chaos'
+};
+
 // Psychic Power Levels
 export const POWER_LEVELS = {
   FETTERED: 'fettered',

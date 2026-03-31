@@ -28,7 +28,8 @@
     "modifiers": [],
     "conditions": {},
     "description": "<p>A shrieking cloud of winged Gargoyles, swooping and diving to pepper their foes with fleshborer fire before darting away. In great numbers they blot out the sky and sow confusion across the battlefield.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Blinding Venom:</strong> Attacks in melee from a Gargoyle have a chance of blinding its foes. If a blow from a Gargoyle with its Teeth and Claws strikes an opponent's head, they must make an Easy (+20) Toughness Test or become Blinded for 1d5 turns. Enclosed helmets (such as those on a suit of power armour) negate this ability.</p><p><strong>Traits:</strong> Dark Sight, Flyer (20), Natural Armour (3), Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Overwhelming (Horde), Tyranid</p><p><strong>Source:</strong> Mark of the Xenos, p. 36</p>",
-    "gearArmor": 0
+    "gearArmor": 0,
+    "classification": "xenos"
   },
   "items": [
     {

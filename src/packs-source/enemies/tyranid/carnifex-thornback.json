@@ -26,7 +26,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>The Thornback is a Carnifex variant optimised for ranged bio-warfare. Where the standard Carnifex relies on massive scything talons, the Thornback is equipped with twin devourers and a stranglethorn cannon, allowing it to saturate entire areas with living ammunition. Its body exudes a potent toxin that poisons anything that comes into contact with it.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Fear 3 (Horrifying), Improved Natural Weapons (Scything Talons), Multiple Arms, Natural Armour (10), Regeneration (5), Size (Massive), Sturdy, Toxic (1d10), Unnatural Strength (×3), Unnatural Toughness (×2), Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>"
+    "description": "<p>The Thornback is a Carnifex variant optimised for ranged bio-warfare. Where the standard Carnifex relies on massive scything talons, the Thornback is equipped with twin devourers and a stranglethorn cannon, allowing it to saturate entire areas with living ammunition. Its body exudes a potent toxin that poisons anything that comes into contact with it.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Fear 3 (Horrifying), Improved Natural Weapons (Scything Talons), Multiple Arms, Natural Armour (10), Regeneration (5), Size (Massive), Sturdy, Toxic (1d10), Unnatural Strength (×3), Unnatural Toughness (×2), Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>",
+    "classification": "xenos"
   },
   "items": [
     {

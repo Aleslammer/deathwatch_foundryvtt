@@ -24,7 +24,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>Ork Kaptins have been breeding a form of Squig known as a Guard Squig, or Squig Hound to some. This creature has all the ferocity of an Attack Squig, but is bred to be utterly loyal to its master and to stay by his side and protect him at all costs. Squig Hounds can be almost affectionate with their keeper and tend to lie at his feet like a contented dog unless danger arises.</p><p><strong>Source:</strong> Rogue Trader: The Koronus Bestiary, p. 82</p>"
+    "description": "<p>Ork Kaptins have been breeding a form of Squig known as a Guard Squig, or Squig Hound to some. This creature has all the ferocity of an Attack Squig, but is bred to be utterly loyal to its master and to stay by his side and protect him at all costs. Squig Hounds can be almost affectionate with their keeper and tend to lie at his feet like a contented dog unless danger arises.</p><p><strong>Source:</strong> Rogue Trader: The Koronus Bestiary, p. 82</p>",
+    "classification": "xenos"
   },
   "items": [
     {

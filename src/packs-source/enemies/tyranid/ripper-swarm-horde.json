@@ -29,7 +29,8 @@
     "modifiers": [],
     "conditions": {},
     "description": "<p>A seething carpet of serpentine Rippers, their mandibles snapping and tearing at anything in their path. Individually small, en masse they can immobilise and drag down even the strongest Battle-Brother.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Tenacious Grappler:</strong> When attempting to grapple an opponent armed with a melee weapon, Rippers suffer a -10 to their WS instead of the normal -20.</p><p><strong>Horde Bonuses:</strong> While in a Horde, Rippers gain the Rampage, Relentless, and Overwhelming Traits, the Swift Attack Talent, and their attacks gain the Tearing quality.</p><p><strong>Traits:</strong> Burrower (1), Crawler, Dark Sight, Fear 1 (Disturbing), Improved Natural Weapons (Mandibles), Instinctive Behaviour (Feed), Natural Armour (2), Overwhelming (Horde), Tyranid</p><p><strong>Source:</strong> Mark of the Xenos, p. 43</p>",
-    "gearArmor": 0
+    "gearArmor": 0,
+    "classification": "xenos"
   },
   "items": [
     {

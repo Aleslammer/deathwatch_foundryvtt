@@ -10,6 +10,7 @@ Book: <book name>
 Page: <page number>
 Faction: <tyranid|ork|tau|chaos> (defaults to tyranid if not specified)
 Type: <enemy|horde|both> (defaults to enemy if not specified)
+Classification: <human|xenos|chaos> (defaults to xenos if not specified)
 
 Description: <flavor text>
 
@@ -41,6 +42,7 @@ Special Abilities: (optional)
    - Map skills using the system's skill keys (e.g., `silent_move`, `tech_use`, `chem_use`)
    - Skills: trained = base, mastered = +10, expert = +20
    - Set psyRating if provided
+   - Set `classification` field: `"xenos"` for aliens (Tyranids, Orks, Tau, etc.), `"chaos"` for Chaos enemies, `"human"` for human enemies. Defaults to `"xenos"` if not specified
    - Include all special abilities in the description HTML
    - List traits in the description for reference
 
@@ -157,3 +159,5 @@ Special Abilities: (optional)
 - Weapon training talents (Basic, Pistol, Melee, Exotic) are omitted for enemies — weapons are already equipped
 - The `-1 cost` warning icon only shows on character sheets, not enemy sheets
 - Enemy actors use `psyRating` directly on the actor, not via Psy Rating talents
+- All enemies must have a `classification` field in system data: `"human"`, `"xenos"`, or `"chaos"`. This controls Deathwatch Training auto-confirm Righteous Fury (only triggers vs xenos)
+- Faction-to-classification mapping: tyranid → xenos, ork → xenos, tau → xenos, chaos → chaos. Human enemies should be explicitly set to `"human"`
