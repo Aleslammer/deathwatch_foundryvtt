@@ -31,7 +31,6 @@ Ammmunition 158
     TODO: We need to revisit the Devastation upgrade for cohesion damage
 
 
-TODO: Need to handle called shot mechanic
 TODO: "DeathWatch Training" Auto confirm RF when shooting "Alien Enemies" (non-human)
 TODO: Automated Animations - Can we use this for things?
 TODO: WE have no Cohesion mechanic
