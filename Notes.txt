@@ -27,14 +27,15 @@ Rites of Battle
 
 Ammmunition 158
     
-    TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
     TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
     TODO: We need to revisit the Devastation upgrade for cohesion damage
 
 
 TODO: Need to handle called shot mechanic
-TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
+TODO: "DeathWatch Training" Auto confirm RF when shooting "Alien Enemies" (non-human)
 TODO: Automated Animations - Can we use this for things?
+TODO: WE have no Cohesion mechanic
+TODO: we have no squad vs solo mode flip
 
 Enemies:
     TODO: Still Need to add Tyranids
@@ -90,3 +91,5 @@ Grot Wrangler: Runtherds are very good at getting Gretchin and Snotlings to
 perform their assigned tasks, no matter how dangerous or downright suicidal 
 they might be. He has the Command (Fel) and Wrangling (Int) Skills, both 
 with a +20 bonus, when used to direct these lesser orkoid beings. 
+
+
