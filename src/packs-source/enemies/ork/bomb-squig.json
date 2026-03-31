@@ -95,7 +95,7 @@
       "_id": "eiork09000000005",
       "name": "Bite",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-melee.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10+6",
@@ -116,7 +116,7 @@
       "_id": "eiork09000000006",
       "name": "Bomb Harness",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-ranged.webp",
+      "img": "systems/deathwatch/icons/generic/generic-ranged.webp",
       "system": {
         "class": "Basic",
         "dmg": "2d10+4",

@@ -110,7 +110,7 @@
       "_id": "eiork10000000006",
       "name": "Bite",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-melee.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10+6",

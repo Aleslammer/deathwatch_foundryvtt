@@ -140,7 +140,7 @@
       "_id": "hiork03000000007",
       "name": "Bite, Claws, and Tiny Weapons",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-melee.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "2d10",

@@ -386,7 +386,7 @@
       "_id": "eiork08000000022",
       "name": "Dok's Tools",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-melee.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10+8",
@@ -407,7 +407,7 @@
       "_id": "eiork08000000023",
       "name": "'Urty Syringe",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-melee.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10+4",
