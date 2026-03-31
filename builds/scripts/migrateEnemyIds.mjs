@@ -62,7 +62,19 @@ const FACTIONS = [
     faction: "ork",
     files: {
       "ork-boy.json":       { num: "01", type: "enmy" },
+      "ork-meganob.json":   { num: "02", type: "enmy" },
+      "ork-warboss.json":    { num: "03", type: "enmy" },
+      "big-mek-wurrzog.json": { num: "04", type: "enmy" },
+      "gretchen.json":      { num: "05", type: "enmy" },
+      "squig.json":          { num: "06", type: "enmy" },
+      "kommando.json":       { num: "07", type: "enmy" },
+      "mad-dok.json":        { num: "08", type: "enmy" },
+      "bomb-squig.json":     { num: "09", type: "enmy" },
+      "guard-squig.json":    { num: "10", type: "enmy" },
+      "runtherd.json":       { num: "11", type: "enmy" },
       "ork-boy-horde.json": { num: "01", type: "hord" },
+      "squig-horde.json":   { num: "02", type: "hord" },
+      "snotling-horde.json": { num: "03", type: "hord" },
     }
   }
 ];

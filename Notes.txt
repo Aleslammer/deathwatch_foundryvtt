@@ -5,14 +5,10 @@ to convert a png to webp!
 https://developers.google.com/speed/webp/download
 C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
 
-cls;npm run build:packs;.\builds\scripts\CopyLocal.ps1
 
 TODO: I have issues still with first load of html files.
-TODO: Weapon Quality Flame  
-    Has an entirely new attack dynamic PG 142 core rule book.   You dont make a BS test
 
 Traits
-    TODO: if a target has a trait size can we auto apply modifier?
     TODO: review traits if they need modifiers
 
 Talents
@@ -44,21 +40,53 @@ Enemies:
     TODO: Still Need to add Tyranids
             Trygon, Warrior Prime, Tyrant Guard, Venonthrope, Zoanthrope
     TODO: Add more orks
-        
-    
+        Add images
+        Additional Ork profiles, rules, and equipment can be found in creatures anatheMa, a supplement for Dark heresy, and Into the storM, a rogue traDer supplement. 
+        These additional sources for information can be very valuable for a GM who wants to involve Orks more heavily in his Deathwatch campaign.
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects    
 
 Hordes
-    TODO: Update to support psychic attacks (pg 360)    
 
 Psychic Combat
-    TODO: we have no combat system for psychic Powers
-        Perils etc...
-    TODO: Tyranids have special rules bot core rules and in mark of the xenos
 
 Combat:
-    TODO: we need to alter Flame damage.   There is no "Hit" component like BS and WS.....
 
+Rontherd
+
+Book: Rogue Trader: The Koronus Bestiary
+Page: 81
+
+Descrption: Ork Runtherds specialise in corralling and training Grots, 
+primarily to drive them forward into enemy fire. Needless to 
+say, many Gretchin would rather avoid this, so the Runtherd 
+applies encouragement involving weapons fire and application 
+of their Grot Prods or grabba-sticks. Some Runtherds, 
+realising that the Grots are more willing should they actually 
+have a chance of surviving, outfit their herdz with ramshackle, 
+blunderbuss-style weapons. In reality, this rarely helps them, 
+but for a Grot in combat it is better than nothing. Despite 
+what would appear as an odious chore at best, Runtherds are 
+proud of their occupation and know they contribute 
+greatly to the wellbeing of their tribe or ship. 
+Maintaining a well-trained population of 
+Gretchin is a respectable position for an Ork, 
+and Runtherds do their best to keep the little 
+Grots properly in line. 
+
+Ws Bs s T ag int Per WP fel
+37 19 46 44 30 24 32 26 21
+Wounds: 15
+Skills:  Awareness (Per), Intimidate (S)
+Talents: Bulging Biceps, Crushing Blow, Furious Assault, Grot Wrangler†, Hardy, Iron Jaw, True Grit.
+Traits: Brutal Charge, Make it Work, Mob Rule, Sturdy, Size (Hulking), Unnatural Toughness (x2).
+Weapons:  Slugga  Choppa  Grot Prod (1d5+8 I; Pen 0; Shocking).
+Armors: Flak
+
+New Talent
+Grot Wrangler: Runtherds are very good at getting Gretchin and Snotlings to 
+perform their assigned tasks, no matter how dangerous or downright suicidal 
+they might be. He has the Command (Fel) and Wrangling (Int) Skills, both 
+with a +20 bonus, when used to direct these lesser orkoid beings. 
