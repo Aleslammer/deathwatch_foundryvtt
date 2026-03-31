@@ -16,6 +16,7 @@ export class CombatHelper {
   static lastAttackAim = 0;
   static lastAttackRangeLabel = null;
   static lastAttackDistance = null;
+  static lastCalledShotLocation = null;
 
   static calculateRangeModifier(distance, weaponRange) {
     debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
@@ -292,10 +293,11 @@ export class CombatHelper {
               const attackRoll = parseInt(attackRollInput);
               targetNumber = parseInt(targetNumberInput);
               if (attackRoll >= 1 && attackRoll <= 100) {
-                firstHitLocation = this.determineHitLocation(attackRoll);
+                firstHitLocation = this.lastCalledShotLocation || this.determineHitLocation(attackRoll);
                 degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(attackRoll, targetNumber);
               }
             }
+            this.lastCalledShotLocation = null;
 
             const hitLocations = this.determineMultipleHitLocations(firstHitLocation, numHits);
             const penetration = weapon.system.effectivePenetration ?? weapon.system.penetration ?? weapon.system.pen ?? 0;

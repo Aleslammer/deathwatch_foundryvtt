@@ -1,4 +1,4 @@
-import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS } from "../constants.mjs";
+import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS, HIT_LOCATIONS } from "../constants.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
@@ -128,6 +128,12 @@ export class MeleeCombatHelper {
           <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
         </label>
       </div>
+      <div class="form-group" id="calledShotLocationGroup" style="display: none;">
+        <label>Called Shot Location:</label>
+        <select id="calledShotLocation" name="calledShotLocation">
+          ${HIT_LOCATIONS.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
+        </select>
+      </div>
       <div class="form-group">
         <label>Misc Modifier:</label>
         <input type="text" id="miscModifier" name="miscModifier" value="0" />
@@ -149,6 +155,11 @@ export class MeleeCombatHelper {
             const icon = $(this).find(`#${id}Icon`);
             checkbox.prop('checked', !checkbox.prop('checked'));
             icon.toggleClass('fa-square').toggleClass('fa-check-square');
+            if (id === 'calledShot') {
+              html.find('#calledShotLocationGroup').toggle(checkbox.prop('checked'));
+              const app = html.closest('.app');
+              if (app.length) ui.windows[app.data('appid')]?.setPosition({ height: 'auto' });
+            }
           });
         });
       },
@@ -181,6 +192,7 @@ export class MeleeCombatHelper {
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
+            CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0) ? html.find('#calledShotLocation').val() : null;
 
             let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
             if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;

@@ -115,6 +115,11 @@ export const MELEE_MODIFIERS = {
   CHARGE: 10
 };
 
+// Hit Locations
+export const HIT_LOCATIONS = [
+  "Head", "Right Arm", "Left Arm", "Body", "Right Leg", "Left Leg"
+];
+
 // Range Modifiers
 export const RANGE_MODIFIERS = {
   POINT_BLANK: 30,  // <= 2m

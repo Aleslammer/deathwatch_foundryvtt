@@ -1,4 +1,4 @@
-import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES } from "../constants.mjs";
+import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, HIT_LOCATIONS } from "../constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
@@ -255,6 +255,12 @@ export class RangedCombatHelper {
           <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
         </label>
       </div>
+      <div class="form-group" id="calledShotLocationGroup" style="display: none;">
+        <label>Called Shot Location:</label>
+        <select id="calledShotLocation" name="calledShotLocation">
+          ${HIT_LOCATIONS.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
+        </select>
+      </div>
       <div class="form-group">
         <label>Misc Modifier:</label>
         <input type="text" id="miscModifier" name="miscModifier" value="0" />
@@ -275,6 +281,9 @@ export class RangedCombatHelper {
           const icon = $(this).find('#calledShotIcon');
           checkbox.prop('checked', !checkbox.prop('checked'));
           icon.toggleClass('fa-square').toggleClass('fa-check-square');
+          html.find('#calledShotLocationGroup').toggle(checkbox.prop('checked'));
+          const app = html.closest('.app');
+          if (app.length) ui.windows[app.data('appid')]?.setPosition({ height: 'auto' });
         });
         
         html.find('label:has(#runningTarget)').click(function(e) {
@@ -365,6 +374,7 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackAim = aim;
             CombatHelper.lastAttackRangeLabel = rangeLabel;
             CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
+            CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0) ? html.find('#calledShotLocation').val() : null;
 
             // Post chat message
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
