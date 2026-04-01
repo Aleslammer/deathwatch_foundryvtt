@@ -1,0 +1,60 @@
+/* Cohesion Panel — popOut window overrides */
+#cohesion-panel {
+  min-width: 200px;
+  max-width: 260px;
+}
+
+#cohesion-panel .window-content {
+  padding: 6px 10px;
+  background: rgba(30, 30, 30, 0.95);
+  color: #eee;
+}
+
+/* Inner layout */
+.cohesion-panel-inner .cohesion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.cohesion-panel-inner .cohesion-label {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.cohesion-panel-inner .cohesion-value {
+  font-size: 1.4em;
+  font-weight: bold;
+  cursor: help;
+}
+
+.cohesion-panel-inner .cohesion-leader {
+  font-size: 0.85em;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.cohesion-panel-inner .cohesion-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 1em;
+}
+
+.cohesion-panel-inner .cohesion-controls a {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+  color: #ccc;
+}
+
+.cohesion-panel-inner .cohesion-controls a:hover {
+  opacity: 1;
+  color: #fff;
+}
+
+/* Chat message */
+.cohesion-chat {
+  padding: 4px 0;
+}

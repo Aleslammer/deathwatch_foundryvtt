@@ -44,7 +44,12 @@ describe('deathwatch.mjs', () => {
       user: { isGM: false, assignHotbarMacro: jest.fn() },
       tables: { getName: jest.fn() },
       actors: { get: jest.fn() },
-      macros: { find: jest.fn() }
+      macros: { find: jest.fn() },
+      settings: {
+        register: jest.fn(),
+        get: jest.fn(),
+        set: jest.fn()
+      }
     };
   });
 

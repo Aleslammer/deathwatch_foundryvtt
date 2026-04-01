@@ -17,6 +17,8 @@ import { InitiativeHelper } from "./helpers/initiative.mjs";
 import { SkillLoader } from "./helpers/character/skill-loader.mjs";
 import { DW_STATUS_EFFECTS } from "./helpers/status-effects.mjs";
 import { FireHelper } from "./helpers/combat/fire-helper.mjs";
+import { CohesionHelper } from "./helpers/cohesion.mjs";
+import { CohesionPanel } from "./ui/cohesion-panel.mjs";
 
 
 /* -------------------------------------------- */
@@ -35,7 +37,9 @@ Hooks.once('init', async function () {
         DeathwatchItem,
         rollItemMacro,
         flameAttack,
-        applyOnFireEffects
+        applyOnFireEffects,
+        CohesionHelper,
+        CohesionPanel
     };
 
     // Add custom constants for configuration.
@@ -113,6 +117,36 @@ Hooks.once('init', async function () {
       weapon: models.DeathwatchWeapon
     };
 
+    // Register Cohesion world settings
+    game.settings.register('deathwatch', 'cohesion', {
+      name: 'Kill-team Cohesion',
+      scope: 'world',
+      config: false,
+      type: Object,
+      default: { value: 0, max: 0 }
+    });
+    game.settings.register('deathwatch', 'squadLeader', {
+      name: 'Squad Leader Actor ID',
+      scope: 'world',
+      config: false,
+      type: String,
+      default: ''
+    });
+    game.settings.register('deathwatch', 'cohesionModifier', {
+      name: 'Cohesion GM Modifier',
+      scope: 'world',
+      config: false,
+      type: Number,
+      default: 0
+    });
+    game.settings.register('deathwatch', 'cohesionDamageThisRound', {
+      name: 'Cohesion Damage This Round',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: false
+    });
+
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;
 
@@ -186,6 +220,16 @@ Hooks.once('init', async function () {
 });
 
 Hooks.once('ready', async function () {
+    // Render Cohesion panel
+    CohesionPanel.getInstance().render(true);
+
+    // Re-render Cohesion panel when settings change
+    Hooks.on('updateSetting', (setting) => {
+        if (['deathwatch.cohesion', 'deathwatch.squadLeader', 'deathwatch.cohesionModifier'].includes(setting.key)) {
+            CohesionPanel.getInstance().render(false);
+        }
+    });
+
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
     Hooks.on("hotbarDrop", (bar, data, slot) => {
         if (data.type === "Item") {

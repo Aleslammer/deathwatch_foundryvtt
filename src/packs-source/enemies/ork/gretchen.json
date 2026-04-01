@@ -161,6 +161,8 @@
     "displayName": 30,
     "actorLink": false,
     "disposition": -1,
+    "width": 0.5,
+    "height": 0.5,
     "bar1": { "attribute": "wounds" }
   }
 }

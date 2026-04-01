@@ -1,0 +1,21 @@
+<div class="cohesion-panel-inner">
+  <div class="cohesion-header">
+    <span class="cohesion-label">⚔ Cohesion</span>
+    <span class="cohesion-value" title="{{breakdown}}">
+      <span class="cohesion-current">{{value}}</span>
+      <span class="cohesion-separator">/</span>
+      <span class="cohesion-max">{{max}}</span>
+    </span>
+  </div>
+  <div class="cohesion-leader">Leader: {{leaderName}}</div>
+  <div class="cohesion-controls">
+    {{#if isGM}}
+    <a class="cohesion-recover" title="Recover 1 Cohesion"><i class="fas fa-plus"></i></a>
+    <a class="cohesion-lose" title="Lose 1 Cohesion"><i class="fas fa-minus"></i></a>
+    <a class="cohesion-recalculate" title="Recalculate"><i class="fas fa-sync"></i></a>
+    <a class="cohesion-edit" title="Edit"><i class="fas fa-edit"></i></a>
+    <a class="cohesion-set-leader" title="Set Leader"><i class="fas fa-crown"></i></a>
+    {{/if}}
+    <a class="cohesion-challenge-btn" title="Cohesion Challenge"><i class="fas fa-dice"></i></a>
+  </div>
+</div>

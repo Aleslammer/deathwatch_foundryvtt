@@ -1,0 +1,220 @@
+import { CohesionHelper } from "../helpers/cohesion.mjs";
+
+/**
+ * Floating HUD panel displaying Kill-team Cohesion.
+ * Singleton — one instance shared across the session.
+ * Uses popOut: true for proper Foundry window management.
+ * @extends {Application}
+ */
+export class CohesionPanel extends Application {
+  static _instance = null;
+
+  static getInstance() {
+    if (!CohesionPanel._instance) {
+      CohesionPanel._instance = new CohesionPanel();
+    }
+    return CohesionPanel._instance;
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: 'cohesion-panel',
+      title: '⚔ Kill-team Cohesion',
+      template: 'systems/deathwatch/templates/ui/cohesion-panel.html',
+      popOut: true,
+      width: 220,
+      height: 'auto',
+      minimizable: false,
+      resizable: false,
+      classes: ['cohesion-panel']
+    });
+  }
+
+  /** After render, position at top center of the screen. */
+  async _render(...args) {
+    await super._render(...args);
+    const left = Math.round((window.innerWidth - 220) / 2);
+    super.setPosition({ left, top: 10 });
+  }
+
+  getData() {
+    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    const leaderId = game.settings.get('deathwatch', 'squadLeader');
+    const leader = leaderId ? game.actors.get(leaderId) : null;
+    const gmMod = game.settings.get('deathwatch', 'cohesionModifier');
+    return {
+      value: cohesion.value,
+      max: cohesion.max,
+      leaderName: leader?.name || 'None',
+      isGM: game.user.isGM,
+      breakdown: CohesionHelper.buildCohesionBreakdown(leader, gmMod)
+    };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find('.cohesion-recover').click(() => this._adjustCohesion(1));
+    html.find('.cohesion-lose').click(() => this._adjustCohesion(-1));
+    html.find('.cohesion-recalculate').click(() => this._onRecalculate());
+    html.find('.cohesion-edit').click(() => this._onEdit());
+    html.find('.cohesion-set-leader').click(() => this._onSetLeader());
+    html.find('.cohesion-challenge-btn').click(() => this._onCohesionChallenge());
+  }
+
+  /** Override close to prevent closing — panel should always be visible. */
+  async close(options = {}) {
+    if (options.force) return super.close(options);
+    return;
+  }
+
+  /* -------------------------------------------- */
+  /*  Cohesion Adjustments                        */
+  /* -------------------------------------------- */
+
+  async _adjustCohesion(delta) {
+    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    const newValue = Math.max(0, Math.min(cohesion.max, cohesion.value + delta));
+    if (newValue === cohesion.value) {
+      ui.notifications.info(delta > 0 ? 'Cohesion is already at maximum.' : 'Cohesion is already at 0.');
+      return;
+    }
+    await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
+    const label = delta > 0 ? 'Recovered' : 'Lost';
+    await ChatMessage.create({
+      content: `<div class="cohesion-chat"><strong>⚔ Cohesion ${label}</strong> — now ${newValue} / ${cohesion.max}</div>`
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Dialogs                                     */
+  /* -------------------------------------------- */
+
+  async _onRecalculate() {
+    const leaderId = game.settings.get('deathwatch', 'squadLeader');
+    const leader = leaderId ? game.actors.get(leaderId) : null;
+    if (!leader) return ui.notifications.warn('No squad leader assigned.');
+
+    const currentGmMod = game.settings.get('deathwatch', 'cohesionModifier');
+    const fsBonus = Math.floor((leader.system.characteristics?.fs?.value || 0) / 10);
+    const rankMod = CohesionHelper.getRankModifier(leader.system.rank || 1);
+    const commandMod = CohesionHelper.getCommandModifier(leader.system.skills?.command || {});
+
+    new Dialog({
+      title: 'Recalculate Cohesion',
+      content: `
+        <div class="form-group">
+          <p>Leader: <strong>${leader.name}</strong></p>
+          <p>Fellowship Bonus: <strong>${fsBonus}</strong></p>
+          <p>Rank Modifier: <strong>+${rankMod}</strong></p>
+          <p>Command Modifier: <strong>+${commandMod}</strong></p>
+          <hr/>
+          <label>GM Modifier:</label>
+          <input type="number" id="gm-modifier" value="${currentGmMod}" />
+        </div>`,
+      buttons: {
+        confirm: {
+          label: 'Recalculate',
+          callback: async (html) => {
+            const gmMod = parseInt(html.find('#gm-modifier').val()) || 0;
+            await game.settings.set('deathwatch', 'cohesionModifier', gmMod);
+            const max = CohesionHelper.calculateCohesionMaxFromActor(leader, gmMod);
+            const current = game.settings.get('deathwatch', 'cohesion');
+            await game.settings.set('deathwatch', 'cohesion', { value: Math.min(current.value, max), max });
+          }
+        },
+        cancel: { label: 'Cancel' }
+      },
+      default: 'confirm'
+    }).render(true);
+  }
+
+  async _onEdit() {
+    const current = game.settings.get('deathwatch', 'cohesion');
+    new Dialog({
+      title: 'Edit Cohesion',
+      content: `
+        <div class="form-group">
+          <label>Current:</label>
+          <input type="number" id="cohesion-value" value="${current.value}" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Maximum:</label>
+          <input type="number" id="cohesion-max" value="${current.max}" min="0" />
+        </div>`,
+      buttons: {
+        confirm: {
+          label: 'Save',
+          callback: async (html) => {
+            const value = parseInt(html.find('#cohesion-value').val()) || 0;
+            const max = parseInt(html.find('#cohesion-max').val()) || 0;
+            await game.settings.set('deathwatch', 'cohesion', { value: Math.min(value, max), max });
+          }
+        },
+        cancel: { label: 'Cancel' }
+      },
+      default: 'confirm'
+    }).render(true);
+  }
+
+  async _onSetLeader() {
+    const characters = game.actors.filter(a => a.type === 'character');
+    if (!characters.length) return ui.notifications.warn('No character actors found.');
+
+    const currentLeader = game.settings.get('deathwatch', 'squadLeader');
+    const options = characters.map(a => `<option value="${a.id}" ${a.id === currentLeader ? 'selected' : ''}>${a.name}</option>`).join('');
+
+    new Dialog({
+      title: 'Set Squad Leader',
+      content: `
+        <div class="form-group">
+          <label>Squad Leader:</label>
+          <select id="leader-select">${options}</select>
+        </div>`,
+      buttons: {
+        confirm: {
+          label: 'Confirm',
+          callback: async (html) => {
+            const leaderId = html.find('#leader-select').val();
+            await game.settings.set('deathwatch', 'squadLeader', leaderId);
+            const gmMod = game.settings.get('deathwatch', 'cohesionModifier');
+            const leader = game.actors.get(leaderId);
+            const max = CohesionHelper.calculateCohesionMaxFromActor(leader, gmMod);
+            await game.settings.set('deathwatch', 'cohesion', { value: max, max });
+          }
+        },
+        cancel: { label: 'Cancel' }
+      },
+      default: 'confirm'
+    }).render(true);
+  }
+
+  async _onCohesionChallenge() {
+    const owned = game.actors.filter(a => a.type === 'character' && a.isOwner);
+    if (!owned.length) return ui.notifications.warn('No owned character actors found.');
+
+    if (owned.length === 1) {
+      return CohesionHelper.rollCohesionChallenge(owned[0]);
+    }
+
+    const options = owned.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+    new Dialog({
+      title: 'Cohesion Challenge',
+      content: `
+        <div class="form-group">
+          <label>Battle-Brother:</label>
+          <select id="challenge-actor">${options}</select>
+        </div>`,
+      buttons: {
+        roll: {
+          label: 'Roll',
+          callback: async (html) => {
+            const actor = game.actors.get(html.find('#challenge-actor').val());
+            if (actor) await CohesionHelper.rollCohesionChallenge(actor);
+          }
+        },
+        cancel: { label: 'Cancel' }
+      },
+      default: 'roll'
+    }).render(true);
+  }
+}

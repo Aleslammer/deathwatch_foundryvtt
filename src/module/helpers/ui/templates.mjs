@@ -49,5 +49,8 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/deathwatch/templates/item/item-characteristic-advance-sheet.html",
     "systems/deathwatch/templates/item/item-critical-effect-sheet.html",
     "systems/deathwatch/templates/item/item-psychic-power-sheet.html",
+
+    // UI panels.
+    "systems/deathwatch/templates/ui/cohesion-panel.html",
   ]);
 };

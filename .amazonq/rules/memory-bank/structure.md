@@ -56,7 +56,10 @@ src/
 │   │   ├── combat/                # Combat logic (10 files)
 │   │   ├── character/             # Character data computation (6 files)
 │   │   ├── ui/                    # UI/presentation helpers (5 files)
+│   │   ├── cohesion.mjs           # CohesionHelper (Cohesion calculations)
 │   │   └── (root)                 # Core infrastructure (7 files)
+│   ├── ui/                         # UI Application classes
+│   │   └── cohesion-panel.mjs      # CohesionPanel (floating window)
 │   ├── modifiers/                  # Modifier system
 │   ├── sheets/                     # UI sheet implementations
 │   └── deathwatch.mjs              # Main entry point
@@ -83,10 +86,13 @@ src/
 │       ├── sheets.css
 │       ├── skills.css
 │       ├── tooltips.css
-│       └── wounds.css
+│       ├── wounds.css
+│       └── cohesion.css
 ├── templates/                      # Handlebars HTML templates
 │   ├── actor/                      # Character/NPC sheets
-│   └── item/                       # Item sheets
+│   ├── item/                       # Item sheets
+│   └── ui/                         # UI panel templates
+│       └── cohesion-panel.html     # Cohesion floating panel
 ├── system.json                     # Foundry system manifest
 └── template.json                   # Data schema definitions
 ```
@@ -96,6 +102,8 @@ src/
 ### 1. System Entry Point
 - **deathwatch.mjs**: Main initialization file that bootstraps the system
   - Registers document types and DataModels (`CONFIG.Actor.dataModels`, `CONFIG.Item.dataModels`)
+  - Registers Cohesion world settings (cohesion, squadLeader, cohesionModifier, cohesionDamageThisRound)
+  - Renders CohesionPanel on ready, registers updateSetting hook for reactivity
   - Loads helpers and utilities
   - Initializes sheets
   - Sets up Handlebars templates
@@ -138,7 +146,8 @@ Organized into three subfolders plus core infrastructure at root:
 
 #### Root (Core Infrastructure)
 - **config.mjs**: System configuration (DWConfig object)
-- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers, power levels)
+- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers, power levels, cohesion)
+- **cohesion.mjs**: CohesionHelper — Cohesion pool calculations, Cohesion Challenge
 - **debug.mjs**: Debug logging with feature flags
 - **effects.mjs**: Active effects and modifiers
 - **foundry-adapter.mjs**: Foundry API wrapper for testability
@@ -315,6 +324,8 @@ deathwatch.mjs (Entry Point)
     │       └─→ Templates (Handlebars HTML)
     │               ↓
     │               └─→ Handlebars Helpers
+    │
+    ├─→ UI Applications (cohesion-panel.mjs) ← floating windows
     │
     └─→ Configuration (config.mjs, constants.mjs)
 ```

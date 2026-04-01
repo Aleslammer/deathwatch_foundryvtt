@@ -18,10 +18,11 @@
 11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 12. **enemies.md** - Enemy & horde compendium entries, faction-based ID conventions
 13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
+14. **cohesion.md** - Kill-team Cohesion pool, CohesionPanel UI, Cohesion Challenge
 
 ## Key Metrics
-- **Tests**: 1335 passing, 87 suites
-- **Helper Classes**: 26+ modules
+- **Tests**: 1377 passing, 88 suites
+- **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
 
@@ -74,6 +75,15 @@ npm run build:all                                           # build:packs + depl
 - **Types**: weapon-damage, weapon-rof, weapon-blast, righteous-fury-threshold, characteristic-damage
 - **Special**: weaponClass restrictions, qualityException field
 
+### Cohesion
+- **Pool**: World-level shared resource (not per-actor), stored as world settings
+- **Formula**: Fellowship Bonus + Rank Modifier (0/+1/+2) + Command Modifier (+1/+2/+3) + GM Modifier
+- **UI**: `CohesionPanel` — floating `Application` window (`popOut: true`), singleton, always visible
+- **Buttons**: +1, −1, Recalculate (with GM modifier dialog), Edit, Set Leader, Cohesion Challenge
+- **Challenge**: 1d10 ≤ current Cohesion to pass
+- **Helper**: `CohesionHelper` in `helpers/cohesion.mjs` — 7 functions (6 pure + 1 roll)
+- **Planning**: `docs/improvements/cohesion/` (5 phase docs, Phases 1-2 complete)
+
 ## Common Tasks
 
 ### Add New Weapon Quality
@@ -115,18 +125,20 @@ npm run build:all                                           # build:packs + depl
 ```
 src/module/data/         TypeDataModel classes (base-document, actor/*.mjs, item/*.mjs)
 src/module/documents/    Actor, Item (thin shells), ActorConditions
-src/module/helpers/      Core infrastructure (constants, config, debug, foundry-adapter)
+src/module/helpers/      Core infrastructure (constants, config, debug, foundry-adapter, cohesion)
 src/module/helpers/combat/    Combat logic (10 files: combat, ranged, melee, psychic, horde, etc.)
 src/module/helpers/character/ Character data (6 files: modifiers, XP, skills, wounds, rank)
 src/module/helpers/ui/        UI helpers (5 files: chat, dialogs, items, templates, handlebars)
+src/module/ui/           UI Application classes (cohesion-panel)
 src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1335 tests across 87 suites
+tests/                   1377 tests across 88 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
+docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Hotbar weapon/psychic macros, psychic Righteous Fury auto-confirm fix, 1335 tests)
+**Last Updated**: January 2025 (Cohesion system Phase 1-2, CohesionPanel floating window, 1377 tests)
