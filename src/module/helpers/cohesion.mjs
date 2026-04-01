@@ -82,7 +82,84 @@ export class CohesionHelper {
   }
 
   /* -------------------------------------------- */
-  /*  Cohesion Challenge (Phase 5 preview)        */
+  /*  Cohesion Damage (Phase 3)                   */
+  /* -------------------------------------------- */
+
+  /**
+   * Check if raw damage + weapon qualities should trigger Cohesion damage.
+   * @param {number} rawDamage - Damage before armor/TB
+   * @param {Array} weaponQualities - Array of quality objects or strings
+   * @returns {boolean}
+   */
+  static shouldTriggerCohesionDamage(rawDamage, weaponQualities = []) {
+    if (rawDamage < COHESION.DAMAGE_THRESHOLD) return false;
+    const qualityIds = weaponQualities.map(q => typeof q === 'string' ? q : q.id);
+    return qualityIds.some(id => ['accurate', 'blast', 'devastating'].includes(id));
+  }
+
+  /**
+   * Check if a Fear creature should trigger Cohesion damage.
+   * @param {number} fearLevel
+   * @returns {boolean}
+   */
+  static shouldTriggerFearCohesionDamage(fearLevel) {
+    return fearLevel > 0;
+  }
+
+  /**
+   * Resolve a rally test (Command/Fellowship or Willpower). Pure function.
+   * @param {number} targetNumber - Test target number
+   * @param {number} roll - d100 result
+   * @returns {boolean}
+   */
+  static resolveRallyTest(targetNumber, roll) {
+    return roll <= targetNumber;
+  }
+
+  /**
+   * Post a Cohesion damage prompt to chat with Rally and Accept buttons.
+   * Non-pure — uses Foundry API.
+   * @param {string} reason - Description of what caused the damage
+   */
+  static async handleCohesionDamage(reason = 'A devastating attack threatens Kill-team cohesion.') {
+    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    if (cohesion.value <= 0) return;
+
+    const alreadyDamaged = game.settings.get('deathwatch', 'cohesionDamageThisRound');
+    if (alreadyDamaged) return;
+
+    const leaderId = game.settings.get('deathwatch', 'squadLeader');
+    const leader = leaderId ? game.actors.get(leaderId) : null;
+    const leaderName = leader?.name || 'Squad Leader';
+
+    const content = `<div class="cohesion-damage-prompt">
+      <h3>\u26A0 Cohesion Damage!</h3>
+      <p>${reason}</p>
+      <p><strong>${leaderName}</strong> may attempt a Command or Fellowship Test to rally.</p>
+      <button class="cohesion-rally-btn" data-leader-id="${leaderId || ''}">
+        \uD83D\uDEE1 Rally Test (Command/Fellowship)
+      </button>
+      <button class="cohesion-damage-accept-btn">
+        \u2717 Accept Cohesion Damage
+      </button>
+    </div>`;
+    await ChatMessage.create({ content, speaker: ChatMessage.getSpeaker() });
+  }
+
+  /**
+   * Apply Cohesion damage and mark the round as damaged.
+   * Non-pure — uses Foundry API.
+   * @param {number} amount
+   */
+  static async applyCohesionDamage(amount) {
+    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    const newValue = Math.max(0, cohesion.value - amount);
+    await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
+    await game.settings.set('deathwatch', 'cohesionDamageThisRound', true);
+  }
+
+  /* -------------------------------------------- */
+  /*  Cohesion Challenge                          */
   /* -------------------------------------------- */
 
   /**

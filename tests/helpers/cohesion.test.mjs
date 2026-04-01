@@ -206,6 +206,88 @@ describe('CohesionHelper', () => {
   });
 
   /* -------------------------------------------- */
+  /*  shouldTriggerCohesionDamage                 */
+  /* -------------------------------------------- */
+
+  describe('shouldTriggerCohesionDamage', () => {
+    it('returns true for exactly 10 damage with Blast', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(10, [{id: 'blast'}])).toBe(true);
+    });
+
+    it('returns false for 9 damage with Blast (below threshold)', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(9, [{id: 'blast'}])).toBe(false);
+    });
+
+    it('returns true for Accurate above threshold', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(15, [{id: 'accurate'}])).toBe(true);
+    });
+
+    it('returns true for Devastating above threshold', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(12, [{id: 'devastating'}])).toBe(true);
+    });
+
+    it('returns false for non-qualifying quality', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(10, [{id: 'tearing'}])).toBe(false);
+    });
+
+    it('returns false for no qualities', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(10, [])).toBe(false);
+    });
+
+    it('returns true for mixed qualities with one qualifying', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(20, [{id: 'blast'}, {id: 'tearing'}])).toBe(true);
+    });
+
+    it('handles string format qualities', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(10, ['blast'])).toBe(true);
+    });
+
+    it('returns false with no arguments for qualities', () => {
+      expect(CohesionHelper.shouldTriggerCohesionDamage(15)).toBe(false);
+    });
+  });
+
+  /* -------------------------------------------- */
+  /*  shouldTriggerFearCohesionDamage             */
+  /* -------------------------------------------- */
+
+  describe('shouldTriggerFearCohesionDamage', () => {
+    it('returns true for fear level 1', () => {
+      expect(CohesionHelper.shouldTriggerFearCohesionDamage(1)).toBe(true);
+    });
+
+    it('returns true for fear level 4', () => {
+      expect(CohesionHelper.shouldTriggerFearCohesionDamage(4)).toBe(true);
+    });
+
+    it('returns false for fear level 0', () => {
+      expect(CohesionHelper.shouldTriggerFearCohesionDamage(0)).toBe(false);
+    });
+  });
+
+  /* -------------------------------------------- */
+  /*  resolveRallyTest                            */
+  /* -------------------------------------------- */
+
+  describe('resolveRallyTest', () => {
+    it('passes when roll is under target', () => {
+      expect(CohesionHelper.resolveRallyTest(50, 30)).toBe(true);
+    });
+
+    it('passes when roll equals target', () => {
+      expect(CohesionHelper.resolveRallyTest(50, 50)).toBe(true);
+    });
+
+    it('fails when roll is over target', () => {
+      expect(CohesionHelper.resolveRallyTest(50, 51)).toBe(false);
+    });
+
+    it('fails when target is 0', () => {
+      expect(CohesionHelper.resolveRallyTest(0, 1)).toBe(false);
+    });
+  });
+
+  /* -------------------------------------------- */
   /*  resolveCohesionChallenge                    */
   /* -------------------------------------------- */
 

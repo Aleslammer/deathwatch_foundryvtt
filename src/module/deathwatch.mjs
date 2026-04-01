@@ -177,6 +177,12 @@ Hooks.once('init', async function () {
     Hooks.on('updateCombat', async (combat, changed) => {
         if (!game.user.isGM) return;
         if (!("turn" in changed) && !("round" in changed)) return;
+
+        // Reset Cohesion damage cap on new round
+        if ("round" in changed) {
+            game.settings.set('deathwatch', 'cohesionDamageThisRound', false);
+        }
+
         const combatant = combat.combatants.get(combat.current.combatantId);
         if (!combatant?.actor?.hasCondition?.('on-fire')) return;
 
@@ -331,6 +337,13 @@ Hooks.on('renderChatMessage', (message, html) => {
         }
         
         await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour });
+
+        // Check for Cohesion damage trigger (10+ raw damage from Accurate/Blast/Devastating)
+        const weaponQualitiesRaw = button.data('weaponQualities');
+        const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? JSON.parse(weaponQualitiesRaw) : weaponQualitiesRaw) : [];
+        if (targetActor.type === 'character' && CohesionHelper.shouldTriggerCohesionDamage(damage, weaponQualities)) {
+            await CohesionHelper.handleCohesionDamage(`${targetActor.name} took ${damage} raw damage from a qualifying weapon.`);
+        }
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {
@@ -510,6 +523,45 @@ Hooks.on('renderChatMessage', (message, html) => {
         }
         
         await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
+    });
+
+    html.find('.cohesion-rally-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const leaderId = button.data('leaderId');
+        const leader = leaderId ? game.actors.get(leaderId) : null;
+        if (!leader) {
+            ui.notifications.warn('Squad leader not found!');
+            return;
+        }
+
+        const commandTotal = leader.system.skills?.command?.total || 0;
+        const fsValue = leader.system.characteristics?.fs?.value || 0;
+        const targetNumber = Math.max(commandTotal, fsValue);
+
+        const roll = await new Roll('1d100').evaluate();
+        const success = CohesionHelper.resolveRallyTest(targetNumber, roll.total);
+
+        if (success) {
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: leader }),
+                flavor: `<strong>\uD83D\uDEE1 Rally Successful!</strong><br>${leader.name} rallies the Kill-team! (Rolled ${roll.total} vs ${targetNumber})<br>Cohesion damage negated.`
+            });
+        } else {
+            await CohesionHelper.applyCohesionDamage(1);
+            const cohesion = game.settings.get('deathwatch', 'cohesion');
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: leader }),
+                flavor: `<strong>\u26A0 Rally Failed!</strong><br>${leader.name} fails to rally! (Rolled ${roll.total} vs ${targetNumber})<br>Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}`
+            });
+        }
+    });
+
+    html.find('.cohesion-damage-accept-btn').click(async () => {
+        await CohesionHelper.applyCohesionDamage(1);
+        const cohesion = game.settings.get('deathwatch', 'cohesion');
+        await ChatMessage.create({
+            content: `<div class="cohesion-chat"><strong>\u26A0 Cohesion Lost</strong> \u2014 Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}</div>`
+        });
     });
 
     html.find('.extinguish-btn').click(async (ev) => {

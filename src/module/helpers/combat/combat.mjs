@@ -379,7 +379,13 @@ export class CombatHelper {
                   isScatter, isLongOrExtremeRange, isMeltaRange, magnitudeBonusDamage, ignoresNaturalArmour
                 });
               } else {
-                const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour) : '';
+                const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton({
+                  damage: totalDamage, penetration, location: hitLocations[i], targetId: targetToken.actor.id,
+                  damageType: weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess,
+                  isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange,
+                  charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour,
+                  weaponQualities: weapon.system.attachedQualities || []
+                }) : '';
                 const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
                 await roll.toMessage({
@@ -394,7 +400,13 @@ export class CombatHelper {
                 
                   totalDamage += furyDamage;
                 
-                  const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(totalDamage, penetration, hitLocations[i], targetToken.actor.id, weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour) : '';
+                  const applyFuryButton = targetToken ? ChatMessageBuilder.createDamageApplyButton({
+                    damage: totalDamage, penetration, location: hitLocations[i], targetId: targetToken.actor.id,
+                    damageType: weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess,
+                    isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange,
+                    charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour,
+                    weaponQualities: weapon.system.attachedQualities || []
+                  }) : '';
                   const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 
                   await ChatMessage.create({
