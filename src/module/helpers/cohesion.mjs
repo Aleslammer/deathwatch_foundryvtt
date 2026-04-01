@@ -123,9 +123,8 @@ export class CohesionHelper {
    */
   static async handleCohesionDamage(reason = 'A devastating attack threatens Kill-team cohesion.') {
     const cohesion = game.settings.get('deathwatch', 'cohesion');
-    if (cohesion.value <= 0) return;
-
     const alreadyDamaged = game.settings.get('deathwatch', 'cohesionDamageThisRound');
+    if (cohesion.value <= 0) return;
     if (alreadyDamaged) return;
 
     const leaderId = game.settings.get('deathwatch', 'squadLeader');
@@ -156,6 +155,42 @@ export class CohesionHelper {
     const newValue = Math.max(0, cohesion.value - amount);
     await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
     await game.settings.set('deathwatch', 'cohesionDamageThisRound', true);
+  }
+
+  /* -------------------------------------------- */
+  /*  Cohesion Recovery (Phase 4)                 */
+  /* -------------------------------------------- */
+
+  /**
+   * Check if Cohesion can be recovered. Pure function.
+   * @param {number} currentValue
+   * @param {number} maxValue
+   * @returns {boolean}
+   */
+  static canRecoverCohesion(currentValue, maxValue) {
+    return currentValue < maxValue;
+  }
+
+  /**
+   * Recover Cohesion by amount, capped at max. Posts chat message.
+   * Non-pure — uses Foundry API.
+   * @param {number} amount
+   * @param {string} [reason] - Optional reason for chat message
+   * @returns {Promise<boolean>} true if recovered, false if already at max
+   */
+  static async recoverCohesion(amount, reason = '') {
+    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    if (!CohesionHelper.canRecoverCohesion(cohesion.value, cohesion.max)) {
+      ui.notifications.info('Cohesion is already at maximum.');
+      return false;
+    }
+    const newValue = Math.min(cohesion.max, cohesion.value + amount);
+    await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
+    const reasonText = reason ? ` ${reason}` : '';
+    await ChatMessage.create({
+      content: `<div class="cohesion-chat"><strong>\u2694 Cohesion Recovered</strong> \u2014 now ${newValue} / ${cohesion.max}${reasonText}</div>`
+    });
+    return true;
   }
 
   /* -------------------------------------------- */

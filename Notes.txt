@@ -8,6 +8,18 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 
 TODO: I have issues still with first load of html files.
 
+System:
+    TODO: add extensive logging for each of the critical system paths
+        Ranged attack
+        Melee attack
+        Psychic attack
+        Ranged damage
+        Melee Damage
+        Psychic Damage
+        Mechanics (ammo depletion etc)
+        system events
+        cohesion        
+
 Traits
     TODO: review traits if they need modifiers
 

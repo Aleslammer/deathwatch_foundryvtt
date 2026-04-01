@@ -21,7 +21,7 @@
 14. **cohesion.md** - Kill-team Cohesion pool, CohesionPanel UI, Cohesion Challenge
 
 ## Key Metrics
-- **Tests**: 1377 passing, 88 suites
+- **Tests**: 1393 passing, 88 suites
 - **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -82,7 +82,7 @@ npm run build:all                                           # build:packs + depl
 - **Buttons**: +1, −1, Recalculate (with GM modifier dialog), Edit, Set Leader, Cohesion Challenge
 - **Challenge**: 1d10 ≤ current Cohesion to pass
 - **Helper**: `CohesionHelper` in `helpers/cohesion.mjs` — 7 functions (6 pure + 1 roll)
-- **Planning**: `docs/improvements/cohesion/` (5 phase docs, Phases 1-2 complete)
+- **Planning**: `docs/improvements/cohesion/` (5 phase docs, Phases 1-3 complete)
 
 ## Common Tasks
 
@@ -134,11 +134,11 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1377 tests across 88 suites
+tests/                   1393 tests across 88 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Cohesion system Phase 1-2, CohesionPanel floating window, 1377 tests)
+**Last Updated**: January 2025 (Cohesion system Phase 1-3, CohesionPanel floating window, 1393 tests)

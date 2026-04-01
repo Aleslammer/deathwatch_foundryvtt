@@ -53,7 +53,7 @@ export class CohesionPanel extends Application {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find('.cohesion-recover').click(() => this._adjustCohesion(1));
+    html.find('.cohesion-recover').click(() => CohesionHelper.recoverCohesion(1));
     html.find('.cohesion-lose').click(() => this._adjustCohesion(-1));
     html.find('.cohesion-recalculate').click(() => this._onRecalculate());
     html.find('.cohesion-edit').click(() => this._onEdit());

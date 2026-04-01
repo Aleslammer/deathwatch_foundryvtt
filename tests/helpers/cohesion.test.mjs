@@ -288,6 +288,28 @@ describe('CohesionHelper', () => {
   });
 
   /* -------------------------------------------- */
+  /*  canRecoverCohesion                          */
+  /* -------------------------------------------- */
+
+  describe('canRecoverCohesion', () => {
+    it('returns true when current is below max', () => {
+      expect(CohesionHelper.canRecoverCohesion(3, 7)).toBe(true);
+    });
+
+    it('returns false when current equals max', () => {
+      expect(CohesionHelper.canRecoverCohesion(7, 7)).toBe(false);
+    });
+
+    it('returns false when both are zero', () => {
+      expect(CohesionHelper.canRecoverCohesion(0, 0)).toBe(false);
+    });
+
+    it('returns true when current is zero but max is positive', () => {
+      expect(CohesionHelper.canRecoverCohesion(0, 5)).toBe(true);
+    });
+  });
+
+  /* -------------------------------------------- */
   /*  resolveCohesionChallenge                    */
   /* -------------------------------------------- */
 
