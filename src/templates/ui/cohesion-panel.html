@@ -18,4 +18,19 @@
     {{/if}}
     <a class="cohesion-challenge-btn" title="Cohesion Challenge"><i class="fas fa-dice"></i></a>
   </div>
+  {{#if characters.length}}
+  <div class="cohesion-characters">
+    {{#each characters}}
+    <div class="cohesion-character-row">
+      <span class="mode-indicator {{this.mode}}" title="{{this.mode}}"></span>
+      <span class="character-name">{{this.name}}</span>
+      {{#if this.canToggle}}
+      <a class="mode-toggle" data-actor-id="{{this.id}}" title="Toggle Mode">
+        <i class="fas fa-exchange-alt"></i>
+      </a>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
 </div>

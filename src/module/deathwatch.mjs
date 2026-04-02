@@ -19,6 +19,7 @@ import { DW_STATUS_EFFECTS } from "./helpers/status-effects.mjs";
 import { FireHelper } from "./helpers/combat/fire-helper.mjs";
 import { CohesionHelper } from "./helpers/cohesion.mjs";
 import { CohesionPanel } from "./ui/cohesion-panel.mjs";
+import { ModeHelper } from "./helpers/mode-helper.mjs";
 
 
 /* -------------------------------------------- */
@@ -214,6 +215,21 @@ Hooks.once('init', async function () {
         if (folder) await actor.update({ folder: folder.id });
     });
 
+    // Add Kill-team Cohesion toggle to Token Controls toolbar
+    Hooks.on('getSceneControlButtons', (controls) => {
+        const tokenControls = controls.tokens;
+        if (tokenControls?.tools) {
+            tokenControls.tools.cohesionPanel = {
+                name: 'cohesionPanel',
+                title: 'Toggle Cohesion Panel',
+                icon: 'fas fa-shield-alt',
+                button: true,
+                visible: true,
+                onChange: () => CohesionPanel.toggle()
+            };
+        }
+    });
+
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });
@@ -226,13 +242,25 @@ Hooks.once('init', async function () {
 });
 
 Hooks.once('ready', async function () {
-    // Render Cohesion panel
-    CohesionPanel.getInstance().render(true);
-
-    // Re-render Cohesion panel when settings change
+    // Re-render Cohesion panel when settings change; auto-drop Squad Mode on zero Cohesion
     Hooks.on('updateSetting', (setting) => {
         if (['deathwatch.cohesion', 'deathwatch.squadLeader', 'deathwatch.cohesionModifier'].includes(setting.key)) {
-            CohesionPanel.getInstance().render(false);
+            const panel = CohesionPanel.getInstance();
+            if (panel.rendered) panel.render(false);
+        }
+        if (setting.key === 'deathwatch.cohesion' && game.user.isGM) {
+            const cohesion = game.settings.get('deathwatch', 'cohesion');
+            if (cohesion.value <= 0) {
+                CohesionPanel.dropAllToSoloMode();
+            }
+        }
+    });
+
+    // Re-render Cohesion panel when a character's mode changes
+    Hooks.on('updateActor', (actor, changes) => {
+        if (actor.type === 'character' && changes.system?.mode !== undefined) {
+            const panel = CohesionPanel.getInstance();
+            if (panel.rendered) panel.render(false);
         }
     });
 

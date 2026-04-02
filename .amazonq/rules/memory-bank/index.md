@@ -19,9 +19,10 @@
 12. **enemies.md** - Enemy & horde compendium entries, faction-based ID conventions
 13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
 14. **cohesion.md** - Kill-team Cohesion pool, CohesionPanel UI, Cohesion Challenge
+15. **modes.md** - Solo/Squad Mode tracking, CohesionPanel mode display
 
 ## Key Metrics
-- **Tests**: 1393 passing, 88 suites
+- **Tests**: 1410 passing, 89 suites
 - **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -78,11 +79,21 @@ npm run build:all                                           # build:packs + depl
 ### Cohesion
 - **Pool**: World-level shared resource (not per-actor), stored as world settings
 - **Formula**: Fellowship Bonus + Rank Modifier (0/+1/+2) + Command Modifier (+1/+2/+3) + GM Modifier
-- **UI**: `CohesionPanel` — floating `Application` window (`popOut: true`), singleton, always visible
+- **UI**: `CohesionPanel` — floating `Application` window, toggled via Kill-team scene control button (left toolbar)
 - **Buttons**: +1, −1, Recalculate (with GM modifier dialog), Edit, Set Leader, Cohesion Challenge
 - **Challenge**: 1d10 ≤ current Cohesion to pass
 - **Helper**: `CohesionHelper` in `helpers/cohesion.mjs` — 7 functions (6 pure + 1 roll)
 - **Planning**: `docs/improvements/cohesion/` (5 phase docs, Phases 1-3 complete)
+
+### Solo/Squad Mode
+- **Mode Field**: `mode` StringField on `DeathwatchCharacter` ("solo" or "squad", default "solo")
+- **UI**: Character mode list in CohesionPanel with colored indicators (🟢 Solo / 🔵 Squad)
+- **Toggle**: Click to switch modes; entering Squad Mode validates Cohesion ≥ 1
+- **Auto-Drop**: All characters forced to Solo Mode when Cohesion reaches 0
+- **Chat**: Mode changes logged to chat for table visibility
+- **Helper**: `ModeHelper` in `helpers/mode-helper.mjs` — 4 pure functions
+- **Constants**: `MODES`, `MODE_LABELS` in `constants.mjs`
+- **Planning**: `docs/improvements/modes/planning/` (Phase 1 complete, Phases 2-3 planned)
 
 ## Common Tasks
 
@@ -134,11 +145,11 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1393 tests across 88 suites
+tests/                   1410 tests across 89 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Cohesion system Phase 1-3, CohesionPanel floating window, 1393 tests)
+**Last Updated**: January 2025 (Solo/Squad Mode Phase 1, CohesionPanel mode display, 1410 tests)

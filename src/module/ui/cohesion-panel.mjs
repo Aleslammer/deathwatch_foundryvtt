@@ -1,4 +1,6 @@
 import { CohesionHelper } from "../helpers/cohesion.mjs";
+import { ModeHelper } from "../helpers/mode-helper.mjs";
+import { MODES } from "../helpers/constants.mjs";
 
 /**
  * Floating HUD panel displaying Kill-team Cohesion.
@@ -30,11 +32,14 @@ export class CohesionPanel extends Application {
     });
   }
 
-  /** After render, position at top center of the screen. */
+  /** After render, position at top center on first open only. */
   async _render(...args) {
+    const firstRender = !this._element?.length;
     await super._render(...args);
-    const left = Math.round((window.innerWidth - 220) / 2);
-    super.setPosition({ left, top: 10 });
+    if (firstRender) {
+      const left = Math.round((window.innerWidth - 220) / 2);
+      super.setPosition({ left, top: 10 });
+    }
   }
 
   getData() {
@@ -42,12 +47,23 @@ export class CohesionPanel extends Application {
     const leaderId = game.settings.get('deathwatch', 'squadLeader');
     const leader = leaderId ? game.actors.get(leaderId) : null;
     const gmMod = game.settings.get('deathwatch', 'cohesionModifier');
+
+    const characters = game.actors
+      .filter(a => a.type === 'character')
+      .map(a => ({
+        id: a.id,
+        name: a.name,
+        mode: a.system.mode || MODES.SOLO,
+        canToggle: game.user.isGM || a.isOwner
+      }));
+
     return {
       value: cohesion.value,
       max: cohesion.max,
       leaderName: leader?.name || 'None',
       isGM: game.user.isGM,
-      breakdown: CohesionHelper.buildCohesionBreakdown(leader, gmMod)
+      breakdown: CohesionHelper.buildCohesionBreakdown(leader, gmMod),
+      characters
     };
   }
 
@@ -59,12 +75,60 @@ export class CohesionPanel extends Application {
     html.find('.cohesion-edit').click(() => this._onEdit());
     html.find('.cohesion-set-leader').click(() => this._onSetLeader());
     html.find('.cohesion-challenge-btn').click(() => this._onCohesionChallenge());
+    html.find('.mode-toggle').click(ev => this._onToggleMode(ev));
   }
 
-  /** Override close to prevent closing — panel should always be visible. */
-  async close(options = {}) {
-    if (options.force) return super.close(options);
-    return;
+  /**
+   * Toggle the panel open/closed.
+   */
+  static toggle() {
+    const panel = CohesionPanel.getInstance();
+    if (panel.rendered) {
+      panel.close();
+    } else {
+      panel.render(true);
+    }
+  }
+
+  /* -------------------------------------------- */
+  /*  Mode Toggle                                 */
+  /* -------------------------------------------- */
+
+  async _onToggleMode(ev) {
+    if (!game.ready) return;
+    const actorId = $(ev.currentTarget).data('actorId');
+    const actor = game.actors.get(actorId);
+    if (!actor || !(actor instanceof Actor)) return;
+
+    const currentMode = actor.system.mode || MODES.SOLO;
+    const newMode = currentMode === MODES.SOLO ? MODES.SQUAD : MODES.SOLO;
+
+    if (newMode === MODES.SQUAD) {
+      const cohesion = game.settings.get('deathwatch', 'cohesion');
+      if (!ModeHelper.canEnterSquadMode(cohesion.value)) {
+        ui.notifications.warn('Cannot enter Squad Mode — Cohesion is 0.');
+        return;
+      }
+    }
+
+    await actor.update({ 'system.mode': newMode });
+    await ChatMessage.create({ content: ModeHelper.buildModeChangeMessage(actor.name, newMode) });
+    this.render(false);
+  }
+
+  /**
+   * Force all characters in Squad Mode back to Solo Mode.
+   * Called when Cohesion reaches 0.
+   */
+  static async dropAllToSoloMode() {
+    if (!game.ready) return;
+    const squadCharacters = game.actors.filter(a => a.type === 'character' && a.system.mode === MODES.SQUAD);
+    if (!squadCharacters.length) return;
+
+    for (const actor of squadCharacters) {
+      await actor.update({ 'system.mode': MODES.SOLO });
+    }
+    await ChatMessage.create({ content: ModeHelper.buildCohesionDepletedMessage() });
   }
 
   /* -------------------------------------------- */

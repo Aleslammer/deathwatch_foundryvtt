@@ -57,8 +57,9 @@ Singleton `Application` with `popOut: true`. Renders as a Foundry floating windo
 
 ### Key Behaviors
 - **Singleton**: `CohesionPanel.getInstance()` returns the single instance
-- **Always visible**: `close()` overridden to prevent closing (only `close({ force: true })` works)
-- **Position**: Top center on every render (`top: 10`, horizontally centered). Users can drag during session but position does not persist between reloads.
+- **Toggled via Scene Controls**: Kill-team tool group in left toolbar, panel starts closed
+- **Toggle**: `CohesionPanel.toggle()` opens if closed, closes if open
+- **Position**: Top center on first render. Users can drag during session but position resets on reopen.
 - **Reactivity**: Re-renders when `cohesion`, `squadLeader`, or `cohesionModifier` settings change (via `updateSetting` hook)
 - **Non-minimizable, non-resizable**: Compact HUD-like window
 

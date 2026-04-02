@@ -27,11 +27,11 @@ Talents
     TODO: Review all talents to determine if effects can be applied to anythig
 
 Gear:
+    Cybernetics
     Relics
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
-    Cybernetics
     Servitors
 Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak

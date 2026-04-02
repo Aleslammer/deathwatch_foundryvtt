@@ -185,6 +185,17 @@ export const POWER_LEVEL_LABELS = {
   [POWER_LEVELS.PUSH]: 'Push'
 };
 
+// Combat Modes
+export const MODES = {
+  SOLO: 'solo',
+  SQUAD: 'squad'
+};
+
+export const MODE_LABELS = {
+  [MODES.SOLO]: 'Solo Mode',
+  [MODES.SQUAD]: 'Squad Mode'
+};
+
 // Cohesion
 export const COHESION = {
   RANK_THRESHOLD_MID: 4,
