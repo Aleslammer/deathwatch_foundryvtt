@@ -110,6 +110,11 @@ Each Squad Mode ability will have:
 **Note:** Squad Mode abilities also need `cohesionCost`, `sustained`, and `action` fields — these are defined in Phase 3. For Phase 2, we add the items with descriptions only. Phase 3 adds the activation mechanics.
 
 ## Compendium File Structure
+
+Folders use **kebab-case** (matching existing convention). The build script auto-title-cases folder names for Foundry display (e.g., `solo-mode` → `Solo Mode`, `blood-angels` → `Blood Angels`).
+
+Chapter folders sit directly under `solo-mode/` and `squad-mode/` — no intermediate `chapter/` folder. The chapter name itself distinguishes from `codex/`, keeping the hierarchy flat and the compendium browser clean.
+
 ```
 src/packs-source/specialties/special-abilities/
 ├── apothecary/              (existing specialty abilities)
@@ -118,22 +123,53 @@ src/packs-source/specialties/special-abilities/
 ├── tactical-marine/         (existing specialty abilities)
 ├── techmarine/              (existing specialty abilities)
 ├── solo-mode/
-│   ├── codex/               (Codex Solo Mode abilities)
+│   ├── codex/               (Codex Solo Mode abilities — available to all)
 │   │   ├── burst-of-speed.json
 │   │   ├── feat-of-strength.json
 │   │   └── ...
-│   └── chapter/             (Chapter Solo Mode abilities)
-│       ├── ultramarines/
-│       ├── blood-angels/
-│       └── ...
+│   ├── ultramarines/        (Chapter Solo Mode abilities)
+│   ├── blood-angels/
+│   ├── space-wolves/
+│   ├── dark-angels/
+│   ├── black-templars/
+│   ├── storm-wardens/
+│   ├── iron-hands/
+│   ├── novamarines/
+│   └── raptors/
 └── squad-mode/
     ├── codex/               (Codex Attack Patterns & Defensive Stances)
     │   ├── bolter-assault.json
     │   ├── fire-support.json
     │   └── ...
-    └── chapter/             (Chapter-specific Squad Mode abilities)
-        ├── ultramarines/
-        └── ...
+    ├── ultramarines/        (Chapter Squad Mode abilities)
+    ├── blood-angels/
+    ├── space-wolves/
+    ├── dark-angels/
+    ├── black-templars/
+    ├── storm-wardens/
+    ├── iron-hands/
+    ├── novamarines/
+    └── raptors/
+```
+
+**Foundry compendium browser display:**
+```
+📁 Solo Mode
+  📁 Codex
+  📁 Ultramarines
+  📁 Blood Angels
+  📁 Space Wolves
+  📁 Dark Angels
+  📁 Black Templars
+  📁 Storm Wardens
+  📁 Iron Hands
+  📁 Novamarines
+  📁 Raptors
+📁 Squad Mode
+  📁 Codex
+  📁 Ultramarines
+  📁 Blood Angels
+  ...
 ```
 
 ### ID Convention
@@ -142,37 +178,313 @@ src/packs-source/specialties/special-abilities/
 - Squad Mode Codex: `sqcd00000000###` (squad-mode-codex)
 - Squad Mode Chapter: `sqch00000000###` (squad-mode-chapter)
 
+## Example Compendium JSONs
+
+All fields below map directly to the DataModel schema chain:
+- `DeathwatchDataModel` → (no fields)
+- `DeathwatchItemBase` → `description`, `book`, `page`, `modifiers`
+- `DeathwatchSpecialAbility` → `key` (keyTemplate), `specialty`, `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`
+
+### Example 1: Solo Mode Codex Ability (with improvements)
+**File:** `src/packs-source/specialties/special-abilities/solo-mode/codex/burst-of-speed.json`
+```json
+{
+  "_id": "smcd00000000001",
+  "name": "Burst of Speed",
+  "type": "special-ability",
+  "img": "systems/deathwatch/icons/generic/special-ability.webp",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "218",
+    "key": "burst-of-speed",
+    "description": "<p>A Battle-Brother can call on reserves of speed when needed, crossing great distances to close with the foe. Once per game session, a Battle-Brother can perform a Burst of Speed. This ability increases the character's Agility Bonus by 2 with all the usual associated benefits for a number of Rounds equal to his Rank.</p><table><tr><th>Rank</th><th>Improvement</th></tr><tr><td>3</td><td>Also adds +10 to all Agility tests based on movement</td></tr><tr><td>5</td><td>AG Bonus increase becomes +4</td></tr><tr><td>7</td><td>Ignore Agility Tests when running or charging in difficult terrain</td></tr></table>",
+    "modifiers": [],
+    "specialty": "",
+    "modeRequirement": "solo",
+    "requiredRank": 1,
+    "chapter": "",
+    "abilityCategory": "codex",
+    "effect": "Increases Agility Bonus by 2 for a number of Rounds equal to Rank",
+    "improvements": [
+      { "rank": 3, "effect": "Also adds +10 to all Agility tests based on movement" },
+      { "rank": 5, "effect": "AG Bonus increase becomes +4" },
+      { "rank": 7, "effect": "Ignore Agility Tests when running or charging in difficult terrain" }
+    ]
+  }
+}
+```
+
+**Field mapping:**
+| JSON Field | Source | Notes |
+|------------|--------|-------|
+| `description` | DeathwatchItemBase | Full HTML with improvement table for item sheet |
+| `book`, `page` | DeathwatchItemBase | Source reference |
+| `modifiers` | DeathwatchItemBase | Empty — mode abilities don't use modifier system |
+| `key` | keyTemplate | Kebab-case identifier |
+| `specialty` | DeathwatchSpecialAbility | Empty — not a specialty ability |
+| `modeRequirement` | Phase 2 | `"solo"` |
+| `requiredRank` | Phase 2 | Minimum rank to use |
+| `chapter` | Phase 2 | Empty = Codex (available to all) |
+| `abilityCategory` | Phase 2 | `"codex"` |
+| `effect` | Phase 2 | Concise summary for chat message |
+| `improvements` | Phase 2 | Structured rank/effect pairs for chat filtering |
+
+### Example 2: Solo Mode Chapter Ability
+**File:** `src/packs-source/specialties/special-abilities/solo-mode/ultramarines/favoured-son.json`
+```json
+{
+  "_id": "smch00000000001",
+  "name": "Favoured Son",
+  "type": "special-ability",
+  "img": "systems/deathwatch/icons/generic/special-ability.webp",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "220",
+    "key": "favoured-son",
+    "description": "<p>Example chapter ability description.</p>",
+    "modifiers": [],
+    "specialty": "",
+    "modeRequirement": "solo",
+    "requiredRank": 1,
+    "chapter": "Ultramarines",
+    "abilityCategory": "chapter",
+    "effect": "Example chapter ability effect summary",
+    "improvements": []
+  }
+}
+```
+
+**Key differences from Codex:**
+- `chapter`: `"Ultramarines"` — only available to Ultramarines characters
+- `abilityCategory`: `"chapter"` — chapter-specific ability
+- `improvements`: Empty — not all abilities have rank improvements
+
+### Example 3: Squad Mode Codex Ability
+**File:** `src/packs-source/specialties/special-abilities/squad-mode/codex/bolter-assault.json`
+```json
+{
+  "_id": "sqcd00000000001",
+  "name": "Bolter Assault",
+  "type": "special-ability",
+  "img": "systems/deathwatch/icons/generic/special-ability.webp",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "229",
+    "key": "bolter-assault",
+    "description": "<p>Example squad mode attack pattern description.</p>",
+    "modifiers": [],
+    "specialty": "",
+    "modeRequirement": "squad",
+    "requiredRank": 0,
+    "chapter": "",
+    "abilityCategory": "codex",
+    "effect": "Example squad mode effect summary",
+    "improvements": []
+  }
+}
+```
+
+**Key differences:**
+- `modeRequirement`: `"squad"` — only usable in Squad Mode
+- `requiredRank`: `0` — Squad Mode abilities are not rank-gated (determined by squad leader)
+- Phase 3 will add `cohesionCost`, `sustained`, and `action` fields
+
+### Example 4: Existing Specialty Ability (NO CHANGES)
+**File:** `src/packs-source/specialties/special-abilities/tactical-marine/bolter-mastery.json`
+```json
+{
+  "_id": "sabi00000000008",
+  "name": "Bolter Mastery",
+  "type": "special-ability",
+  "img": "systems/deathwatch/icons/generic/special-ability.webp",
+  "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "85",
+    "key": "bolter-mastery",
+    "description": "<p>The Tactical Marine gains a +10 bonus to all Ballistic Skill Tests and +2 to Damage when firing a Bolt weapon. This ability only functions in Solo Mode.</p>",
+    "specialty": "Tactical Marine"
+  }
+}
+```
+
+**Note:** Existing files are NOT modified. The new fields (`modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`) default to empty/zero via the DataModel schema. This means:
+- `modeRequirement` → `""` (no mode restriction)
+- `requiredRank` → `0` (no rank gate)
+- `chapter` → `""` (not chapter-specific)
+- `abilityCategory` → `""` (specialty ability)
+- `effect` → `""` (triggers fallback to raw description in chat)
+- `improvements` → `[]` (no structured improvements)
+
+## Description & Improvements Data
+
+Mode abilities have rank-gated improvements that enhance the base effect at higher ranks. The data is split across two concerns:
+
+1. **`description`** (HTMLField): Rich HTML for the item sheet — base effect paragraph + improvement table for visual reference
+2. **`effect`** (StringField): Short base effect summary for chat messages
+3. **`improvements`** (ArrayField of ObjectField): Structured rank/effect pairs for chat message filtering
+
+### Additional Schema Fields
+```javascript
+schema.effect = new fields.StringField({ initial: "", blank: true });
+// Short base effect summary used in activation chat messages.
+// Example: "Increases Agility Bonus by 2 for a number of Rounds equal to Rank"
+
+schema.improvements = new fields.ArrayField(
+  new fields.ObjectField(),
+  { initial: [] }
+);
+// Structured rank-gated improvements.
+// Each entry: { rank: 3, effect: "Also adds +10 to all Agility tests based on movement" }
+```
+
+### Description HTML Format (Item Sheet)
+The `description` field uses a **base effect paragraph + improvement table** format for the item sheet display. Foundry's HTMLField renders standard HTML including tables out of the box.
+
+```html
+<p>A Battle-Brother can call on reserves of speed when needed, crossing great
+distances to close with the foe. Once per game session, a Battle-Brother can
+perform a Burst of Speed. This ability increases the character's Agility Bonus
+by 2 with all the usual associated benefits for a number of Rounds equal to
+his Rank.</p>
+<table>
+  <tr><th>Rank</th><th>Improvement</th></tr>
+  <tr><td>3</td><td>Also adds +10 to all Agility tests based on movement</td></tr>
+  <tr><td>5</td><td>AG Bonus increase becomes +4</td></tr>
+  <tr><td>7</td><td>Ignore Agility Tests when running or charging in difficult terrain</td></tr>
+</table>
+```
+
+### Structured Data (Chat Messages)
+The `effect` and `improvements` fields drive the contextual activation chat message:
+
+```json
+{
+  "effect": "Increases Agility Bonus by 2 for a number of Rounds equal to Rank",
+  "improvements": [
+    { "rank": 3, "effect": "Also adds +10 to all Agility tests based on movement" },
+    { "rank": 5, "effect": "AG Bonus increase becomes +4" },
+    { "rank": 7, "effect": "Ignore Agility Tests when running or charging in difficult terrain" }
+  ]
+}
+```
+
+### Rules
+- `requiredRank` captures the minimum rank to **use the ability at all**
+- `effect` is a concise summary — not the full description paragraph
+- `improvements` array is filtered by character rank at activation time
+- Abilities without rank improvements have an empty `improvements` array
+- Existing specialty abilities leave `effect` and `improvements` empty (they use the existing click-to-chat behavior)
+- `description` and `effect`/`improvements` are intentionally duplicated — description is the full reference for the item sheet, effect+improvements are the structured data for contextual chat messages
+- `specialty` is empty for mode abilities (they are not granted by a specialty)
+- `chapter` value must match the chapter item's `name` field exactly (e.g., `"Ultramarines"`, not `"ultramarines"`)
+
+## Activation Chat Message
+
+When a mode ability is clicked on the character sheet, a **contextual chat message** is posted that combines the base effect with all qualifying rank improvements for the activating character.
+
+### Chat Builder
+`ModeHelper.buildAbilityActivationMessage(actorName, abilityName, modeRequirement, effect, improvements, currentRank)`
+
+Pure function. Filters `improvements` to entries where `rank <= currentRank`, then builds the chat HTML.
+
+### Chat Format
+```html
+<div class="cohesion-chat">
+  <p>🟢 <strong>Brother Taco</strong> activates <strong>Burst of Speed</strong></p>
+  <p>Increases Agility Bonus by 2 for a number of Rounds equal to Rank</p>
+  <ul>
+    <li>Also adds +10 to all Agility tests based on movement</li>
+  </ul>
+</div>
+```
+
+- Mode emoji: 🟢 for Solo, 🔵 for Squad, none for specialty abilities
+- Base `effect` shown as paragraph
+- Qualifying improvements shown as bullet list (only those where `rank <= currentRank`)
+- If no improvements qualify, the bullet list is omitted
+
+### Examples
+
+**Rank 1 character activates Burst of Speed:**
+> 🟢 **Brother Taco** activates **Burst of Speed**
+>
+> Increases Agility Bonus by 2 for a number of Rounds equal to Rank
+
+**Rank 4 character activates Burst of Speed:**
+> 🟢 **Brother Taco** activates **Burst of Speed**
+>
+> Increases Agility Bonus by 2 for a number of Rounds equal to Rank
+> - Also adds +10 to all Agility tests based on movement
+
+**Rank 6 character activates Burst of Speed:**
+> 🟢 **Brother Taco** activates **Burst of Speed**
+>
+> Increases Agility Bonus by 2 for a number of Rounds equal to Rank
+> - Also adds +10 to all Agility tests based on movement
+> - AG Bonus increase becomes +4
+
+**Rank 8 character activates Burst of Speed:**
+> 🟢 **Brother Taco** activates **Burst of Speed**
+>
+> Increases Agility Bonus by 2 for a number of Rounds equal to Rank
+> - Also adds +10 to all Agility tests based on movement
+> - AG Bonus increase becomes +4
+> - Ignore Agility Tests when running or charging in difficult terrain
+
+### Fallback
+If `effect` is empty (existing specialty abilities), falls back to the current behavior — posts the raw `description` HTML to chat.
+
 ## Actor Sheet Display
 
 ### Current Behavior
-Special abilities are listed on the character sheet with name, specialty, and description.
+Special abilities are listed on the Abilities tab in a table with columns: Name, Specialty (e.g., "Tactical Marine"), Controls.
+
+The current template (lines 121–136 of `actor-character-sheet.html`):
+```html
+<div class="item-name">{{item.name}}</div>
+<div class="item-specialty">{{item.system.specialty}}</div>
+<div class="item-controls">...</div>
+```
 
 ### New Behavior
-Group abilities by category with visual distinction:
+The `item-specialty` column becomes a **smart column** that shows different content based on ability type:
+
+| Ability Type | Column Display | Example |
+|-------------|---------------|----------|
+| Specialty ability | `specialty` field | `Tactical Marine` |
+| Solo Mode Codex | 🟢 + `"Codex"` | `🟢 Codex` |
+| Solo Mode Chapter | 🟢 + `chapter` field | `🟢 Ultramarines` |
+| Squad Mode Codex | 🔵 + `"Codex"` | `🔵 Codex` |
+| Squad Mode Chapter | 🔵 + `chapter` field | `🔵 Blood Angels` |
+
+### Template Change
+```handlebars
+<div class="item-specialty">
+  {{#if item.system.specialty}}
+    {{item.system.specialty}}
+  {{else if item.system.modeRequirement}}
+    {{#if (eq item.system.modeRequirement "solo")}}🟢{{else}}🔵{{/if}}
+    {{#if item.system.chapter}}{{item.system.chapter}}{{else}}Codex{{/if}}
+  {{/if}}
+</div>
+```
+
+### Row Dimming
+Mode abilities are dimmed when the character is in the wrong mode:
 
 **Specialty Abilities** (existing, always shown):
-- Displayed as today — no mode badge, no dimming
+- Displayed as today — no dimming
 
 **Solo Mode Abilities** (new):
-- Shown with 🟢 Solo badge
 - Dimmed when character is in Squad Mode
 - Only show abilities the character qualifies for (rank check + chapter match)
 
 **Squad Mode Abilities** (new):
-- Shown with 🔵 Squad badge
 - Dimmed when character is in Solo Mode
 - Phase 3 adds activation buttons
 
-### Mode Badge CSS
+### Mode Inactive CSS
 ```css
-.mode-badge {
-  font-size: 0.75em;
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 4px;
-}
-.mode-badge.solo { background: #c9a227; color: white; }
-.mode-badge.squad { background: #2277c9; color: white; }
 .special-ability-row.mode-inactive { opacity: 0.5; }
 ```
 
@@ -194,13 +506,23 @@ static meetsChapterRequirement(abilityChapter, characterChapter) {
   if (!abilityChapter) return true;  // Codex = available to all
   return abilityChapter === characterChapter;
 }
+
+static getQualifyingImprovements(improvements, currentRank) {
+  if (!Array.isArray(improvements)) return [];
+  return improvements.filter(imp => imp.rank <= currentRank);
+}
+
+static buildAbilityActivationMessage(actorName, abilityName, modeRequirement, effect, improvements, currentRank) {
+  // Returns chat HTML with mode emoji, base effect, and qualifying improvements as bullet list
+  // Falls back to null if effect is empty (caller uses existing description-to-chat behavior)
+}
 ```
 
 ## Tests
 
 ### DataModel Tests
-- `DeathwatchSpecialAbility` schema includes `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`
-- Default values are empty/zero
+- `DeathwatchSpecialAbility` schema includes `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`
+- Default values are empty/zero/empty-array
 - Accepts valid values
 
 ### ModeHelper Tests
@@ -214,14 +536,22 @@ static meetsChapterRequirement(abilityChapter, characterChapter) {
 - `meetsChapterRequirement("", "Ultramarines")` → true
 - `meetsChapterRequirement("Ultramarines", "Ultramarines")` → true
 - `meetsChapterRequirement("Ultramarines", "Blood Angels")` → false
+- `getQualifyingImprovements([{rank:3,...},{rank:5,...}], 4)` → [{rank:3,...}]
+- `getQualifyingImprovements([], 4)` → []
+- `getQualifyingImprovements(null, 4)` → []
+- `buildAbilityActivationMessage(...)` → correct HTML with solo emoji, base effect, qualifying improvements
+- `buildAbilityActivationMessage(...)` → correct HTML with squad emoji
+- `buildAbilityActivationMessage(...)` → omits bullet list when no improvements qualify
+- `buildAbilityActivationMessage(...)` → returns null when effect is empty
 
 ## Files Changed/Created
 ```
 CHANGED:
-  src/module/data/item/special-ability.mjs     — Add modeRequirement, requiredRank, chapter, abilityCategory
-  src/module/helpers/mode-helper.mjs           — Add isAbilityActiveForMode, meetsRankRequirement, meetsChapterRequirement
+  src/module/data/item/special-ability.mjs     — Add modeRequirement, requiredRank, chapter, abilityCategory, effect, improvements
+  src/module/helpers/mode-helper.mjs           — Add isAbilityActiveForMode, meetsRankRequirement, meetsChapterRequirement, getQualifyingImprovements, buildAbilityActivationMessage
   src/templates/item/item-special-ability-sheet.html — New fields in header
   src/styles/components/items.css              — Mode badge and inactive styles
+  src/module/sheets/actor-sheet.mjs            — Mode ability click handler uses buildAbilityActivationMessage
 
 CREATED:
   src/packs-source/specialties/special-abilities/solo-mode/codex/*.json
@@ -232,7 +562,10 @@ CREATED:
 
 ## Notes
 - Existing specialty abilities are NEVER tagged with mode requirements — they remain as-is
+- Existing specialty abilities leave `effect` and `improvements` empty — they use the existing click-to-chat behavior (raw description)
 - Solo Mode abilities are rank-gated and free (no XP cost) — the system shows/hides based on rank
 - Chapter abilities require matching chapter — the system filters based on character's assigned chapter
 - Squad Mode ability activation (Cohesion cost, sustained tracking) is Phase 3 — Phase 2 only adds the items and display logic
 - The user will provide specific ability data from the source material for compendium population
+- `description` (HTML) and `effect`/`improvements` (structured) serve different purposes — description is the full item sheet reference, effect+improvements drive the contextual chat message
+- Chat message uses Option A (simple concatenation) — base effect + qualifying improvements as bullet list, no per-ability merge logic
