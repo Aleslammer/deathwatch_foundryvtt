@@ -47,6 +47,7 @@ export class CohesionPanel extends Application {
     const leaderId = game.settings.get('deathwatch', 'squadLeader');
     const leader = leaderId ? game.actors.get(leaderId) : null;
     const gmMod = game.settings.get('deathwatch', 'cohesionModifier');
+    const activeAbilities = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
 
     const characters = game.actors
       .filter(a => a.type === 'character')
@@ -63,7 +64,8 @@ export class CohesionPanel extends Application {
       leaderName: leader?.name || 'None',
       isGM: game.user.isGM,
       breakdown: CohesionHelper.buildCohesionBreakdown(leader, gmMod),
-      characters
+      characters,
+      activeAbilities
     };
   }
 
@@ -76,6 +78,7 @@ export class CohesionPanel extends Application {
     html.find('.cohesion-set-leader').click(() => this._onSetLeader());
     html.find('.cohesion-challenge-btn').click(() => this._onCohesionChallenge());
     html.find('.mode-toggle').click(ev => this._onToggleMode(ev));
+    html.find('.squad-ability-deactivate').click(ev => this._onDeactivateAbility(ev));
   }
 
   /**
@@ -111,6 +114,11 @@ export class CohesionPanel extends Application {
       }
     }
 
+    // Deactivate sustained abilities when leaving Squad Mode
+    if (newMode === MODES.SOLO) {
+      await CohesionPanel.deactivateAbilitiesForActor(actorId);
+    }
+
     await actor.update({ 'system.mode': newMode });
     await ChatMessage.create({ content: ModeHelper.buildModeChangeMessage(actor.name, newMode) });
     this.render(false);
@@ -118,7 +126,7 @@ export class CohesionPanel extends Application {
 
   /**
    * Force all characters in Squad Mode back to Solo Mode.
-   * Called when Cohesion reaches 0.
+   * Called when Cohesion reaches 0. Also deactivates all sustained abilities.
    */
   static async dropAllToSoloMode() {
     if (!game.ready) return;
@@ -128,12 +136,88 @@ export class CohesionPanel extends Application {
     for (const actor of squadCharacters) {
       await actor.update({ 'system.mode': MODES.SOLO });
     }
+
+    // Deactivate all sustained abilities
+    await game.settings.set('deathwatch', 'activeSquadAbilities', []);
+
     await ChatMessage.create({ content: ModeHelper.buildCohesionDepletedMessage() });
   }
 
   /* -------------------------------------------- */
   /*  Cohesion Adjustments                        */
   /* -------------------------------------------- */
+
+  /**
+   * Activate a Squad Mode ability: validate, deduct Cohesion, track if sustained.
+   * @param {Actor} actor
+   * @param {Item} ability
+   */
+  static async activateSquadAbility(actor, ability) {
+    const sys = ability.system;
+    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    const check = ModeHelper.canActivateSquadAbility(actor.system.mode || MODES.SOLO, cohesion.value, sys.cohesionCost);
+    if (!check.allowed) {
+      ui.notifications.warn(check.reason);
+      return;
+    }
+
+    // Block any activation if already sustaining
+    const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
+    if (ModeHelper.isSustainingAbility(active, actor.id)) {
+      ui.notifications.warn(`${actor.name} is already sustaining a Squad Mode ability. Deactivate it first.`);
+      return;
+    }
+
+    // Deduct Cohesion
+    const newValue = cohesion.value - sys.cohesionCost;
+    await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
+
+    // Track sustained ability
+    if (sys.sustained) {
+      active.push({
+        abilityId: ability.id,
+        abilityName: ability.name,
+        initiatorId: actor.id,
+        initiatorName: actor.name,
+        sustained: true
+      });
+      await game.settings.set('deathwatch', 'activeSquadAbilities', active);
+    }
+
+    await ChatMessage.create({
+      content: ModeHelper.buildSquadActivationMessage(
+        actor.name, ability.name, sys.cohesionCost, newValue, cohesion.max,
+        sys.effect || '', sys.improvements || [], actor.system.rank || 1
+      )
+    });
+  }
+
+  /**
+   * Deactivate a sustained ability by index.
+   * @param {Event} ev
+   */
+  async _onDeactivateAbility(ev) {
+    const index = parseInt($(ev.currentTarget).data('index'));
+    const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
+    if (index < 0 || index >= active.length) return;
+
+    const removed = active[index];
+    active.splice(index, 1);
+    await game.settings.set('deathwatch', 'activeSquadAbilities', active);
+    await ChatMessage.create({ content: ModeHelper.buildDeactivationMessage(removed.abilityName) });
+  }
+
+  /**
+   * Deactivate all sustained abilities for a specific actor.
+   * @param {string} actorId
+   */
+  static async deactivateAbilitiesForActor(actorId) {
+    const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
+    const remaining = active.filter(a => a.initiatorId !== actorId);
+    if (remaining.length !== active.length) {
+      await game.settings.set('deathwatch', 'activeSquadAbilities', remaining);
+    }
+  }
 
   async _adjustCohesion(delta) {
     const cohesion = game.settings.get('deathwatch', 'cohesion');

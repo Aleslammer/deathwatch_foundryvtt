@@ -247,6 +247,35 @@ describe('DeathwatchSpecialAbility', () => {
     expect(schema.specialty).toBeDefined();
     expect(schema.specialty.options.initial).toBe("");
   });
+
+  it('includes mode-related fields with correct defaults', () => {
+    const schema = DeathwatchSpecialAbility.defineSchema();
+    expect(schema.modeRequirement).toBeDefined();
+    expect(schema.modeRequirement.options.initial).toBe("");
+    expect(schema.requiredRank).toBeDefined();
+    expect(schema.requiredRank.options.initial).toBe(0);
+    expect(schema.chapter).toBeDefined();
+    expect(schema.chapter.options.initial).toBe("");
+    expect(schema.abilityCategory).toBeDefined();
+    expect(schema.abilityCategory.options.initial).toBe("");
+    expect(schema.effect).toBeDefined();
+    expect(schema.effect.options.initial).toBe("");
+    expect(schema.improvements).toBeDefined();
+  });
+
+  it('includes Squad Mode activation fields with correct defaults', () => {
+    const schema = DeathwatchSpecialAbility.defineSchema();
+    expect(schema.abilityType).toBeDefined();
+    expect(schema.abilityType.options.initial).toBe("");
+    expect(schema.cohesionCost).toBeDefined();
+    expect(schema.cohesionCost.options.initial).toBe(0);
+    expect(schema.sustained).toBeDefined();
+    expect(schema.sustained.options.initial).toBe(false);
+    expect(schema.action).toBeDefined();
+    expect(schema.action.options.initial).toBe("");
+    expect(schema.chapterImg).toBeDefined();
+    expect(schema.chapterImg.options.initial).toBe("");
+  });
 });
 
 describe('DeathwatchArmor', () => {

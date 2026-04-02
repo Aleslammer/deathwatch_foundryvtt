@@ -18,6 +18,20 @@ schema.mode = new fields.StringField({ initial: "solo" });
 ```
 Values: `"solo"` (default) or `"squad"`.
 
+### DeathwatchSpecialAbility Schema (Phase 2)
+```javascript
+schema.modeRequirement = new fields.StringField({ initial: "", blank: true });
+// Values: "" (none), "solo", "squad"
+
+schema.requiredRank = new fields.NumberField({ initial: 0, min: 0, integer: true });
+schema.chapter = new fields.StringField({ initial: "", blank: true });
+schema.abilityCategory = new fields.StringField({ initial: "", blank: true });
+// Values: "" (specialty ability), "codex", "chapter"
+
+schema.effect = new fields.StringField({ initial: "", blank: true });
+schema.improvements = new fields.ArrayField(new fields.ObjectField(), { initial: [] });
+```
+
 ## Constants (`constants.mjs`)
 ```javascript
 export const MODES = {
@@ -41,6 +55,15 @@ Static helper class. All pure functions.
 | `getModeLabel(mode)` | Returns display label, defaults to "Solo Mode" |
 | `buildModeChangeMessage(actorName, newMode)` | Chat HTML for mode transitions |
 | `buildCohesionDepletedMessage()` | Chat HTML for forced Solo Mode drop |
+| `isAbilityActiveForMode(modeRequirement, currentMode)` | True if no requirement or mode matches |
+| `meetsRankRequirement(requiredRank, currentRank)` | True if rank ≥ required (0 = always) |
+| `meetsChapterRequirement(abilityChapter, characterChapter)` | True if empty or chapters match |
+| `getQualifyingImprovements(improvements, currentRank)` | Filters improvements by rank |
+| `buildAbilityActivationMessage(...)` | Chat HTML with mode emoji, effect, qualifying improvements |
+| `canActivateSquadAbility(mode, cohesionValue, cost)` | Validates Squad Mode + Cohesion cost |
+| `buildSquadActivationMessage(...)` | Chat HTML with Cohesion deduction |
+| `buildDeactivationMessage(abilityName)` | Chat HTML for sustained ability deactivation |
+| `isSustainingAbility(activeAbilities, actorId)` | True if actor already sustaining |
 
 ## CohesionPanel Integration
 
@@ -80,16 +103,22 @@ When Cohesion reaches 0 (detected via `updateSetting` hook):
 src/module/helpers/mode-helper.mjs       ModeHelper (pure functions)
 src/module/helpers/constants.mjs         MODES, MODE_LABELS (added)
 src/module/data/actor/character.mjs      mode field (added)
-src/module/ui/cohesion-panel.mjs         Character mode list, toggle, auto-drop
-src/templates/ui/cohesion-panel.html     Mode indicator rows
-src/styles/components/cohesion.css       Mode indicator styles
-src/module/deathwatch.mjs                Scene control hook, auto-drop hook, updateActor hook
-tests/helpers/mode-helper.test.mjs       13 unit tests
+src/module/data/item/special-ability.mjs Phase 2+3 fields (modeRequirement, requiredRank, chapter, abilityCategory, effect, improvements, abilityType, cohesionCost, sustained, action)
+src/module/ui/cohesion-panel.mjs         Character mode list, toggle, auto-drop, Squad ability activation/deactivation
+src/templates/ui/cohesion-panel.html     Mode indicator rows, active abilities section
+src/templates/item/item-special-ability-sheet.html  Mode + Squad Mode fields
+src/templates/actor/actor-character-sheet.html       Smart column, row dimming, activate button, cost/sustained badges
+src/styles/components/cohesion.css       Mode indicator styles, active abilities styles
+src/styles/components/items.css          Mode-inactive dimming, squad badges
+src/module/sheets/actor-sheet.mjs        Mode ability click handler, activate button handler
+src/module/deathwatch.mjs                Scene control hook, auto-drop hook, updateActor hook, activeSquadAbilities setting
+tests/helpers/mode-helper.test.mjs       42 unit tests
+tests/helpers/squad-ability-activation.test.mjs  16 unit tests
 ```
 
 ## Test Coverage
 
-### File: `tests/helpers/mode-helper.test.mjs` — 13 tests
+### File: `tests/helpers/mode-helper.test.mjs` — 42 tests
 
 | Describe Block | Tests |
 |---------------|-------|
@@ -97,6 +126,20 @@ tests/helpers/mode-helper.test.mjs       13 unit tests
 | getModeLabel | 4 |
 | buildModeChangeMessage | 3 |
 | buildCohesionDepletedMessage | 2 |
+| isAbilityActiveForMode | 6 |
+| meetsRankRequirement | 5 |
+| meetsChapterRequirement | 4 |
+| getQualifyingImprovements | 6 |
+| buildAbilityActivationMessage | 8 |
+
+### File: `tests/helpers/squad-ability-activation.test.mjs` — 16 tests
+
+| Describe Block | Tests |
+|---------------|-------|
+| canActivateSquadAbility | 6 |
+| buildSquadActivationMessage | 2 |
+| buildDeactivationMessage | 2 |
+| isSustainingAbility | 5 |
 
 ## What Is NOT Automated
 - **Support Range**: GM adjudicates whether characters are close enough (visual/vocal distance)
@@ -108,8 +151,8 @@ tests/helpers/mode-helper.test.mjs       13 unit tests
 | Phase | Doc | Status | Description |
 |-------|-----|--------|-------------|
 | 1 | `01-mode-tracking.md` | ✅ Complete | Mode field, CohesionPanel display, toggle, auto-drop |
-| 2 | `02-special-ability-modes.md` | Planned | `modeRequirement` field on special-ability items, visual filtering |
-| 3 | `03-squad-mode-abilities.md` | Planned | Squad Mode ability activation, Cohesion cost, sustained tracking |
+| 2 | `02-special-ability-modes.md` | ✅ Complete | Mode fields on special-ability, ModeHelper functions, smart display, activation chat |
+| 3 | `03-squad-mode-abilities.md` | ✅ Complete | Squad Mode ability activation, Cohesion cost, sustained tracking |
 
 Planning docs: `docs/improvements/modes/planning/`
 

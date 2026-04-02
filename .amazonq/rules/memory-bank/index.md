@@ -22,7 +22,7 @@
 15. **modes.md** - Solo/Squad Mode tracking, CohesionPanel mode display
 
 ## Key Metrics
-- **Tests**: 1410 passing, 89 suites
+- **Tests**: 1455 passing, 90 suites
 - **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -91,9 +91,12 @@ npm run build:all                                           # build:packs + depl
 - **Toggle**: Click to switch modes; entering Squad Mode validates Cohesion ≥ 1
 - **Auto-Drop**: All characters forced to Solo Mode when Cohesion reaches 0
 - **Chat**: Mode changes logged to chat for table visibility
-- **Helper**: `ModeHelper` in `helpers/mode-helper.mjs` — 4 pure functions
+- **Helper**: `ModeHelper` in `helpers/mode-helper.mjs` — 13 functions (12 pure + 1 roll)
+- **Special Ability Modes**: `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements` fields on `DeathwatchSpecialAbility`
+- **Activation Chat**: Mode abilities post contextual chat with emoji, base effect, and rank-filtered improvements
+- **Row Dimming**: Special abilities dimmed when character is in wrong mode
 - **Constants**: `MODES`, `MODE_LABELS` in `constants.mjs`
-- **Planning**: `docs/improvements/modes/planning/` (Phase 1 complete, Phases 2-3 planned)
+- **Planning**: `docs/improvements/modes/planning/` (Phases 1-3 complete)
 
 ## Common Tasks
 
@@ -152,4 +155,4 @@ docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Solo/Squad Mode Phase 1, CohesionPanel mode display, 1410 tests)
+**Last Updated**: January 2025 (Solo/Squad Mode Phase 3, Squad ability activation, 1455 tests)

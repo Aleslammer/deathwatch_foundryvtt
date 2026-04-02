@@ -19,7 +19,7 @@ export class DeathwatchItemSheet extends ItemSheet {
     /** @override */
     async _renderOuter() {
         const html = await super._renderOuter();
-        if (this.item.type === 'psychic-power') {
+        if (this.item.type === 'psychic-power' || this.item.type === 'special-ability') {
             this.position.height = 624;
         }
         return html;

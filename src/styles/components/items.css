@@ -308,6 +308,30 @@
   font-size: var(--dw-font-size-sm);
 }
 
+/* Mode ability dimming */
+.deathwatch .special-ability-row.mode-inactive {
+  opacity: 0.5;
+}
+
+/* Squad Mode badges */
+.deathwatch .squad-badges {
+  margin-left: 4px;
+}
+
+.deathwatch .squad-badges .badge {
+  font-size: 0.8em;
+  color: #666;
+  font-weight: bold;
+}
+
+.deathwatch .squad-badges .cost-badge {
+  color: #2196f3;
+}
+
+.deathwatch .squad-badges .sustained-badge {
+  color: #ff9800;
+}
+
 .armor-effects-table thead tr {
   background: var(--dw-color-bg-tertiary);
   border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);

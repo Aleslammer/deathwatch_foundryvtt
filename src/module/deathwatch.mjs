@@ -147,6 +147,13 @@ Hooks.once('init', async function () {
       type: Boolean,
       default: false
     });
+    game.settings.register('deathwatch', 'activeSquadAbilities', {
+      name: 'Active Squad Mode Abilities',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: []
+    });
 
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;
@@ -244,7 +251,7 @@ Hooks.once('init', async function () {
 Hooks.once('ready', async function () {
     // Re-render Cohesion panel when settings change; auto-drop Squad Mode on zero Cohesion
     Hooks.on('updateSetting', (setting) => {
-        if (['deathwatch.cohesion', 'deathwatch.squadLeader', 'deathwatch.cohesionModifier'].includes(setting.key)) {
+        if (['deathwatch.cohesion', 'deathwatch.squadLeader', 'deathwatch.cohesionModifier', 'deathwatch.activeSquadAbilities'].includes(setting.key)) {
             const panel = CohesionPanel.getInstance();
             if (panel.rendered) panel.render(false);
         }

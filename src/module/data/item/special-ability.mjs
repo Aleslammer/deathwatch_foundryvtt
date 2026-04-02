@@ -13,6 +13,17 @@ export default class DeathwatchSpecialAbility extends DeathwatchItemBase {
       ...DeathwatchItemBase.keyTemplate()
     });
     schema.specialty = new fields.StringField({ initial: "", blank: true });
+    schema.modeRequirement = new fields.StringField({ initial: "", blank: true });
+    schema.requiredRank = new fields.NumberField({ initial: 0, min: 0, integer: true });
+    schema.chapter = new fields.StringField({ initial: "", blank: true });
+    schema.abilityCategory = new fields.StringField({ initial: "", blank: true });
+    schema.effect = new fields.StringField({ initial: "", blank: true });
+    schema.improvements = new fields.ArrayField(new fields.ObjectField(), { initial: [] });
+    schema.abilityType = new fields.StringField({ initial: "", blank: true });
+    schema.cohesionCost = new fields.NumberField({ initial: 0, min: 0, integer: true });
+    schema.sustained = new fields.BooleanField({ initial: false });
+    schema.action = new fields.StringField({ initial: "", blank: true });
+    schema.chapterImg = new fields.StringField({ initial: "", blank: true });
     return schema;
   }
 }
