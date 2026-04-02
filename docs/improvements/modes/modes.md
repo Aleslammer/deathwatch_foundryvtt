@@ -79,5 +79,3 @@ member of his Kill-team.
 • He chooses to return to Solo Mode.
 In certain circumstances he may also lose Squad Mode if
 he fails a Cohesion Challenge (see page 212)
-
-This is just the information on the modes There are two further documents on each mode type
