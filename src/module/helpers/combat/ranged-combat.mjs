@@ -168,7 +168,14 @@ export class RangedCombatHelper {
   }
 
   /* istanbul ignore next */
-  static async attackDialog(actor, weapon) {
+  static async attackDialog(actor, weapon, options = {}) {
+    const hasOptions = Object.keys(options).length > 0 && options.action !== 'damage';
+
+    // Skip-dialog: roll immediately with preset values
+    if (hasOptions && options.skipDialog) {
+      return this._attackWithOptions(actor, weapon, options);
+    }
+
     const validation = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
     if (!validation.valid) {
       ui.notifications.warn(validation.message);
@@ -293,6 +300,23 @@ export class RangedCombatHelper {
           checkbox.prop('checked', !checkbox.prop('checked'));
           icon.toggleClass('fa-square').toggleClass('fa-check-square');
         });
+
+        // Pre-fill from options
+        if (hasOptions) {
+          if (options.aim !== undefined) html.find('#aim').val(CombatDialogHelper.mapAimOption(options.aim));
+          if (options.rof !== undefined) html.find('#autoFire').val(CombatDialogHelper.mapRofOption(options.rof));
+          if (options.calledShot) {
+            html.find('#calledShot').prop('checked', true);
+            html.find('#calledShotIcon').removeClass('fa-square').addClass('fa-check-square');
+            html.find('#calledShotLocationGroup').show();
+            if (options.calledShotLocation) html.find('#calledShotLocation').val(options.calledShotLocation);
+          }
+          if (options.runningTarget) {
+            html.find('#runningTarget').prop('checked', true);
+            html.find('#runningTargetIcon').removeClass('fa-square').addClass('fa-check-square');
+          }
+          if (options.miscModifier !== undefined) html.find('#miscModifier').val(options.miscModifier);
+        }
       },
       buttons: {
         attack: {
@@ -406,5 +430,146 @@ export class RangedCombatHelper {
       },
       default: "attack"
     }).render(true);
+  }
+
+  /**
+   * Execute a ranged attack immediately with preset options (skip dialog).
+   * @param {Object} actor - Actor document
+   * @param {Object} weapon - Weapon item
+   * @param {Object} options - Preset attack options
+   */
+  /* istanbul ignore next */
+  static async _attackWithOptions(actor, weapon, options) {
+    const validation = CombatDialogHelper.validateWeaponForAttack(weapon, actor);
+    if (!validation.valid) {
+      ui.notifications.warn(validation.message);
+      return;
+    }
+
+    const rofValidation = CombatDialogHelper.validateRofOption(options.rof || 0, weapon, actor);
+    if (!rofValidation.valid) {
+      ui.notifications.warn(rofValidation.message);
+      return;
+    }
+
+    const aim = CombatDialogHelper.mapAimOption(options.aim || 0);
+    const autoFire = CombatDialogHelper.mapRofOption(options.rof || 0);
+    const calledShot = options.calledShot ? COMBAT_PENALTIES.CALLED_SHOT : 0;
+    const runningTarget = options.runningTarget ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
+    const miscModifier = options.miscModifier || 0;
+
+    const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
+    const rofParts = rof.split('/');
+    const clip = weapon.system.clip;
+    const hasAmmoManagement = clip && clip !== '\u2014' && clip !== '-' && clip !== '';
+
+    const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
+    const targetToken = game.user.targets.first();
+
+    let autoRangeMod = 0;
+    let rangeLabel = "Unknown";
+
+    if (attackerToken && targetToken) {
+      let weaponRange = 0;
+      if (weapon.system.class?.toLowerCase() === 'thrown') {
+        weaponRange = this.calculateThrownWeaponRange(weapon, actor) || 0;
+      } else {
+        weaponRange = parseInt(weapon.system.effectiveRange || weapon.system.range) || 0;
+      }
+      if (weaponRange > 0) {
+        const distance = CombatHelper.getTokenDistance(attackerToken, targetToken);
+        if (distance !== null) {
+          const rangeInfo = CombatHelper.calculateRangeModifier(distance, weaponRange);
+          autoRangeMod = rangeInfo.modifier;
+          rangeLabel = rangeInfo.label;
+        }
+      }
+    }
+
+    const hitRoll = await new Roll('1d100').evaluate();
+    const hitValue = hitRoll.total;
+
+    const targetActor = targetToken?.actor;
+    const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
+
+    const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, {
+      hitValue, aim, autoFire, calledShot, runningTarget, miscModifier,
+      rangeMod: autoRangeMod, rangeLabel, rofParts,
+      sizeModifier, sizeLabel, targetActor
+    });
+
+    let { hitsTotal, isJammed } = result;
+    const { targetNumber, hasPrematureDetonation, isOverheated, hasReliable,
+            ammoExpended, modifierParts, isStorm, isTwinLinked } = result;
+
+    if (targetActor?.type === 'horde' && hitsTotal > 0) {
+      const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
+      if (isFlame) {
+        const flameRoll = await new Roll('1d5').evaluate();
+        hitsTotal += flameRoll.total;
+        await flameRoll.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor }),
+          flavor: `<strong>Flame vs Horde:</strong> +${flameRoll.total} additional hits (1d5)`,
+          rollMode: game.settings.get('core', 'rollMode')
+        });
+      }
+    }
+
+    if (isJammed && hasReliable) {
+      const reliableRoll = await new Roll('1d10').evaluate();
+      await reliableRoll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        flavor: `<strong>Reliable Check:</strong> ${weapon.name} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
+        rollMode: game.settings.get('core', 'rollMode')
+      });
+      isJammed = reliableRoll.total === 10;
+    }
+
+    if (isJammed) await weapon.update({ "system.jammed": true });
+
+    if (hasPrematureDetonation) {
+      await weapon.update({ "system.jammed": true });
+      ui.notifications.error(`${weapon.name} detonated prematurely!`);
+      const armLocation = Math.random() < 0.5 ? "Right Arm" : "Left Arm";
+      const weaponDamage = weapon.system.effectiveDamage || weapon.system.dmg;
+      const damageRoll = await new Roll(weaponDamage).evaluate();
+      await CombatHelper.applyDamage(actor, {
+        damage: damageRoll.total, penetration: 5,
+        location: armLocation, damageType: 'Explosive'
+      });
+      await damageRoll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        flavor: `<h3>Premature Detonation!</h3><p><strong>${weapon.name}</strong> exploded in ${actor.name}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
+      });
+    }
+
+    CombatHelper.lastAttackRoll = hitValue;
+    CombatHelper.lastAttackTarget = targetNumber;
+    CombatHelper.lastAttackHits = hitsTotal;
+    CombatHelper.lastAttackAim = aim;
+    CombatHelper.lastAttackRangeLabel = rangeLabel;
+    CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
+    CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0 && options.calledShotLocation) ? options.calledShotLocation : null;
+
+    const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
+    const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
+    hitRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: flavor,
+      rollMode: game.settings.get('core', 'rollMode')
+    });
+
+    const isHorde = actor.type === 'horde';
+    if (!isHorde && hasAmmoManagement && weapon.system.loadedAmmo) {
+      const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
+      if (loadedAmmo) {
+        const newAmmoValue = Math.max(0, loadedAmmo.system.capacity.value - ammoExpended);
+        await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
+        if (newAmmoValue === 0) {
+          ui.notifications.warn(`${weapon.name} is out of ammunition!`);
+        }
+        actor.sheet.render(false);
+      }
+    }
   }
 }

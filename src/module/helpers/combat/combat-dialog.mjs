@@ -327,4 +327,67 @@ export class CombatDialogHelper {
   static buildClearJamFlavor(weaponName, targetNumber, success) {
     return `<strong>Clear Jam: ${weaponName}</strong><br>Target: ${targetNumber}<br><strong style="color: ${success ? 'green' : 'red'};">${success ? 'SUCCESS - Jam Cleared!' : 'FAILED - Still Jammed'}</strong>${success ? '<br><em>Ammo lost, weapon needs reloading</em>' : ''}`;
   }
+
+  /**
+   * Validate that a preset rate of fire option is available on the weapon.
+   * @param {number} rofOption - 0=Single, 1=Semi-Auto, 2=Full-Auto
+   * @param {Object} weapon - Weapon item
+   * @param {Object} actor - Actor document
+   * @returns {{ valid: boolean, message?: string }}
+   */
+  static validateRofOption(rofOption, weapon, actor) {
+    const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
+    const rofParts = rof.split('/');
+    const clip = weapon.system.clip;
+    const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
+    const loadedAmmo = hasAmmoManagement && weapon.system.loadedAmmo
+      ? actor.items.get(weapon.system.loadedAmmo) : null;
+    const currentAmmo = loadedAmmo?.system.capacity.value || 0;
+
+    if (rofOption === 1) {
+      if (!rofParts[1] || rofParts[1] === '-') {
+        return { valid: false, message: `${weapon.name} does not support Semi-Auto fire.` };
+      }
+      if (hasAmmoManagement && loadedAmmo) {
+        const semiAutoRounds = parseInt(rofParts[1]) || 0;
+        if (currentAmmo < semiAutoRounds) {
+          return { valid: false, message: `${weapon.name} needs ${semiAutoRounds} rounds for Semi-Auto but only has ${currentAmmo}.` };
+        }
+      }
+    }
+    if (rofOption === 2) {
+      if (!rofParts[2] || rofParts[2] === '-') {
+        return { valid: false, message: `${weapon.name} does not support Full-Auto fire.` };
+      }
+      if (hasAmmoManagement && loadedAmmo) {
+        const fullAutoRounds = parseInt(rofParts[2]) || 0;
+        if (currentAmmo < fullAutoRounds) {
+          return { valid: false, message: `${weapon.name} needs ${fullAutoRounds} rounds for Full-Auto but only has ${currentAmmo}.` };
+        }
+      }
+    }
+    return { valid: true };
+  }
+
+  /**
+   * Map shorthand aim value (0/1/2) to AIM_MODIFIERS constant.
+   * @param {number} aim - 0=None, 1=Half, 2=Full
+   * @returns {number}
+   */
+  static mapAimOption(aim) {
+    if (aim === 2) return AIM_MODIFIERS.FULL;
+    if (aim === 1) return AIM_MODIFIERS.HALF;
+    return AIM_MODIFIERS.NONE;
+  }
+
+  /**
+   * Map shorthand rof value (0/1/2) to RATE_OF_FIRE_MODIFIERS constant.
+   * @param {number} rof - 0=Single, 1=Semi-Auto, 2=Full-Auto
+   * @returns {number}
+   */
+  static mapRofOption(rof) {
+    if (rof === 2) return RATE_OF_FIRE_MODIFIERS.FULL_AUTO;
+    if (rof === 1) return RATE_OF_FIRE_MODIFIERS.SEMI_AUTO;
+    return RATE_OF_FIRE_MODIFIERS.SINGLE;
+  }
 }

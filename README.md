@@ -68,6 +68,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 - Drag weapons from Gear tab to hotbar → click for Attack/Damage choice dialog
 - Drag psychic powers from Psychic Powers tab to hotbar → click opens Focus Power Test directly
 - Other items fall through to generic item roll (posts description to chat)
+- **Macro Presets**: Right-click a weapon macro and edit the command to pre-load combat options (rate of fire, aim, called shot, etc.) — see [Hotbar Macros Guide](docs/hotbar-macros.md)
 
 ### Compendium Packs
 17 pre-built compendium packs with book references and page numbers:
