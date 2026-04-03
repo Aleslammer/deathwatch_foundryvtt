@@ -22,7 +22,7 @@
 15. **modes.md** - Solo/Squad Mode tracking, CohesionPanel mode display
 
 ## Key Metrics
-- **Tests**: 1455 passing, 90 suites
+- **Tests**: 1458 passing, 90 suites
 - **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -92,8 +92,9 @@ npm run build:all                                           # build:packs + depl
 - **Auto-Drop**: All characters forced to Solo Mode when Cohesion reaches 0
 - **Chat**: Mode changes logged to chat for table visibility
 - **Helper**: `ModeHelper` in `helpers/mode-helper.mjs` — 13 functions (12 pure + 1 roll)
-- **Special Ability Modes**: `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements` fields on `DeathwatchSpecialAbility`
+- **Special Ability Modes**: `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`, `abilityType`, `cohesionCost`, `sustained`, `action`, `chapterImg` fields on `DeathwatchSpecialAbility`
 - **Activation Chat**: Mode abilities post contextual chat with emoji, base effect, and rank-filtered improvements
+- **Squad Activation**: Socket-based for multiplayer — players emit, GM executes world setting changes
 - **Row Dimming**: Special abilities dimmed when character is in wrong mode
 - **Constants**: `MODES`, `MODE_LABELS` in `constants.mjs`
 - **Planning**: `docs/improvements/modes/planning/` (Phases 1-3 complete)
@@ -148,11 +149,11 @@ src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1410 tests across 89 suites
+tests/                   1458 tests across 90 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Solo/Squad Mode Phase 3, Squad ability activation, 1455 tests)
+**Last Updated**: January 2025 (Solo/Squad Mode Phase 3, Squad ability activation + socket, 1458 tests)

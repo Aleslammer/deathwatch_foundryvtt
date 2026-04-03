@@ -111,7 +111,7 @@ global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
 ### Current State (Post-Refactoring)
 - **Total Lines**: ~2,618 lines across core modules
 - **Test Coverage**: 68%
-- **Test Count**: 1335 tests across 87 suites
+- **Test Count**: 1458 tests across 90 suites
 - **Key Files**:
   - actor.mjs: ~60 lines (thin shell, delegates to DataModels)
   - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)

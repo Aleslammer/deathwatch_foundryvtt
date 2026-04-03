@@ -18,6 +18,7 @@ Cohesion is a shared Kill-team resource representing the squad's combat morale a
 | `deathwatch.squadLeader` | world | String | `''` | Actor ID of squad leader |
 | `deathwatch.cohesionModifier` | world | Number | `0` | GM modifier to Cohesion max |
 | `deathwatch.cohesionDamageThisRound` | world | Boolean | `false` | 1-per-round damage cap |
+| `deathwatch.activeSquadAbilities` | world | Array | `[]` | Active sustained Squad Mode abilities |
 
 ## Cohesion Calculation Formula
 ```

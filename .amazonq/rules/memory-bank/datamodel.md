@@ -46,6 +46,8 @@ Defined as static methods on `DeathwatchDataModel`, composed via spread into `de
 | `capacityTemplate()` | `capacity` (SchemaField: value, max) | ammunition |
 | `keyTemplate()` | `key` (StringField) | weapon-quality, weapon-upgrade, psychic-power, special-ability |
 
+**Note:** `DeathwatchSpecialAbility` has the most fields of any item type after weapon: `specialty`, `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`, `abilityType`, `cohesionCost`, `sustained`, `action`, `chapterImg` (Phase 2+3 additions).
+
 **Note:** Weapons do NOT use `capacityTemplate()`. Weapons use `clip` (StringField) for clip size. Ammunition items use `capacityTemplate()` for tracking current/max rounds.
 
 ## Registered Types

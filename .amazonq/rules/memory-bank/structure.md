@@ -102,8 +102,9 @@ src/
 ### 1. System Entry Point
 - **deathwatch.mjs**: Main initialization file that bootstraps the system
   - Registers document types and DataModels (`CONFIG.Actor.dataModels`, `CONFIG.Item.dataModels`)
-  - Registers Cohesion world settings (cohesion, squadLeader, cohesionModifier, cohesionDamageThisRound)
+  - Registers Cohesion world settings (cohesion, squadLeader, cohesionModifier, cohesionDamageThisRound, activeSquadAbilities)
   - Renders CohesionPanel on ready, registers updateSetting hook for reactivity
+  - Registers socket listener for player-initiated Squad Mode activation/deactivation
   - Loads helpers and utilities
   - Initializes sheets
   - Sets up Handlebars templates
@@ -329,6 +330,11 @@ deathwatch.mjs (Entry Point)
     │
     └─→ Configuration (config.mjs, constants.mjs)
 ```
+
+### Socket Communication
+- **System socket**: `system.deathwatch` channel (requires `"socket": true` in `system.json`)
+- **Squad Mode activation**: Players emit, GM client executes world setting changes
+- **Listener**: Registered in `ready` hook in `deathwatch.mjs`
 
 ### Hotbar Macro System
 - **hotbarDrop hook**: Returns `false` synchronously for Item drops to prevent Foundry's default "Display Item" macro

@@ -66,6 +66,7 @@ Orks:
 Gameplay:
     TODO: Update the drag and drop macros to allow for pre-loading modfiers...
     TODO: Test psychic power hotbar 
+    TODO: Test weapon hotbar
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
 
 Hordes

@@ -23,7 +23,7 @@ npm run test:coverage
 
 ### Test Setup
 - **Setup File**: `tests/setup.mjs`
-- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, Application, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields, game.settings) and provide mock factories (`createMockActor`, `createMockWeapon`)
+- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, Application, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields, game.settings, game.socket, game.user.isGM) and provide mock factories (`createMockActor`, `createMockWeapon`)
 - **Loaded**: Automatically via `setupFiles` in `jest.config.mjs`
 
 ### Coverage Reports
@@ -81,6 +81,8 @@ tests/
 │   ├── wound-helper.test.mjs
 │   ├── skill-loader.test.mjs
 │   ├── cohesion.test.mjs
+│   ├── mode-helper.test.mjs
+│   ├── squad-ability-activation.test.mjs
 │   ├── constants.test.mjs
 │   ├── debug.test.mjs
 │   ├── foundry-adapter.test.mjs

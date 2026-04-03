@@ -143,3 +143,17 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - **Psychic Powers Tab**: Dedicated tab on character sheet
   - Shows current Psy Rating in header with modifier tooltip
   - Conditionally visible based on specialty
+
+### Solo/Squad Mode System
+- **Solo Mode**: Personal combat enhancements, rank-gated, no XP cost
+  - Codex abilities available to all Battle-Brothers (Burst of Speed, Feat of Strength, etc.)
+  - Chapter abilities specific to character's chapter (Righteous Zeal, Blood Frenzy, etc.)
+- **Squad Mode**: Coordinated Kill-team actions that cost Cohesion
+  - Attack Patterns (Bolter Assault, Furious Charge, Fire Support, etc.)
+  - Defensive Stances (Dig In, Strongpoint, Tactical Spacing, etc.)
+  - Chapter-specific patterns and stances
+- **Activation**: Squad Mode abilities activated from character sheet, deduct Cohesion
+- **Sustained Tracking**: Sustained abilities tracked in CohesionPanel, one per character
+- **Multiplayer**: Socket-based activation for non-GM players
+- **Mode Display**: Character mode list in CohesionPanel with colored indicators
+- **Row Dimming**: Abilities dimmed when character is in wrong mode
