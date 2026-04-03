@@ -73,5 +73,3 @@ Hordes
 Psychic Combat
 
 Combat:
-
-Still need some testing for the solo and squad modes.
