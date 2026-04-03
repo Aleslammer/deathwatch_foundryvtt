@@ -1,13 +1,69 @@
 <form class="{{cssClass}}" autocomplete="off">
-  <header class="sheet-header">
-    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64" />
-    <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
-      <div class="form-group">
-        <label>Specialty:</label>
-        <input type="text" name="system.specialty" value="{{system.specialty}}" placeholder="e.g., Apothecary" />
+  <header class="sheet-header" style="background-image: url('{{item.img}}'); background-size: cover; background-position: top left; padding: 10px; padding-bottom: 50px; border-radius: 4px; position: relative;">
+    <div class="header-fields" style="position: relative; z-index: 1;">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" style="background: rgba(0,0,0,0.49); color: #fff; padding: 2px 6px; border-radius: 3px;" /></h1>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Mode:</label>
+        <select name="system.modeRequirement" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;">
+          <option value="" {{#unless system.modeRequirement}}selected{{/unless}}>None</option>
+          <option value="solo" {{#if (eq system.modeRequirement "solo")}}selected{{/if}}>Solo Mode</option>
+          <option value="squad" {{#if (eq system.modeRequirement "squad")}}selected{{/if}}>Squad Mode</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Category:</label>
+        <select name="system.abilityCategory" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;">
+          <option value="" {{#unless system.abilityCategory}}selected{{/unless}}>Specialty</option>
+          <option value="codex" {{#if (eq system.abilityCategory "codex")}}selected{{/if}}>Codex</option>
+          <option value="chapter" {{#if (eq system.abilityCategory "chapter")}}selected{{/if}}>Chapter</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Type:</label>
+        <select name="system.abilityType" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;">
+          <option value="" {{#unless system.abilityType}}selected{{/unless}}>—</option>
+          <option value="attack-pattern" {{#if (eq system.abilityType "attack-pattern")}}selected{{/if}}>Attack Pattern</option>
+          <option value="defensive-stance" {{#if (eq system.abilityType "defensive-stance")}}selected{{/if}}>Defensive Stance</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Action:</label>
+        <select name="system.action" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;">
+          <option value="" {{#unless system.action}}selected{{/unless}}>—</option>
+          <option value="free" {{#if (eq system.action "free")}}selected{{/if}}>Free Action</option>
+          <option value="half" {{#if (eq system.action "half")}}selected{{/if}}>Half Action</option>
+          <option value="full" {{#if (eq system.action "full")}}selected{{/if}}>Full Action</option>
+          <option value="reaction" {{#if (eq system.action "reaction")}}selected{{/if}}>Reaction</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Cost:</label>
+        <input type="number" name="system.cohesionCost" value="{{system.cohesionCost}}" min="0" style="margin-top: 2px; width: 60px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Sustained:</label>
+        <input type="checkbox" name="system.sustained" {{#if system.sustained}}checked{{/if}} style="margin-top: 4px;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Req. Rank:</label>
+        <input type="number" name="system.requiredRank" value="{{system.requiredRank}}" min="0" style="margin-top: 2px; width: 60px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Specialty:</label>
+        <input type="text" name="system.specialty" value="{{system.specialty}}" placeholder="e.g., Apothecary" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Chapter:</label>
+        <input type="text" name="system.chapter" value="{{system.chapter}}" placeholder="Empty = Codex" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
+      </div>
+      <div class="form-group" style="margin-top: 5px;">
+        <label style="font-weight: bold; font-size: 0.9em; color: #fff; padding: 1px 5px; text-align: right; min-width: 100px;">Effect:</label>
+        <input type="text" name="system.effect" value="{{system.effect}}" placeholder="Chat summary" style="margin-top: 2px; background: rgba(255,255,255,0.75); color: #000;" />
       </div>
     </div>
+    {{#if system.chapterImg}}
+    <img src="{{system.chapterImg}}" title="{{system.chapter}}" height="60" width="60" style="position: absolute; bottom: 8px; left: 8px; border: 2px solid rgba(255,255,255,0.5); border-radius: 4px;" />
+    {{/if}}
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">

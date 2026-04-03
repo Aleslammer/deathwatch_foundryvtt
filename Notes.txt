@@ -8,6 +8,18 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 
 TODO: I have issues still with first load of html files.
 
+System:
+    TODO: add extensive logging for each of the critical system paths
+        Ranged attack
+        Melee attack
+        Psychic attack
+        Ranged damage
+        Melee Damage
+        Psychic Damage
+        Mechanics (ammo depletion etc)
+        system events
+        cohesion        
+
 Traits
     TODO: review traits if they need modifiers
 
@@ -15,11 +27,11 @@ Talents
     TODO: Review all talents to determine if effects can be applied to anythig
 
 Gear:
+    Cybernetics
     Relics
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
-    Cybernetics
     Servitors
 Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak
@@ -27,14 +39,13 @@ Rites of Battle
 
 Ammmunition 158
     
-    TODO: we need to revisit Witch Bolts when we get to the Application of Psychic Powers and Ratings
     TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
     TODO: We need to revisit the Devastation upgrade for cohesion damage
 
 
-TODO: Need to handle called shot mechanic
-TODO: "DeathWatch Training" Auto confirm RF when shooting "Alient Enemies" (non-human)
 TODO: Automated Animations - Can we use this for things?
+TODO: WE have no Cohesion mechanic
+TODO: we have no squad vs solo mode flip
 
 Enemies:
     TODO: Still Need to add Tyranids
@@ -48,45 +59,18 @@ Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects    
 
+Orks:
+    TODO: Images - Squigs are bipedal not quadrapeds. Change the Bomb and Guard squig
+    TODO: Images do not have proeprty token backgrounds
+
+Gameplay:
+    TODO: Update the drag and drop macros to allow for pre-loading modfiers...
+    TODO: Test psychic power hotbar 
+    TODO: Test weapon hotbar
+    TODO: test Psychic Power Righteous Furty and Deathwatch Training
+
 Hordes
 
 Psychic Combat
 
 Combat:
-
-Rontherd
-
-Book: Rogue Trader: The Koronus Bestiary
-Page: 81
-
-Descrption: Ork Runtherds specialise in corralling and training Grots, 
-primarily to drive them forward into enemy fire. Needless to 
-say, many Gretchin would rather avoid this, so the Runtherd 
-applies encouragement involving weapons fire and application 
-of their Grot Prods or grabba-sticks. Some Runtherds, 
-realising that the Grots are more willing should they actually 
-have a chance of surviving, outfit their herdz with ramshackle, 
-blunderbuss-style weapons. In reality, this rarely helps them, 
-but for a Grot in combat it is better than nothing. Despite 
-what would appear as an odious chore at best, Runtherds are 
-proud of their occupation and know they contribute 
-greatly to the wellbeing of their tribe or ship. 
-Maintaining a well-trained population of 
-Gretchin is a respectable position for an Ork, 
-and Runtherds do their best to keep the little 
-Grots properly in line. 
-
-Ws Bs s T ag int Per WP fel
-37 19 46 44 30 24 32 26 21
-Wounds: 15
-Skills:  Awareness (Per), Intimidate (S)
-Talents: Bulging Biceps, Crushing Blow, Furious Assault, Grot Wrangler†, Hardy, Iron Jaw, True Grit.
-Traits: Brutal Charge, Make it Work, Mob Rule, Sturdy, Size (Hulking), Unnatural Toughness (x2).
-Weapons:  Slugga  Choppa  Grot Prod (1d5+8 I; Pen 0; Shocking).
-Armors: Flak
-
-New Talent
-Grot Wrangler: Runtherds are very good at getting Gretchin and Snotlings to 
-perform their assigned tasks, no matter how dangerous or downright suicidal 
-they might be. He has the Command (Fel) and Wrangling (Int) Skills, both 
-with a +20 bonus, when used to direct these lesser orkoid beings. 

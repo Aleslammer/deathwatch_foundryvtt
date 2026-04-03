@@ -18,10 +18,12 @@
 11. **specialty-chapter-costs.md** - XP cost overrides (chapter/specialty bonuses)
 12. **enemies.md** - Enemy & horde compendium entries, faction-based ID conventions
 13. **psychic-combat.md** - Psychic power Focus Power Tests, Phenomena, Perils
+14. **cohesion.md** - Kill-team Cohesion pool, CohesionPanel UI, Cohesion Challenge
+15. **modes.md** - Solo/Squad Mode tracking, CohesionPanel mode display
 
 ## Key Metrics
-- **Tests**: 1244 passing, 83 suites
-- **Helper Classes**: 26+ modules
+- **Tests**: 1458 passing, 90 suites
+- **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
 
@@ -52,8 +54,10 @@ npm run build:all                                           # build:packs + depl
 ### Combat
 - **Ranged**: BS-based (uses computed `bs.value`), RoF (Single/Semi/Full), aim, range modifiers, jamming
 - **Melee**: WS-based (uses computed `ws.value`), all-out attack, charge, DoS displayed in chat
-- **Shared**: Hit locations, damage application (polymorphic), Righteous Fury
+- **Shared**: Hit locations, damage application (polymorphic), Righteous Fury, Called Shot location selection
 - **Horde**: Magnitude-based damage, batch damage application, special hit rules (blast/flame/melee DoS)
+- **Deathwatch Training**: Auto-confirms Righteous Fury vs xenos targets (requires talent + `classification === 'xenos'`)
+- **Attack Resolution**: Pure functions `resolveRangedAttack()` and `resolveMeleeAttack()` extracted for testability
 
 ### Psychic Combat
 - **Focus Power Test**: WP + (up to 5 × ePR) + psychic-test modifiers + misc, capped at 90. Roll 91+ always fails.
@@ -71,6 +75,29 @@ npm run build:all                                           # build:packs + depl
 ### Ammunition Modifiers
 - **Types**: weapon-damage, weapon-rof, weapon-blast, righteous-fury-threshold, characteristic-damage
 - **Special**: weaponClass restrictions, qualityException field
+
+### Cohesion
+- **Pool**: World-level shared resource (not per-actor), stored as world settings
+- **Formula**: Fellowship Bonus + Rank Modifier (0/+1/+2) + Command Modifier (+1/+2/+3) + GM Modifier
+- **UI**: `CohesionPanel` — floating `Application` window, toggled via Kill-team scene control button (left toolbar)
+- **Buttons**: +1, −1, Recalculate (with GM modifier dialog), Edit, Set Leader, Cohesion Challenge
+- **Challenge**: 1d10 ≤ current Cohesion to pass
+- **Helper**: `CohesionHelper` in `helpers/cohesion.mjs` — 7 functions (6 pure + 1 roll)
+- **Planning**: `docs/improvements/cohesion/` (5 phase docs, Phases 1-3 complete)
+
+### Solo/Squad Mode
+- **Mode Field**: `mode` StringField on `DeathwatchCharacter` ("solo" or "squad", default "solo")
+- **UI**: Character mode list in CohesionPanel with colored indicators (🟢 Solo / 🔵 Squad)
+- **Toggle**: Click to switch modes; entering Squad Mode validates Cohesion ≥ 1
+- **Auto-Drop**: All characters forced to Solo Mode when Cohesion reaches 0
+- **Chat**: Mode changes logged to chat for table visibility
+- **Helper**: `ModeHelper` in `helpers/mode-helper.mjs` — 13 functions (12 pure + 1 roll)
+- **Special Ability Modes**: `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`, `abilityType`, `cohesionCost`, `sustained`, `action`, `chapterImg` fields on `DeathwatchSpecialAbility`
+- **Activation Chat**: Mode abilities post contextual chat with emoji, base effect, and rank-filtered improvements
+- **Squad Activation**: Socket-based for multiplayer — players emit, GM executes world setting changes
+- **Row Dimming**: Special abilities dimmed when character is in wrong mode
+- **Constants**: `MODES`, `MODE_LABELS` in `constants.mjs`
+- **Planning**: `docs/improvements/modes/planning/` (Phases 1-3 complete)
 
 ## Common Tasks
 
@@ -113,18 +140,20 @@ npm run build:all                                           # build:packs + depl
 ```
 src/module/data/         TypeDataModel classes (base-document, actor/*.mjs, item/*.mjs)
 src/module/documents/    Actor, Item (thin shells), ActorConditions
-src/module/helpers/      Core infrastructure (constants, config, debug, foundry-adapter)
+src/module/helpers/      Core infrastructure (constants, config, debug, foundry-adapter, cohesion)
 src/module/helpers/combat/    Combat logic (10 files: combat, ranged, melee, psychic, horde, etc.)
 src/module/helpers/character/ Character data (6 files: modifiers, XP, skills, wounds, rank)
 src/module/helpers/ui/        UI helpers (5 files: chat, dialogs, items, templates, handlebars)
+src/module/ui/           UI Application classes (cohesion-panel)
 src/module/sheets/       ActorSheet, ItemSheet
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1244 tests across 83 suites
+tests/                   1458 tests across 90 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
+docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
 ```
 
 ---
-**Last Updated**: January 2025 (Psychic combat Phase 1-3 complete, Phase 4a status effects, Phase 4b damage powers, helpers reorganized, flame/fire system, 1220 tests)
+**Last Updated**: January 2025 (Solo/Squad Mode Phase 3, Squad ability activation + socket, 1458 tests)

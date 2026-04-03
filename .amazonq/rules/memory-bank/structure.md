@@ -56,7 +56,10 @@ src/
 │   │   ├── combat/                # Combat logic (10 files)
 │   │   ├── character/             # Character data computation (6 files)
 │   │   ├── ui/                    # UI/presentation helpers (5 files)
+│   │   ├── cohesion.mjs           # CohesionHelper (Cohesion calculations)
 │   │   └── (root)                 # Core infrastructure (7 files)
+│   ├── ui/                         # UI Application classes
+│   │   └── cohesion-panel.mjs      # CohesionPanel (floating window)
 │   ├── modifiers/                  # Modifier system
 │   ├── sheets/                     # UI sheet implementations
 │   └── deathwatch.mjs              # Main entry point
@@ -83,10 +86,13 @@ src/
 │       ├── sheets.css
 │       ├── skills.css
 │       ├── tooltips.css
-│       └── wounds.css
+│       ├── wounds.css
+│       └── cohesion.css
 ├── templates/                      # Handlebars HTML templates
 │   ├── actor/                      # Character/NPC sheets
-│   └── item/                       # Item sheets
+│   ├── item/                       # Item sheets
+│   └── ui/                         # UI panel templates
+│       └── cohesion-panel.html     # Cohesion floating panel
 ├── system.json                     # Foundry system manifest
 └── template.json                   # Data schema definitions
 ```
@@ -96,6 +102,9 @@ src/
 ### 1. System Entry Point
 - **deathwatch.mjs**: Main initialization file that bootstraps the system
   - Registers document types and DataModels (`CONFIG.Actor.dataModels`, `CONFIG.Item.dataModels`)
+  - Registers Cohesion world settings (cohesion, squadLeader, cohesionModifier, cohesionDamageThisRound, activeSquadAbilities)
+  - Renders CohesionPanel on ready, registers updateSetting hook for reactivity
+  - Registers socket listener for player-initiated Squad Mode activation/deactivation
   - Loads helpers and utilities
   - Initializes sheets
   - Sets up Handlebars templates
@@ -104,7 +113,7 @@ src/
 - **base-document.mjs**: `DeathwatchDataModel` — root class extending `foundry.abstract.TypeDataModel`
   - Shared template methods: `equippedTemplate()`, `requisitionTemplate()`, `capacityTemplate()`, `keyTemplate()`
 - **actor/base-actor.mjs**: `DeathwatchActorBase` — base for all actor types
-  - Shared fields: `wounds` (value, base, max), `fatigue` (value, max)
+  - Shared fields: `wounds` (value, base, max), `fatigue` (value, max), `classification` (StringField, initial "human")
   - Polymorphic combat methods: `getArmorValue()`, `getDefenses()`, `calculateHitsReceived()`, `receiveDamage()`, `canRighteousFury()`
 - **actor/character.mjs**: `DeathwatchCharacter` — full PC data with `prepareDerivedData()`
   - Schema: 9 characteristics (each with value, base, bonus, damage, advances), biography, progression, modifiers, conditions, psyRating, skills, legacy fields
@@ -114,6 +123,7 @@ src/
   - `prepareDerivedData()`: XP from CR calculation
 - **actor/enemy.mjs**: `DeathwatchEnemy` — full enemy data (characteristics, skills, psy rating, movement)
   - Extends DeathwatchActorBase, same prepareDerivedData pattern as NPC but with psy rating and force weapons
+  - Overrides `classification` initial to `"xenos"`
 - **actor/horde.mjs**: `DeathwatchHorde` — magnitude-based horde
   - Extends DeathwatchEnemy, adds single `armor` field
   - Overrides: `getArmorValue()`, `getDefenses()`, `calculateHitsReceived()`, `receiveDamage()`, `receiveBatchDamage()`
@@ -137,7 +147,8 @@ Organized into three subfolders plus core infrastructure at root:
 
 #### Root (Core Infrastructure)
 - **config.mjs**: System configuration (DWConfig object)
-- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers, power levels)
+- **constants.mjs**: Game constants (XP, characteristics, rolls, combat modifiers, power levels, cohesion)
+- **cohesion.mjs**: CohesionHelper — Cohesion pool calculations, Cohesion Challenge
 - **debug.mjs**: Debug logging with feature flags
 - **effects.mjs**: Active effects and modifiers
 - **foundry-adapter.mjs**: Foundry API wrapper for testability
@@ -315,8 +326,23 @@ deathwatch.mjs (Entry Point)
     │               ↓
     │               └─→ Handlebars Helpers
     │
+    ├─→ UI Applications (cohesion-panel.mjs) ← floating windows
+    │
     └─→ Configuration (config.mjs, constants.mjs)
 ```
+
+### Socket Communication
+- **System socket**: `system.deathwatch` channel (requires `"socket": true` in `system.json`)
+- **Squad Mode activation**: Players emit, GM client executes world setting changes
+- **Listener**: Registered in `ready` hook in `deathwatch.mjs`
+
+### Hotbar Macro System
+- **hotbarDrop hook**: Returns `false` synchronously for Item drops to prevent Foundry's default "Display Item" macro
+- **createItemMacro()**: Creates script macro with `game.deathwatch.rollItemMacro(uuid)` command, assigns to hotbar slot
+- **rollItemMacro()**: Resolves item from UUID, routes by type:
+  - `weapon` → Attack/Damage Dialog → `CombatHelper.weaponAttackDialog()` or `weaponDamageRoll()`
+  - `psychic-power` → `PsychicCombatHelper.focusPowerDialog()` directly
+  - Other → `item.roll()` (posts description to chat)
 
 ### Data Flow
 1. **Initialization**: deathwatch.mjs loads all modules

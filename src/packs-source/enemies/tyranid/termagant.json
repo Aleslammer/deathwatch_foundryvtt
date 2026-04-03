@@ -27,7 +27,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>Termagants are the most numerous of the Tyranid bioforms, forming the bulk of any Tyranid swarm. They are small, skittering creatures armed with living ranged weapons called Fleshborers that fire borer beetles at the enemy. While individually weak, their sheer numbers make them a significant threat.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (3), Improved Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Dark Sight</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>"
+    "description": "<p>Termagants are the most numerous of the Tyranid bioforms, forming the bulk of any Tyranid swarm. They are small, skittering creatures armed with living ranged weapons called Fleshborers that fire borer beetles at the enemy. While individually weak, their sheer numbers make them a significant threat.</p><p><strong>Traits:</strong> Tyranid, Natural Armour (3), Improved Natural Weapons (Teeth and Claws), Instinctive Behaviour (Lurk), Dark Sight</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
+    "classification": "xenos"
   },
   "items": [
     {

@@ -157,7 +157,9 @@ describe('ChatMessageBuilder', () => {
 
   describe('createDamageApplyButton', () => {
     it('creates apply damage button with all parameters', () => {
-      const button = ChatMessageBuilder.createDamageApplyButton(10, 5, 'Head', 'actor123', 'Energy');
+      const button = ChatMessageBuilder.createDamageApplyButton({
+        damage: 10, penetration: 5, location: 'Head', targetId: 'actor123', damageType: 'Energy'
+      });
 
       expect(button).toContain('apply-damage-btn');
       expect(button).toContain('data-damage="10"');
@@ -168,7 +170,9 @@ describe('ChatMessageBuilder', () => {
     });
 
     it('defaults damage type to Impact', () => {
-      const button = ChatMessageBuilder.createDamageApplyButton(10, 5, 'Body', 'actor123');
+      const button = ChatMessageBuilder.createDamageApplyButton({
+        damage: 10, penetration: 5, location: 'Body', targetId: 'actor123'
+      });
 
       expect(button).toContain('data-damage-type="Impact"');
     });

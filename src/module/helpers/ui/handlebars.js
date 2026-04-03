@@ -67,6 +67,10 @@ function registerHandlebarsHelpers() {
         return `${value}m`;
     })
 
+    Handlebars.registerHelper("eq", function (a, b) {
+        return a === b;
+    })
+
     Handlebars.registerHelper("qualityList", function (qualities) {
         if (!Array.isArray(qualities) || qualities.length === 0) return "";
         return qualities.map(q => {

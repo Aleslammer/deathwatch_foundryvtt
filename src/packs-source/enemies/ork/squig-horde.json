@@ -25,7 +25,8 @@
     "modifiers": [],
     "conditions": {},
     "description": "<p>A seething mass of snapping, biting Squigs, propelled forward by powerful legs and insatiable hunger. Each one is mostly mouth and mostly teeth, and together they form a terrifying wave of fungal fury.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Source:</strong> Dark Heresy: Creatures Anathema, p. 101</p>",
-    "gearArmor": 0
+    "gearArmor": 0,
+    "classification": "xenos"
   },
   "items": [
     {

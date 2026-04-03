@@ -10,7 +10,17 @@ global.game = {
   user: {
     targets: {
       first: jest.fn(() => null)
-    }
+    },
+    isGM: true
+  },
+  settings: {
+    register: jest.fn(),
+    get: jest.fn(),
+    set: jest.fn()
+  },
+  socket: {
+    on: jest.fn(),
+    emit: jest.fn()
   }
 };
 
@@ -75,6 +85,15 @@ global.Actor = class Actor {
     return {};
   }
   async _preCreate(data, options, user) {}
+};
+
+global.Application = class Application {
+  static get defaultOptions() {
+    return { id: '', template: '', popOut: true, classes: [] };
+  }
+  getData() { return {}; }
+  activateListeners() {}
+  render() { return this; }
 };
 
 global.ActorSheet = class ActorSheet {

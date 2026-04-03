@@ -52,21 +52,20 @@ The combat system is split into separate modules for ranged and melee combat, wi
 ## Weapon Attack Routing
 
 ### weaponAttackDialog(actor, weapon)
-Routes to appropriate attack dialog based on weapon class:
+Routes to appropriate attack dialog based on weapon class and qualities:
 ```javascript
 static async weaponAttackDialog(actor, weapon) {
-  const isMelee = weapon.system.class?.toLowerCase().includes('melee');
-  if (isMelee) {
-    return MeleeCombatHelper.attackDialog(actor, weapon);
-  }
+  const attackType = await this.getWeaponAttackType(weapon);
+  if (attackType === 'melee') return MeleeCombatHelper.attackDialog(actor, weapon);
+  if (attackType === 'flame') return this._flameWeaponRoll(actor, weapon);
   return RangedCombatHelper.attackDialog(actor, weapon);
 }
 ```
 
 **Detection Logic:**
-- Checks `weapon.system.class` field
-- Case-insensitive check for "melee"
-- Defaults to ranged if class is undefined or doesn't contain "melee"
+- Checks `weapon.system.class` field for "melee"
+- Checks for `flame` weapon quality
+- Defaults to ranged if neither
 
 ## Characteristic Value Usage
 
@@ -121,6 +120,9 @@ const hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHi
 // Capped at maxHits (rounds fired)
 ```
 
+### resolveRangedAttack(actor, weapon, options)
+Pure logic function extracted from the dialog callback. No UI, no rolls, no document updates. Takes parsed dialog inputs + a d100 roll result, returns attack resolution (targetNumber, hitsTotal, isJammed, hasPrematureDetonation, isOverheated, ammoExpended, modifierParts, etc.). Used by both the dialog and tests.
+
 ## Melee Combat
 
 ### Attack Dialog Options
@@ -152,6 +154,9 @@ const success = hitValue <= targetNumber;
 **Chat Display:** Melee attacks show hit count (via `buildAttackLabel()`) and Degrees of Success on successful hits.
 
 **Note:** Melee attacks currently result in single hit against non-horde targets (no multiple hits like ranged)
+
+### resolveMeleeAttack(actor, weapon, options)
+Pure logic function extracted from the dialog callback. No UI, no rolls, no document updates. Takes parsed dialog inputs + a d100 roll result, returns attack resolution (targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts). Used by both the dialog and tests.
 
 ## Shared Combat Logic
 
@@ -228,6 +233,21 @@ static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
 
 Triggered by natural 10 on damage dice (or 5 on d5).
 
+**Deathwatch Training Auto-Confirm:**
+- `RighteousFuryHelper.hasDeathwatchTraining(actor)` checks for talent named "Deathwatch Training"
+- `RighteousFuryHelper.isDeathwatchAutoConfirm(actor, targetActor)` requires talent AND `targetActor.system.classification === 'xenos'`
+- Auto-confirm skips the d100 confirmation roll (same as Volatile)
+- Chat shows: "Deathwatch Training — auto-confirmed vs Xenos!"
+- `processFuryChain()` accepts `targetActor` as 8th parameter
+- Weapon damage rolls pass `targetToken?.actor`, psychic damage passes `targetActor`
+
+### Called Shot
+- Both ranged and melee dialogs include a Called Shot location dropdown (hidden until Called Shot is checked)
+- Location options: Head, Right Arm, Left Arm, Body, Right Leg, Left Leg (from `HIT_LOCATIONS` constant)
+- When Called Shot is active and attack hits, `CombatHelper.lastCalledShotLocation` stores the chosen location
+- `weaponDamageRoll()` uses `lastCalledShotLocation` instead of reversing the attack roll for hit location
+- Cleared after damage roll (`this.lastCalledShotLocation = null`)
+
 ## Damage Rolling
 
 ### weaponDamageRoll(actor, weapon)
@@ -274,6 +294,18 @@ export const MELEE_MODIFIERS = {
 export const COMBAT_PENALTIES = {
   CALLED_SHOT: -20,
   RUNNING_TARGET: -20
+};
+
+// Hit Locations
+export const HIT_LOCATIONS = [
+  "Head", "Right Arm", "Left Arm", "Body", "Right Leg", "Left Leg"
+];
+
+// Enemy Classifications
+export const ENEMY_CLASSIFICATIONS = {
+  HUMAN: 'human',
+  XENOS: 'xenos',
+  CHAOS: 'chaos'
 };
 
 // Range Modifiers
@@ -365,6 +397,10 @@ Pure functions:
 - **horde.test.mjs**: Horde DataModel tests (receiveBatchDamage, getDefenses)
 - **psychic-combat.test.mjs**: Psychic combat tests (97 tests)
 - **fire-helper.test.mjs**: Fire helper tests (28 tests)
+- **resolve-ranged-attack.test.mjs**: Pure function ranged attack resolution tests
+- **resolve-melee-attack.test.mjs**: Pure function melee attack resolution tests
+- **called-shot.test.mjs**: Called shot location override tests
+- **deathwatch-training.test.mjs**: Deathwatch Training auto-confirm tests
 
 ### Coverage
 - Core combat logic: Well tested
@@ -373,7 +409,7 @@ Pure functions:
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 1244 tests passing across 83 suites
+- Overall: 1458 tests passing across 90 suites
 
 ## Force Weapon Integration
 
@@ -470,6 +506,15 @@ CombatHelper.applyDamage(targetActor, damage, penetration, location, damageType)
 ### Actor Sheet
 - Attack buttons call `CombatHelper.weaponAttackDialog()`
 - Damage buttons call `CombatHelper.weaponDamageRoll()`
+
+### Hotbar Macros
+- Drag-and-drop weapons or psychic powers from actor sheet to hotbar creates macros
+- `hotbarDrop` hook returns `false` synchronously for Item drops to suppress Foundry's default "Display Item" macro
+- `createItemMacro()` runs fire-and-forget (async, not awaited) to create the macro
+- `rollItemMacro()` routes by item type:
+  - **weapon**: Shows Attack/Damage choice dialog (with weapon icon), then calls `CombatHelper.weaponAttackDialog()` or `CombatHelper.weaponDamageRoll()`
+  - **psychic-power**: Calls `PsychicCombatHelper.focusPowerDialog()` directly (no intermediate dialog)
+  - **other items**: Falls through to `item.roll()` (posts description to chat)
 
 ### Chat Messages
 - Apply damage buttons call `CombatHelper.applyDamage()`

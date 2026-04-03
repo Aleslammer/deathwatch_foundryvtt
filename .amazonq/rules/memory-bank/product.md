@@ -65,6 +65,12 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - Enemies (Tyranid: Hormagaunt, Termagant — each with enemy and horde variants)
 - All items include book references and page numbers
 
+### Hotbar Macros
+- Drag weapons from Gear tab to hotbar → click for Attack/Damage choice dialog
+- Drag psychic powers from Psychic Powers tab to hotbar → click opens Focus Power Test directly
+- Other items fall through to generic item roll (posts description to chat)
+- Macros use item UUID, so they work across sessions
+
 ### Lore and Knowledge System
 - Common Lore (Adeptus Astartes, Deathwatch, Imperium, etc.)
 - Forbidden Lore (Daemonology, Heresy, Xenos, etc.)
@@ -137,3 +143,17 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - **Psychic Powers Tab**: Dedicated tab on character sheet
   - Shows current Psy Rating in header with modifier tooltip
   - Conditionally visible based on specialty
+
+### Solo/Squad Mode System
+- **Solo Mode**: Personal combat enhancements, rank-gated, no XP cost
+  - Codex abilities available to all Battle-Brothers (Burst of Speed, Feat of Strength, etc.)
+  - Chapter abilities specific to character's chapter (Righteous Zeal, Blood Frenzy, etc.)
+- **Squad Mode**: Coordinated Kill-team actions that cost Cohesion
+  - Attack Patterns (Bolter Assault, Furious Charge, Fire Support, etc.)
+  - Defensive Stances (Dig In, Strongpoint, Tactical Spacing, etc.)
+  - Chapter-specific patterns and stances
+- **Activation**: Squad Mode abilities activated from character sheet, deduct Cohesion
+- **Sustained Tracking**: Sustained abilities tracked in CohesionPanel, one per character
+- **Multiplayer**: Socket-based activation for non-GM players
+- **Mode Display**: Character mode list in CohesionPanel with colored indicators
+- **Row Dimming**: Abilities dimmed when character is in wrong mode

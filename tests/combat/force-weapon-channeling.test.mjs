@@ -53,10 +53,10 @@ describe('Force Weapon Channeling', () => {
   describe('ChatMessageBuilder.createDamageApplyButton', () => {
     it('should include force data attributes when forceWeaponData provided', () => {
       const forceData = { attackerId: 'attacker123', psyRating: 4 };
-      const button = ChatMessageBuilder.createDamageApplyButton(
-        10, 2, 'Body', 'target123', 'Energy',
-        false, false, 0, false, false, false, false, false, null, forceData
-      );
+      const button = ChatMessageBuilder.createDamageApplyButton({
+        damage: 10, penetration: 2, location: 'Body', targetId: 'target123',
+        damageType: 'Energy', forceWeaponData: forceData
+      });
 
       expect(button).toContain('data-is-force="true"');
       expect(button).toContain('data-force-attacker-id="attacker123"');
@@ -64,10 +64,10 @@ describe('Force Weapon Channeling', () => {
     });
 
     it('should not include force data attributes when forceWeaponData is null', () => {
-      const button = ChatMessageBuilder.createDamageApplyButton(
-        10, 2, 'Body', 'target123', 'Energy',
-        false, false, 0, false, false, false, false, false, null, null
-      );
+      const button = ChatMessageBuilder.createDamageApplyButton({
+        damage: 10, penetration: 2, location: 'Body', targetId: 'target123',
+        damageType: 'Energy'
+      });
 
       expect(button).not.toContain('data-is-force');
       expect(button).not.toContain('data-force-attacker-id');

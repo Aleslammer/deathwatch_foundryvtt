@@ -61,6 +61,9 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
     // Conditions
     schema.conditions = new fields.ObjectField({ initial: {} });
 
+    // Combat Mode (Solo/Squad)
+    schema.mode = new fields.StringField({ initial: "solo" });
+
     // Characteristics (all 9)
     schema.characteristics = new fields.SchemaField({
       ws: DeathwatchCharacter._characteristicFields(),

@@ -25,6 +25,9 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
       max: new fields.NumberField({ initial: 0, min: 0, integer: true })
     });
 
+    // Enemy classification (human, xenos, chaos) — used by Deathwatch Training
+    schema.classification = new fields.StringField({ initial: "human", blank: false });
+
     return schema;
   }
 

@@ -115,6 +115,11 @@ export const MELEE_MODIFIERS = {
   CHARGE: 10
 };
 
+// Hit Locations
+export const HIT_LOCATIONS = [
+  "Head", "Right Arm", "Left Arm", "Body", "Right Leg", "Left Leg"
+];
+
 // Range Modifiers
 export const RANGE_MODIFIERS = {
   POINT_BLANK: 30,  // <= 2m
@@ -154,6 +159,19 @@ export const ROLL_CONSTANTS = {
   DEGREES_DIVISOR: 10
 };
 
+// Enemy Classifications
+export const ENEMY_CLASSIFICATIONS = {
+  HUMAN: 'human',
+  XENOS: 'xenos',
+  CHAOS: 'chaos'
+};
+
+export const ENEMY_CLASSIFICATION_LABELS = {
+  [ENEMY_CLASSIFICATIONS.HUMAN]: 'Human',
+  [ENEMY_CLASSIFICATIONS.XENOS]: 'Xenos',
+  [ENEMY_CLASSIFICATIONS.CHAOS]: 'Chaos'
+};
+
 // Psychic Power Levels
 export const POWER_LEVELS = {
   FETTERED: 'fettered',
@@ -165,4 +183,28 @@ export const POWER_LEVEL_LABELS = {
   [POWER_LEVELS.FETTERED]: 'Fettered',
   [POWER_LEVELS.UNFETTERED]: 'Unfettered',
   [POWER_LEVELS.PUSH]: 'Push'
+};
+
+// Combat Modes
+export const MODES = {
+  SOLO: 'solo',
+  SQUAD: 'squad'
+};
+
+export const MODE_LABELS = {
+  [MODES.SOLO]: 'Solo Mode',
+  [MODES.SQUAD]: 'Squad Mode'
+};
+
+// Cohesion
+export const COHESION = {
+  RANK_THRESHOLD_MID: 4,
+  RANK_THRESHOLD_HIGH: 6,
+  RANK_BONUS_MID: 1,
+  RANK_BONUS_HIGH: 2,
+  COMMAND_TRAINED: 1,
+  COMMAND_MASTERED: 2,
+  COMMAND_EXPERT: 3,
+  DAMAGE_THRESHOLD: 10,
+  MAX_DAMAGE_PER_ROUND: 1
 };

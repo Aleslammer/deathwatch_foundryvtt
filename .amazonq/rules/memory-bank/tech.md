@@ -23,7 +23,7 @@ npm run test:coverage
 
 ### Test Setup
 - **Setup File**: `tests/setup.mjs`
-- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields) and provide mock factories (`createMockActor`, `createMockWeapon`)
+- **Purpose**: Mock Foundry VTT globals (game, ui, ChatMessage, Item, Actor, Application, foundry.utils, foundry.abstract.TypeDataModel, foundry.data.fields, game.settings, game.socket, game.user.isGM) and provide mock factories (`createMockActor`, `createMockWeapon`)
 - **Loaded**: Automatically via `setupFiles` in `jest.config.mjs`
 
 ### Coverage Reports
@@ -51,7 +51,11 @@ tests/
 │   ├── melta.test.mjs
 │   ├── overheats.test.mjs
 │   ├── power-fist.test.mjs
-│   └── reliable.test.mjs
+│   ├── reliable.test.mjs
+│   ├── resolve-ranged-attack.test.mjs
+│   ├── resolve-melee-attack.test.mjs
+│   ├── called-shot.test.mjs
+│   └── deathwatch-training.test.mjs
 ├── documents/                         # Document tests
 │   ├── actor.test.mjs
 │   ├── actor-conditions.test.mjs
@@ -76,6 +80,9 @@ tests/
 │   ├── weapon-upgrade-helper.test.mjs
 │   ├── wound-helper.test.mjs
 │   ├── skill-loader.test.mjs
+│   ├── cohesion.test.mjs
+│   ├── mode-helper.test.mjs
+│   ├── squad-ability-activation.test.mjs
 │   ├── constants.test.mjs
 │   ├── debug.test.mjs
 │   ├── foundry-adapter.test.mjs

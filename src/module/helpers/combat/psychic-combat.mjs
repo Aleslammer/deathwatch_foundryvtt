@@ -490,7 +490,7 @@ export class PsychicCombatHelper {
       // Righteous Fury check
       if (actor.system.canRighteousFury?.() && RighteousFuryHelper.hasNaturalTen(roll, 10) && targetNumber > 0) {
         const { totalDamage: furyDamage } = await RighteousFuryHelper.processFuryChain(
-          actor, null, damageFormula, targetNumber, "Body", false, 10
+          actor, null, damageFormula, targetNumber, "Body", false, 10, targetActor
         );
         totalDamage += furyDamage;
       }
@@ -498,11 +498,10 @@ export class PsychicCombatHelper {
       if (isHordeTarget) {
         hordeHitResults.push({ damage: totalDamage, penetration, location: "Body", damageType });
       } else {
-        const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton(
-          totalDamage, penetration, "Body", targetActor.id, damageType,
-          false, false, dos, false, false, false, false, false,
-          null, null, tokenInfo
-        ) : "";
+        const applyButton = targetToken ? ChatMessageBuilder.createDamageApplyButton({
+          damage: totalDamage, penetration, location: "Body", targetId: targetActor.id,
+          damageType, degreesOfSuccess: dos, tokenInfo
+        }) : "";
 
         const hitInfo = numHits > 1 ? ` (${i + 1}/${numHits})` : "";
         const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${power.name}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;

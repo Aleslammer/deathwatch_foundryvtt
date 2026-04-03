@@ -72,13 +72,20 @@ export class ChatMessageBuilder {
     });
   }
 
-  static createDamageApplyButton(damage, penetration, location, targetId, damageType = 'Impact', isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false, isShocking = false, isToxic = false, isMeltaRange = false, charDamageEffect = null, forceWeaponData = null, tokenInfo = null, magnitudeBonusDamage = 0, ignoresNaturalArmour = false) {
+  static createDamageApplyButton(options = {}) {
+    const { damage, penetration, location, targetId, damageType = 'Impact',
+      isPrimitive = false, isRazorSharp = false, degreesOfSuccess = 0,
+      isScatter = false, isLongOrExtremeRange = false, isShocking = false,
+      isToxic = false, isMeltaRange = false, charDamageEffect = null,
+      forceWeaponData = null, tokenInfo = null, magnitudeBonusDamage = 0,
+      ignoresNaturalArmour = false, weaponQualities = [] } = options;
     const charDamageData = charDamageEffect ? ` data-char-damage-formula="${charDamageEffect.formula}" data-char-damage-char="${charDamageEffect.characteristic}" data-char-damage-name="${charDamageEffect.name}"` : '';
     const forceData = forceWeaponData ? ` data-is-force="true" data-force-attacker-id="${forceWeaponData.attackerId}" data-force-psy-rating="${forceWeaponData.psyRating}"` : '';
     const tokenData = tokenInfo ? ` data-scene-id="${tokenInfo.sceneId}" data-token-id="${tokenInfo.tokenId}"` : '';
     const magnitudeData = magnitudeBonusDamage > 0 ? ` data-magnitude-bonus-damage="${magnitudeBonusDamage}"` : '';
     const naturalArmourData = ignoresNaturalArmour ? ` data-ignores-natural-armour="true"` : '';
-    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}" data-is-toxic="${isToxic}" data-is-melta-range="${isMeltaRange}"${charDamageData}${forceData}${tokenData}${magnitudeData}${naturalArmourData}>Apply Damage</button>`;
+    const qualitiesData = weaponQualities.length > 0 ? ` data-weapon-qualities='${JSON.stringify(weaponQualities)}'` : '';
+    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}" data-is-toxic="${isToxic}" data-is-melta-range="${isMeltaRange}"${charDamageData}${forceData}${tokenData}${magnitudeData}${naturalArmourData}${qualitiesData}>Apply Damage</button>`;
   }
 
   static createDamageFlavor(weapon, hitNumber, totalHits, location, degreesOfSuccess, penetration, isMelee, strBonus, applyButton = '') {
@@ -92,6 +99,10 @@ export class ChatMessageBuilder {
 
   static createVolatileAutoConfirmFlavor() {
     return `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br><em style="color: orange;">Volatile weapon — auto-confirmed!</em>`;
+  }
+
+  static createDeathwatchTrainingAutoConfirmFlavor() {
+    return `<strong style="background: #8b4513; color: gold; padding: 2px 6px; border-radius: 3px;">⚡ RIGHTEOUS FURY CONFIRMATION ⚡</strong><br><em style="color: orange;">Deathwatch Training — auto-confirmed vs Xenos!</em>`;
   }
 
   static createRighteousFuryFlavor(targetNumber, confirmed) {

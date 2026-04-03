@@ -26,7 +26,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>The Carnifex is a living engine of destruction, a monstrous creature of immense size and power. Standing taller than a Dreadnought, the Carnifex is one of the most feared Tyranid bioforms on the battlefield. Its massive scything talons can slice through ceramite armour with ease, and its bio-plasma attack can melt through fortifications. Carnifexes are often found at the forefront of Tyranid assaults, smashing through defensive lines and crushing all resistance.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Fear 3 (Horrifying), Improved Natural Weapons (Scything Talons), Multiple Arms, Natural Armour (10), Regeneration (5), Size (Massive), Sturdy, Unnatural Strength (×3), Unnatural Toughness (×2), Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>"
+    "description": "<p>The Carnifex is a living engine of destruction, a monstrous creature of immense size and power. Standing taller than a Dreadnought, the Carnifex is one of the most feared Tyranid bioforms on the battlefield. Its massive scything talons can slice through ceramite armour with ease, and its bio-plasma attack can melt through fortifications. Carnifexes are often found at the forefront of Tyranid assaults, smashing through defensive lines and crushing all resistance.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Fear 3 (Horrifying), Improved Natural Weapons (Scything Talons), Multiple Arms, Natural Armour (10), Regeneration (5), Size (Massive), Sturdy, Unnatural Strength (×3), Unnatural Toughness (×2), Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>",
+    "classification": "xenos"
   },
   "items": [
     {

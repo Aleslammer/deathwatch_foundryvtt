@@ -10,6 +10,7 @@ Automates the Focus Power workflow for psykers (Librarians, Tyranid creatures wi
 
 ### Integration Points
 - **sheets/actor-sheet.mjs**: `.psychic-power-use` click handler calls `PsychicCombatHelper.focusPowerDialog()`
+- **deathwatch.mjs**: `rollItemMacro()` routes psychic-power items directly to `focusPowerDialog()` for hotbar macros
 - **templates/actor/parts/actor-psychic-powers.html**: ⚡ "Use Power" button per power (bolt icon)
 - **helpers/constants.mjs**: `POWER_LEVELS`, `POWER_LEVEL_LABELS`, `PSYCHIC_TEST` and `NO_PERILS` effect types
 - **helpers/character/modifier-collector.mjs**: Existing `collectAllModifiers()` collects `psychic-test` and `no-perils` modifiers
@@ -165,5 +166,5 @@ Planning docs: `docs/psychic-combat/` (00-overview through 04-power-effects)
 
 ## Key Rules for Future Phases
 - **Psychic vs Hordes**: Hits = Effective PR (+1d10 for area powers)
-- **Righteous Fury**: Confirmation uses stored Focus Power target number (not raw WP). Confirmation roll does NOT trigger Phenomena.
+- **Righteous Fury**: Confirmation uses stored Focus Power target number (not raw WP). Confirmation roll does NOT trigger Phenomena. `_rollPsychicDamage()` passes `targetActor` to `processFuryChain()` so Deathwatch Training auto-confirm works against xenos targets.
 - **Opposed Tests**: Powers with `opposed: "Yes"` — psyker must succeed AND beat target's WP test

@@ -28,7 +28,8 @@
     "modifiers": [],
     "conditions": {},
     "description": "<p>A seething mass of Hormagaunts, bounding forward on powerful legs to overwhelm the enemy through sheer numbers. Each creature is a fast-moving assault organism armed with razor-sharp scything talons.</p><p><strong>Magnitude:</strong> 30</p><p><strong>Traits:</strong> Tyranid, Natural Armour (2), Natural Weapons, Instinctive Behaviour (Feed), Unnatural Speed</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
-    "gearArmor": 0
+    "gearArmor": 0,
+    "classification": "xenos"
   },
   "items": [
     {

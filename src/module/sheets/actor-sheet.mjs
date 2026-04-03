@@ -8,6 +8,8 @@ import { ChatMessageBuilder } from "../helpers/ui/chat-message-builder.mjs";
 import { ItemHandlers } from "../helpers/ui/item-handlers.mjs";
 import { getRankImage } from "../helpers/character/rank-helper.mjs";
 import { WoundHelper } from "../helpers/character/wound-helper.mjs";
+import { ModeHelper } from "../helpers/mode-helper.mjs";
+import { CohesionPanel } from "../ui/cohesion-panel.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -494,12 +496,33 @@ export class DeathwatchActorSheet extends ActorSheet {
       if (power) PsychicCombatHelper.focusPowerDialog(this.actor, power);
     });
 
-    // Show special ability in chat
+    // Show special ability in chat (with mode activation message support)
     html.find('.special-ability-show').click(ev => {
       const li = $(ev.currentTarget).closest('.item');
       const itemId = li.data('itemId');
       const ability = this.actor.items.get(itemId);
-      if (ability) ChatMessageBuilder.createItemCard(ability, this.actor);
+      if (!ability) return;
+
+      const sys = ability.system;
+      if (sys.effect && sys.modeRequirement) {
+        const msg = ModeHelper.buildAbilityActivationMessage(
+          this.actor.name, ability.name, sys.modeRequirement,
+          sys.effect, sys.improvements || [], this.actor.system.rank || 1
+        );
+        if (msg) {
+          ChatMessage.create({ content: msg, speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+          return;
+        }
+      }
+      ChatMessageBuilder.createItemCard(ability, this.actor);
+    });
+
+    // Activate Squad Mode ability
+    html.find('.squad-ability-activate').click(ev => {
+      ev.stopPropagation();
+      const itemId = $(ev.currentTarget).data('itemId');
+      const ability = this.actor.items.get(itemId);
+      if (ability) CohesionPanel.activateSquadAbility(this.actor, ability);
     });
 
     // Remove armor history from armor

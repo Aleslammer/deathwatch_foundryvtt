@@ -17,6 +17,9 @@ import { InitiativeHelper } from "./helpers/initiative.mjs";
 import { SkillLoader } from "./helpers/character/skill-loader.mjs";
 import { DW_STATUS_EFFECTS } from "./helpers/status-effects.mjs";
 import { FireHelper } from "./helpers/combat/fire-helper.mjs";
+import { CohesionHelper } from "./helpers/cohesion.mjs";
+import { CohesionPanel } from "./ui/cohesion-panel.mjs";
+import { ModeHelper } from "./helpers/mode-helper.mjs";
 
 
 /* -------------------------------------------- */
@@ -35,7 +38,9 @@ Hooks.once('init', async function () {
         DeathwatchItem,
         rollItemMacro,
         flameAttack,
-        applyOnFireEffects
+        applyOnFireEffects,
+        CohesionHelper,
+        CohesionPanel
     };
 
     // Add custom constants for configuration.
@@ -113,6 +118,43 @@ Hooks.once('init', async function () {
       weapon: models.DeathwatchWeapon
     };
 
+    // Register Cohesion world settings
+    game.settings.register('deathwatch', 'cohesion', {
+      name: 'Kill-team Cohesion',
+      scope: 'world',
+      config: false,
+      type: Object,
+      default: { value: 0, max: 0 }
+    });
+    game.settings.register('deathwatch', 'squadLeader', {
+      name: 'Squad Leader Actor ID',
+      scope: 'world',
+      config: false,
+      type: String,
+      default: ''
+    });
+    game.settings.register('deathwatch', 'cohesionModifier', {
+      name: 'Cohesion GM Modifier',
+      scope: 'world',
+      config: false,
+      type: Number,
+      default: 0
+    });
+    game.settings.register('deathwatch', 'cohesionDamageThisRound', {
+      name: 'Cohesion Damage This Round',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: false
+    });
+    game.settings.register('deathwatch', 'activeSquadAbilities', {
+      name: 'Active Squad Mode Abilities',
+      scope: 'world',
+      config: false,
+      type: Array,
+      default: []
+    });
+
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;
 
@@ -143,6 +185,12 @@ Hooks.once('init', async function () {
     Hooks.on('updateCombat', async (combat, changed) => {
         if (!game.user.isGM) return;
         if (!("turn" in changed) && !("round" in changed)) return;
+
+        // Reset Cohesion damage cap on new round
+        if ("round" in changed) {
+            game.settings.set('deathwatch', 'cohesionDamageThisRound', false);
+        }
+
         const combatant = combat.combatants.get(combat.current.combatantId);
         if (!combatant?.actor?.hasCondition?.('on-fire')) return;
 
@@ -174,6 +222,21 @@ Hooks.once('init', async function () {
         if (folder) await actor.update({ folder: folder.id });
     });
 
+    // Add Kill-team Cohesion toggle to Token Controls toolbar
+    Hooks.on('getSceneControlButtons', (controls) => {
+        const tokenControls = controls.tokens;
+        if (tokenControls?.tools) {
+            tokenControls.tools.cohesionPanel = {
+                name: 'cohesionPanel',
+                title: 'Toggle Cohesion Panel',
+                icon: 'fas fa-shield-alt',
+                button: true,
+                visible: true,
+                onChange: () => CohesionPanel.toggle()
+            };
+        }
+    });
+
     // Register sheet application classes
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });
@@ -186,8 +249,58 @@ Hooks.once('init', async function () {
 });
 
 Hooks.once('ready', async function () {
+    // Register socket for player-initiated world setting changes
+    if (game.deathwatch) game.deathwatch.socket = `system.deathwatch`;
+
+    // Re-render Cohesion panel when settings change; auto-drop Squad Mode on zero Cohesion
+    Hooks.on('updateSetting', (setting) => {
+        if (['deathwatch.cohesion', 'deathwatch.squadLeader', 'deathwatch.cohesionModifier', 'deathwatch.activeSquadAbilities'].includes(setting.key)) {
+            const panel = CohesionPanel.getInstance();
+            if (panel.rendered) panel.render(false);
+        }
+        if (setting.key === 'deathwatch.cohesion' && game.user.isGM) {
+            const cohesion = game.settings.get('deathwatch', 'cohesion');
+            if (cohesion.value <= 0) {
+                CohesionPanel.dropAllToSoloMode();
+            }
+        }
+    });
+
+    // Re-render Cohesion panel when a character's mode changes
+    Hooks.on('updateActor', (actor, changes) => {
+        if (actor.type === 'character' && changes.system?.mode !== undefined) {
+            const panel = CohesionPanel.getInstance();
+            if (panel.rendered) panel.render(false);
+        }
+    });
+
+    // Listen for socket messages (GM processes player requests)
+    game.socket.on('system.deathwatch', async (data) => {
+        if (data.type === 'activateSquadAbility' && game.user.isGM) {
+            const actor = game.actors.get(data.actorId);
+            const ability = actor?.items.get(data.abilityId);
+            if (actor && ability) {
+                await CohesionPanel.activateSquadAbility(actor, ability);
+            }
+        }
+        if (data.type === 'deactivateSquadAbility' && game.user.isGM) {
+            const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
+            if (data.index >= 0 && data.index < active.length) {
+                const removed = active[data.index];
+                active.splice(data.index, 1);
+                await game.settings.set('deathwatch', 'activeSquadAbilities', active);
+                await ChatMessage.create({ content: ModeHelper.buildDeactivationMessage(removed.abilityName) });
+            }
+        }
+    });
+
     // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-    Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
+    Hooks.on("hotbarDrop", (bar, data, slot) => {
+        if (data.type === "Item") {
+            createItemMacro(data, slot);
+            return false;
+        }
+    });
 
     // Set Skip Defeated default on first load (respects manual changes after)
     if (game.user.isGM) {
@@ -282,6 +395,13 @@ Hooks.on('renderChatMessage', (message, html) => {
         }
         
         await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour });
+
+        // Check for Cohesion damage trigger (10+ raw damage from Accurate/Blast/Devastating)
+        const weaponQualitiesRaw = button.data('weaponQualities');
+        const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? JSON.parse(weaponQualitiesRaw) : weaponQualitiesRaw) : [];
+        if (targetActor.type === 'character' && CohesionHelper.shouldTriggerCohesionDamage(damage, weaponQualities)) {
+            await CohesionHelper.handleCohesionDamage(`${targetActor.name} took ${damage} raw damage from a qualifying weapon.`);
+        }
     });
     
     html.find('.shocking-test-btn').click(async (ev) => {
@@ -461,6 +581,45 @@ Hooks.on('renderChatMessage', (message, html) => {
         }
         
         await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
+    });
+
+    html.find('.cohesion-rally-btn').click(async (ev) => {
+        const button = $(ev.currentTarget);
+        const leaderId = button.data('leaderId');
+        const leader = leaderId ? game.actors.get(leaderId) : null;
+        if (!leader) {
+            ui.notifications.warn('Squad leader not found!');
+            return;
+        }
+
+        const commandTotal = leader.system.skills?.command?.total || 0;
+        const fsValue = leader.system.characteristics?.fs?.value || 0;
+        const targetNumber = Math.max(commandTotal, fsValue);
+
+        const roll = await new Roll('1d100').evaluate();
+        const success = CohesionHelper.resolveRallyTest(targetNumber, roll.total);
+
+        if (success) {
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: leader }),
+                flavor: `<strong>\uD83D\uDEE1 Rally Successful!</strong><br>${leader.name} rallies the Kill-team! (Rolled ${roll.total} vs ${targetNumber})<br>Cohesion damage negated.`
+            });
+        } else {
+            await CohesionHelper.applyCohesionDamage(1);
+            const cohesion = game.settings.get('deathwatch', 'cohesion');
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor: leader }),
+                flavor: `<strong>\u26A0 Rally Failed!</strong><br>${leader.name} fails to rally! (Rolled ${roll.total} vs ${targetNumber})<br>Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}`
+            });
+        }
+    });
+
+    html.find('.cohesion-damage-accept-btn').click(async () => {
+        await CohesionHelper.applyCohesionDamage(1);
+        const cohesion = game.settings.get('deathwatch', 'cohesion');
+        await ChatMessage.create({
+            content: `<div class="cohesion-chat"><strong>\u26A0 Cohesion Lost</strong> \u2014 Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}</div>`
+        });
     });
 
     html.find('.extinguish-btn').click(async (ev) => {
@@ -816,25 +975,44 @@ async function createItemMacro(data, slot) {
 }
 
 /**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
+ * Execute a macro for an owned item. Weapons show Attack/Damage dialog,
+ * psychic powers open Focus Power Test, other items use generic roll.
  * @param {string} itemUuid
  */
 function rollItemMacro(itemUuid) {
-    // Reconstruct the drop data so that we can load the item.
-    const dropData = {
-        type: 'Item',
-        uuid: itemUuid
-    };
-    // Load the item from the uuid.
+    const dropData = { type: 'Item', uuid: itemUuid };
     Item.fromDropData(dropData).then(item => {
-        // Determine if the item loaded and if it's an owned item.
         if (!item || !item.parent) {
             const itemName = item?.name ?? itemUuid;
             return ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
         }
 
-        // Trigger the item roll
+        if (item.type === 'weapon') {
+            new Dialog({
+                title: item.name,
+                content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${item.name}</strong></p>`,
+                buttons: {
+                    attack: {
+                        icon: '<i class="fas fa-crosshairs"></i>',
+                        label: "Attack",
+                        callback: () => CombatHelper.weaponAttackDialog(item.parent, item)
+                    },
+                    damage: {
+                        icon: '<i class="fas fa-burst"></i>',
+                        label: "Damage",
+                        callback: () => CombatHelper.weaponDamageRoll(item.parent, item)
+                    }
+                },
+                default: "attack"
+            }).render(true);
+            return;
+        }
+
+        if (item.type === 'psychic-power') {
+            PsychicCombatHelper.focusPowerDialog(item.parent, item);
+            return;
+        }
+
         item.roll();
     });
 }

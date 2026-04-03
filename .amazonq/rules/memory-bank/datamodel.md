@@ -46,6 +46,8 @@ Defined as static methods on `DeathwatchDataModel`, composed via spread into `de
 | `capacityTemplate()` | `capacity` (SchemaField: value, max) | ammunition |
 | `keyTemplate()` | `key` (StringField) | weapon-quality, weapon-upgrade, psychic-power, special-ability |
 
+**Note:** `DeathwatchSpecialAbility` has the most fields of any item type after weapon: `specialty`, `modeRequirement`, `requiredRank`, `chapter`, `abilityCategory`, `effect`, `improvements`, `abilityType`, `cohesionCost`, `sustained`, `action`, `chapterImg` (Phase 2+3 additions).
+
 **Note:** Weapons do NOT use `capacityTemplate()`. Weapons use `clip` (StringField) for clip size. Ammunition items use `capacityTemplate()` for tracking current/max rounds.
 
 ## Registered Types
@@ -167,7 +169,7 @@ NPC DataModel with characteristics, skills, wounds, and modifiers. Simplified ve
 ### DeathwatchEnemy (Phase 4)
 Enemy DataModel. Same as character but without chapters, specialties, rank, XP, fate points, renown, special abilities, demeanours, past events. Extends DeathwatchActorBase.
 
-**Schema fields:** 9 characteristics (with value, base, bonus, damage, advances), skills (ObjectField), modifiers (ArrayField), conditions (ObjectField), description (HTMLField), biography fields (gender, age, complexion, hair), psyRating (SchemaField: value, base).
+**Schema fields:** 9 characteristics (with value, base, bonus, damage, advances), skills (ObjectField), modifiers (ArrayField), conditions (ObjectField), description (HTMLField), biography fields (gender, age, complexion, hair), psyRating (SchemaField: value, base). Overrides `classification` initial to `"xenos"`.
 
 **prepareDerivedData():**
 1. Loads skills via `SkillLoader.loadSkills()`

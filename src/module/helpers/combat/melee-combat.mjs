@@ -1,4 +1,4 @@
-import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS } from "../constants.mjs";
+import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS, HIT_LOCATIONS } from "../constants.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
@@ -42,6 +42,60 @@ export class MeleeCombatHelper {
     if (sizeModifier !== 0) parts.push(`${sizeModifier >= 0 ? '+' : ''}${sizeModifier} ${sizeLabel || 'Target Size'}`);
     return parts;
   }
+  /**
+   * Resolve a melee attack given parsed dialog inputs and a d100 roll.
+   * Pure logic — no UI, no rolls, no document updates.
+   * @param {Object} actor - Actor document
+   * @param {Object} weapon - Weapon item
+   * @param {Object} options - Parsed attack options
+   * @param {number} options.hitValue - The d100 attack roll result
+   * @param {number} options.aim - Aim modifier
+   * @param {number} options.allOut - All Out Attack modifier
+   * @param {number} options.charge - Charge modifier
+   * @param {number} options.calledShot - Called shot penalty
+   * @param {number} options.runningTarget - Running target penalty
+   * @param {number} options.miscModifier - Misc modifier
+   * @param {number} [options.sizeModifier=0] - Target size modifier
+   * @param {string} [options.sizeLabel=''] - Target size label
+   * @param {Object} [options.targetActor=null] - Target actor for horde hit recalculation
+   * @returns {Promise<Object>} Attack resolution result
+   */
+  static async resolveMeleeAttack(actor, weapon, options) {
+    const {
+      hitValue, aim, allOut, charge, calledShot, runningTarget, miscModifier,
+      sizeModifier = 0, sizeLabel = '', targetActor = null
+    } = options;
+
+    const ws = actor.system.characteristics.ws.value || 0;
+    const isDefensive = weapon.system?.attachedQualities?.some(
+      q => (typeof q === 'string' ? q : q.id) === 'defensive'
+    ) || false;
+
+    const { targetNumber, defensivePenalty } = MeleeCombatHelper.buildMeleeModifiers({
+      ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, sizeModifier, isDefensive
+    });
+
+    const success = hitValue <= targetNumber;
+    const degreesOfSuccess = success ? CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber) : 0;
+    let hitsTotal = success ? 1 : 0;
+
+    if (targetActor && hitsTotal > 0) {
+      const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
+      hitsTotal = targetActor.system.calculateHitsReceived({
+        isMelee: true, degreesOfSuccess, hasPowerField, baseHits: 1
+      });
+    }
+
+    const modifierParts = MeleeCombatHelper.buildMeleeModifierParts({
+      ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, defensivePenalty, sizeModifier, sizeLabel
+    });
+
+    return {
+      hitValue, targetNumber, success, degreesOfSuccess,
+      hitsTotal, modifierParts, defensivePenalty
+    };
+  }
+
   /* istanbul ignore next */
   static async attackDialog(actor, weapon) {
     const ws = actor.system.characteristics.ws.value || 0;
@@ -74,6 +128,12 @@ export class MeleeCombatHelper {
           <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
         </label>
       </div>
+      <div class="form-group" id="calledShotLocationGroup" style="display: none;">
+        <label>Called Shot Location:</label>
+        <select id="calledShotLocation" name="calledShotLocation">
+          ${HIT_LOCATIONS.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
+        </select>
+      </div>
       <div class="form-group">
         <label>Misc Modifier:</label>
         <input type="text" id="miscModifier" name="miscModifier" value="0" />
@@ -95,6 +155,11 @@ export class MeleeCombatHelper {
             const icon = $(this).find(`#${id}Icon`);
             checkbox.prop('checked', !checkbox.prop('checked'));
             icon.toggleClass('fa-square').toggleClass('fa-check-square');
+            if (id === 'calledShot') {
+              html.find('#calledShotLocationGroup').toggle(checkbox.prop('checked'));
+              const app = html.closest('.app');
+              if (app.length) ui.windows[app.data('appid')]?.setPosition({ height: 'auto' });
+            }
           });
         });
       },
@@ -109,40 +174,25 @@ export class MeleeCombatHelper {
             const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
 
+            const hitRoll = await new Roll('1d100').evaluate();
+            const hitValue = hitRoll.total;
+
             const targetToken = game.user.targets.first();
             const targetActor = targetToken?.actor;
             const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
 
-            const { targetNumber, defensivePenalty } = MeleeCombatHelper.buildMeleeModifiers({
-              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, sizeModifier,
-              isDefensive: weapon.attachedQualities?.some(q => q.system.key === 'defensive')
+            const result = await MeleeCombatHelper.resolveMeleeAttack(actor, weapon, {
+              hitValue, aim, allOut, charge, calledShot, runningTarget, miscModifier,
+              sizeModifier, sizeLabel, targetActor
             });
 
-            const hitRoll = await new Roll('1d100').evaluate();
-            const hitValue = hitRoll.total;
-            const success = hitValue <= targetNumber;
+            const { targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts } = result;
 
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
-            const degreesOfSuccess = success ? CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber) : 0;
-            let hitsTotal = success ? 1 : 0;
-
-            if (targetActor && hitsTotal > 0) {
-              const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
-              hitsTotal = targetActor.system.calculateHitsReceived({
-                isMelee: true,
-                degreesOfSuccess,
-                hasPowerField,
-                baseHits: 1
-              });
-            }
-
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
-
-            const modifierParts = MeleeCombatHelper.buildMeleeModifierParts({
-              ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, defensivePenalty, sizeModifier, sizeLabel
-            });
+            CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0) ? html.find('#calledShotLocation').val() : null;
 
             let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
             if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;

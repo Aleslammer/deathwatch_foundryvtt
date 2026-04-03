@@ -56,6 +56,9 @@ export default class DeathwatchEnemy extends DeathwatchActorBase {
       base: new fields.NumberField({ initial: 0, min: 0, integer: true })
     });
 
+    // Enemy classification (human, xenos, chaos)
+    schema.classification = new fields.StringField({ initial: "xenos", blank: false });
+
     return schema;
   }
 

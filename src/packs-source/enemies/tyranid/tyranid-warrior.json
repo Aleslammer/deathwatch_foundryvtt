@@ -25,7 +25,8 @@
     "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
-    "description": "<p>Tyranid Warriors are the backbone of the Tyranid swarm, serving as both powerful combatants and vital synapse nodes that relay the will of the Hive Mind to lesser creatures. Standing twice the height of a man, they are fast, strong, and incredibly resilient. Each Warrior is armed with a combination of bio-weapons and can be configured for ranged or close combat roles.</p><p><strong>Traits:</strong> Dark Sight, Fear 3 (Horrifying), Natural Armour (8), Multiple Arms, Unnatural Strength (×2), Unnatural Toughness (×2), Improved Natural Weapons (Scything Talons or Rending Claws), Shadow in the Warp, Size (Enormous), Synapse Creature, Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>"
+    "description": "<p>Tyranid Warriors are the backbone of the Tyranid swarm, serving as both powerful combatants and vital synapse nodes that relay the will of the Hive Mind to lesser creatures. Standing twice the height of a man, they are fast, strong, and incredibly resilient. Each Warrior is armed with a combination of bio-weapons and can be configured for ranged or close combat roles.</p><p><strong>Traits:</strong> Dark Sight, Fear 3 (Horrifying), Natural Armour (8), Multiple Arms, Unnatural Strength (×2), Unnatural Toughness (×2), Improved Natural Weapons (Scything Talons or Rending Claws), Shadow in the Warp, Size (Enormous), Synapse Creature, Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 370</p>",
+    "classification": "xenos"
   },
   "items": [
     {
