@@ -97,7 +97,13 @@ export class MeleeCombatHelper {
   }
 
   /* istanbul ignore next */
-  static async attackDialog(actor, weapon) {
+  static async attackDialog(actor, weapon, options = {}) {
+    const hasOptions = Object.keys(options).length > 0 && options.action !== 'damage';
+
+    if (hasOptions && options.skipDialog) {
+      return this._attackWithOptions(actor, weapon, options);
+    }
+
     const ws = actor.system.characteristics.ws.value || 0;
 
     const content = `
@@ -162,6 +168,30 @@ export class MeleeCombatHelper {
             }
           });
         });
+
+        // Pre-fill from options
+        if (hasOptions) {
+          if (options.aim !== undefined) html.find('#aim').val(CombatDialogHelper.mapAimOption(options.aim));
+          if (options.allOut) {
+            html.find('#allOut').prop('checked', true);
+            html.find('#allOutIcon').removeClass('fa-square').addClass('fa-check-square');
+          }
+          if (options.charge) {
+            html.find('#charge').prop('checked', true);
+            html.find('#chargeIcon').removeClass('fa-square').addClass('fa-check-square');
+          }
+          if (options.calledShot) {
+            html.find('#calledShot').prop('checked', true);
+            html.find('#calledShotIcon').removeClass('fa-square').addClass('fa-check-square');
+            html.find('#calledShotLocationGroup').show();
+            if (options.calledShotLocation) html.find('#calledShotLocation').val(options.calledShotLocation);
+          }
+          if (options.runningTarget) {
+            html.find('#runningTarget').prop('checked', true);
+            html.find('#runningTargetIcon').removeClass('fa-square').addClass('fa-check-square');
+          }
+          if (options.miscModifier !== undefined) html.find('#miscModifier').val(options.miscModifier);
+        }
       },
       buttons: {
         attack: {
@@ -213,5 +243,53 @@ export class MeleeCombatHelper {
       },
       default: "attack"
     }).render(true);
+  }
+
+  /**
+   * Execute a melee attack immediately with preset options (skip dialog).
+   * @param {Object} actor - Actor document
+   * @param {Object} weapon - Weapon item
+   * @param {Object} options - Preset attack options
+   */
+  /* istanbul ignore next */
+  static async _attackWithOptions(actor, weapon, options) {
+    const aim = CombatDialogHelper.mapAimOption(options.aim || 0);
+    const allOut = options.allOut ? MELEE_MODIFIERS.ALL_OUT_ATTACK : 0;
+    const charge = options.charge ? MELEE_MODIFIERS.CHARGE : 0;
+    const calledShot = options.calledShot ? COMBAT_PENALTIES.CALLED_SHOT : 0;
+    const runningTarget = options.runningTarget ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
+    const miscModifier = options.miscModifier || 0;
+
+    const hitRoll = await new Roll('1d100').evaluate();
+    const hitValue = hitRoll.total;
+
+    const targetToken = game.user.targets.first();
+    const targetActor = targetToken?.actor;
+    const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
+
+    const result = await MeleeCombatHelper.resolveMeleeAttack(actor, weapon, {
+      hitValue, aim, allOut, charge, calledShot, runningTarget, miscModifier,
+      sizeModifier, sizeLabel, targetActor
+    });
+
+    const { targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts } = result;
+
+    CombatHelper.lastAttackRoll = hitValue;
+    CombatHelper.lastAttackTarget = targetNumber;
+    CombatHelper.lastAttackHits = hitsTotal;
+    CombatHelper.lastAttackAim = aim;
+    CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0 && options.calledShotLocation) ? options.calledShotLocation : null;
+
+    let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
+    if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;
+    const flavor = modifierParts.length > 0
+      ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`
+      : label;
+
+    hitRoll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: flavor,
+      rollMode: game.settings.get('core', 'rollMode')
+    });
   }
 }

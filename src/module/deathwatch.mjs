@@ -977,9 +977,11 @@ async function createItemMacro(data, slot) {
 /**
  * Execute a macro for an owned item. Weapons show Attack/Damage dialog,
  * psychic powers open Focus Power Test, other items use generic roll.
+ * When options are provided for weapons, skips the Attack/Damage choice dialog.
  * @param {string} itemUuid
+ * @param {Object} [options={}] - Preset attack options (see docs/hotbar-macros.md)
  */
-function rollItemMacro(itemUuid) {
+function rollItemMacro(itemUuid, options = {}) {
     const dropData = { type: 'Item', uuid: itemUuid };
     Item.fromDropData(dropData).then(item => {
         if (!item || !item.parent) {
@@ -988,6 +990,21 @@ function rollItemMacro(itemUuid) {
         }
 
         if (item.type === 'weapon') {
+            const hasOptions = Object.keys(options).length > 0;
+
+            // action: "damage" goes straight to damage roll
+            if (hasOptions && options.action === 'damage') {
+                CombatHelper.weaponDamageRoll(item.parent, item);
+                return;
+            }
+
+            // With options: skip Attack/Damage choice, go straight to attack
+            if (hasOptions) {
+                CombatHelper.weaponAttackDialog(item.parent, item, options);
+                return;
+            }
+
+            // No options: show Attack/Damage choice dialog (original behavior)
             new Dialog({
                 title: item.name,
                 content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${item.name}</strong></p>`,

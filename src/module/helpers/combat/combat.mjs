@@ -86,11 +86,11 @@ export class CombatHelper {
   }
 
   /* istanbul ignore next */
-  static async weaponAttackDialog(actor, weapon) {
+  static async weaponAttackDialog(actor, weapon, options = {}) {
     const attackType = await this.getWeaponAttackType(weapon);
-    if (attackType === 'melee') return MeleeCombatHelper.attackDialog(actor, weapon);
+    if (attackType === 'melee') return MeleeCombatHelper.attackDialog(actor, weapon, options);
     if (attackType === 'flame') return this._flameWeaponRoll(actor, weapon);
-    return RangedCombatHelper.attackDialog(actor, weapon);
+    return RangedCombatHelper.attackDialog(actor, weapon, options);
   }
 
   /**
