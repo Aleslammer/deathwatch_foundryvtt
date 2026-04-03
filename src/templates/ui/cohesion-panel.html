@@ -10,13 +10,13 @@
   <div class="cohesion-leader">Leader: {{leaderName}}</div>
   <div class="cohesion-controls">
     {{#if isGM}}
-    <a class="cohesion-recover" title="Recover 1 Cohesion"><i class="fas fa-plus"></i></a>
-    <a class="cohesion-lose" title="Lose 1 Cohesion"><i class="fas fa-minus"></i></a>
-    <a class="cohesion-recalculate" title="Recalculate"><i class="fas fa-sync"></i></a>
-    <a class="cohesion-edit" title="Edit"><i class="fas fa-edit"></i></a>
-    <a class="cohesion-set-leader" title="Set Leader"><i class="fas fa-crown"></i></a>
+    <button type="button" data-action="recover" title="Recover 1 Cohesion"><i class="fas fa-plus"></i></button>
+    <button type="button" data-action="lose" title="Lose 1 Cohesion"><i class="fas fa-minus"></i></button>
+    <button type="button" data-action="recalculate" title="Recalculate"><i class="fas fa-sync"></i></button>
+    <button type="button" data-action="edit" title="Edit"><i class="fas fa-edit"></i></button>
+    <button type="button" data-action="setLeader" title="Set Leader"><i class="fas fa-crown"></i></button>
     {{/if}}
-    <a class="cohesion-challenge-btn" title="Cohesion Challenge"><i class="fas fa-dice"></i></a>
+    <button type="button" data-action="challenge" title="Cohesion Challenge"><i class="fas fa-dice"></i></button>
   </div>
   {{#if characters.length}}
   <div class="cohesion-characters">
@@ -25,9 +25,9 @@
       <span class="mode-indicator {{this.mode}}" title="{{this.mode}}"></span>
       <span class="character-name">{{this.name}}</span>
       {{#if this.canToggle}}
-      <a class="mode-toggle" data-actor-id="{{this.id}}" title="Toggle Mode">
+      <button type="button" data-action="toggleMode" data-actor-id="{{this.id}}" title="Toggle Mode">
         <i class="fas fa-exchange-alt"></i>
-      </a>
+      </button>
       {{/if}}
     </div>
     {{/each}}
@@ -42,7 +42,7 @@
       <span class="active-ability-name">{{this.abilityName}}</span>
       <span class="active-ability-initiator">({{this.initiatorName}})</span>
       {{#if this.canDeactivate}}
-      <a class="squad-ability-deactivate" data-index="{{@index}}" title="Deactivate"><i class="fas fa-times"></i></a>
+      <button type="button" data-action="deactivateAbility" data-index="{{@index}}" title="Deactivate"><i class="fas fa-times"></i></button>
       {{/if}}
     </div>
     {{/each}}

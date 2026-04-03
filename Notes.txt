@@ -44,8 +44,6 @@ Ammmunition 158
 
 
 TODO: Automated Animations - Can we use this for things?
-TODO: WE have no Cohesion mechanic
-TODO: we have no squad vs solo mode flip
 
 Enemies:
     TODO: Still Need to add Tyranids
@@ -60,17 +58,75 @@ Armor:
           164 - Terminator Armour has forcefield like effects    
 
 Orks:
-    TODO: Images - Squigs are bipedal not quadrapeds. Change the Bomb and Guard squig
     TODO: Images do not have proeprty token backgrounds
 
 Gameplay:
-    TODO: Update the drag and drop macros to allow for pre-loading modfiers...
-    TODO: Test psychic power hotbar 
-    TODO: Test weapon hotbar
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
 
-Hordes
 
-Psychic Combat
 
-Combat:
+What Q thinks is missing
+
+Core Combat Mechanics
+Not Yet Implemented:
+    Swift Attack / Lightning Attack — multiple melee hits (like Semi/Full Auto for melee)
+    Parry & Dodge reactions — opposed WS/AG tests to negate hits
+    Defensive Stance — sacrifice attacks for defensive bonuses
+    Overwatch — readied ranged attacks triggered by enemy movement
+    Suppressive Fire — pin targets in an area, forcing Pinning tests
+    Blast/Scatter mechanics — area damage with scatter direction (roll table exists but not wired)
+    Grappling — opposed STR tests, actions while grappled
+    Two-Weapon Fighting — attack with both weapons (talents exist, mechanics don't)
+    Dual Strike / Whirlwind of Death — advanced multi-attack actions
+
+Defensive Systems
+    Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
+    Cover system — AP bonuses from terrain
+    Pinning — WP test or lose actions when under fire
+
+Character Mechanics
+    Fate Points — spending (re-roll, +10, count as not dead) and burning (survive death)
+    Characteristic advance XP costs — data exists in specialties but not wired to XP calculation
+    Corruption & Insanity — tracking, thresholds, disorders, mutations
+    Experience spending UI — buying advances, skills, talents from the sheet
+    Renown & Requisition — mission requisition rolls, renown thresholds for gear access
+    Demeanour mechanics — Chapter and Personal demeanour interaction (currently just text)
+
+Cohesion (Partially Done)
+    Cohesion Damage (Phase 3 planned) — 10+ damage from Accurate/Blast/Devastating triggers Cohesion loss; rally tests
+    Cohesion Recovery (Phase 4 planned) — +1 from objectives, Fate Points, GM awards
+    Fear-based Cohesion damage — Fear creatures causing Cohesion loss
+
+Conditions & Status Effects
+    Stunned — lose actions for rounds (Shocking button exists but no condition tracking)
+    Prone / Knocked Down — movement and combat penalties
+    On Fire — partially implemented (FireHelper exists), but no persistent condition auto-processing outside combat tracker
+    Blinded / Deafened — sensory impairment penalties
+    Fatigue effects — penalties at thresholds (fatigue ≥ TB = penalties, ≥ 2×TB = unconscious)
+    Blood Loss — TG test each round or die when critically wounded
+    Pinned — suppressive fire result
+
+Horde Mechanics (Partially Done)
+    Horde damage bonus — magnitude-based bonus dice to horde attacks (formula exists, not wired to attack rolls)
+    Horde special actions — Overwhelm, Swarm
+    Breaking hordes — morale/flee at low magnitude
+
+Equipment & Gear
+    Cybernetics — MIU, bionic limbs, augmetic senses (item type exists, no mechanical effects)
+    Consumables / Drugs — combat drugs, stimm packs with temporary effects
+    Grenades — thrown weapons with Blast, scatter
+    Vehicles — no vehicle rules at all
+    Requisition system — mission gear selection with renown gates
+
+Campaign Systems
+    Mission structure — primary/secondary/tertiary objectives
+    Oath system — Kill-team oaths granting bonuses
+    Distinction & Honors — earned titles
+    Rank advancement UI — visual progression through Deathwatch ranks
+
+Miscellaneous
+    Skill tests — no general d100 skill test dialog (only combat rolls exist)
+    Extended tests — multi-roll challenges
+    Opposed tests — general opposed test framework (only psychic opposed exists)
+    Interaction skills — Charm, Deceive, Intimidate, Command with DoS effects
+    Jumping / Climbing / Swimming — AG/STR tests with movement rules

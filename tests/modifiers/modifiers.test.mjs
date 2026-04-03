@@ -132,8 +132,6 @@ describe('ModifierHelper', () => {
   });
 
   describe('editModifierDialog', () => {
-    let mockDialog, mockHtml;
-
     beforeEach(() => {
       mockActor.system.modifiers = [
         {
@@ -146,59 +144,42 @@ describe('ModifierHelper', () => {
           enabled: true
         }
       ];
-
-      mockHtml = {
-        find: jest.fn((selector) => {
-          if (selector === '[name="name"]') return { val: () => 'Updated Name' };
-          if (selector === '[name="modifier"]') return { val: () => '20' };
-          if (selector === '[name="type"]') return { val: () => MODIFIER_TYPES.CIRCUMSTANCE };
-          if (selector === '[name="effectType"]') return { val: () => EFFECT_TYPES.SKILL };
-          if (selector === '[name="valueAffected"]') return { val: () => 'acrobatics' };
-          if (selector === '#effectType') {
-            return {
-              change: jest.fn((callback) => {
-                mockHtml._effectTypeCallback = callback;
-              })
-            };
-          }
-          if (selector === '#valueAffectedGroup') {
-            return {
-              find: jest.fn(() => ({ remove: jest.fn() })),
-              append: jest.fn()
-            };
-          }
-          return { val: () => '', change: jest.fn() };
-        })
-      };
-
-      global.Dialog = jest.fn(function(config) {
-        this.render = jest.fn(() => {
-          if (config.render) config.render(mockHtml);
-        });
-        mockDialog = this;
-        mockDialog.config = config;
-      });
     });
 
     it('returns early if modifier not found', async () => {
+      foundry.applications.api.DialogV2.wait.mockResolvedValue(null);
       await ModifierHelper.editModifierDialog(mockActor, 'nonexistent');
-      expect(global.Dialog).not.toHaveBeenCalled();
+      expect(foundry.applications.api.DialogV2.wait).not.toHaveBeenCalled();
     });
 
     it('opens dialog with modifier data', async () => {
+      foundry.applications.api.DialogV2.wait.mockResolvedValue('cancel');
       await ModifierHelper.editModifierDialog(mockActor, 'mod1');
 
-      expect(global.Dialog).toHaveBeenCalled();
-      const config = mockDialog.config;
-      expect(config.title).toBe('Edit Modifier');
-      expect(config.content).toContain('Test Modifier');
-      expect(config.content).toContain('10');
+      expect(foundry.applications.api.DialogV2.wait).toHaveBeenCalledTimes(1);
+      const callArgs = foundry.applications.api.DialogV2.wait.mock.calls[0][0];
+      expect(callArgs.window.title).toBe('Edit Modifier');
+      expect(callArgs.content).toContain('Test Modifier');
+      expect(callArgs.content).toContain('10');
     });
 
-    it('saves modified data on save button', async () => {
-      await ModifierHelper.editModifierDialog(mockActor, 'mod1');
+    it('saves modified data on save button callback', async () => {
+      foundry.applications.api.DialogV2.wait.mockImplementation(async (config) => {
+        const saveBtn = config.buttons.find(b => b.action === 'save');
+        const mockElement = {
+          querySelector: (sel) => {
+            if (sel === '[name="name"]') return { value: 'Updated Name' };
+            if (sel === '[name="modifier"]') return { value: '20' };
+            if (sel === '[name="type"]') return { value: MODIFIER_TYPES.CIRCUMSTANCE };
+            if (sel === '[name="effectType"]') return { value: EFFECT_TYPES.SKILL };
+            if (sel === '[name="valueAffected"]') return { value: 'acrobatics' };
+            return null;
+          }
+        };
+        return saveBtn.callback(null, null, { element: mockElement });
+      });
 
-      await mockDialog.config.buttons.save.callback(mockHtml);
+      await ModifierHelper.editModifierDialog(mockActor, 'mod1');
 
       expect(mockActor.update).toHaveBeenCalledWith({
         'system.modifiers': [
@@ -214,11 +195,10 @@ describe('ModifierHelper', () => {
       });
     });
 
-    it('registers effect type change handler', async () => {
+    it('does not save when cancel is selected', async () => {
+      foundry.applications.api.DialogV2.wait.mockResolvedValue('cancel');
       await ModifierHelper.editModifierDialog(mockActor, 'mod1');
-      mockDialog.config.render(mockHtml);
-
-      expect(mockHtml.find).toHaveBeenCalledWith('#effectType');
+      expect(mockActor.update).not.toHaveBeenCalled();
     });
   });
 

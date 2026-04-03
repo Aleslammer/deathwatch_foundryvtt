@@ -2,13 +2,16 @@ import { CohesionHelper } from "../helpers/cohesion.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
 import { MODES } from "../helpers/constants.mjs";
 
+const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
+
 /**
  * Floating HUD panel displaying Kill-team Cohesion.
  * Singleton — one instance shared across the session.
- * Uses popOut: true for proper Foundry window management.
- * @extends {Application}
+ * @extends {ApplicationV2}
  */
-export class CohesionPanel extends Application {
+export class CohesionPanel extends HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2
+) {
   static _instance = null;
 
   static getInstance() {
@@ -18,31 +21,37 @@ export class CohesionPanel extends Application {
     return CohesionPanel._instance;
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: 'cohesion-panel',
+  static DEFAULT_OPTIONS = {
+    id: 'cohesion-panel',
+    window: {
       title: '⚔ Kill-team Cohesion',
-      template: 'systems/deathwatch/templates/ui/cohesion-panel.html',
-      popOut: true,
-      width: 220,
-      height: 'auto',
       minimizable: false,
-      resizable: false,
-      classes: ['cohesion-panel']
-    });
-  }
-
-  /** After render, position at top center on first open only. */
-  async _render(...args) {
-    const firstRender = !this._element?.length;
-    await super._render(...args);
-    if (firstRender) {
-      const left = Math.round((window.innerWidth - 220) / 2);
-      super.setPosition({ left, top: 10 });
+      resizable: false
+    },
+    position: { width: 220, height: 'auto' },
+    classes: ['cohesion-panel'],
+    actions: {
+      recover: CohesionPanel._onRecover,
+      lose: CohesionPanel._onLose,
+      recalculate: CohesionPanel._onRecalculate,
+      edit: CohesionPanel._onEdit,
+      setLeader: CohesionPanel._onSetLeader,
+      challenge: CohesionPanel._onChallenge,
+      toggleMode: CohesionPanel._onToggleMode,
+      deactivateAbility: CohesionPanel._onDeactivateAbility
     }
+  };
+
+  static PARTS = {
+    panel: { template: 'systems/deathwatch/templates/ui/cohesion-panel.html' }
+  };
+
+  _onFirstRender(context, options) {
+    const left = Math.round((window.innerWidth - 220) / 2);
+    this.setPosition({ left, top: 10 });
   }
 
-  getData() {
+  async _prepareContext(options) {
     const cohesion = game.settings.get('deathwatch', 'cohesion');
     const leaderId = game.settings.get('deathwatch', 'squadLeader');
     const leader = leaderId ? game.actors.get(leaderId) : null;
@@ -76,18 +85,6 @@ export class CohesionPanel extends Application {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.cohesion-recover').click(() => CohesionHelper.recoverCohesion(1));
-    html.find('.cohesion-lose').click(() => this._adjustCohesion(-1));
-    html.find('.cohesion-recalculate').click(() => this._onRecalculate());
-    html.find('.cohesion-edit').click(() => this._onEdit());
-    html.find('.cohesion-set-leader').click(() => this._onSetLeader());
-    html.find('.cohesion-challenge-btn').click(() => this._onCohesionChallenge());
-    html.find('.mode-toggle').click(ev => this._onToggleMode(ev));
-    html.find('.squad-ability-deactivate').click(ev => this._onDeactivateAbility(ev));
-  }
-
   /**
    * Toggle the panel open/closed.
    */
@@ -101,12 +98,20 @@ export class CohesionPanel extends Application {
   }
 
   /* -------------------------------------------- */
-  /*  Mode Toggle                                 */
+  /*  Action Handlers (static, 'this' = panel)    */
   /* -------------------------------------------- */
 
-  async _onToggleMode(ev) {
+  static async _onRecover(event, target) {
+    await CohesionHelper.recoverCohesion(1);
+  }
+
+  static async _onLose(event, target) {
+    await this._adjustCohesion(-1);
+  }
+
+  static async _onToggleMode(event, target) {
     if (!game.ready) return;
-    const actorId = $(ev.currentTarget).data('actorId');
+    const actorId = target.dataset.actorId;
     const actor = game.actors.get(actorId);
     if (!actor || !(actor instanceof Actor)) return;
 
@@ -121,7 +126,6 @@ export class CohesionPanel extends Application {
       }
     }
 
-    // Deactivate sustained abilities when leaving Squad Mode
     if (newMode === MODES.SOLO) {
       await CohesionPanel.deactivateAbilitiesForActor(actorId);
     }
@@ -131,9 +135,25 @@ export class CohesionPanel extends Application {
     this.render(false);
   }
 
+  static async _onDeactivateAbility(event, target) {
+    const index = parseInt(target.dataset.index);
+
+    if (!game.user.isGM) {
+      game.socket.emit('system.deathwatch', { type: 'deactivateSquadAbility', index });
+      return;
+    }
+
+    const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
+    if (index < 0 || index >= active.length) return;
+
+    const removed = active[index];
+    active.splice(index, 1);
+    await game.settings.set('deathwatch', 'activeSquadAbilities', active);
+    await ChatMessage.create({ content: ModeHelper.buildDeactivationMessage(removed.abilityName) });
+  }
+
   /**
    * Force all characters in Squad Mode back to Solo Mode.
-   * Called when Cohesion reaches 0. Also deactivates all sustained abilities.
    */
   static async dropAllToSoloMode() {
     if (!game.ready) return;
@@ -144,22 +164,14 @@ export class CohesionPanel extends Application {
       await actor.update({ 'system.mode': MODES.SOLO });
     }
 
-    // Deactivate all sustained abilities
     await game.settings.set('deathwatch', 'activeSquadAbilities', []);
-
     await ChatMessage.create({ content: ModeHelper.buildCohesionDepletedMessage() });
   }
 
   /* -------------------------------------------- */
-  /*  Cohesion Adjustments                        */
+  /*  Squad Ability Activation                    */
   /* -------------------------------------------- */
 
-  /**
-   * Activate a Squad Mode ability: validate, deduct Cohesion, track if sustained.
-   * GM executes directly; players emit a socket request.
-   * @param {Actor} actor
-   * @param {Item} ability
-   */
   static async activateSquadAbility(actor, ability) {
     const sys = ability.system;
     const cohesion = game.settings.get('deathwatch', 'cohesion');
@@ -175,17 +187,14 @@ export class CohesionPanel extends Application {
       return;
     }
 
-    // Players route through socket; GM executes directly
     if (!game.user.isGM) {
       game.socket.emit('system.deathwatch', { type: 'activateSquadAbility', actorId: actor.id, abilityId: ability.id });
       return;
     }
 
-    // Deduct Cohesion
     const newValue = cohesion.value - sys.cohesionCost;
     await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
 
-    // Track sustained ability
     if (sys.sustained) {
       active.push({
         abilityId: ability.id,
@@ -205,32 +214,6 @@ export class CohesionPanel extends Application {
     });
   }
 
-  /**
-   * Deactivate a sustained ability by index.
-   * GM executes directly; players emit a socket request.
-   * @param {Event} ev
-   */
-  async _onDeactivateAbility(ev) {
-    const index = parseInt($(ev.currentTarget).data('index'));
-
-    if (!game.user.isGM) {
-      game.socket.emit('system.deathwatch', { type: 'deactivateSquadAbility', index });
-      return;
-    }
-
-    const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
-    if (index < 0 || index >= active.length) return;
-
-    const removed = active[index];
-    active.splice(index, 1);
-    await game.settings.set('deathwatch', 'activeSquadAbilities', active);
-    await ChatMessage.create({ content: ModeHelper.buildDeactivationMessage(removed.abilityName) });
-  }
-
-  /**
-   * Deactivate all sustained abilities for a specific actor.
-   * @param {string} actorId
-   */
   static async deactivateAbilitiesForActor(actorId) {
     const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
     const remaining = active.filter(a => a.initiatorId !== actorId);
@@ -254,10 +237,10 @@ export class CohesionPanel extends Application {
   }
 
   /* -------------------------------------------- */
-  /*  Dialogs                                     */
+  /*  Dialogs (migrated to DialogV2)              */
   /* -------------------------------------------- */
 
-  async _onRecalculate() {
+  static async _onRecalculate(event, target) {
     const leaderId = game.settings.get('deathwatch', 'squadLeader');
     const leader = leaderId ? game.actors.get(leaderId) : null;
     if (!leader) return ui.notifications.warn('No squad leader assigned.');
@@ -267,96 +250,95 @@ export class CohesionPanel extends Application {
     const rankMod = CohesionHelper.getRankModifier(leader.system.rank || 1);
     const commandMod = CohesionHelper.getCommandModifier(leader.system.skills?.command || {});
 
-    new Dialog({
-      title: 'Recalculate Cohesion',
+    const result = await DialogV2.prompt({
+      window: { title: 'Recalculate Cohesion' },
       content: `
+        <div class="form-group">Leader: <strong>${leader.name}</strong></div>
+        <div class="form-group">Fellowship Bonus: <strong>${fsBonus}</strong></div>
+        <div class="form-group">Rank Modifier: <strong>+${rankMod}</strong></div>
+        <div class="form-group">Command Modifier: <strong>+${commandMod}</strong></div>
+        <hr/>
         <div class="form-group">
-          <p>Leader: <strong>${leader.name}</strong></p>
-          <p>Fellowship Bonus: <strong>${fsBonus}</strong></p>
-          <p>Rank Modifier: <strong>+${rankMod}</strong></p>
-          <p>Command Modifier: <strong>+${commandMod}</strong></p>
-          <hr/>
           <label>GM Modifier:</label>
-          <input type="number" id="gm-modifier" value="${currentGmMod}" />
+          <input type="number" name="gmModifier" value="${currentGmMod}" />
         </div>`,
-      buttons: {
-        confirm: {
-          label: 'Recalculate',
-          callback: async (html) => {
-            const gmMod = parseInt(html.find('#gm-modifier').val()) || 0;
-            await game.settings.set('deathwatch', 'cohesionModifier', gmMod);
-            const max = CohesionHelper.calculateCohesionMaxFromActor(leader, gmMod);
-            const current = game.settings.get('deathwatch', 'cohesion');
-            await game.settings.set('deathwatch', 'cohesion', { value: Math.min(current.value, max), max });
-          }
-        },
-        cancel: { label: 'Cancel' }
-      },
-      default: 'confirm'
-    }).render(true);
+      ok: {
+        label: 'Recalculate',
+        callback: (event, button, dialog) => {
+          return parseInt(button.form.elements.gmModifier.value) || 0;
+        }
+      }
+    });
+
+    if (result !== null) {
+      await game.settings.set('deathwatch', 'cohesionModifier', result);
+      const max = CohesionHelper.calculateCohesionMaxFromActor(leader, result);
+      const current = game.settings.get('deathwatch', 'cohesion');
+      await game.settings.set('deathwatch', 'cohesion', { value: Math.min(current.value, max), max });
+    }
   }
 
-  async _onEdit() {
+  static async _onEdit(event, target) {
     const current = game.settings.get('deathwatch', 'cohesion');
-    new Dialog({
-      title: 'Edit Cohesion',
+
+    const result = await DialogV2.prompt({
+      window: { title: 'Edit Cohesion' },
       content: `
         <div class="form-group">
           <label>Current:</label>
-          <input type="number" id="cohesion-value" value="${current.value}" min="0" />
+          <input type="number" name="cohesionValue" value="${current.value}" min="0" />
         </div>
         <div class="form-group">
           <label>Maximum:</label>
-          <input type="number" id="cohesion-max" value="${current.max}" min="0" />
+          <input type="number" name="cohesionMax" value="${current.max}" min="0" />
         </div>`,
-      buttons: {
-        confirm: {
-          label: 'Save',
-          callback: async (html) => {
-            const value = parseInt(html.find('#cohesion-value').val()) || 0;
-            const max = parseInt(html.find('#cohesion-max').val()) || 0;
-            await game.settings.set('deathwatch', 'cohesion', { value: Math.min(value, max), max });
-          }
-        },
-        cancel: { label: 'Cancel' }
-      },
-      default: 'confirm'
-    }).render(true);
+      ok: {
+        label: 'Save',
+        callback: (event, button, dialog) => {
+          const value = parseInt(button.form.elements.cohesionValue.value) || 0;
+          const max = parseInt(button.form.elements.cohesionMax.value) || 0;
+          return { value, max };
+        }
+      }
+    });
+
+    if (result !== null) {
+      await game.settings.set('deathwatch', 'cohesion', { value: Math.min(result.value, result.max), max: result.max });
+    }
   }
 
-  async _onSetLeader() {
+  static async _onSetLeader(event, target) {
     const characters = game.actors.filter(a => a.type === 'character');
     if (!characters.length) return ui.notifications.warn('No character actors found.');
 
     const currentLeader = game.settings.get('deathwatch', 'squadLeader');
     const options = characters.map(a => `<option value="${a.id}" ${a.id === currentLeader ? 'selected' : ''}>${a.name}</option>`).join('');
 
-    new Dialog({
-      title: 'Set Squad Leader',
+    const result = await DialogV2.prompt({
+      window: { title: 'Set Squad Leader' },
       content: `
         <div class="form-group">
           <label>Squad Leader:</label>
-          <select id="leader-select">${options}</select>
+          <select name="leaderId">${options}</select>
         </div>`,
-      buttons: {
-        confirm: {
-          label: 'Confirm',
-          callback: async (html) => {
-            const leaderId = html.find('#leader-select').val();
-            await game.settings.set('deathwatch', 'squadLeader', leaderId);
-            const gmMod = game.settings.get('deathwatch', 'cohesionModifier');
-            const leader = game.actors.get(leaderId);
-            const max = CohesionHelper.calculateCohesionMaxFromActor(leader, gmMod);
-            await game.settings.set('deathwatch', 'cohesion', { value: max, max });
-          }
-        },
-        cancel: { label: 'Cancel' }
-      },
-      default: 'confirm'
-    }).render(true);
+      ok: {
+        label: 'Confirm',
+        callback: (event, button, dialog) => {
+          return button.form.elements.leaderId.value;
+        }
+      }
+    });
+
+    if (result !== null) {
+      await game.settings.set('deathwatch', 'squadLeader', result);
+      const gmMod = game.settings.get('deathwatch', 'cohesionModifier');
+      const leader = game.actors.get(result);
+      const max = CohesionHelper.calculateCohesionMaxFromActor(leader, gmMod);
+      await game.settings.set('deathwatch', 'cohesion', { value: max, max });
+    }
   }
 
-  async _onCohesionChallenge() {
+  static async _onChallenge(event, target) {
     const owned = game.actors.filter(a => a.type === 'character' && a.isOwner);
     if (!owned.length) return ui.notifications.warn('No owned character actors found.');
 
@@ -365,24 +347,25 @@ export class CohesionPanel extends Application {
     }
 
     const options = owned.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-    new Dialog({
-      title: 'Cohesion Challenge',
+
+    const result = await DialogV2.prompt({
+      window: { title: 'Cohesion Challenge' },
       content: `
         <div class="form-group">
           <label>Battle-Brother:</label>
-          <select id="challenge-actor">${options}</select>
+          <select name="actorId">${options}</select>
         </div>`,
-      buttons: {
-        roll: {
-          label: 'Roll',
-          callback: async (html) => {
-            const actor = game.actors.get(html.find('#challenge-actor').val());
-            if (actor) await CohesionHelper.rollCohesionChallenge(actor);
-          }
-        },
-        cancel: { label: 'Cancel' }
-      },
-      default: 'roll'
-    }).render(true);
+      ok: {
+        label: 'Roll',
+        callback: (event, button, dialog) => {
+          return button.form.elements.actorId.value;
+        }
+      }
+    });
+
+    if (result !== null) {
+      const actor = game.actors.get(result);
+      if (actor) await CohesionHelper.rollCohesionChallenge(actor);
+    }
   }
 }

@@ -10,7 +10,7 @@ global.Hooks = {
     if (hook === 'ready') readyCallback = callback;
   }),
   on: jest.fn((hook, callback) => {
-    if (hook === 'renderChatMessage') renderChatCallback = callback;
+    if (hook === 'renderChatMessageHTML') renderChatCallback = callback;
     if (hook === 'hotbarDrop') hotbarDropCallback = callback;
   })
 };
@@ -98,7 +98,7 @@ describe('deathwatch.mjs', () => {
     });
   });
 
-  describe('renderChatMessage hook', () => {
+  describe('renderChatMessageHTML hook', () => {
     beforeEach(async () => {
       await initCallback();
       await readyCallback();
@@ -106,13 +106,11 @@ describe('deathwatch.mjs', () => {
 
     it('registers chat message handlers', () => {
       const mockHtml = {
-        find: jest.fn(() => ({
-          click: jest.fn()
-        }))
+        querySelectorAll: jest.fn(() => [])
       };
       
       renderChatCallback({}, mockHtml);
-      expect(mockHtml.find).toHaveBeenCalled();
+      expect(mockHtml.querySelectorAll).toHaveBeenCalled();
     });
   });
 

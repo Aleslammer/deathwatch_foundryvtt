@@ -141,6 +141,34 @@ global.foundry = {
     mergeObject: (original, other) => Object.assign(original, other)
   },
   applications: {
+    api: {
+      ApplicationV2: class ApplicationV2 {
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
+        render() { return this; }
+        close() {}
+        setPosition() {}
+        get rendered() { return false; }
+      },
+      HandlebarsApplicationMixin: (Base) => class extends Base {
+        async _prepareContext() { return {}; }
+        _onRender() {}
+        _onFirstRender() {}
+      },
+      DialogV2: {
+        wait: jest.fn().mockResolvedValue(null),
+        prompt: jest.fn().mockResolvedValue(null),
+        confirm: jest.fn().mockResolvedValue(true)
+      }
+    },
+    sheets: {
+      ActorSheetV2: class {
+        static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
+      },
+      ItemSheetV2: class {
+        static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
+      }
+    },
     ux: {
       TextEditor: {
         implementation: {

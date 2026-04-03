@@ -20,10 +20,38 @@ export class RollDialogBuilder {
     });
   }
 
+  static attachModifierInputHandlerV2(dialog) {
+    const input = dialog.querySelector('#modifier');
+    if (input) {
+      input.addEventListener('input', function() {
+        const value = this.value.replace(/[^0-9+\-\s]/g, '');
+        if (this.value !== value) this.value = value;
+      });
+    }
+  }
+
   static parseModifiers(html) {
     const selectedDifficulty = html.find('#difficulty-select').val();
     const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
     const additionalModifierInput = html.find('#modifier').val().trim();
+    
+    let additionalModifier = 0;
+    if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {
+      additionalModifier = parseInt(additionalModifierInput);
+    }
+    
+    return {
+      difficulty: selectedDifficulty,
+      difficultyModifier,
+      additionalModifier,
+      difficultyLabel: DWConfig.TestDifficulties[selectedDifficulty].label
+    };
+  }
+
+  static parseModifiersV2(dialog) {
+    const selectedDifficulty = dialog.querySelector('#difficulty-select').value;
+    const difficultyModifier = DWConfig.TestDifficulties[selectedDifficulty].modifier;
+    const additionalModifierInput = (dialog.querySelector('#modifier').value || '').trim();
     
     let additionalModifier = 0;
     if (additionalModifierInput && additionalModifierInput.match(/^[-+]?\d+$/)) {

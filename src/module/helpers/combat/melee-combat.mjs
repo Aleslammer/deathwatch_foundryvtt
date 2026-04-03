@@ -119,90 +119,94 @@ export class MeleeCombatHelper {
         </select>
       </div>
       <div class="form-group" style="display: flex; gap: 20px;">
-        <label><i class="far fa-square" id="allOutIcon"></i> All Out Attack (+${MELEE_MODIFIERS.ALL_OUT_ATTACK})
+        <label title="+${MELEE_MODIFIERS.ALL_OUT_ATTACK} bonus"><i class="far fa-square" id="allOutIcon"></i> All Out Attack
           <input type="checkbox" id="allOut" name="allOut" style="display:none;" />
         </label>
-        <label><i class="far fa-square" id="chargeIcon"></i> Charge (+${MELEE_MODIFIERS.CHARGE})
+        <label title="+${MELEE_MODIFIERS.CHARGE} bonus"><i class="far fa-square" id="chargeIcon"></i> Charge
           <input type="checkbox" id="charge" name="charge" style="display:none;" />
         </label>
       </div>
       <div class="form-group" style="display: flex; gap: 20px;">
-        <label><i class="far fa-square" id="calledShotIcon"></i> Called Shot (${COMBAT_PENALTIES.CALLED_SHOT})
+        <label title="${COMBAT_PENALTIES.CALLED_SHOT} penalty"><i class="far fa-square" id="calledShotIcon"></i> Called Shot
           <input type="checkbox" id="calledShot" name="calledShot" style="display:none;" />
         </label>
-        <label><i class="far fa-square" id="runningTargetIcon"></i> Running Target (${COMBAT_PENALTIES.RUNNING_TARGET})
+        <label title="${COMBAT_PENALTIES.RUNNING_TARGET} penalty"><i class="far fa-square" id="runningTargetIcon"></i> Running Target
           <input type="checkbox" id="runningTarget" name="runningTarget" style="display:none;" />
         </label>
       </div>
       <div class="form-group" id="calledShotLocationGroup" style="display: none;">
-        <label>Called Shot Location:</label>
+        <label>Location:</label>
         <select id="calledShotLocation" name="calledShotLocation">
           ${HIT_LOCATIONS.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
         </select>
       </div>
       <div class="form-group">
-        <label>Misc Modifier:</label>
+        <label>Modifier:</label>
         <input type="text" id="miscModifier" name="miscModifier" value="0" />
       </div>
     `;
 
-    new Dialog({
-      title: `Melee Attack: ${weapon.name}`,
+    foundry.applications.api.DialogV2.wait({
+      window: { title: `Melee Attack: ${weapon.name}` },
+      position: { width: 325 },
       content: content,
-      render: (html) => {
-        html.find('#miscModifier').on('input', function() {
+      render: (event, dialog) => {
+        const el = dialog.element;
+        const miscInput = el.querySelector('#miscModifier');
+        if (miscInput) miscInput.addEventListener('input', function() {
           this.value = this.value.replace(/[^0-9+\-]/g, '');
         });
-        
+
         ['allOut', 'charge', 'calledShot', 'runningTarget'].forEach(id => {
-          html.find(`label:has(#${id})`).click(function(e) {
+          const label = el.querySelector(`label:has(#${id})`);
+          if (!label) return;
+          label.addEventListener('click', (e) => {
             e.preventDefault();
-            const checkbox = $(this).find(`#${id}`);
-            const icon = $(this).find(`#${id}Icon`);
-            checkbox.prop('checked', !checkbox.prop('checked'));
-            icon.toggleClass('fa-square').toggleClass('fa-check-square');
+            const cb = label.querySelector(`#${id}`);
+            const icon = label.querySelector(`#${id}Icon`);
+            cb.checked = !cb.checked;
+            icon.classList.toggle('fa-square');
+            icon.classList.toggle('fa-check-square');
             if (id === 'calledShot') {
-              html.find('#calledShotLocationGroup').toggle(checkbox.prop('checked'));
-              const app = html.closest('.app');
-              if (app.length) ui.windows[app.data('appid')]?.setPosition({ height: 'auto' });
+              el.querySelector('#calledShotLocationGroup').style.display = cb.checked ? '' : 'none';
             }
           });
         });
 
-        // Pre-fill from options
         if (hasOptions) {
-          if (options.aim !== undefined) html.find('#aim').val(CombatDialogHelper.mapAimOption(options.aim));
+          if (options.aim !== undefined) el.querySelector('#aim').value = CombatDialogHelper.mapAimOption(options.aim);
           if (options.allOut) {
-            html.find('#allOut').prop('checked', true);
-            html.find('#allOutIcon').removeClass('fa-square').addClass('fa-check-square');
+            el.querySelector('#allOut').checked = true;
+            el.querySelector('#allOutIcon').classList.replace('fa-square', 'fa-check-square');
           }
           if (options.charge) {
-            html.find('#charge').prop('checked', true);
-            html.find('#chargeIcon').removeClass('fa-square').addClass('fa-check-square');
+            el.querySelector('#charge').checked = true;
+            el.querySelector('#chargeIcon').classList.replace('fa-square', 'fa-check-square');
           }
           if (options.calledShot) {
-            html.find('#calledShot').prop('checked', true);
-            html.find('#calledShotIcon').removeClass('fa-square').addClass('fa-check-square');
-            html.find('#calledShotLocationGroup').show();
-            if (options.calledShotLocation) html.find('#calledShotLocation').val(options.calledShotLocation);
+            el.querySelector('#calledShot').checked = true;
+            el.querySelector('#calledShotIcon').classList.replace('fa-square', 'fa-check-square');
+            el.querySelector('#calledShotLocationGroup').style.display = '';
+            if (options.calledShotLocation) el.querySelector('#calledShotLocation').value = options.calledShotLocation;
           }
           if (options.runningTarget) {
-            html.find('#runningTarget').prop('checked', true);
-            html.find('#runningTargetIcon').removeClass('fa-square').addClass('fa-check-square');
+            el.querySelector('#runningTarget').checked = true;
+            el.querySelector('#runningTargetIcon').classList.replace('fa-square', 'fa-check-square');
           }
-          if (options.miscModifier !== undefined) html.find('#miscModifier').val(options.miscModifier);
+          if (options.miscModifier !== undefined) el.querySelector('#miscModifier').value = options.miscModifier;
         }
       },
-      buttons: {
-        attack: {
-          label: "Attack",
-          callback: async (html) => {
-            const aim = parseInt(html.find('#aim').val()) || 0;
-            const allOut = html.find('#allOut').prop('checked') ? MELEE_MODIFIERS.ALL_OUT_ATTACK : 0;
-            const charge = html.find('#charge').prop('checked') ? MELEE_MODIFIERS.CHARGE : 0;
-            const calledShot = html.find('#calledShot').prop('checked') ? COMBAT_PENALTIES.CALLED_SHOT : 0;
-            const runningTarget = html.find('#runningTarget').prop('checked') ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
-            const miscModifier = parseInt(html.find('#miscModifier').val()) || 0;
+      buttons: [
+        {
+          label: "Attack", action: "attack",
+          callback: async (event, button, dialog) => {
+            const el = dialog.element;
+            const aim = parseInt(el.querySelector('#aim').value) || 0;
+            const allOut = el.querySelector('#allOut').checked ? MELEE_MODIFIERS.ALL_OUT_ATTACK : 0;
+            const charge = el.querySelector('#charge').checked ? MELEE_MODIFIERS.CHARGE : 0;
+            const calledShot = el.querySelector('#calledShot').checked ? COMBAT_PENALTIES.CALLED_SHOT : 0;
+            const runningTarget = el.querySelector('#runningTarget').checked ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
+            const miscModifier = parseInt(el.querySelector('#miscModifier').value) || 0;
 
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
@@ -222,7 +226,7 @@ export class MeleeCombatHelper {
             CombatHelper.lastAttackTarget = targetNumber;
             CombatHelper.lastAttackHits = hitsTotal;
             CombatHelper.lastAttackAim = aim;
-            CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0) ? html.find('#calledShotLocation').val() : null;
+            CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0) ? el.querySelector('#calledShotLocation').value : null;
 
             let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
             if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;
@@ -237,12 +241,9 @@ export class MeleeCombatHelper {
             });
           }
         },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "attack"
-    }).render(true);
+        { label: "Cancel", action: "cancel" }
+      ]
+    });
   }
 
   /**

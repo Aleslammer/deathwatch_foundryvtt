@@ -255,36 +255,37 @@ export class CombatHelper {
     const content = `
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
-          <label>Attack Roll:</label>
+          <label>Roll:</label>
           <input type="number" id="attackRoll" name="attackRoll" value="${defaultRoll}" placeholder="e.g., 32" min="1" max="100" readonly />
         </div>
         <div class="form-group" style="flex: 1;">
-          <label>Target Number:</label>
+          <label>Target:</label>
           <input type="number" id="targetNumber" name="targetNumber" value="${defaultTarget}" placeholder="e.g., 50" min="1" max="200" readonly />
         </div>
       </div>
       <div class="form-group">
-        <label>Number of Hits:</label>
+        <label>Hits:</label>
         <input type="number" id="numHits" name="numHits" value="${defaultHits}" min="1" max="10" />
       </div>
       <div class="form-group">
-        <label>Misc Damage Modifier:</label>
+        <label>Modifier:</label>
         <input type="text" id="miscDamageModifier" name="miscDamageModifier" value="" placeholder="e.g., 5 or 1d10" />
       </div>
       ${targetToken ? `<div class="form-group"><strong>Target:</strong> ${targetToken.actor.name}</div>` : ''}
     `;
 
-    new Dialog({
-      title: `Damage: ${weapon.name}`,
+    foundry.applications.api.DialogV2.wait({
+      window: { title: `Damage: ${weapon.name}` },
       content: content,
-      buttons: {
-        roll: {
-          label: "Roll Damage",
-          callback: async (html) => {
-            const attackRollInput = html.find('#attackRoll').val();
-            const targetNumberInput = html.find('#targetNumber').val();
-            const numHits = parseInt(html.find('#numHits').val()) || 1;
-            const miscDamageModifier = html.find('#miscDamageModifier').val()?.trim() || '';
+      buttons: [
+        {
+          label: "Roll Damage", action: "roll",
+          callback: async (event, button, dialog) => {
+            const el = dialog.element;
+            const attackRollInput = el.querySelector('#attackRoll').value;
+            const targetNumberInput = el.querySelector('#targetNumber').value;
+            const numHits = parseInt(el.querySelector('#numHits').value) || 1;
+            const miscDamageModifier = el.querySelector('#miscDamageModifier').value?.trim() || '';
             let firstHitLocation = "Unknown";
             let degreesOfSuccess = 0;
             let targetNumber = 0;
@@ -422,11 +423,8 @@ export class CombatHelper {
             }
           }
         },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "roll"
-    }).render(true);
+        { label: "Cancel", action: "cancel" }
+      ]
+    });
   }
 }
