@@ -249,6 +249,9 @@ Hooks.once('init', async function () {
 });
 
 Hooks.once('ready', async function () {
+    // Register socket for player-initiated world setting changes
+    if (game.deathwatch) game.deathwatch.socket = `system.deathwatch`;
+
     // Re-render Cohesion panel when settings change; auto-drop Squad Mode on zero Cohesion
     Hooks.on('updateSetting', (setting) => {
         if (['deathwatch.cohesion', 'deathwatch.squadLeader', 'deathwatch.cohesionModifier', 'deathwatch.activeSquadAbilities'].includes(setting.key)) {
@@ -268,6 +271,26 @@ Hooks.once('ready', async function () {
         if (actor.type === 'character' && changes.system?.mode !== undefined) {
             const panel = CohesionPanel.getInstance();
             if (panel.rendered) panel.render(false);
+        }
+    });
+
+    // Listen for socket messages (GM processes player requests)
+    game.socket.on('system.deathwatch', async (data) => {
+        if (data.type === 'activateSquadAbility' && game.user.isGM) {
+            const actor = game.actors.get(data.actorId);
+            const ability = actor?.items.get(data.abilityId);
+            if (actor && ability) {
+                await CohesionPanel.activateSquadAbility(actor, ability);
+            }
+        }
+        if (data.type === 'deactivateSquadAbility' && game.user.isGM) {
+            const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
+            if (data.index >= 0 && data.index < active.length) {
+                const removed = active[data.index];
+                active.splice(data.index, 1);
+                await game.settings.set('deathwatch', 'activeSquadAbilities', active);
+                await ChatMessage.create({ content: ModeHelper.buildDeactivationMessage(removed.abilityName) });
+            }
         }
     });
 

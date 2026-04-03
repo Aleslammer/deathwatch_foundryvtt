@@ -49,6 +49,10 @@ describe('deathwatch.mjs', () => {
         register: jest.fn(),
         get: jest.fn(),
         set: jest.fn()
+      },
+      socket: {
+        on: jest.fn(),
+        emit: jest.fn()
       }
     };
   });

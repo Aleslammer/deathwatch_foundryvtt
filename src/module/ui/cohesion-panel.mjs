@@ -58,6 +58,10 @@ export class CohesionPanel extends Application {
         canToggle: game.user.isGM || a.isOwner
       }));
 
+    const ownedActorIds = game.actors
+      .filter(a => a.type === 'character' && a.isOwner)
+      .map(a => a.id);
+
     return {
       value: cohesion.value,
       max: cohesion.max,
@@ -65,7 +69,10 @@ export class CohesionPanel extends Application {
       isGM: game.user.isGM,
       breakdown: CohesionHelper.buildCohesionBreakdown(leader, gmMod),
       characters,
-      activeAbilities
+      activeAbilities: activeAbilities.map(a => ({
+        ...a,
+        canDeactivate: game.user.isGM || ownedActorIds.includes(a.initiatorId)
+      }))
     };
   }
 
@@ -149,6 +156,7 @@ export class CohesionPanel extends Application {
 
   /**
    * Activate a Squad Mode ability: validate, deduct Cohesion, track if sustained.
+   * GM executes directly; players emit a socket request.
    * @param {Actor} actor
    * @param {Item} ability
    */
@@ -161,10 +169,15 @@ export class CohesionPanel extends Application {
       return;
     }
 
-    // Block any activation if already sustaining
     const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
     if (ModeHelper.isSustainingAbility(active, actor.id)) {
       ui.notifications.warn(`${actor.name} is already sustaining a Squad Mode ability. Deactivate it first.`);
+      return;
+    }
+
+    // Players route through socket; GM executes directly
+    if (!game.user.isGM) {
+      game.socket.emit('system.deathwatch', { type: 'activateSquadAbility', actorId: actor.id, abilityId: ability.id });
       return;
     }
 
@@ -194,10 +207,17 @@ export class CohesionPanel extends Application {
 
   /**
    * Deactivate a sustained ability by index.
+   * GM executes directly; players emit a socket request.
    * @param {Event} ev
    */
   async _onDeactivateAbility(ev) {
     const index = parseInt($(ev.currentTarget).data('index'));
+
+    if (!game.user.isGM) {
+      game.socket.emit('system.deathwatch', { type: 'deactivateSquadAbility', index });
+      return;
+    }
+
     const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
     if (index < 0 || index >= active.length) return;
 

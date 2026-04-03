@@ -147,6 +147,7 @@
     },
     "primaryTokenAttribute": "wounds",
     "secondaryTokenAttribute": "fatigue",
+    "socket": true,
     "media": [
         {
             "type": "cover",

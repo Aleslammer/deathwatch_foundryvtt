@@ -41,7 +41,7 @@
       <span class="active-ability-icon">🔷</span>
       <span class="active-ability-name">{{this.abilityName}}</span>
       <span class="active-ability-initiator">({{this.initiatorName}})</span>
-      {{#if ../isGM}}
+      {{#if this.canDeactivate}}
       <a class="squad-ability-deactivate" data-index="{{@index}}" title="Deactivate"><i class="fas fa-times"></i></a>
       {{/if}}
     </div>
