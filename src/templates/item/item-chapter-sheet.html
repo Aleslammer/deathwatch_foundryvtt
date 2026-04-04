@@ -1,4 +1,4 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
+<div class="{{cssClass}} flexcol" autocomplete="off">
   <header class="sheet-header">
     <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="100" width="100"/>
     <div class="header-fields">
@@ -6,11 +6,11 @@
       <div style="display: flex; gap: 10px; margin-top: 5px;">
         <div style="flex: 4;">
           <label>Book:</label>
-          <input type="text" name="system.book" value="{{system.book}}" placeholder="Book" readonly style="background: #f0f0f0; width: 100%;"/>
+          <input type="text" name="system.book" value="{{system.book}}" placeholder="Book" readonly class="effective-field" style="width: 100%;"/>
         </div>
         <div style="flex: 1;">
           <label>Page:</label>
-          <input type="text" name="system.page" value="{{system.page}}" placeholder="Page" readonly style="background: #f0f0f0; width: 100%; text-align: center;"/>
+          <input type="text" name="system.page" value="{{system.page}}" placeholder="Page" readonly class="effective-field" style="width: 100%; text-align: center;"/>
         </div>
       </div>
     </div>
@@ -22,4 +22,4 @@
       {{editor system.description target="system.description" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
     </div>
   </section>
-</form>
+</div>

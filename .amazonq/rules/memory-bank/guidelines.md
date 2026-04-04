@@ -111,11 +111,13 @@ global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
 ### Current State (Post-Refactoring)
 - **Total Lines**: ~2,618 lines across core modules
 - **Test Coverage**: 68%
-- **Test Count**: 1458 tests across 90 suites
+- **Test Count**: 1567 tests across 95 suites
 - **Key Files**:
   - actor.mjs: ~60 lines (thin shell, delegates to DataModels)
-  - actor-sheet.mjs: 671 lines (uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
-  - combat.mjs: 395 lines (uses ChatMessageBuilder)
+  - actor-sheet.mjs: 671 lines (V1, uses RollDialogBuilder, ChatMessageBuilder, ItemHandlers)
+  - actor-sheet-v2.mjs: ~650 lines (V2, static action handlers, native DOM)
+  - item-sheet.mjs: ~280 lines (V1)
+  - item-sheet-v2.mjs: ~280 lines (V2, static action handlers)
   - CSS: 10 modular files (~900 lines total)
 
 ### Architecture Patterns Established
@@ -124,6 +126,8 @@ global.ChatMessage = { getSpeaker: jest.fn(), create: jest.fn() };
 3. **CSS Modularity**: Component-based CSS with variables and low specificity
 4. **Template Partials**: Reusable Handlebars components
 5. **Constants**: Named constants instead of magic numbers
+6. **V2 Dark Theme CSS**: All V2 overrides scoped to `.deathwatch.sheet .window-content` in `deathwatch.css`
+7. **No Inline Background Colors**: Use CSS classes (`effective-field`, `sub-item-row`, `drop-zone`) instead of inline `style="background: #f0f0f0"`
 
 ### File Extensions and Module System
 - Use `.mjs` extension for all ES module JavaScript files (100% of core modules)

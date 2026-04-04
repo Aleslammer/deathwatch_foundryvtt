@@ -22,7 +22,7 @@
 15. **modes.md** - Solo/Squad Mode tracking, CohesionPanel mode display
 
 ## Key Metrics
-- **Tests**: 1458 passing, 90 suites
+- **Tests**: 1567 passing, 95 suites
 - **Helper Classes**: 27+ modules
 - **Compendium Packs**: 17 (including enemies)
 - **DataModel Types**: All 17 item types + 4 actor types registered
@@ -35,6 +35,30 @@ npm run format:json                                         # Compact + Prettier
 npm run build:packs                                         # Compact + format + validate + compile
 npm run build:all                                           # build:packs + deploy
 ```
+
+## ApplicationV2 Migration
+- **Status**: All phases complete. V1 and V2 coexist behind `useV2Sheets` client setting (default: off).
+- **ActorSheetV2**: `HandlebarsApplicationMixin(ActorSheetV2)` — 30 `data-action` handlers + 3 drop methods, 54 tests
+- **ItemSheetV2**: `HandlebarsApplicationMixin(ItemSheetV2)` — 8 `data-action` handlers + drop handler, 11 tests
+- **CohesionPanel**: Already ApplicationV2 with `data-action` attributes
+- **Dialogs**: All ~30 instances migrated to DialogV2
+- **Templates**: `<form>` → `<div>` wrapper (V2 provides outer form); `<header>` → `<div>` (V2 intercepts header elements); dual `class` + `data-action` attributes for V1/V2 compatibility
+- **Feature Flag**: `game.settings.get('deathwatch', 'useV2Sheets')` — Configure Settings → toggle checkbox → auto-reload
+- **Dark Theme**: V2 has dark background; comprehensive CSS overrides in `deathwatch.css` for light text, borders, inputs
+- **Planning**: `docs/future/applicationv2/` (migration-plan.md, quickref.md, examples.md)
+
+### V2 Key Gotchas (Foundry v13)
+- **Mixin pattern**: `HandlebarsApplicationMixin(ActorSheetV2)` NOT `ActorSheetV2.mixin(HandlebarsApplicationMixin)`
+- **Namespaced globals**: Use `foundry.appv1.sheets.ActorSheet`, `foundry.documents.collections.Actors`, `foundry.applications.handlebars.loadTemplates`, `foundry.applications.ux.Tabs` — NOT bare globals
+- **Static PARTS template sharing**: NEVER mutate `this.constructor.PARTS.sheet.template` — it's shared across all instances. Override `_renderHTML()` to compile per-instance template via `foundry.applications.handlebars.getTemplate()`
+- **Template wrapper**: Use `<div>` not `<form>` — V2 provides its own outer `<form>`, nested forms are silently stripped by browsers
+- **Header element**: Use `<div class="sheet-header">` not `<header>` — V2 intercepts `<header>` elements for window chrome
+- **Tabs**: V2 doesn't auto-manage V1-style `data-group`/`data-tab` tabs. Use `foundry.applications.ux.Tabs` in `_onRender()` with null guard for sheets without tabs
+- **Re-render after mutations**: V2 doesn't auto-re-render on document updates from action handlers. Call `this.render()` after `item.update()`, `item.delete()`, etc.
+- **Form-group layout**: V2 defaults `.form-group` to `flex-direction: column`. Override to `row` in CSS for V1 template compatibility
+- **Context variables**: V2's `_prepareContext()` doesn't provide `actor`, `cssClass`, `editable`, `owner` — add them manually
+- **Window title**: Override `get title()` to return `this.document.name` — V2 defaults to `TYPES.Actor.{type}: {name}`
+- **Inline styles**: Replace hardcoded `background: #f0f0f0` and `color: #666` with CSS classes (`effective-field`, etc.) for theme compatibility
 
 ## Core Systems Summary
 
@@ -145,15 +169,16 @@ src/module/helpers/combat/    Combat logic (10 files: combat, ranged, melee, psy
 src/module/helpers/character/ Character data (6 files: modifiers, XP, skills, wounds, rank)
 src/module/helpers/ui/        UI helpers (5 files: chat, dialogs, items, templates, handlebars)
 src/module/ui/           UI Application classes (cohesion-panel)
-src/module/sheets/       ActorSheet, ItemSheet
+src/module/sheets/       ActorSheet (V1), ActorSheetV2, ItemSheet (V1), ItemSheetV2
 src/template.json        Type lists only (4 actor types, 17 item types)
 src/packs-source/        Compendium JSON source
 builds/scripts/          Build, validation, formatting, and deployment scripts
-tests/                   1458 tests across 90 suites
+tests/                   1567 tests across 95 suites
 docs/datamodel/          Full DataModel migration plan (10 files)
 docs/psychic-combat/     Psychic combat planning (4 phase docs)
 docs/improvements/cohesion/  Cohesion implementation plan (5 phase docs)
+docs/future/applicationv2/   ApplicationV2 migration plan + quickref + examples
 ```
 
 ---
-**Last Updated**: January 2025 (Solo/Squad Mode Phase 3, Squad ability activation + socket, 1458 tests)
+**Last Updated**: January 2025 (ApplicationV2 migration complete, 1567 tests)

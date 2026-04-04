@@ -423,7 +423,8 @@ describe('DeathwatchActorSheetV2', () => {
         mockItem.system.equipped = true;
         mockItem.update = jest.fn();
         const target = { dataset: { itemId: 'item1' }, closest: jest.fn() };
-        await DeathwatchActorSheetV2._onToggleEquip.call(sheet, {}, target);
+        const event = { preventDefault: jest.fn() };
+        await DeathwatchActorSheetV2._onToggleEquip.call(sheet, event, target);
         expect(mockItem.update).toHaveBeenCalledWith({ "system.equipped": false });
       });
 
@@ -431,7 +432,8 @@ describe('DeathwatchActorSheetV2', () => {
         mockItem.system.equipped = false;
         mockItem.update = jest.fn();
         const target = { dataset: { itemId: 'item1' }, closest: jest.fn() };
-        await DeathwatchActorSheetV2._onToggleEquip.call(sheet, {}, target);
+        const event = { preventDefault: jest.fn() };
+        await DeathwatchActorSheetV2._onToggleEquip.call(sheet, event, target);
         expect(mockItem.update).toHaveBeenCalledWith({ "system.equipped": true });
       });
     });

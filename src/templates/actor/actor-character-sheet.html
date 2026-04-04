@@ -1,7 +1,7 @@
-<form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
+<div class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
 
   {{!-- Sheet Header --}}
-  <header class="sheet-header">
+  <div class="sheet-header">
     <div class="header-fields" style="width: 100%;">
       <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
         <h1 class="charname" style="flex: 1; margin: 0;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
@@ -24,7 +24,7 @@
             <div style="font-size: 0.7em; color: #666; margin-top: 2px;">{{chapterItem.name}}</div>
           </div>
           {{else}}
-          <div class="chapter-drop-zone" style="width: 100px; height: 100px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Drop Chapter Here">
+          <div class="chapter-drop-zone drop-zone" style="width: 100px; height: 100px; border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Drop Chapter Here">
             <i class="fas fa-shield-alt" style="font-size: 40px; opacity: 0.3;"></i>
           </div>
           <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Chapter</div>
@@ -38,7 +38,7 @@
             <div style="font-size: 0.7em; color: #666; margin-top: 2px;">{{specialtyItem.name}}</div>
           </div>
           {{else}}
-          <div class="specialty-drop-zone" style="width: 100px; height: 100px; background: rgba(0,0,0,0.05); border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Drop Specialty Here">
+          <div class="specialty-drop-zone drop-zone" style="width: 100px; height: 100px; border: 1px dashed #999; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Drop Specialty Here">
             <i class="fas fa-user-shield" style="font-size: 40px; opacity: 0.3;"></i>
           </div>
           <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Specialty</div>
@@ -59,7 +59,7 @@
           <div class="resource flex-group-center" style="width: 200px;">
             <label for="system.xp.total" class="resource-label">XP</label>
             <div class="resource-content flexrow flex-center flex-between">
-              <input type="text" name="system.xp.spent" value="{{system.xp.spent}}" data-dtype="Number" readonly style="background: #f0f0f0;" />
+              <input type="text" name="system.xp.spent" value="{{system.xp.spent}}" data-dtype="Number" readonly class="effective-field" />
               <span> / </span>
               <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
             </div>
@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-  </header>
+  </div>
 
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
@@ -218,4 +218,4 @@
     </div>
 
   </section>
-</form>
+</div>

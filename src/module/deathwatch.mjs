@@ -7,6 +7,7 @@ import * as models from './data/_module.mjs';
 import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
 import { DeathwatchActorSheetV2 } from "./sheets/actor-sheet-v2.mjs";
 import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
+import { DeathwatchItemSheetV2 } from "./sheets/item-sheet-v2.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/ui/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
@@ -248,10 +249,11 @@ Hooks.once('init', async function () {
     // Register sheet application classes
     const useV2 = game.settings.get('deathwatch', 'useV2Sheets');
     const ActorSheetClass = useV2 ? DeathwatchActorSheetV2 : DeathwatchActorSheet;
-    Actors.unregisterSheet("core", ActorSheet);
-    Actors.registerSheet("deathwatch", ActorSheetClass, { makeDefault: true });
-    Items.unregisterSheet("core", ItemSheet);
-    Items.registerSheet("deathwatch", DeathwatchItemSheet, { makeDefault: true });
+    const ItemSheetClass = useV2 ? DeathwatchItemSheetV2 : DeathwatchItemSheet;
+    foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+    foundry.documents.collections.Actors.registerSheet("deathwatch", ActorSheetClass, { makeDefault: true });
+    foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+    foundry.documents.collections.Items.registerSheet("deathwatch", ItemSheetClass, { makeDefault: true });
     initializeHandlebars();
 
     // Preload Handlebars templates.

@@ -6,7 +6,7 @@ describe('Templates', () => {
 
   beforeEach(() => {
     loadTemplatesMock = jest.fn().mockResolvedValue(undefined);
-    global.loadTemplates = loadTemplatesMock;
+    foundry.applications.handlebars.loadTemplates = loadTemplatesMock;
   });
 
   describe('preloadHandlebarsTemplates', () => {

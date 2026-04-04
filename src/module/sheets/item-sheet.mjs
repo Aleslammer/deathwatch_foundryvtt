@@ -4,7 +4,7 @@ import { ModifierHelper } from "../helpers/character/modifiers.mjs";
  * Extend the basic ItemSheet with some very simple modifications
  * @extends {ItemSheet}
  */
-export class DeathwatchItemSheet extends ItemSheet {
+export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
 
     /** @override */
     static get defaultOptions() {

@@ -114,9 +114,11 @@ tests/
 │   └── weapon-quality-volatile.test.mjs
 ├── sheets/                            # Sheet tests
 │   ├── actor-sheet.test.mjs
+│   ├── actor-sheet-v2.test.mjs
 │   ├── actor-sheet-renown.test.mjs
 │   ├── actor-sheet-talents-traits.test.mjs
 │   ├── item-sheet.test.mjs
+│   ├── item-sheet-v2.test.mjs
 │   └── talents-traits-chat.test.mjs
 ├── data/                              # DataModel schema tests
 │   └── item-models.test.mjs

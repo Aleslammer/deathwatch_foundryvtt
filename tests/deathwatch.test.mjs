@@ -84,10 +84,11 @@ describe('deathwatch.mjs', () => {
     });
 
     it('registers sheets', () => {
-      expect(Actors.unregisterSheet).toHaveBeenCalledWith('core', ActorSheet);
-      expect(Actors.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
-      expect(Items.unregisterSheet).toHaveBeenCalledWith('core', ItemSheet);
-      expect(Items.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
+      const collections = foundry.documents.collections;
+      expect(collections.Actors.unregisterSheet).toHaveBeenCalledWith('core', foundry.appv1.sheets.ActorSheet);
+      expect(collections.Actors.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
+      expect(collections.Items.unregisterSheet).toHaveBeenCalledWith('core', foundry.appv1.sheets.ItemSheet);
+      expect(collections.Items.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
     });
   });
 

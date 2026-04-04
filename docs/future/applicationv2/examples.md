@@ -19,8 +19,8 @@ import { CohesionPanel } from "../ui/cohesion-panel.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorSheetV2.mixin(
-  HandlebarsApplicationMixin
+export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2
 ) {
 
   static DEFAULT_OPTIONS = {
@@ -468,10 +468,10 @@ global.foundry.applications = {
   },
   sheets: {
     ActorSheetV2: class {
-      static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
+      // No .mixin() — use HandlebarsApplicationMixin(ActorSheetV2) pattern
     },
     ItemSheetV2: class {
-      static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
+      // No .mixin() — use HandlebarsApplicationMixin(ItemSheetV2) pattern
     }
   }
 };

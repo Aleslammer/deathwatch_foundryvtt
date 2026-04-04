@@ -5,17 +5,18 @@ Complete plan for migrating from Foundry VTT's legacy V1 Application/Sheet/Dialo
 
 This folder is self-contained — everything needed to execute the migration lives here.
 
-## Current State (v0.0.2, 1502 tests)
+## Current State (v0.0.2, 1567 tests)
 - `DeathwatchActorSheet` extends `ActorSheet` (V1) — 1170 lines, 4 actor types, 25+ jQuery event handlers
+- `DeathwatchActorSheetV2` extends `HandlebarsApplicationMixin(ActorSheetV2)` ✅ **MIGRATED** — feature flag `useV2Sheets`
 - `DeathwatchItemSheet` extends `ItemSheet` (V1) — 17 item type templates, 9 jQuery event handlers
+- `DeathwatchItemSheetV2` extends `ItemSheetV2.mixin(HandlebarsApplicationMixin)` ✅ **MIGRATED** — feature flag `useV2Sheets`
 - `CohesionPanel` extends `HandlebarsApplicationMixin(ApplicationV2)` ✅ **MIGRATED**
 - All `Dialog` → `DialogV2` ✅ **MIGRATED** (~30 instances across all files)
-- jQuery-based event handling in sheets (ActorSheet, ItemSheet still V1)
-- Handlebars templates with class-based click targets (sheets still V1)
-- CohesionPanel template uses `data-action` attributes ✅ **MIGRATED**
+- All templates have dual `class` + `data-action` attributes ✅ **MIGRATED** — both V1 and V2 work
+- Feature flag `useV2Sheets` (client setting, default: off) toggles V1/V2 sheets
 
 ## Target State
-- `DeathwatchActorSheetV2` extends `ActorSheetV2.mixin(HandlebarsApplicationMixin)`
+- `DeathwatchActorSheetV2` extends `HandlebarsApplicationMixin(ActorSheetV2)`
 - `DeathwatchItemSheetV2` extends `ItemSheetV2.mixin(HandlebarsApplicationMixin)`
 - `CohesionPanel` extends `HandlebarsApplicationMixin(ApplicationV2)`
 - All `Dialog` → `DialogV2` (prompt/confirm/wait patterns)
@@ -26,7 +27,7 @@ This folder is self-contained — everything needed to execute the migration liv
 
 | Aspect | V1 (Current) | V2 (Target) |
 |--------|-------------|-------------|
-| Base Class | `ActorSheet` / `ItemSheet` / `Application` | `ActorSheetV2.mixin(...)` / `ItemSheetV2.mixin(...)` / `ApplicationV2` |
+| Base Class | `ActorSheet` / `ItemSheet` / `Application` | `HandlebarsApplicationMixin(ActorSheetV2)` / `HandlebarsApplicationMixin(ItemSheetV2)` / `ApplicationV2` |
 | Options | `static get defaultOptions()` | `static DEFAULT_OPTIONS = {}` |
 | Template | `get template()` | `static PARTS = {}` |
 | Data Prep | `getData()` | `async _prepareContext(options)` |
@@ -199,7 +200,7 @@ DeathwatchActorSheet extends ActorSheet
 
 ### Target Architecture
 ```
-DeathwatchActorSheetV2 extends ActorSheetV2.mixin(HandlebarsApplicationMixin)
+DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(ActorSheetV2)
 ├── static DEFAULT_OPTIONS            → classes, position, actions, window
 ├── static PARTS                      → template parts
 ├── tabGroups                         → tab configuration

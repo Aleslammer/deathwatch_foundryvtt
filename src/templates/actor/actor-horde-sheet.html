@@ -1,7 +1,7 @@
-<form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
+<div class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
 
   {{!-- Sheet Header --}}
-  <header class="sheet-header">
+  <div class="sheet-header">
     <div class="header-fields" style="width: 100%;">
       <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
         <h1 class="charname" style="flex: 1; margin: 0;"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
@@ -41,7 +41,7 @@
         <div style="flex: 1;"></div>
       </div>
     </div>
-  </header>
+  </div>
 
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
@@ -115,4 +115,4 @@
     </div>
 
   </section>
-</form>
+</div>

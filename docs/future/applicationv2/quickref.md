@@ -4,7 +4,7 @@
 
 | Aspect | V1 (Legacy) | V2 (Modern) |
 |--------|-------------|-------------|
-| **Actor Sheet** | `ActorSheet` | `ActorSheetV2.mixin(HandlebarsApplicationMixin)` |
+| **Actor Sheet** | `ActorSheet` | `HandlebarsApplicationMixin(ActorSheetV2)` |
 | **Item Sheet** | `ItemSheet` | `ItemSheetV2.mixin(HandlebarsApplicationMixin)` |
 | **Application** | `Application` | `HandlebarsApplicationMixin(ApplicationV2)` |
 | **Dialog** | `new Dialog({}).render(true)` | `await DialogV2.wait({})` |
@@ -33,8 +33,8 @@ export class DeathwatchActorSheet extends ActorSheet {
 }
 
 // V2
-export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorSheetV2.mixin(
-  foundry.applications.api.HandlebarsApplicationMixin
+export class DeathwatchActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2
 ) {
   static DEFAULT_OPTIONS = {
     classes: ["deathwatch", "sheet", "actor"],
@@ -202,37 +202,96 @@ async _prepareContext(options) {
 }
 ```
 
-### 4. Partial Rendering
+### 4. NEVER Mutate Static PARTS Template
 ```javascript
-await this.render({ parts: ["equipment"] });  // Re-render one part
-await this.render({ force: true });            // Force full re-render
-```
+// ❌ BROKEN — shared across all instances, causes wrong templates
+this.constructor.PARTS.sheet.template = `item-${this.document.type}-sheet.html`;
 
-### 5. First Render Position (CohesionPanel)
-```javascript
-// V1
-async _render(...args) {
-  const firstRender = !this._element?.length;
-  await super._render(...args);
-  if (firstRender) super.setPosition({ left, top: 10 });
-}
-
-// V2
-_onFirstRender(context, options) {
-  this.setPosition({ left: Math.round((window.innerWidth - 220) / 2), top: 10 });
+// ✅ CORRECT — override _renderHTML to compile per-instance
+async _renderHTML(context, options) {
+  const template = `systems/deathwatch/templates/item/item-${this.document.type}-sheet.html`;
+  const compiled = await foundry.applications.handlebars.getTemplate(template);
+  const htmlString = compiled(context, { allowProtoMethodsByDefault: true, allowProtoPropertiesByDefault: true });
+  const temp = document.createElement("div");
+  temp.innerHTML = htmlString;
+  return { sheet: temp.firstElementChild };
 }
 ```
 
-### 6. Dialog Callback Differences
+### 5. Use Namespaced Globals (v13)
 ```javascript
-// V1: html is jQuery, use .find().val()
-callback: (html) => { const v = html.find('#field').val(); }
+// ❌ Deprecated globals
+ActorSheet, ItemSheet, Actors, Items, loadTemplates, Tabs
 
-// V2: dialog is native Element, use querySelector
-callback: (event, button, dialog) => { const v = dialog.querySelector('#field').value; }
-// OR use form elements
-callback: (event, button, dialog) => { const v = button.form.elements.field.value; }
+// ✅ Namespaced
+foundry.appv1.sheets.ActorSheet
+foundry.appv1.sheets.ItemSheet
+foundry.documents.collections.Actors
+foundry.documents.collections.Items
+foundry.applications.handlebars.loadTemplates
+foundry.applications.ux.Tabs
 ```
+
+### 6. Mixin Pattern (v13)
+```javascript
+// ❌ Wrong — .mixin() doesn't exist on sheet classes
+class MySheet extends ActorSheetV2.mixin(HandlebarsApplicationMixin) {}
+
+// ✅ Correct — same pattern as CohesionPanel
+class MySheet extends HandlebarsApplicationMixin(ActorSheetV2) {}
+```
+
+### 7. Template Wrapper Must Be `<div>` Not `<form>`
+V2 provides its own outer `<form>`. Nested `<form>` tags are silently stripped by browsers, losing all flex layout classes.
+
+### 8. Don't Use `<header>` Element in Templates
+V2 intercepts `<header>` elements for window chrome. Use `<div class="sheet-header">` instead.
+
+### 9. Re-render After Data Mutations
+V2 doesn't auto-re-render when action handlers update documents:
+```javascript
+static async _onDeleteItem(event, target) {
+  const item = this.actor.items.get(target.dataset.itemId);
+  await item?.delete();
+  this.render();  // ← Required!
+}
+```
+
+### 10. Add V1 Context Variables
+V2's `_prepareContext()` doesn't provide `actor`, `cssClass`, `editable`, `owner`:
+```javascript
+async _prepareContext(options) {
+  const context = await super._prepareContext(options);
+  context.actor = this.actor;
+  context.cssClass = this.isEditable ? "editable" : "locked";
+  context.editable = this.isEditable;
+  context.owner = this.actor.isOwner;
+  // ...
+}
+```
+
+### 11. Override Window Title
+```javascript
+get title() {
+  return this.document.name;  // Instead of "TYPES.Actor.character: Bob"
+}
+```
+
+### 12. V1-Style Tabs in _onRender
+```javascript
+_onRender(context, options) {
+  const html = this.element;
+  const tabNav = html.querySelector('.sheet-tabs');
+  if (tabNav) {
+    const tabs = new foundry.applications.ux.Tabs({ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' });
+    tabs.bind(html);
+    tabs.activate(this._activeTab || 'description');
+  }
+}
+```
+
+### 13. Dark Theme CSS
+V2 has dark background. Override `.form-group` to `flex-direction: row`, add light text colors, replace inline `background: #f0f0f0` with CSS classes.
 
 ## Debugging
 

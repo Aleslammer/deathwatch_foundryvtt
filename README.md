@@ -4,7 +4,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 
 ![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
 ![Version](https://img.shields.io/badge/Version-0.0.2-blue)
-![Tests](https://img.shields.io/badge/Tests-1458%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-1567%20passing-brightgreen)
 
 ---
 
@@ -124,7 +124,7 @@ npm install
 
 | Command | Description |
 |---------|-------------|
-| `npm test` | Run all tests (1458 tests across 90 suites) |
+| `npm test` | Run all tests (1567 tests across 95 suites) |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
 | `npm run format:json` | Compact + Prettier JSON formatting |
@@ -154,7 +154,7 @@ src/
 ├── icons/                     # Item, weapon, enemy artwork
 ├── system.json                # Foundry system manifest
 └── template.json              # Actor/Item type lists
-tests/                         # Jest test suites (90 files)
+tests/                         # Jest test suites (95 files)
 builds/scripts/                # Build, validation, and deployment scripts
 ```
 

@@ -140,6 +140,18 @@ global.foundry = {
     deepClone: (obj) => JSON.parse(JSON.stringify(obj)),
     mergeObject: (original, other) => Object.assign(original, other)
   },
+  appv1: {
+    sheets: {
+      ActorSheet: global.ActorSheet,
+      ItemSheet: global.ItemSheet
+    }
+  },
+  documents: {
+    collections: {
+      Actors: { unregisterSheet: jest.fn(), registerSheet: jest.fn() },
+      Items: { unregisterSheet: jest.fn(), registerSheet: jest.fn() }
+    }
+  },
   applications: {
     api: {
       ApplicationV2: class ApplicationV2 {
@@ -175,14 +187,20 @@ global.foundry = {
         render() { return this; }
         static DEFAULT_OPTIONS = {};
         static PARTS = {};
-        static mixin(...mixins) {
-          let b = this;
-          for (const m of mixins) b = m(b);
-          return b;
-        }
       },
-      ItemSheetV2: class {
-        static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
+      ItemSheetV2: class ItemSheetV2Mock {
+        constructor(options = {}) {
+          this.options = options;
+        }
+        get item() { return this._item; }
+        set item(v) { this._item = v; }
+        get document() { return this._item; }
+        set document(v) { this._item = v; }
+        async _prepareContext() { return {}; }
+        _configureRenderOptions() {}
+        render() { return this; }
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
       }
     },
     ux: {
@@ -190,7 +208,15 @@ global.foundry = {
         implementation: {
           getDragEventData: jest.fn()
         }
+      },
+      Tabs: class Tabs {
+        constructor(config) { this.config = config; }
+        bind() {}
+        activate() {}
       }
+    },
+    handlebars: {
+      loadTemplates: jest.fn(async () => {})
     }
   }
 };
@@ -219,6 +245,12 @@ global.Combatant = class Combatant {
     Object.assign(this, data);
   }
   getInitiativeRoll() {}
+};
+
+global.Tabs = class Tabs {
+  constructor(config) { this.config = config; }
+  bind() {}
+  activate() {}
 };
 
 global.Folder = class Folder {

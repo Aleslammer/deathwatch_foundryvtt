@@ -18,15 +18,15 @@ const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
  * Handles all 4 actor types: character, npc, enemy, horde.
  * @extends {ActorSheetV2}
  */
-export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorSheetV2.mixin(
-  HandlebarsApplicationMixin
+export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2
 ) {
 
   static DEFAULT_OPTIONS = {
     classes: ["deathwatch", "sheet", "actor"],
     position: { width: 1000, height: 800 },
     window: { resizable: true },
-    form: { submitOnChange: true },
+    form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       // Step 2: show-item-in-chat handlers
       showTalent: DeathwatchActorSheetV2._onShowItem,
@@ -88,17 +88,23 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     return context;
   }
 
-  /** @override */
-  _configureRenderOptions(options) {
-    super._configureRenderOptions(options);
-    // Override the template path based on actor type
-    if (this.document.type) {
-      this.constructor.PARTS.sheet.template =
-        `systems/deathwatch/templates/actor/actor-${this.document.type}-sheet.html`;
-    }
+  /** @override — render using per-instance template */
+  async _renderHTML(context, options) {
+    const template = `systems/deathwatch/templates/actor/actor-${this.document.type}-sheet.html`;
+    const compiled = await foundry.applications.handlebars.getTemplate(template);
+    const htmlString = compiled(context, { allowProtoMethodsByDefault: true, allowProtoPropertiesByDefault: true });
+    const temp = document.createElement("div");
+    temp.innerHTML = htmlString;
+    const content = temp.firstElementChild;
+    return { sheet: content };
   }
 
   tabGroups = { primary: "characteristics" };
+
+  /** @override */
+  get title() {
+    return this.document.name;
+  }
 
   /* -------------------------------------------- */
   /*  Data Preparation                            */
@@ -108,9 +114,14 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
+    // Provide actor reference for template compatibility with V1
+    context.actor = this.actor;
     // Live system data (preserves derived DataModel properties)
     context.system = { ...this.actor.system };
     context.flags = this.actor.flags;
+    context.cssClass = this.isEditable ? "editable" : "locked";
+    context.editable = this.isEditable;
+    context.owner = this.actor.isOwner;
 
     if (this.actor.type === 'character') {
       this._prepareCharacterData(context);
@@ -451,18 +462,22 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     const itemId = target.dataset.itemId || target.closest('[data-item-id]')?.dataset.itemId;
     const item = this.actor.items.get(itemId);
     await item?.delete();
+    this.render();
   }
 
   static async _onCreateItem(event, target) {
     const type = target.dataset.type;
     const name = `New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
     await Item.create({ name, type, system: {} }, { parent: this.actor });
+    this.render();
   }
 
   static async _onToggleEquip(event, target) {
+    event.preventDefault();
     const itemId = target.dataset.itemId || target.closest('[data-item-id]')?.dataset.itemId;
     const item = this.actor.items.get(itemId);
     if (item) await item.update({ "system.equipped": !item.system.equipped });
+    this.render();
   }
 
   /* -------------------------------------------- */
@@ -493,6 +508,7 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     if (!weapon) return;
     await weapon.update({ "system.loadedAmmo": null });
     ui.notifications.info('Ammunition removed.');
+    this.render();
   }
 
   static _onEditAmmo(event, target) {
@@ -511,6 +527,7 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     const updatedUpgrades = currentUpgrades.filter(u => u.id !== upgradeId);
     await weapon.update({ "system.attachedUpgrades": updatedUpgrades });
     ui.notifications.info('Weapon upgrade removed.');
+    this.render();
   }
 
   /* -------------------------------------------- */
@@ -623,6 +640,7 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     }
     await this.actor.update({ "system.chapterId": "" });
     ui.notifications.info('Chapter removed.');
+    this.render();
   }
 
   static async _onRemoveSpecialty(event, target) {
@@ -633,6 +651,7 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     }
     await this.actor.update({ "system.specialtyId": "" });
     ui.notifications.info('Specialty removed.');
+    this.render();
   }
 
   static async _onRemoveHistory(event, target) {
@@ -644,6 +663,7 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     const updatedHistories = currentHistories.filter(id => id !== historyId);
     await armor.update({ "system.attachedHistories": updatedHistories });
     ui.notifications.info('Armor history removed.');
+    this.render();
   }
 
   /* istanbul ignore next */
@@ -666,6 +686,16 @@ export class DeathwatchActorSheetV2 extends foundry.applications.sheets.ActorShe
     super._onRender?.(context, options);
     const html = this.element;
     if (!html) return;
+
+    // V1-style tab activation (V2 doesn't auto-manage these)
+    const tabs = new foundry.applications.ux.Tabs({ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: this._activeTab || 'characteristics' });
+    tabs.bind(html);
+    this._tabs = tabs;
+    tabs.activate(this._activeTab || 'characteristics');
+    // Track active tab across re-renders
+    html.querySelectorAll('.sheet-tabs .item').forEach(tab => {
+      tab.addEventListener('click', () => { this._activeTab = tab.dataset.tab; });
+    });
 
     // Select all text on focus
     html.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {

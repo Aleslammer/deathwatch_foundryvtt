@@ -82,7 +82,7 @@
             {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
           </li>
           {{#each item.attachedUpgrades as |upgrade|}}
-          <li class="item flexrow" data-item-id="{{upgrade._id}}" style="background: rgba(0,0,0,0.05); padding-left: 30px;">
+          <li class="item flexrow sub-item-row" data-item-id="{{upgrade._id}}" style="padding-left: 30px;">
             <div class="item-name">
               <div class="item-image">
                 <img src="{{upgrade.img}}" title="{{upgrade.name}}" width="20" height="20"/>
@@ -145,7 +145,7 @@
             {{> "systems/deathwatch/templates/actor/parts/item-controls.html"}}
           </li>
           {{#each item.attachedHistories as |history|}}
-          <li class="item flexrow" data-item-id="{{history._id}}" style="background: rgba(0,0,0,0.05); padding-left: 30px;">
+          <li class="item flexrow sub-item-row" data-item-id="{{history._id}}" style="padding-left: 30px;">
             <div class="item-name">
               <div class="item-image history-show" data-action="showHistory" data-item-id="{{history._id}}" style="cursor: pointer;">
                 <img src="{{history.img}}" title="{{history.name}}" width="20" height="20"/>

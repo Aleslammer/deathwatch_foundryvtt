@@ -4,7 +4,7 @@
  * @return {Promise}
  */
 export const preloadHandlebarsTemplates = async function () {
-  return loadTemplates([
+  return foundry.applications.handlebars.loadTemplates([
 
     // Actor main sheets.
     "systems/deathwatch/templates/actor/actor-character-sheet.html",

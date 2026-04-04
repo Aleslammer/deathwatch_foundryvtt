@@ -367,7 +367,7 @@
       "_id": "eiork03000000022",
       "name": "'Eavy Armour",
       "type": "armor",
-      "img": "systems/deathwatch/icons/armor/ork-eavy-armour.webp",
+      "img": "systems/deathwatch/icons/generic/ork-gear.webp",
       "system": {
         "head": 6,
         "body": 6,
