@@ -140,13 +140,83 @@ global.foundry = {
     deepClone: (obj) => JSON.parse(JSON.stringify(obj)),
     mergeObject: (original, other) => Object.assign(original, other)
   },
+  appv1: {
+    sheets: {
+      ActorSheet: global.ActorSheet,
+      ItemSheet: global.ItemSheet
+    }
+  },
+  documents: {
+    collections: {
+      Actors: { unregisterSheet: jest.fn(), registerSheet: jest.fn() },
+      Items: { unregisterSheet: jest.fn(), registerSheet: jest.fn() }
+    }
+  },
   applications: {
+    api: {
+      ApplicationV2: class ApplicationV2 {
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
+        render() { return this; }
+        close() {}
+        setPosition() {}
+        get rendered() { return false; }
+      },
+      HandlebarsApplicationMixin: (Base) => class extends Base {
+        async _prepareContext() { return {}; }
+        _onRender() {}
+        _onFirstRender() {}
+      },
+      DialogV2: {
+        wait: jest.fn().mockResolvedValue(null),
+        prompt: jest.fn().mockResolvedValue(null),
+        confirm: jest.fn().mockResolvedValue(true)
+      }
+    },
+    sheets: {
+      ActorSheetV2: class ActorSheetV2Mock {
+        constructor(options = {}) {
+          this.options = options;
+        }
+        get actor() { return this._actor; }
+        set actor(v) { this._actor = v; }
+        get document() { return this._actor; }
+        set document(v) { this._actor = v; }
+        async _prepareContext() { return {}; }
+        _configureRenderOptions() {}
+        render() { return this; }
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
+      },
+      ItemSheetV2: class ItemSheetV2Mock {
+        constructor(options = {}) {
+          this.options = options;
+        }
+        get item() { return this._item; }
+        set item(v) { this._item = v; }
+        get document() { return this._item; }
+        set document(v) { this._item = v; }
+        async _prepareContext() { return {}; }
+        _configureRenderOptions() {}
+        render() { return this; }
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
+      }
+    },
     ux: {
       TextEditor: {
         implementation: {
           getDragEventData: jest.fn()
         }
+      },
+      Tabs: class Tabs {
+        constructor(config) { this.config = config; }
+        bind() {}
+        activate() {}
       }
+    },
+    handlebars: {
+      loadTemplates: jest.fn(async () => {})
     }
   }
 };
@@ -175,6 +245,12 @@ global.Combatant = class Combatant {
     Object.assign(this, data);
   }
   getInitiativeRoll() {}
+};
+
+global.Tabs = class Tabs {
+  constructor(config) { this.config = config; }
+  bind() {}
+  activate() {}
 };
 
 global.Folder = class Folder {

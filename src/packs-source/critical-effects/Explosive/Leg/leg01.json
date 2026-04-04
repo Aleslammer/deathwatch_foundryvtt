@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "255",
     "damageType": "Explosive",
     "location": "Leg",
     "description": "A glancing blast sends the character backwards one metre.",

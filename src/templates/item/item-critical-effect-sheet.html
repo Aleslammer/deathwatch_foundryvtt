@@ -1,4 +1,4 @@
-<form class="{{cssClass}}" autocomplete="off">
+<div class="{{cssClass}}" autocomplete="off">
   <header class="sheet-header">
     <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64" />
     <div class="header-fields">
@@ -9,6 +9,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="details">Details</a>
     <a class="item" data-tab="description">Description</a>
+      <a class="item" data-tab="source">Source</a>
   </nav>
 
   <section class="sheet-body">
@@ -30,5 +31,18 @@
     <div class="tab" data-group="primary" data-tab="description">
       {{editor system.description target="system.description" button=true owner=owner editable=editable}}
     </div>
+    <div class="tab" data-group="primary" data-tab="source">
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Book:</label>
+          <input type="text" name="system.book" value="{{system.book}}" />
+        </div>
+        <div class="flex1">
+          <label>Page:</label>
+          <input type="text" name="system.page" value="{{system.page}}" />
+        </div>
+      </div>
+    </div>
+
   </section>
-</form>
+</div>

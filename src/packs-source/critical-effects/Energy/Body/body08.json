@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "252",
     "damageType": "Energy",
     "location": "Body",
     "description": "As the attack washes over the target, his skin turns black and peels off while body fat seeps out of his clothing and armour. The target is Stunned for 2d10 Rounds and the attack halves his Strength, Toughness and Agility. The extensive scarring permanently halves the target's Fellowship characteristic.",

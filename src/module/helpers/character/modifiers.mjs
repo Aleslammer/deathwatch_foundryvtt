@@ -70,7 +70,7 @@ export class ModifierHelper {
    * @param {Object} modifier - The modifier object to edit
    * @param {Function} onSave - Callback receiving the updated fields
    */
-  static _showEditDialog(modifier, onSave) {
+  static async _showEditDialog(modifier, onSave) {
     const content = `
       <div class="form-group">
         <label>Name:</label>
@@ -102,47 +102,59 @@ export class ModifierHelper {
       </div>
     `;
 
-    new Dialog({
-      title: "Edit Modifier",
+    const result = await foundry.applications.api.DialogV2.wait({
+      window: { title: "Edit Modifier" },
       content: content,
-      render: (html) => {
-        html.find('#effectType').change((ev) => {
-          const effectType = ev.target.value;
-          const group = html.find('#valueAffectedGroup');
-          
-          if (NO_VALUE_AFFECTED.has(effectType)) {
-            group.hide();
-          } else {
-            group.show();
-            group.find('input, select').remove();
-            
-            if (CHARACTERISTIC_VALUE_AFFECTED.has(effectType)) {
-              group.append(ModifierHelper._getCharacteristicSelect());
-            } else if (effectType === EFFECT_TYPES.SKILL) {
-              group.append(ModifierHelper._getSkillSelect());
+      render: (event, dialog) => {
+        const el = dialog.element;
+        const effectTypeSelect = el.querySelector('#effectType');
+        if (effectTypeSelect) {
+          effectTypeSelect.addEventListener('change', (ev) => {
+            const effectType = ev.target.value;
+            const group = el.querySelector('#valueAffectedGroup');
+            if (!group) return;
+
+            if (NO_VALUE_AFFECTED.has(effectType)) {
+              group.style.display = 'none';
             } else {
-              group.append(`<input type="text" name="valueAffected" value="" />`);
+              group.style.display = '';
+              const existing = group.querySelector('input[name="valueAffected"], select[name="valueAffected"]');
+              if (existing) existing.remove();
+
+              const label = group.querySelector('label');
+              if (CHARACTERISTIC_VALUE_AFFECTED.has(effectType)) {
+                label.insertAdjacentHTML('afterend', ModifierHelper._getCharacteristicSelect());
+              } else if (effectType === EFFECT_TYPES.SKILL) {
+                label.insertAdjacentHTML('afterend', ModifierHelper._getSkillSelect());
+              } else {
+                label.insertAdjacentHTML('afterend', `<input type="text" name="valueAffected" value="" />`);
+              }
             }
-          }
-        });
+          });
+        }
       },
-      buttons: {
-        save: {
+      buttons: [
+        {
           label: "Save",
-          callback: async (html) => {
-            onSave({
-              name: html.find('[name="name"]').val(),
-              modifier: html.find('[name="modifier"]').val(),
-              type: html.find('[name="type"]').val(),
-              effectType: html.find('[name="effectType"]').val(),
-              valueAffected: html.find('[name="valueAffected"]').val()
-            });
+          action: "save",
+          callback: (event, button, dialog) => {
+            const el = dialog.element;
+            return {
+              name: el.querySelector('[name="name"]').value,
+              modifier: el.querySelector('[name="modifier"]').value,
+              type: el.querySelector('[name="type"]').value,
+              effectType: el.querySelector('[name="effectType"]').value,
+              valueAffected: el.querySelector('[name="valueAffected"]')?.value || ''
+            };
           }
         },
-        cancel: { label: "Cancel" }
-      },
-      default: "save"
-    }).render(true);
+        { label: "Cancel", action: "cancel" }
+      ]
+    });
+
+    if (result && result !== "cancel") {
+      await onSave(result);
+    }
   }
 
   static _getValueAffectedField(modifier) {

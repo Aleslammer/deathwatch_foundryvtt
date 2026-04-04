@@ -103,10 +103,11 @@ src/
 - **deathwatch.mjs**: Main initialization file that bootstraps the system
   - Registers document types and DataModels (`CONFIG.Actor.dataModels`, `CONFIG.Item.dataModels`)
   - Registers Cohesion world settings (cohesion, squadLeader, cohesionModifier, cohesionDamageThisRound, activeSquadAbilities)
+  - Registers `useV2Sheets` client setting (feature flag for ApplicationV2 sheets)
+  - Conditionally registers V1 or V2 actor/item sheets based on feature flag
   - Renders CohesionPanel on ready, registers updateSetting hook for reactivity
   - Registers socket listener for player-initiated Squad Mode activation/deactivation
   - Loads helpers and utilities
-  - Initializes sheets
   - Sets up Handlebars templates
 
 ### 2. TypeDataModel Classes (`module/data/`)
@@ -184,13 +185,25 @@ Organized into three subfolders plus core infrastructure at root:
 - **handlebars.js**: Custom Handlebars helpers
 
 ### 5. Sheet Classes (`module/sheets/`)
-- **actor-sheet.mjs**: Character and NPC sheet UI logic
-  - Renders character sheets
-  - Handles user interactions
-  - Manages sheet data flow
-- **item-sheet.mjs**: Item sheet UI logic
-  - Renders item configuration sheets
-  - Handles item editing
+- **actor-sheet.mjs**: V1 actor sheet (jQuery-based, `ActorSheet` base class)
+  - Renders character sheets for all 4 actor types
+  - 25+ jQuery event handlers in `activateListeners()`
+  - Default when `useV2Sheets` is off
+- **actor-sheet-v2.mjs**: V2 actor sheet (`HandlebarsApplicationMixin(ActorSheetV2)`)
+  - 30 static `data-action` handlers + 3 drop methods
+  - `_prepareContext()` replaces `getData()` (same data prep logic)
+  - `_renderHTML()` override for per-instance template resolution (avoids static PARTS mutation)
+  - `_onRender()` for tabs, effect toggles, skill cascade, collapsed sections, drop zones
+  - `get title()` returns document name only
+  - Active when `useV2Sheets` is on
+- **item-sheet.mjs**: V1 item sheet (jQuery-based, `ItemSheet` base class)
+  - 17 item type templates, 9 jQuery event handlers
+  - Default when `useV2Sheets` is off
+- **item-sheet-v2.mjs**: V2 item sheet (`HandlebarsApplicationMixin(ItemSheetV2)`)
+  - 8 static `data-action` handlers + drop handler
+  - `_renderHTML()` override for per-instance template resolution
+  - `get title()` returns document name only
+  - Active when `useV2Sheets` is on
 
 ### 6. Data Schema (`template.json`)
 Contains only type lists — all field definitions live in DataModel classes:

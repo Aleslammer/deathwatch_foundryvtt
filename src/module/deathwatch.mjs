@@ -5,7 +5,9 @@ import { DeathwatchItem } from "./documents/item.mjs";
 import * as models from './data/_module.mjs';
 // Import sheet classes.
 import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
+import { DeathwatchActorSheetV2 } from "./sheets/actor-sheet-v2.mjs";
 import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
+import { DeathwatchItemSheetV2 } from "./sheets/item-sheet-v2.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/ui/templates.mjs";
 import { DWConfig } from "./helpers/config.mjs";
@@ -195,18 +197,14 @@ Hooks.once('init', async function () {
         if (!combatant?.actor?.hasCondition?.('on-fire')) return;
 
         const actor = combatant.actor;
-        new Dialog({
-            title: `\uD83D\uDD25 ${actor.name} is On Fire!`,
+        foundry.applications.api.DialogV2.wait({
+            window: { title: `\uD83D\uDD25 ${actor.name} is On Fire!` },
             content: `<p><strong>${actor.name}</strong> is On Fire! Apply fire damage and effects?</p>`,
-            buttons: {
-                apply: {
-                    label: '\uD83D\uDD25 Apply Fire',
-                    callback: () => applyOnFireEffects(actor)
-                },
-                skip: { label: 'Skip' }
-            },
-            default: 'apply'
-        }).render(true);
+            buttons: [
+                { label: '\uD83D\uDD25 Apply Fire', action: 'apply', callback: () => applyOnFireEffects(actor) },
+                { label: 'Skip', action: 'skip' }
+            ]
+        });
     });
 
     // Auto-assign enemy/horde actors to an "Enemies" folder
@@ -237,11 +235,25 @@ Hooks.once('init', async function () {
         }
     });
 
+    // Feature flag: V2 sheets
+    game.settings.register('deathwatch', 'useV2Sheets', {
+      name: 'Use ApplicationV2 Sheets (Experimental)',
+      hint: 'Enable the new sheet architecture. Requires reload.',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: false,
+      onChange: () => window.location.reload()
+    });
+
     // Register sheet application classes
-    Actors.unregisterSheet("core", ActorSheet);
-    Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });
-    Items.unregisterSheet("core", ItemSheet);
-    Items.registerSheet("deathwatch", DeathwatchItemSheet, { makeDefault: true });
+    const useV2 = game.settings.get('deathwatch', 'useV2Sheets');
+    const ActorSheetClass = useV2 ? DeathwatchActorSheetV2 : DeathwatchActorSheet;
+    const ItemSheetClass = useV2 ? DeathwatchItemSheetV2 : DeathwatchItemSheet;
+    foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+    foundry.documents.collections.Actors.registerSheet("deathwatch", ActorSheetClass, { makeDefault: true });
+    foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+    foundry.documents.collections.Items.registerSheet("deathwatch", ItemSheetClass, { makeDefault: true });
     initializeHandlebars();
 
     // Preload Handlebars templates.
@@ -337,55 +349,56 @@ Hooks.once('ready', async function () {
 });
 
 /**
- * Resolve an actor from button data. For unlinked tokens, resolves the
+ * Resolve an actor from button dataset. For unlinked tokens, resolves the
  * synthetic token actor so damage is applied to the token, not the base actor.
- * @param {jQuery} button - The clicked button element
- * @param {string} [actorIdAttr='targetId'] - Data attribute name for actor ID
+ * @param {HTMLElement} button - The clicked button element
+ * @param {string} [actorIdAttr='targetId'] - Dataset attribute name for actor ID
  * @returns {Actor|null}
  */
 function resolveActor(button, actorIdAttr = 'targetId') {
-    const sceneId = button.data('sceneId');
-    const tokenId = button.data('tokenId');
+    const sceneId = button.dataset.sceneId;
+    const tokenId = button.dataset.tokenId;
     if (sceneId && tokenId) {
         const tokenDoc = game.scenes.get(sceneId)?.tokens.get(tokenId);
         if (tokenDoc?.actor) return tokenDoc.actor;
     }
-    const actorId = button.data(actorIdAttr);
+    const actorId = button.dataset[actorIdAttr];
     return actorId ? game.actors.get(actorId) : null;
 }
 
-Hooks.on('renderChatMessage', (message, html) => {
+Hooks.on('renderChatMessageHTML', (message, html) => {
 
-    html.find('.apply-damage-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const damage = parseInt(button.data('damage'));
-        const penetration = parseInt(button.data('penetration'));
-        const location = button.data('location');
-        const damageType = button.data('damageType') || 'Impact';
-        const isPrimitive = button.data('isPrimitive') === 'true' || button.data('isPrimitive') === true;
-        const isRazorSharp = button.data('isRazorSharp') === 'true' || button.data('isRazorSharp') === true;
-        const degreesOfSuccess = parseInt(button.data('degreesOfSuccess')) || 0;
-        const isScatter = button.data('isScatter') === 'true' || button.data('isScatter') === true;
-        const isLongOrExtremeRange = button.data('isLongOrExtremeRange') === 'true' || button.data('isLongOrExtremeRange') === true;
-        const isShocking = button.data('isShocking') === 'true' || button.data('isShocking') === true;
-        const isToxic = button.data('isToxic') === 'true' || button.data('isToxic') === true;
-        const isMeltaRange = button.data('isMeltaRange') === 'true' || button.data('isMeltaRange') === true;
+    html.querySelectorAll('.apply-damage-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const d = button.dataset;
+        const damage = parseInt(d.damage);
+        const penetration = parseInt(d.penetration);
+        const location = d.location;
+        const damageType = d.damageType || 'Impact';
+        const isPrimitive = d.isPrimitive === 'true';
+        const isRazorSharp = d.isRazorSharp === 'true';
+        const degreesOfSuccess = parseInt(d.degreesOfSuccess) || 0;
+        const isScatter = d.isScatter === 'true';
+        const isLongOrExtremeRange = d.isLongOrExtremeRange === 'true';
+        const isShocking = d.isShocking === 'true';
+        const isToxic = d.isToxic === 'true';
+        const isMeltaRange = d.isMeltaRange === 'true';
         
-        const charDamageFormula = button.data('charDamageFormula');
-        const charDamageChar = button.data('charDamageChar');
-        const charDamageName = button.data('charDamageName');
+        const charDamageFormula = d.charDamageFormula;
+        const charDamageChar = d.charDamageChar;
+        const charDamageName = d.charDamageName;
         const charDamageEffect = charDamageFormula ? { formula: charDamageFormula, characteristic: charDamageChar, name: charDamageName } : null;
         
-        const isForce = button.data('isForce') === 'true' || button.data('isForce') === true;
-        const forceAttackerId = button.data('forceAttackerId');
-        const forcePsyRating = parseInt(button.data('forcePsyRating')) || 0;
+        const isForce = d.isForce === 'true';
+        const forceAttackerId = d.forceAttackerId;
+        const forcePsyRating = parseInt(d.forcePsyRating) || 0;
         const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
         
-        const magnitudeBonusDamage = parseInt(button.data('magnitudeBonusDamage')) || 0;
-        const ignoresNaturalArmour = button.data('ignoresNaturalArmour') === 'true' || button.data('ignoresNaturalArmour') === true;
+        const magnitudeBonusDamage = parseInt(d.magnitudeBonusDamage) || 0;
+        const ignoresNaturalArmour = d.ignoresNaturalArmour === 'true';
         
-        const sceneId = button.data('sceneId');
-        const tokenId = button.data('tokenId');
+        const sceneId = d.sceneId;
+        const tokenId = d.tokenId;
         const tokenInfo = (sceneId && tokenId) ? { sceneId, tokenId } : null;
         
         const targetActor = resolveActor(button);
@@ -396,18 +409,17 @@ Hooks.on('renderChatMessage', (message, html) => {
         
         await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour });
 
-        // Check for Cohesion damage trigger (10+ raw damage from Accurate/Blast/Devastating)
-        const weaponQualitiesRaw = button.data('weaponQualities');
+        const weaponQualitiesRaw = d.weaponQualities;
         const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? JSON.parse(weaponQualitiesRaw) : weaponQualitiesRaw) : [];
         if (targetActor.type === 'character' && CohesionHelper.shouldTriggerCohesionDamage(damage, weaponQualities)) {
             await CohesionHelper.handleCohesionDamage(`${targetActor.name} took ${damage} raw damage from a qualifying weapon.`);
         }
-    });
+    }));
     
-    html.find('.shocking-test-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const armorValue = parseInt(button.data('armorValue'));
-        const stunRounds = parseInt(button.data('stunRounds'));
+    html.querySelectorAll('.shocking-test-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const armorValue = parseInt(button.dataset.armorValue);
+        const stunRounds = parseInt(button.dataset.stunRounds);
         
         const actor = resolveActor(button, 'actorId');
         if (!actor) {
@@ -434,11 +446,11 @@ Hooks.on('renderChatMessage', (message, html) => {
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
-    });
+    }));
     
-    html.find('.toxic-test-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const penalty = parseInt(button.data('penalty'));
+    html.querySelectorAll('.toxic-test-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const penalty = parseInt(button.dataset.penalty);
         
         const actor = resolveActor(button, 'actorId');
         if (!actor) {
@@ -475,12 +487,12 @@ Hooks.on('renderChatMessage', (message, html) => {
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
-    });
+    }));
     
-    html.find('.char-damage-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const formula = button.data('formula');
-        const characteristic = button.data('characteristic');
+    html.querySelectorAll('.char-damage-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const formula = button.dataset.formula;
+        const characteristic = button.dataset.characteristic;
         
         const actor = resolveActor(button, 'actorId');
         if (!actor) {
@@ -504,12 +516,12 @@ Hooks.on('renderChatMessage', (message, html) => {
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
-    });
+    }));
     
-    html.find('.force-channel-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const attackerId = button.data('attackerId');
-        const psyRating = parseInt(button.data('psyRating')) || 0;
+    html.querySelectorAll('.force-channel-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const attackerId = button.dataset.attackerId;
+        const psyRating = parseInt(button.dataset.psyRating) || 0;
         
         const attacker = game.actors.get(attackerId);
         const target = resolveActor(button);
@@ -517,7 +529,7 @@ Hooks.on('renderChatMessage', (message, html) => {
             ui.notifications.warn('Attacker or target actor not found!');
             return;
         }
-        const targetId = button.data('targetId');
+        const targetId = button.dataset.targetId;
         
         const attackerWP = attacker.system.characteristics?.wil?.value || 0;
         const targetWP = target.system.characteristics?.wil?.value || 0;
@@ -567,12 +579,12 @@ Hooks.on('renderChatMessage', (message, html) => {
                 rollMode: game.settings.get('core', 'rollMode')
             });
         }
-    });
+    }));
     
-    html.find('.roll-critical-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const location = button.data('location');
-        const damageType = button.data('damageType');
+    html.querySelectorAll('.roll-critical-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const location = button.dataset.location;
+        const damageType = button.dataset.damageType;
         
         const actor = resolveActor(button, 'actorId');
         if (!actor) {
@@ -581,11 +593,11 @@ Hooks.on('renderChatMessage', (message, html) => {
         }
         
         await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
-    });
+    }));
 
-    html.find('.cohesion-rally-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const leaderId = button.data('leaderId');
+    html.querySelectorAll('.cohesion-rally-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const leaderId = button.dataset.leaderId;
         const leader = leaderId ? game.actors.get(leaderId) : null;
         if (!leader) {
             ui.notifications.warn('Squad leader not found!');
@@ -612,18 +624,18 @@ Hooks.on('renderChatMessage', (message, html) => {
                 flavor: `<strong>\u26A0 Rally Failed!</strong><br>${leader.name} fails to rally! (Rolled ${roll.total} vs ${targetNumber})<br>Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}`
             });
         }
-    });
+    }));
 
-    html.find('.cohesion-damage-accept-btn').click(async () => {
+    html.querySelectorAll('.cohesion-damage-accept-btn').forEach(btn => btn.addEventListener('click', async () => {
         await CohesionHelper.applyCohesionDamage(1);
         const cohesion = game.settings.get('deathwatch', 'cohesion');
         await ChatMessage.create({
             content: `<div class="cohesion-chat"><strong>\u26A0 Cohesion Lost</strong> \u2014 Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}</div>`
         });
-    });
+    }));
 
-    html.find('.extinguish-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
+    html.querySelectorAll('.extinguish-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
         const actor = resolveActor(button, 'actorId');
         if (!actor) {
             ui.notifications.warn('Actor not found!');
@@ -642,14 +654,14 @@ Hooks.on('renderChatMessage', (message, html) => {
           </div>
         `;
 
-        new Dialog({
-            title: `\uD83D\uDD25 Extinguish: ${actor.name}`,
+        foundry.applications.api.DialogV2.wait({
+            window: { title: `\uD83D\uDD25 Extinguish: ${actor.name}` },
             content,
-            buttons: {
-                roll: {
-                    label: 'Roll',
-                    callback: async (html) => {
-                        const miscMod = parseInt(html.find('#extinguishMod').val()) || 0;
+            buttons: [
+                {
+                    label: 'Roll', action: 'roll',
+                    callback: async (event, button, dialog) => {
+                        const miscMod = parseInt(dialog.element.querySelector('#extinguishMod').value) || 0;
                         const roll = await new Roll('1d100').evaluate();
                         const result = FireHelper.resolveExtinguishTest(ag, roll.total, miscMod);
                         const flavor = FireHelper.buildExtinguishFlavor(actor.name, ag, roll.total, result, miscMod);
@@ -665,21 +677,20 @@ Hooks.on('renderChatMessage', (message, html) => {
                         });
                     }
                 },
-                cancel: { label: 'Cancel' }
-            },
-            default: 'roll'
-        }).render(true);
-    });
+                { label: 'Cancel', action: 'cancel' }
+            ]
+        });
+    }));
 
-    html.find('.psychic-oppose-btn').click(async (ev) => {
-        const button = $(ev.currentTarget);
-        const powerName = button.data('powerName');
-        const psykerDoS = parseInt(button.data('psykerDos')) || 0;
-        const targetName = button.data('targetName') || 'Target';
-        const targetWP = parseInt(button.data('targetWp')) || 0;
-        const targetId = button.data('targetId');
-        const sceneId = button.data('sceneId');
-        const tokenId = button.data('tokenId');
+    html.querySelectorAll('.psychic-oppose-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const button = ev.currentTarget;
+        const powerName = button.dataset.powerName;
+        const psykerDoS = parseInt(button.dataset.psykerDos) || 0;
+        const targetName = button.dataset.targetName || 'Target';
+        const targetWP = parseInt(button.dataset.targetWp) || 0;
+        const targetId = button.dataset.targetId;
+        const sceneId = button.dataset.sceneId;
+        const tokenId = button.dataset.tokenId;
 
         const target = (sceneId && tokenId)
             ? game.scenes.get(sceneId)?.tokens.get(tokenId)?.actor
@@ -701,16 +712,17 @@ Hooks.on('renderChatMessage', (message, html) => {
           </div>
         `;
 
-        new Dialog({
-            title: `Opposed Test: ${powerName}`,
+        foundry.applications.api.DialogV2.wait({
+            window: { title: `Opposed Test: ${powerName}` },
             content,
-            buttons: {
-                resolve: {
-                    label: "Resolve",
-                    callback: async (html) => {
-                        const wp = parseInt(html.find('#opposeTargetWP').val()) || 0;
-                        const miscMod = parseInt(html.find('#opposeMiscMod').val()) || 0;
-                        const manualRoll = html.find('#opposeManualRoll').val();
+            buttons: [
+                {
+                    label: "Resolve", action: "resolve",
+                    callback: async (event, button, dialog) => {
+                        const el = dialog.element;
+                        const wp = parseInt(el.querySelector('#opposeTargetWP').value) || 0;
+                        const miscMod = parseInt(el.querySelector('#opposeMiscMod').value) || 0;
+                        const manualRoll = el.querySelector('#opposeManualRoll').value;
 
                         let targetRoll;
                         let rollObj = null;
@@ -738,11 +750,10 @@ Hooks.on('renderChatMessage', (message, html) => {
                         }
                     }
                 },
-                cancel: { label: "Cancel" }
-            },
-            default: "resolve"
-        }).render(true);
-    });
+                { label: "Cancel", action: "cancel" }
+            ]
+        });
+    }));
 });
 
 
@@ -819,21 +830,22 @@ async function flameAttack() {
       </div>
     `;
 
-    new Dialog({
-        title: '\uD83D\uDD25 Flame Attack',
+    foundry.applications.api.DialogV2.wait({
+        window: { title: '\uD83D\uDD25 Flame Attack' },
         content,
-        buttons: {
-            burn: {
-                label: '\uD83D\uDD25 Burn',
-                callback: async (html) => {
-                    const damageFormula = html.find('#flameDamage').val()?.trim();
+        buttons: [
+            {
+                label: '\uD83D\uDD25 Burn', action: 'burn',
+                callback: async (event, button, dialog) => {
+                    const el = dialog.element;
+                    const damageFormula = el.querySelector('#flameDamage').value?.trim();
                     if (!damageFormula) {
                         ui.notifications.warn('Enter a damage formula.');
                         return;
                     }
-                    const penetration = parseInt(html.find('#flamePen').val()) || 0;
-                    const damageType = html.find('#flameDmgType').val()?.trim() || 'Energy';
-                    const weaponRange = parseInt(html.find('#flameRange').val()) || 20;
+                    const penetration = parseInt(el.querySelector('#flamePen').value) || 0;
+                    const damageType = el.querySelector('#flameDmgType').value?.trim() || 'Energy';
+                    const weaponRange = parseInt(el.querySelector('#flameRange').value) || 20;
 
                     const targetToken = game.user.targets.first();
                     if (!targetToken?.actor) {
@@ -876,14 +888,14 @@ async function flameAttack() {
                           </div>
                         `;
 
-                        new Dialog({
-                            title: `\uD83D\uDD25 Dodge Flame: ${targetName}`,
+                        foundry.applications.api.DialogV2.wait({
+                            window: { title: `\uD83D\uDD25 Dodge Flame: ${targetName}` },
                             content: dodgeContent,
-                            buttons: {
-                                roll: {
-                                    label: 'Roll Dodge',
-                                    callback: async (dodgeHtml) => {
-                                        const dodgeMod = parseInt(dodgeHtml.find('#dodgeMod').val()) || 0;
+                            buttons: [
+                                {
+                                    label: 'Roll Dodge', action: 'roll',
+                                    callback: async (event, button, dodgeDialog) => {
+                                        const dodgeMod = parseInt(dodgeDialog.element.querySelector('#dodgeMod').value) || 0;
                                         const dodgeRoll = await new Roll('1d100').evaluate();
                                         const dodgeResult = FireHelper.resolveDodgeFlameTest(ag, dodgeRoll.total, dodgeMod);
                                         const dodgeFlavor = FireHelper.buildDodgeFlameFlavor(targetName, ag, dodgeResult, dodgeMod);
@@ -925,17 +937,15 @@ async function flameAttack() {
                                         }
                                     }
                                 },
-                                cancel: { label: 'Cancel' }
-                            },
-                            default: 'roll'
-                        }).render(true);
+                                { label: 'Cancel', action: 'cancel' }
+                            ]
+                        });
                     }
                 }
             },
-            cancel: { label: 'Cancel' }
-        },
-        default: 'burn'
-    }).render(true);
+            { label: 'Cancel', action: 'cancel' }
+        ]
+    });
 }
 
 /* -------------------------------------------- */
@@ -1005,23 +1015,22 @@ function rollItemMacro(itemUuid, options = {}) {
             }
 
             // No options: show Attack/Damage choice dialog (original behavior)
-            new Dialog({
-                title: item.name,
+            foundry.applications.api.DialogV2.wait({
+                window: { title: item.name },
                 content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${item.name}</strong></p>`,
-                buttons: {
-                    attack: {
+                buttons: [
+                    {
                         icon: '<i class="fas fa-crosshairs"></i>',
-                        label: "Attack",
+                        label: "Attack", action: "attack",
                         callback: () => CombatHelper.weaponAttackDialog(item.parent, item)
                     },
-                    damage: {
+                    {
                         icon: '<i class="fas fa-burst"></i>',
-                        label: "Damage",
+                        label: "Damage", action: "damage",
                         callback: () => CombatHelper.weaponDamageRoll(item.parent, item)
                     }
-                },
-                default: "attack"
-            }).render(true);
+                ]
+            });
             return;
         }
 

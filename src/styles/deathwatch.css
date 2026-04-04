@@ -14,3 +14,388 @@
 @import url("components/cohesion.css");
 
 /* Styles limited to deathwatch sheets */
+
+/* Effective (computed) fields — readonly with subtle background */
+.deathwatch .effective-field {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.deathwatch .quality-row {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-bottom: 1px solid var(--dw-color-border);
+}
+
+.deathwatch .effective-quality {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.deathwatch .drop-zone {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.deathwatch .sub-item-row {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure item name headings match V1 sizing */
+.deathwatch.sheet .window-content .items-list h4,
+.deathwatch.sheet .window-content .talents-list h4,
+.deathwatch.sheet .window-content .traits-list h4,
+.deathwatch.sheet .window-content .special-abilities-list h4 {
+  font-family: "Roboto", sans-serif;
+  font-size: var(--dw-font-size-sm);
+  font-weight: normal;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Force form-group to row layout (V2 defaults to column) */
+.deathwatch.sheet .window-content .form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+.deathwatch.sheet .window-content .form-group > label {
+  flex: 0 0 auto;
+}
+
+.deathwatch.sheet .window-content .form-group > input,
+.deathwatch.sheet .window-content .form-group > select,
+.deathwatch.sheet .window-content .form-group > textarea {
+  flex: 1;
+}
+
+/* Constrain inputs inside sheet-header (psychic power / special ability background image) */
+.deathwatch.sheet .window-content .sheet-header .form-group {
+  justify-content: flex-end;
+}
+
+.deathwatch.sheet .window-content .sheet-header .form-group > input,
+.deathwatch.sheet .window-content .sheet-header .form-group > select {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 200px;
+}
+
+/* V2 ApplicationV2 sheet compatibility — dark theme overrides */
+.deathwatch.sheet .window-content {
+  color: #e0e0e0;
+  padding: 8px;
+}
+
+.deathwatch.sheet .window-content .sheet-header {
+  flex: 0 0 auto;
+  display: flex;
+  overflow: visible;
+  min-height: 120px;
+}
+
+.deathwatch.sheet .window-content .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Ensure the flexcol template root fills window-content */
+.deathwatch.sheet .window-content > [data-application-part] {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Text and inputs */
+.deathwatch.sheet .window-content input[type="text"],
+.deathwatch.sheet .window-content input[type="number"],
+.deathwatch.sheet .window-content select,
+.deathwatch.sheet .window-content textarea {
+  color: #e0e0e0;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content input[readonly] {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.deathwatch.sheet .window-content label {
+  color: #ccc;
+}
+
+.deathwatch.sheet .window-content a {
+  color: #8ab4f8;
+}
+
+.deathwatch.sheet .window-content h1,
+.deathwatch.sheet .window-content h2,
+.deathwatch.sheet .window-content h3,
+.deathwatch.sheet .window-content h4 {
+  color: #e0e0e0;
+}
+
+/* Section headers */
+.deathwatch.sheet .window-content .section-header {
+  color: #d4a574;
+  border-image: linear-gradient(to right, #8b6914, #d4a574, #8b6914) 1;
+}
+
+/* Skills */
+.deathwatch.sheet .window-content .skills-header-row {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ccc;
+}
+
+.deathwatch.sheet .window-content .skills-header {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.deathwatch.sheet .window-content .skills-header h3 {
+  color: #bbb;
+}
+
+.deathwatch.sheet .window-content .skills-list {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.deathwatch.sheet .window-content .skill-item {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.deathwatch.sheet .window-content .skill-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.deathwatch.sheet .window-content .skill-name {
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .skill-total {
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .skill-characteristic {
+  color: #999;
+}
+
+.deathwatch.sheet .window-content .skill-descriptor {
+  color: #999;
+}
+
+.deathwatch.sheet .window-content .skill-modifier input {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Characteristic boxes */
+.deathwatch.sheet .window-content .characteristic {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .characteristic h4.box-title {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .characteristic .characteristic-header input {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .characteristic .characteristic-modifiers span.characteristic-mod {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .characteristic .characteristic-modifiers input.characteristic-base {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Wounds, Fatigue, Movement, Psy Rating boxes */
+.deathwatch.sheet .window-content .wounds-box {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .wounds-box .wounds-modifiers span.wounds-max {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .wounds-box .wounds-modifiers input.wounds-base {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .fatigue-box {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .fatigue-box .fatigue-modifiers span.fatigue-max {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .movement-box {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.deathwatch.sheet .window-content .psy-rating-box {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.deathwatch.sheet .window-content .psy-rating-box .psy-rating-modifiers input {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Items lists */
+.deathwatch.sheet .window-content .items-header {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ccc;
+}
+
+.deathwatch.sheet .window-content .items-list {
+  color: #ccc;
+}
+
+.deathwatch.sheet .window-content .items-list .item {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.deathwatch.sheet .window-content .items-list .item .item-name {
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .items-list .item-stat {
+  border-left-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modifiers */
+.deathwatch.sheet .window-content .modifiers-list .modifier-mod,
+.deathwatch.sheet .window-content .modifiers-list .modifier-type,
+.deathwatch.sheet .window-content .modifiers-list .modifier-effect-type,
+.deathwatch.sheet .window-content .modifiers-list .modifier-value-affected {
+  border-left-color: rgba(255, 255, 255, 0.1);
+}
+
+.deathwatch.sheet .window-content .modifiers-list .modifier:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Inline style color overrides for hardcoded colors */
+.deathwatch.sheet .window-content span[style*="color: #666"],
+.deathwatch.sheet .window-content div[style*="color: #666"] {
+  color: #aaa !important;
+}
+
+.deathwatch.sheet .window-content span[style*="color: #999"] {
+  color: #bbb !important;
+}
+
+.deathwatch.sheet .window-content span[style*="color: #cc0000"],
+.deathwatch.sheet .window-content div[style*="color: #cc0000"] {
+  color: #ff6666 !important;
+}
+
+/* Resource labels */
+.deathwatch.sheet .window-content .resource-label {
+  color: #ccc;
+}
+
+/* Tabs */
+.deathwatch.sheet .window-content .sheet-tabs {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.deathwatch.sheet .window-content .sheet-tabs .item {
+  color: #aaa;
+}
+
+.deathwatch.sheet .window-content .sheet-tabs .item.active {
+  color: #fff;
+  border-bottom-color: #8ab4f8;
+}
+
+.deathwatch.sheet .window-content .sheet-tabs .item:hover {
+  color: #fff;
+}
+
+/* Squad badges */
+.deathwatch.sheet .window-content .squad-badges .badge {
+  color: #999;
+}
+
+.deathwatch.sheet .window-content .squad-badges .cost-badge {
+  color: #64b5f6;
+}
+
+.deathwatch.sheet .window-content .squad-badges .sustained-badge {
+  color: #ffb74d;
+}
+
+/* Editor areas */
+.deathwatch.sheet .window-content .editor {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.deathwatch.sheet .window-content .editor-content {
+  color: #e0e0e0;
+}
+
+/* Effective fields in dark theme */
+.deathwatch.sheet .window-content .effective-field {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.deathwatch.sheet .window-content .quality-row {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.deathwatch.sheet .window-content .drop-zone {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.deathwatch.sheet .window-content .sub-item-row {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Armor effects table */
+.deathwatch.sheet .window-content .armor-effects-table {
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .armor-effects-table thead tr {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.deathwatch.sheet .window-content .armor-effects-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.deathwatch.sheet .window-content .armor-effects-table tbody tr:nth-child(odd) {
+  background: transparent;
+}
+
+.deathwatch.sheet .window-content .armor-effects-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Catch-all for any remaining dark text */
+.deathwatch.sheet .window-content .item-modifier,
+.deathwatch.sheet .window-content .item-effect-type,
+.deathwatch.sheet .window-content .item-controls a,
+.deathwatch.sheet .window-content .modifier-name h4,
+.deathwatch.sheet .window-content .grid label,
+.deathwatch.sheet .window-content .resource-label,
+.deathwatch.sheet .window-content .form-group label,
+.deathwatch.sheet .window-content p,
+.deathwatch.sheet .window-content span,
+.deathwatch.sheet .window-content div {
+  color: inherit;
+}

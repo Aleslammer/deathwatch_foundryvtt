@@ -157,3 +157,15 @@ Warhammer 40k: Deathwatch is a custom game system implementation for Foundry Vir
 - **Multiplayer**: Socket-based activation for non-GM players
 - **Mode Display**: Character mode list in CohesionPanel with colored indicators
 - **Row Dimming**: Abilities dimmed when character is in wrong mode
+
+### ApplicationV2 Sheet Architecture
+- **Feature Flag**: `useV2Sheets` client setting toggles between V1 (legacy) and V2 (modern) sheets
+- **V2 Actor Sheet**: `HandlebarsApplicationMixin(ActorSheetV2)` with 30 `data-action` handlers
+- **V2 Item Sheet**: `HandlebarsApplicationMixin(ItemSheetV2)` with 8 `data-action` handlers
+- **CohesionPanel**: Already ApplicationV2 with `data-action` attributes
+- **Dialogs**: All ~30 dialog instances use `DialogV2` (wait/prompt/confirm patterns)
+- **Templates**: `<div>` wrappers (not `<form>`); dual `class` + `data-action` attributes for V1/V2 compatibility
+- **Dark Theme**: V2 uses dark background with comprehensive light-text CSS overrides
+- **No jQuery**: V2 sheets use native DOM APIs exclusively
+- **Per-Instance Templates**: `_renderHTML()` override compiles templates per-instance to avoid static PARTS sharing bugs
+- **Namespaced Globals**: All Foundry API calls use v13 namespaced paths (no deprecated globals)

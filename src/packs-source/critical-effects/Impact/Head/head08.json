@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "257",
     "damageType": "Impact",
     "location": "Head",
     "description": "Blood pours from the target's noise, mouth, ears and eyes as the attack pulverises his brain. He does not survive the experience.",

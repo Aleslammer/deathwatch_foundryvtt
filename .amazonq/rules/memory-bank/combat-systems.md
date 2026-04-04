@@ -409,7 +409,7 @@ Pure functions:
 - Weapon qualities: 23+ qualities tested
 - Ammunition modifiers: Fully tested
 - Modifier system: Comprehensive coverage
-- Overall: 1458 tests passing across 90 suites
+- Overall: 1567 tests passing across 95 suites
 
 ## Force Weapon Integration
 

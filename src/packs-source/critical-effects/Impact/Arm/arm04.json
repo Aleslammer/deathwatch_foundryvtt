@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "256",
     "damageType": "Impact",
     "location": "Arm",
     "description": "The impact leaves the target reeling from pain. The target is Stunned for 1 Round. The limb is useless for 1d5 Rounds and the target takes 1 level of Fatigue.",

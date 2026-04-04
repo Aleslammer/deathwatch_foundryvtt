@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "256",
     "damageType": "Impact",
     "location": "Arm",
     "description": "The impact inflicts crushing pain and the target takes 1 level of Fatigue and drops whatever was held in that hand.",

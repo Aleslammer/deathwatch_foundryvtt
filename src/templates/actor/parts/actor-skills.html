@@ -19,7 +19,7 @@
       {{#if skill.isBasic}}
         {{#if (lookup ../config.Skills key)}}
         <div class="skill-item flexrow">
-          <div class="skill-name rollable" data-roll-type="skill" data-skill="{{key}}" data-label="{{lookup ../config.Skills key}}{{#if skill.descriptor}} ({{skill.descriptor}}){{/if}}">
+          <div class="skill-name rollable" data-action="rollSkill" data-roll-type="skill" data-skill="{{key}}" data-label="{{lookup ../config.Skills key}}{{#if skill.descriptor}} ({{skill.descriptor}}){{/if}}">
             {{lookup ../config.Skills key}}
             {{#if (eq ../../actor.type "character")}}
             {{#if (or (and skill.trained (eq skill.costTrain -1)) (and skill.mastered (eq skill.costMaster -1)) (and skill.expert (eq skill.costExpert -1)))}}
@@ -62,7 +62,7 @@
       {{#unless skill.isBasic}}
         {{#if (lookup ../config.Skills key)}}
         <div class="skill-item flexrow">
-          <div class="skill-name rollable" data-roll-type="skill" data-skill="{{key}}" data-label="{{lookup ../config.Skills key}}{{#if skill.descriptor}} ({{skill.descriptor}}){{/if}}">
+          <div class="skill-name rollable" data-action="rollSkill" data-roll-type="skill" data-skill="{{key}}" data-label="{{lookup ../config.Skills key}}{{#if skill.descriptor}} ({{skill.descriptor}}){{/if}}">
             {{lookup ../config.Skills key}}
             {{#if (eq ../../actor.type "character")}}
             {{#if (or (and skill.trained (eq skill.costTrain -1)) (and skill.mastered (eq skill.costMaster -1)) (and skill.expert (eq skill.costExpert -1)))}}

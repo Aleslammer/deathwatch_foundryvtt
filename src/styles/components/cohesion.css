@@ -42,14 +42,20 @@
   font-size: 1em;
 }
 
-.cohesion-panel-inner .cohesion-controls a {
+.cohesion-panel-inner .cohesion-controls a,
+.cohesion-panel-inner .cohesion-controls button {
   cursor: pointer;
   opacity: 0.7;
   transition: opacity 0.15s;
   color: #ccc;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
 }
 
-.cohesion-panel-inner .cohesion-controls a:hover {
+.cohesion-panel-inner .cohesion-controls a:hover,
+.cohesion-panel-inner .cohesion-controls button:hover {
   opacity: 1;
   color: #fff;
 }
@@ -76,14 +82,20 @@
   white-space: nowrap;
 }
 
-.cohesion-character-row .mode-toggle {
+.cohesion-character-row .mode-toggle,
+.cohesion-character-row button[data-action="toggleMode"] {
   cursor: pointer;
   opacity: 0.7;
   color: #ccc;
   transition: opacity 0.15s;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
 }
 
-.cohesion-character-row .mode-toggle:hover {
+.cohesion-character-row .mode-toggle:hover,
+.cohesion-character-row button[data-action="toggleMode"]:hover {
   opacity: 1;
   color: #fff;
 }
@@ -147,14 +159,20 @@
   flex-shrink: 0;
 }
 
-.active-ability-row .squad-ability-deactivate {
+.active-ability-row .squad-ability-deactivate,
+.active-ability-row button[data-action="deactivateAbility"] {
   cursor: pointer;
   opacity: 0.7;
   color: #f44;
   margin-left: auto;
   flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
 }
 
-.active-ability-row .squad-ability-deactivate:hover {
+.active-ability-row .squad-ability-deactivate:hover,
+.active-ability-row button[data-action="deactivateAbility"]:hover {
   opacity: 1;
 }

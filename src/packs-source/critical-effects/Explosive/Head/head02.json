@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "255",
     "damageType": "Explosive",
     "location": "Head",
     "description": "The flash and noise leaves the target blind and deaf for 1 Round. The target takes 2 levels of Fatigue.",

@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "259",
     "damageType": "Rending",
     "location": "Leg",
     "description": "With a meaty chop, the leg comes away at the hip. The target pitches to the ground howling in agony, before dying moments later.",

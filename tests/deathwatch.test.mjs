@@ -10,7 +10,7 @@ global.Hooks = {
     if (hook === 'ready') readyCallback = callback;
   }),
   on: jest.fn((hook, callback) => {
-    if (hook === 'renderChatMessage') renderChatCallback = callback;
+    if (hook === 'renderChatMessageHTML') renderChatCallback = callback;
     if (hook === 'hotbarDrop') hotbarDropCallback = callback;
   })
 };
@@ -84,10 +84,11 @@ describe('deathwatch.mjs', () => {
     });
 
     it('registers sheets', () => {
-      expect(Actors.unregisterSheet).toHaveBeenCalledWith('core', ActorSheet);
-      expect(Actors.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
-      expect(Items.unregisterSheet).toHaveBeenCalledWith('core', ItemSheet);
-      expect(Items.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
+      const collections = foundry.documents.collections;
+      expect(collections.Actors.unregisterSheet).toHaveBeenCalledWith('core', foundry.appv1.sheets.ActorSheet);
+      expect(collections.Actors.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
+      expect(collections.Items.unregisterSheet).toHaveBeenCalledWith('core', foundry.appv1.sheets.ItemSheet);
+      expect(collections.Items.registerSheet).toHaveBeenCalledWith('deathwatch', expect.any(Function), { makeDefault: true });
     });
   });
 
@@ -98,7 +99,7 @@ describe('deathwatch.mjs', () => {
     });
   });
 
-  describe('renderChatMessage hook', () => {
+  describe('renderChatMessageHTML hook', () => {
     beforeEach(async () => {
       await initCallback();
       await readyCallback();
@@ -106,13 +107,11 @@ describe('deathwatch.mjs', () => {
 
     it('registers chat message handlers', () => {
       const mockHtml = {
-        find: jest.fn(() => ({
-          click: jest.fn()
-        }))
+        querySelectorAll: jest.fn(() => [])
       };
       
       renderChatCallback({}, mockHtml);
-      expect(mockHtml.find).toHaveBeenCalled();
+      expect(mockHtml.querySelectorAll).toHaveBeenCalled();
     });
   });
 

@@ -15,7 +15,7 @@ import { CohesionPanel } from "../ui/cohesion-panel.mjs";
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
-export class DeathwatchActorSheet extends ActorSheet {
+export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   /** @override */
   static get defaultOptions() {
@@ -816,16 +816,16 @@ export class DeathwatchActorSheet extends ActorSheet {
     const characteristic = this.actor.system.characteristics[dataset.characteristic];
     const label = `[Characteristic] ${dataset.label}`;
 
-    return new Dialog({
-      title: `Roll ${dataset.label}`,
+    return foundry.applications.api.DialogV2.wait({
+      window: { title: `Roll ${dataset.label}` },
       content: RollDialogBuilder.buildModifierDialog(),
-      render: (html) => RollDialogBuilder.attachModifierInputHandler(html),
-      buttons: {
-        roll: {
-          label: "Roll",
+      render: (event, dialog) => RollDialogBuilder.attachModifierInputHandlerV2(dialog.element),
+      buttons: [
+        {
+          label: "Roll", action: "roll",
           class: "dialog-button roll",
-          callback: async (html) => {
-            const modifiers = RollDialogBuilder.parseModifiers(html);
+          callback: async (event, button, dialog) => {
+            const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
             const target = characteristic.value + modifiers.difficultyModifier + modifiers.additionalModifier;
             
             const roll = new Roll('1d100', rollData);
@@ -837,13 +837,9 @@ export class DeathwatchActorSheet extends ActorSheet {
             ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
           }
         },
-        cancel: {
-          label: "Cancel",
-          class: "dialog-button cancel"
-        }
-      },
-      default: "roll"
-    }).render(true);
+        { label: "Cancel", action: "cancel", class: "dialog-button cancel" }
+      ]
+    });
   }
   /**
    * Handle skill rolls with modifier dialog.
@@ -871,16 +867,16 @@ export class DeathwatchActorSheet extends ActorSheet {
     const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
     const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + (skill.modifierTotal || 0);
 
-    return new Dialog({
-      title: `Roll ${dataset.label}`,
+    return foundry.applications.api.DialogV2.wait({
+      window: { title: `Roll ${dataset.label}` },
       content: RollDialogBuilder.buildModifierDialog(),
-      render: (html) => RollDialogBuilder.attachModifierInputHandler(html),
-      buttons: {
-        roll: {
-          label: "Roll",
+      render: (event, dialog) => RollDialogBuilder.attachModifierInputHandlerV2(dialog.element),
+      buttons: [
+        {
+          label: "Roll", action: "roll",
           class: "dialog-button roll",
-          callback: async (html) => {
-            const modifiers = RollDialogBuilder.parseModifiers(html);
+          callback: async (event, button, dialog) => {
+            const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
             const target = skillTotal + modifiers.difficultyModifier + modifiers.additionalModifier;
             
             const roll = new Roll('1d100', this.actor.getRollData());
@@ -892,13 +888,9 @@ export class DeathwatchActorSheet extends ActorSheet {
             ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
           }
         },
-        cancel: {
-          label: "Cancel",
-          class: "dialog-button cancel"
-        }
-      },
-      default: "roll"
-    }).render(true);
+        { label: "Cancel", action: "cancel", class: "dialog-button cancel" }
+      ]
+    });
   }
 
   /**
@@ -934,15 +926,16 @@ export class DeathwatchActorSheet extends ActorSheet {
       </div>
     `;
 
-    new Dialog({
-      title: `Attack with ${weapon.name}`,
+    foundry.applications.api.DialogV2.wait({
+      window: { title: `Attack with ${weapon.name}` },
       content: content,
-      buttons: {
-        attack: {
-          label: "Attack",
-          callback: async (html) => {
-            const attackType = html.find('#attack-type').val();
-            const rangeMod = parseInt(html.find('#range-mod').val()) || 0;
+      buttons: [
+        {
+          label: "Attack", action: "attack",
+          callback: async (event, button, dialog) => {
+            const el = dialog.element;
+            const attackType = el.querySelector('#attack-type').value;
+            const rangeMod = parseInt(el.querySelector('#range-mod').value) || 0;
             
             let attackMod = 0;
             let modifierParts = [];
@@ -979,12 +972,9 @@ export class DeathwatchActorSheet extends ActorSheet {
             });
           }
         },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "attack"
-    }).render(true);
+        { label: "Cancel", action: "cancel" }
+      ]
+    });
   }
 
   /**

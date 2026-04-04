@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "256",
     "damageType": "Impact",
     "location": "Body",
     "description": "The attack breaks a rib and inflicts 2 levels of Fatigue. The target is also Stunned for 1 Round.",

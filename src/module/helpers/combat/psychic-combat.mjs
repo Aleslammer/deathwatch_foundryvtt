@@ -377,37 +377,43 @@ export class PsychicCombatHelper {
         <span style="font-size: 0.85em; color: #666;">(max +<span id="wpBonusMax">${5 * basePR}</span>)</span>
       </div>
       <div class="form-group">
-        <label>Misc Modifier:</label>
+        <label>Modifier:</label>
         <input type="text" id="miscModifier" name="miscModifier" value="0" />
       </div>
     `;
 
-    new Dialog({
-      title: `Focus Power: ${power.name}`,
+    foundry.applications.api.DialogV2.wait({
+      window: { title: `Focus Power: ${power.name}` },
       content,
-      render: (html) => {
-        html.find("#miscModifier").on("input", function () {
+      render: (event, dialog) => {
+        const el = dialog.element;
+        const miscInput = el.querySelector("#miscModifier");
+        if (miscInput) miscInput.addEventListener("input", function () {
           this.value = this.value.replace(/[^0-9+\-]/g, "");
         });
-        html.find("#powerLevel").change(() => {
-          const level = html.find("#powerLevel").val();
+        const levelSelect = el.querySelector("#powerLevel");
+        if (levelSelect) levelSelect.addEventListener("change", () => {
+          const level = levelSelect.value;
           const ePR = PsychicCombatHelper.calculateEffectivePsyRating(basePR, level);
           const maxBonus = 5 * ePR;
-          html.find("#effectivePR").text(ePR);
-          html.find("#wpBonus").attr("max", maxBonus).val(maxBonus);
-          html.find("#wpBonusMax").text(maxBonus);
+          el.querySelector("#effectivePR").textContent = ePR;
+          const wpInput = el.querySelector("#wpBonus");
+          wpInput.max = maxBonus;
+          wpInput.value = maxBonus;
+          el.querySelector("#wpBonusMax").textContent = maxBonus;
         });
       },
-      buttons: {
-        focus: {
-          label: "Focus Power",
-          callback: async (html) => {
-            const powerLevel = html.find("#powerLevel").val();
-            const miscModifier = parseInt(html.find("#miscModifier").val()) || 0;
-            const effectivePR = this.calculateEffectivePsyRating(basePR, powerLevel);
+      buttons: [
+        {
+          label: "Focus Power", action: "focus",
+          callback: async (event, button, dialog) => {
+            const el = dialog.element;
+            const powerLevel = el.querySelector("#powerLevel").value;
+            const miscModifier = parseInt(el.querySelector("#miscModifier").value) || 0;
+            const effectivePR = PsychicCombatHelper.calculateEffectivePsyRating(basePR, powerLevel);
             const maxWpBonus = 5 * effectivePR;
-            const wpBonus = Math.min(Math.max(parseInt(html.find("#wpBonus").val()) || 0, 0), maxWpBonus);
-            const { targetNumber, modifierParts } = this.buildFocusPowerModifiers(wp, wpBonus, miscModifier, psychicMods);
+            const wpBonus = Math.min(Math.max(parseInt(el.querySelector("#wpBonus").value) || 0, 0), maxWpBonus);
+            const { targetNumber, modifierParts } = PsychicCombatHelper.buildFocusPowerModifiers(wp, wpBonus, miscModifier, psychicMods);
 
             this.lastFocusPowerTarget = targetNumber;
 
@@ -437,18 +443,16 @@ export class PsychicCombatHelper {
               await FoundryAdapter.createChatMessage(opposeContent, speaker);
             }
 
-            await this.handlePhenomenaAndFatigue(effects, psychicMods.noPerils, psychicMods.noPerilsSource, actor);
+            await PsychicCombatHelper.handlePhenomenaAndFatigue(effects, psychicMods.noPerils, psychicMods.noPerilsSource, actor);
 
-            // Roll damage for powers with damageFormula
             if (success && power.system.damageFormula) {
-              await this._rollPsychicDamage(actor, power, effectivePR, targetNumber, dos);
+              await PsychicCombatHelper._rollPsychicDamage(actor, power, effectivePR, targetNumber, dos);
             }
           }
         },
-        cancel: { label: "Cancel" }
-      },
-      default: "focus"
-    }).render(true);
+        { label: "Cancel", action: "cancel" }
+      ]
+    });
   }
 
   /**
