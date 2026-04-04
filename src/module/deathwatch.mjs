@@ -5,6 +5,7 @@ import { DeathwatchItem } from "./documents/item.mjs";
 import * as models from './data/_module.mjs';
 // Import sheet classes.
 import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
+import { DeathwatchActorSheetV2 } from "./sheets/actor-sheet-v2.mjs";
 import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/ui/templates.mjs";
@@ -233,9 +234,22 @@ Hooks.once('init', async function () {
         }
     });
 
+    // Feature flag: V2 sheets
+    game.settings.register('deathwatch', 'useV2Sheets', {
+      name: 'Use ApplicationV2 Sheets (Experimental)',
+      hint: 'Enable the new sheet architecture. Requires reload.',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: false,
+      onChange: () => window.location.reload()
+    });
+
     // Register sheet application classes
+    const useV2 = game.settings.get('deathwatch', 'useV2Sheets');
+    const ActorSheetClass = useV2 ? DeathwatchActorSheetV2 : DeathwatchActorSheet;
     Actors.unregisterSheet("core", ActorSheet);
-    Actors.registerSheet("deathwatch", DeathwatchActorSheet, { makeDefault: true });
+    Actors.registerSheet("deathwatch", ActorSheetClass, { makeDefault: true });
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("deathwatch", DeathwatchItemSheet, { makeDefault: true });
     initializeHandlebars();

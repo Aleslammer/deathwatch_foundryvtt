@@ -162,8 +162,24 @@ global.foundry = {
       }
     },
     sheets: {
-      ActorSheetV2: class {
-        static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
+      ActorSheetV2: class ActorSheetV2Mock {
+        constructor(options = {}) {
+          this.options = options;
+        }
+        get actor() { return this._actor; }
+        set actor(v) { this._actor = v; }
+        get document() { return this._actor; }
+        set document(v) { this._actor = v; }
+        async _prepareContext() { return {}; }
+        _configureRenderOptions() {}
+        render() { return this; }
+        static DEFAULT_OPTIONS = {};
+        static PARTS = {};
+        static mixin(...mixins) {
+          let b = this;
+          for (const m of mixins) b = m(b);
+          return b;
+        }
       },
       ItemSheetV2: class {
         static mixin(...mixins) { let b = this; for (const m of mixins) b = m(b); return b; }
