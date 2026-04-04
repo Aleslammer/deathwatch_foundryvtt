@@ -90,6 +90,12 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
   /** @override — render using per-instance template */
   async _renderHTML(context, options) {
+    // Save scroll positions before re-render
+    const el = this.element;
+    if (el) {
+      const sc = el.querySelector(".skills-section")?.parentElement;
+      if (sc) this._skillsScrollTop = sc.scrollTop;
+    }
     const template = `systems/deathwatch/templates/actor/actor-${this.document.type}-sheet.html`;
     const compiled = await foundry.applications.handlebars.getTemplate(template);
     const htmlString = compiled(context, { allowProtoMethodsByDefault: true, allowProtoPropertiesByDefault: true });
@@ -761,6 +767,12 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       el.addEventListener('drop', (ev) => this._onDropSpecialty(ev), false);
       el.addEventListener('dragover', (ev) => ev.preventDefault(), false);
     });
+
+    // Restore skills scroll position
+    if (this._skillsScrollTop !== undefined) {
+      const sc = html.querySelector(".skills-section")?.parentElement;
+      if (sc) sc.scrollTop = this._skillsScrollTop;
+    }
 
     // Drag events for macros
     if (this.actor.isOwner) {

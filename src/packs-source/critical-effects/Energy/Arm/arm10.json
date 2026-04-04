@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "252",
     "damageType": "Energy",
     "location": "Arm",
     "description": "The attack reduces the arm to a cloud of ash and sends the target crumbling to the ground where he immediately dies from shock, clutching his smoking stump.",

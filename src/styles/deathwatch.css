@@ -138,7 +138,7 @@
 
 /* Skills */
 .deathwatch.sheet .window-content .skills-header-row {
-  background: rgba(255, 255, 255, 0.08);
+  background: #2a2a2a;
   border-color: rgba(255, 255, 255, 0.15);
   color: #ccc;
 }

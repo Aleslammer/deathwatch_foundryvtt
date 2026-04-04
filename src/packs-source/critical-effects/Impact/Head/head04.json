@@ -4,6 +4,8 @@
   "type": "critical-effect",
   "img": "systems/deathwatch/icons/tables/critical-damage.webp",
   "system": {
+    "book": "Deathwatch Core Rulebook",
+    "page": "257",
     "damageType": "Impact",
     "location": "Head",
     "description": "The concussive strike staggers the target, dealing 1d5 levels of Fatigue.",

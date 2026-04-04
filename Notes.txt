@@ -9,10 +9,7 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
-    TODO: Critical Effects need source information
-    TODO: Cybernetics bionic arm needs source info
-    TODO: review Rank based adance costs for apothecary
-    TODO: Talens edit page is wonky.   Needs an attribute tab
+    TODO: Talents edit page is wonky.   Needs an attribute tab
     TODO: Corruption & Insanity — tracking, thresholds, disorders, mutations
     TODO: Remove the V1 sheets.   They are anot needed anymore.  Also the option to trigger both sheet types
     TODO: add extensive logging for each of the critical system paths
@@ -135,3 +132,5 @@ Miscellaneous
     Opposed tests — general opposed test framework (only psychic opposed exists)
     Interaction skills — Charm, Deceive, Intimidate, Command with DoS effects
     Jumping / Climbing / Swimming — AG/STR tests with movement rules
+
+
