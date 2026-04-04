@@ -356,6 +356,27 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
+/* Armor effects table */
+.deathwatch.sheet .window-content .armor-effects-table {
+  color: #e0e0e0;
+}
+
+.deathwatch.sheet .window-content .armor-effects-table thead tr {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.deathwatch.sheet .window-content .armor-effects-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.deathwatch.sheet .window-content .armor-effects-table tbody tr:nth-child(odd) {
+  background: transparent;
+}
+
+.deathwatch.sheet .window-content .armor-effects-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
 /* Catch-all for any remaining dark text */
 .deathwatch.sheet .window-content .item-modifier,
 .deathwatch.sheet .window-content .item-effect-type,

@@ -9,7 +9,8 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
-    </nav>
+        <a class="item" data-tab="source">Source</a>
+  </nav>
 
     <section class="sheet-body">
         <div class="tab" data-group="primary" data-tab="description">
@@ -27,16 +28,20 @@
                     <input type="text" name="system.value" value="{{system.value}}" placeholder="e.g., 2 for Felling (2)" />
                 </div>
             </div>
-            <div class="grid grid-2col">
-                <div class="resource">
-                    <label class="resource-label">Book</label>
-                    <input type="text" name="system.book" value="{{system.book}}" />
-                </div>
-                <div class="resource">
-                    <label class="resource-label">Page</label>
-                    <input type="text" name="system.page" value="{{system.page}}" />
-                </div>
-            </div>
+            
         </div>
+    <div class="tab" data-group="primary" data-tab="source">
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Book:</label>
+          <input type="text" name="system.book" value="{{system.book}}" />
+        </div>
+        <div class="flex1">
+          <label>Page:</label>
+          <input type="text" name="system.page" value="{{system.page}}" />
+        </div>
+      </div>
+    </div>
+
     </section>
 </div>

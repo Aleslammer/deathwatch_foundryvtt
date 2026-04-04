@@ -10,7 +10,8 @@
     <nav class="sheet-tabs tabs" data-group="primary">
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
-    </nav>
+        <a class="item" data-tab="source">Source</a>
+  </nav>
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
@@ -65,5 +66,18 @@
                 {{/each}}
             </ol>
         </div>
+    <div class="tab" data-group="primary" data-tab="source">
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Book:</label>
+          <input type="text" name="system.book" value="{{system.book}}" />
+        </div>
+        <div class="flex1">
+          <label>Page:</label>
+          <input type="text" name="system.page" value="{{system.page}}" />
+        </div>
+      </div>
+    </div>
+
     </section>
 </div>

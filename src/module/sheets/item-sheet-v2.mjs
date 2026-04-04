@@ -34,9 +34,7 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     }
   };
 
-  /**
-   * Return the correct template for this item's type.
-   */
+  /** Return the correct template for this item's type. */
   get _itemTemplate() {
     return `systems/deathwatch/templates/item/item-${this.document.type}-sheet.html`;
   }
@@ -46,21 +44,24 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     return this.document.name;
   }
 
-  /** @override — render using per-instance template */
+  /** @override — render using per-instance template to avoid static PARTS sharing */
   async _renderHTML(context, options) {
-    // Compile the correct template for this item type
     const template = this._itemTemplate;
     const compiled = await foundry.applications.handlebars.getTemplate(template);
     const htmlString = compiled(context, { allowProtoMethodsByDefault: true, allowProtoPropertiesByDefault: true });
     const temp = document.createElement("div");
     temp.innerHTML = htmlString;
     const content = temp.firstElementChild;
+    content.dataset.applicationPart = "sheet";
     return { sheet: content };
   }
 
   _onFirstRender(context, options) {
     if (this.document.type === 'psychic-power' || this.document.type === 'special-ability') {
       this.setPosition({ height: 624 });
+    }
+    if (this.document.type === 'gear' || this.document.type === 'armor-history' || this.document.type === 'cybernetic') {
+      this.setPosition({ width: 620 });
     }
   }
 
@@ -89,11 +90,9 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     if (itemData.type === 'specialty') {
       this._prepareSpecialtyData(context);
     }
-
     if (itemData.type === 'armor') {
       this._prepareArmorData(context, actor);
     }
-
     if (itemData.type === 'weapon') {
       this._prepareWeaponData(context, actor);
     }
@@ -107,28 +106,23 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
       tg: 'Toughness', ag: 'Agility', int: 'Intelligence',
       per: 'Perception', wil: 'Willpower', fs: 'Fellowship'
     };
-
     if (!context.system.rankCosts) {
       context.system.rankCosts = {};
       for (let i = 1; i <= 8; i++) {
         context.system.rankCosts[i.toString()] = { skills: {}, talents: {} };
       }
     }
-
     context.skillNames = {};
     context.talentNames = {};
-
     if (game.deathwatch?.config?.Skills) {
       context.skillNames = game.deathwatch.config.Skills;
     }
-
     const talentIds = new Set();
     for (const rankData of Object.values(context.system.rankCosts)) {
       if (rankData.talents) {
         Object.keys(rankData.talents).forEach(id => talentIds.add(id));
       }
     }
-
     const talentPack = game.packs.get('deathwatch.talents');
     if (talentPack) {
       for (const talentId of talentIds) {
@@ -167,7 +161,6 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
         }
       };
     }).filter(q => q);
-
     if (this.item.system.effectiveBlast) {
       context.attachedQualities.push({
         _id: 'effective-blast', name: 'Blast',
@@ -192,12 +185,8 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     const modifiers = Array.isArray(this.item.system.modifiers) ? [...this.item.system.modifiers] : [];
     modifiers.push({
       _id: foundry.utils.randomID(),
-      name: "New Modifier",
-      modifier: "0",
-      type: "untyped",
-      effectType: "characteristic",
-      valueAffected: "",
-      enabled: true
+      name: "New Modifier", modifier: "0", type: "untyped",
+      effectType: "characteristic", valueAffected: "", enabled: true
     });
     await this.item.update({ "system.modifiers": modifiers });
     this.render();
@@ -207,7 +196,6 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     const modifierId = target.dataset.modifierId || target.closest('.modifier')?.dataset.modifierId;
     const modifier = this.item.system.modifiers?.find(m => m._id === modifierId);
     if (!modifier) return;
-
     ModifierHelper._showEditDialog(modifier, async (updated) => {
       const modifiers = [...this.item.system.modifiers];
       const index = modifiers.findIndex(m => m._id === modifierId);
@@ -240,11 +228,9 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
   static async _onWeaponAttack(event, target) {
     const actor = this.item.actor;
     if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll attacks.");
-
     const bs = actor.system.characteristics.bs.value;
     const roll = await new Roll("1d100").evaluate();
     const isHit = roll.total <= bs;
-
     const flavor = `<h2>${this.item.name} - Attack Roll</h2><p>Target: ${bs}</p>`;
     roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -256,16 +242,11 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
   static async _onWeaponDamage(event, target) {
     const actor = this.item.actor;
     if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll damage.");
-
     const dmg = this.item.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
-
     const roll = await new Roll(dmg).evaluate();
     const flavor = `<h2>${this.item.name} - Damage Roll</h2><p>Penetration: ${this.item.system.penetration}</p>`;
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor
-    });
+    roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor });
   }
 
   static async _onHistoryRemove(event, target) {
@@ -298,7 +279,10 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     // V1-style tab activation
     const tabNav = html.querySelector('.sheet-tabs');
     if (tabNav) {
-      const tabs = new foundry.applications.ux.Tabs({ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: this._activeTab || 'description' });
+      const tabs = new foundry.applications.ux.Tabs({
+        navSelector: '.sheet-tabs', contentSelector: '.sheet-body',
+        initial: this._activeTab || 'description'
+      });
       tabs.bind(html);
       tabs.activate(this._activeTab || 'description');
       html.querySelectorAll('.sheet-tabs .item').forEach(tab => {
@@ -306,7 +290,7 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
       });
     }
 
-    // Quality value change (input change — can't use data-action)
+    // Quality value change
     html.querySelectorAll('.quality-value').forEach(input => {
       input.addEventListener('change', async (ev) => {
         const qualityId = ev.currentTarget.dataset.qualityId;
@@ -325,7 +309,6 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
   async _onDrop(event) {
     const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
     if (data.type !== 'Item') return super._onDrop?.(event);
-
     const droppedItem = await Item.implementation.fromDropData(data);
     if (!droppedItem) return super._onDrop?.(event);
 

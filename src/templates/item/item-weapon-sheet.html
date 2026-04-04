@@ -21,7 +21,8 @@
         <a class="item" data-tab="description">Description</a>
         <a class="item" data-tab="attributes">Attributes</a>
         <a class="item" data-tab="modifiers">Modifiers</a>
-    </nav>
+        <a class="item" data-tab="source">Source</a>
+  </nav>
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
@@ -116,16 +117,7 @@
               </li>
               {{/each}}
             </ol>
-            <div class="grid grid-2col">
-                <div class="resource">
-                    <label class="resource-label">Book</label>
-                    <input type="text" name="system.book" value="{{system.book}}" />
-                </div>
-                <div class="resource">
-                    <label class="resource-label">Page</label>
-                    <input type="text" name="system.page" value="{{system.page}}" />
-                </div>
-            </div>
+            
         </div>
 
         {{!-- Modifiers Tab --}}
@@ -154,5 +146,18 @@
                 {{/each}}
             </ol>
         </div>
+    <div class="tab" data-group="primary" data-tab="source">
+      <div class="form-group flexrow">
+        <div class="flex1">
+          <label>Book:</label>
+          <input type="text" name="system.book" value="{{system.book}}" />
+        </div>
+        <div class="flex1">
+          <label>Page:</label>
+          <input type="text" name="system.page" value="{{system.page}}" />
+        </div>
+      </div>
+    </div>
+
     </section>
 </div>

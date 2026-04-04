@@ -9,6 +9,10 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
+    TODO: Critical Effects need source information
+    TODO: Cybernetics bionic arm needs source info
+    TODO: review Rank based adance costs for apothecary
+    TODO: Talens edit page is wonky.   Needs an attribute tab
     TODO: Remove the V1 sheets.   They are anot needed anymore.  Also the option to trigger both sheet types
     TODO: add extensive logging for each of the critical system paths
         Ranged attack

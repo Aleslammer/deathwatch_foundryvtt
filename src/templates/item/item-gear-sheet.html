@@ -3,23 +3,7 @@
     <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" height="64" width="64" />
     <div class="header-fields">
       <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name" /></h1>
-    </div>
-  </header>
-
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="details">Details</a>
-    <a class="item" data-tab="description">Description</a>
-    <a class="item" data-tab="effects">Effects</a>
-    <a class="item" data-tab="source">Source</a>
-  </nav>
-
-  <section class="sheet-body">
-    <div class="tab" data-group="primary" data-tab="details">
-      <div class="form-group">
-        <label>Short Description:</label>
-        <input type="text" name="system.shortDescription" value="{{system.shortDescription}}" />
-      </div>
-      <div class="form-group flexrow">
+      <div class="form-group flexrow" style="gap: 8px; margin-top: 4px;">
         <div class="flex1">
           <label>Weight:</label>
           <input type="number" name="system.wt" value="{{system.wt}}" />
@@ -34,12 +18,25 @@
         </div>
       </div>
     </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">Description</a>
+    <a class="item" data-tab="effects">Effects</a>
+    <a class="item" data-tab="source">Source</a>
+  </nav>
+
+  <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="description">
+      <div class="form-group" style="margin-bottom: 8px;">
+        <label>Short:</label>
+        <input type="text" name="system.shortDescription" value="{{system.shortDescription}}" style="flex: 1;" />
+      </div>
       {{editor system.description target="system.description" button=true owner=owner editable=editable}}
     </div>
     <div class="tab" data-group="primary" data-tab="effects">
-      <div class="modifiers-list">
-        <div class="items-header flexrow">
+      <div class="modifiers-list" style="overflow-x: auto;">
+        <div class="items-header flexrow" style="min-width: 550px;">
           <div class="modifier-name">Name</div>
           <div class="modifier-mod">Modifier</div>
           <div class="modifier-type">Type</div>
@@ -49,7 +46,7 @@
             <a class="item-control modifier-create" data-action="createModifier" title="Create Modifier"><i class="fas fa-plus"></i></a>
           </div>
         </div>
-        <ol class="items-list">
+        <ol class="items-list" style="min-width: 550px;">
           {{#each system.modifiers as |modifier id|}}
           <li class="item modifier flexrow" data-modifier-id="{{modifier._id}}">
             <div class="modifier-name">{{modifier.name}}</div>

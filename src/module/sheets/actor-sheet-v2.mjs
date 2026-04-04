@@ -96,6 +96,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     const temp = document.createElement("div");
     temp.innerHTML = htmlString;
     const content = temp.firstElementChild;
+    content.dataset.applicationPart = "sheet";
     return { sheet: content };
   }
 
