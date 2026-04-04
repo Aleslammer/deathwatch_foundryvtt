@@ -59,7 +59,6 @@
   align-items: center;
   flex-wrap: nowrap;
   gap: 4px;
-  justify-content: flex-end;
 }
 
 .deathwatch.sheet .window-content .form-group > label {
@@ -69,6 +68,16 @@
 .deathwatch.sheet .window-content .form-group > input,
 .deathwatch.sheet .window-content .form-group > select,
 .deathwatch.sheet .window-content .form-group > textarea {
+  flex: 1;
+}
+
+/* Constrain inputs inside sheet-header (psychic power / special ability background image) */
+.deathwatch.sheet .window-content .sheet-header .form-group {
+  justify-content: flex-end;
+}
+
+.deathwatch.sheet .window-content .sheet-header .form-group > input,
+.deathwatch.sheet .window-content .sheet-header .form-group > select {
   flex: 0 1 auto;
   width: auto;
   max-width: 200px;
