@@ -13,6 +13,7 @@ System:
     TODO: Cybernetics bionic arm needs source info
     TODO: review Rank based adance costs for apothecary
     TODO: Talens edit page is wonky.   Needs an attribute tab
+    TODO: Corruption & Insanity — tracking, thresholds, disorders, mutations
     TODO: Remove the V1 sheets.   They are anot needed anymore.  Also the option to trigger both sheet types
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
@@ -92,7 +93,6 @@ Defensive Systems
 Character Mechanics
     Fate Points — spending (re-roll, +10, count as not dead) and burning (survive death)
     Characteristic advance XP costs — data exists in specialties but not wired to XP calculation
-    Corruption & Insanity — tracking, thresholds, disorders, mutations
     Experience spending UI — buying advances, skills, talents from the sheet
     Renown & Requisition — mission requisition rolls, renown thresholds for gear access
     Demeanour mechanics — Chapter and Personal demeanour interaction (currently just text)
