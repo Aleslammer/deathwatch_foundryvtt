@@ -84,13 +84,7 @@ Slayer of Daemons	+10 WS and +2 melee damage vs daemons	Melee vs daemons only
 
 None of these damage bonus talents are currently implemented in the combat code. They're purely informational right now — the GM would manually add the bonus.
 
-So the breakdown is:
 
-Tier 1 — Always-on, simple flat bonus (easiest to automate):
-
-Crushing Blow — +2 damage on all melee attacks
-
-Mighty Shot — +2 damage on all ranged attacks
 
 Tier 2 — Always-on but affects critical damage (needs critical system integration):
 

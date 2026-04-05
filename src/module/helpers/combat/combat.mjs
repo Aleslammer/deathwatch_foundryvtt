@@ -234,6 +234,36 @@ export class CombatHelper {
     return false;
   }
 
+  /**
+   * Check if an actor has a talent by name.
+   * @param {Object} actor - Actor document
+   * @param {string} talentName - Talent name to search for
+   * @returns {boolean}
+   */
+  static hasTalent(actor, talentName) {
+    if (!actor?.items) return false;
+    const items = actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items;
+    return items.some(i => i.type === 'talent' && i.name === talentName);
+  }
+
+  /**
+   * Get the Crushing Blow bonus (+2 melee damage) if the actor has the talent.
+   * @param {Object} actor - Actor document
+   * @returns {number}
+   */
+  static getCrushingBlowBonus(actor) {
+    return this.hasTalent(actor, 'Crushing Blow') ? 2 : 0;
+  }
+
+  /**
+   * Get the Mighty Shot bonus (+2 ranged damage) if the actor has the talent.
+   * @param {Object} actor - Actor document
+   * @returns {number}
+   */
+  static getMightyShotBonus(actor) {
+    return this.hasTalent(actor, 'Mighty Shot') ? 2 : 0;
+  }
+
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
     return RighteousFuryHelper.rollConfirmation(actor, targetNumber, hitLocation);
   }
@@ -349,7 +379,9 @@ export class CombatHelper {
                 provenRating,
                 isPowerFist,
                 isLightningClaw,
-                hasLightningClawPair
+                hasLightningClawPair,
+                crushingBlowBonus: this.getCrushingBlowBonus(actor),
+                mightyShotBonus: this.getMightyShotBonus(actor)
               });
 
               if (actor.type === 'horde') {

@@ -201,7 +201,9 @@ export class CombatDialogHelper {
       provenRating = 0,
       isPowerFist = false,
       isLightningClaw = false,
-      hasLightningClawPair = false
+      hasLightningClawPair = false,
+      crushingBlowBonus = 0,
+      mightyShotBonus = 0
     } = options;
 
     let formula = baseDmg;
@@ -232,6 +234,14 @@ export class CombatDialogHelper {
     if (isLightningClaw && degreesOfSuccess > 0) {
       const bonusPerDegree = hasLightningClawPair ? 2 : 1;
       formula += ` + ${degreesOfSuccess * bonusPerDegree}`;
+    }
+    
+    if (isMelee && crushingBlowBonus > 0) {
+      formula += ` + ${crushingBlowBonus}`;
+    }
+    
+    if (!isMelee && mightyShotBonus > 0) {
+      formula += ` + ${mightyShotBonus}`;
     }
     
     return formula;
