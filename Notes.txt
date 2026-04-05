@@ -27,7 +27,9 @@ Traits
     TODO: review traits if they need modifiers
 
 Talents
-    TODO: Review all talents to determine if effects can be applied to anythig
+    TODO: Most auto handled.   Now need to do specific vlaues
+        Damage bonuses (Crushing Blow, Mighty Shot, Crack Shot, etc.) — Applied during combat rolls, not static character modifiers
+        We need to figure out how these might be listed
 
 Gear:
     Cybernetics
@@ -65,6 +67,7 @@ Orks:
 
 Gameplay:
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
+
 
 
 

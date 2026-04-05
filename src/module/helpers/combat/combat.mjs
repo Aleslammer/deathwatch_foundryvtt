@@ -234,6 +234,57 @@ export class CombatHelper {
     return false;
   }
 
+  /**
+   * Check if an actor has a talent by name.
+   * @param {Object} actor - Actor document
+   * @param {string} talentName - Talent name to search for
+   * @returns {boolean}
+   */
+  static hasTalent(actor, talentName) {
+    if (!actor?.items) return false;
+    const items = actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items;
+    return items.some(i => i.type === 'talent' && i.name === talentName);
+  }
+
+  /**
+   * Get the Crushing Blow bonus (+2 melee damage) if the actor has the talent.
+   * @param {Object} actor - Actor document
+   * @returns {number}
+   */
+  static getCrushingBlowBonus(actor) {
+    return this.hasTalent(actor, 'Crushing Blow') ? 2 : 0;
+  }
+
+  /**
+   * Get the Mighty Shot bonus (+2 ranged damage) if the actor has the talent.
+   * @param {Object} actor - Actor document
+   * @returns {number}
+   */
+  static getMightyShotBonus(actor) {
+    return this.hasTalent(actor, 'Mighty Shot') ? 2 : 0;
+  }
+
+  /**
+   * Get the critical damage bonus from talents (Crack Shot, Crippling Strike, Street Fighting).
+   * @param {Object} actor - Actor document
+   * @param {boolean} isMelee - Whether the attack is melee
+   * @param {string} weaponName - Weapon name (for Street Fighting check)
+   * @returns {number}
+   */
+  static getCriticalDamageBonus(actor, isMelee, weaponName = '') {
+    if (!actor?.items) return 0;
+    let bonus = 0;
+    if (isMelee) {
+      if (this.hasTalent(actor, 'Crippling Strike')) bonus += 4;
+      const name = weaponName.toLowerCase();
+      const isUnarmedOrKnife = name.includes('unarmed') || name.includes('knife') || name.includes('combat knife');
+      if (isUnarmedOrKnife && this.hasTalent(actor, 'Street Fighting')) bonus += 2;
+    } else {
+      if (this.hasTalent(actor, 'Crack Shot')) bonus += 2;
+    }
+    return bonus;
+  }
+
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
     return RighteousFuryHelper.rollConfirmation(actor, targetNumber, hitLocation);
   }
@@ -329,6 +380,7 @@ export class CombatHelper {
             const isForce = weapon.system.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === 'force') || false;
             const psyRating = actor.system?.psyRating?.value || 0;
             const forceWeaponData = (isForce && psyRating > 0) ? { attackerId: actor.id, psyRating } : null;
+            const criticalDamageBonus = this.getCriticalDamageBonus(actor, isMelee, weapon.name);
             
             const isHordeTarget = targetToken?.actor?.type === 'horde';
             const hordeHitResults = [];
@@ -349,8 +401,11 @@ export class CombatHelper {
                 provenRating,
                 isPowerFist,
                 isLightningClaw,
-                hasLightningClawPair
+                hasLightningClawPair,
+                crushingBlowBonus: this.getCrushingBlowBonus(actor),
+                mightyShotBonus: this.getMightyShotBonus(actor)
               });
+              const combatDamageFormula = damageFormula;
 
               if (actor.type === 'horde') {
                 const currentMagnitude = (actor.system.wounds.max || 0) - (actor.system.wounds.value || 0);
@@ -368,7 +423,7 @@ export class CombatHelper {
               if (isHordeTarget) {
                 if (actor.system.canRighteousFury() && RighteousFuryHelper.hasNaturalTen(roll, furyThreshold) && targetNumber > 0) {
                   const { totalDamage: furyDamage } = await RighteousFuryHelper.processFuryChain(
-                    actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold, targetToken?.actor
+                    actor, weapon, combatDamageFormula, targetNumber, hitLocations[i], isVolatile, furyThreshold, targetToken?.actor
                   );
                   totalDamage += furyDamage;
                 }
@@ -385,7 +440,7 @@ export class CombatHelper {
                   damageType: weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess,
                   isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange,
                   charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour,
-                  weaponQualities: weapon.system.attachedQualities || []
+                  criticalDamageBonus, weaponQualities: weapon.system.attachedQualities || []
                 }) : '';
                 const flavor = ChatMessageBuilder.createDamageFlavor(weapon.name, i + 1, numHits, hitLocations[i], degreesOfSuccess, penetration, isMelee, strBonus, applyButton);
               
@@ -396,7 +451,7 @@ export class CombatHelper {
               
                 if (actor.system.canRighteousFury() && RighteousFuryHelper.hasNaturalTen(roll, furyThreshold) && targetNumber > 0) {
                   const { totalDamage: furyDamage, furyCount } = await RighteousFuryHelper.processFuryChain(
-                    actor, weapon, dmg, targetNumber, hitLocations[i], isVolatile, furyThreshold, targetToken?.actor
+                    actor, weapon, combatDamageFormula, targetNumber, hitLocations[i], isVolatile, furyThreshold, targetToken?.actor
                   );
                 
                   totalDamage += furyDamage;
@@ -406,7 +461,7 @@ export class CombatHelper {
                     damageType: weapon.system.dmgType || 'Impact', isPrimitive, isRazorSharp, degreesOfSuccess,
                     isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange,
                     charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour,
-                    weaponQualities: weapon.system.attachedQualities || []
+                    criticalDamageBonus, weaponQualities: weapon.system.attachedQualities || []
                   }) : '';
                   const summaryContent = ChatMessageBuilder.createRighteousFurySummary(furyCount, hitLocations[i], totalDamage, applyFuryButton);
                 

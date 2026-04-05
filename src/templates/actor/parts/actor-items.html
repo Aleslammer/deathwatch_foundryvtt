@@ -22,9 +22,9 @@
           <li class="item flexrow" data-item-id="{{item._id}}">
             <div class="item-equipped">
               {{#if item.system.equipped}}
-                <a class="item-control item-equip" title="Unequip"><i class="fas fa-check"></i></a>
+                <a class="item-control item-equip" data-action="toggleEquip" title="Unequip"><i class="fas fa-check"></i></a>
               {{else}}
-                <a class="item-control item-equip" title="Equip"><i class="far fa-square"></i></a>
+                <a class="item-control item-equip" data-action="toggleEquip" title="Equip"><i class="far fa-square"></i></a>
               {{/if}}
             </div>
             <div class="item-name">
@@ -127,9 +127,9 @@
           <li class="item flexrow" data-item-id="{{item._id}}">
             <div class="item-equipped">
               {{#if item.system.equipped}}
-                <a class="item-control item-equip" title="Unequip"><i class="fas fa-check"></i></a>
+                <a class="item-control item-equip" data-action="toggleEquip" title="Unequip"><i class="fas fa-check"></i></a>
               {{else}}
-                <a class="item-control item-equip" title="Equip"><i class="far fa-square"></i></a>
+                <a class="item-control item-equip" data-action="toggleEquip" title="Equip"><i class="far fa-square"></i></a>
               {{/if}}
             </div>
             <div class="item-name">
@@ -190,9 +190,9 @@
           <li class="item flexrow" data-item-id="{{item._id}}">
             <div class="item-equipped">
               {{#if item.system.equipped}}
-                <a class="item-control item-equip" title="Unequip"><i class="fas fa-check"></i></a>
+                <a class="item-control item-equip" data-action="toggleEquip" title="Unequip"><i class="fas fa-check"></i></a>
               {{else}}
-                <a class="item-control item-equip" title="Equip"><i class="far fa-square"></i></a>
+                <a class="item-control item-equip" data-action="toggleEquip" title="Equip"><i class="far fa-square"></i></a>
               {{/if}}
             </div>
             <div class="item-name">

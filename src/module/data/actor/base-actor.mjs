@@ -98,7 +98,7 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
       isRazorSharp = false, degreesOfSuccess = 0, isScatter = false, isLongOrExtremeRange = false,
       isShocking = false, isToxic = false, hasDrainLife = false, attackerActor = null,
       isMeltaRange = false, charDamageEffect = null, forceWeaponData = null, tokenInfo = null,
-      ignoresNaturalArmour = false } = options;
+      ignoresNaturalArmour = false, criticalDamageBonus = 0 } = options;
 
     const defenses = this.getDefenses(location);
     const effectiveArmorValue = ignoresNaturalArmour
@@ -112,9 +112,11 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
     });
 
     if (damageResult.woundsTaken > 0) {
-      const { newWounds, isCritical, criticalDamage } = CombatDialogHelper.calculateCriticalDamage(
+      const { newWounds: baseNewWounds, isCritical, criticalDamage: baseCriticalDamage } = CombatDialogHelper.calculateCriticalDamage(
         this.wounds.value || 0, damageResult.woundsTaken, this.wounds.max || 0
       );
+      const criticalDamage = baseCriticalDamage + (isCritical ? criticalDamageBonus : 0);
+      const newWounds = baseNewWounds + (isCritical ? criticalDamageBonus : 0);
 
       await FoundryAdapter.updateDocument(actor, { "system.wounds.value": newWounds });
 
@@ -124,7 +126,7 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
       const message = CombatDialogHelper.buildDamageMessage(
         actor.name, damageResult.woundsTaken, location, damage, defenses.armorValue, penetration,
         damageResult.effectiveArmor, damageResult.effectiveTB, isCritical, criticalDamage, actor.id,
-        damageType, isShocking, isToxic, drainLifeMessage, charDamageEffect, forceWeaponData, tokenInfo
+        damageType, isShocking, isToxic, drainLifeMessage, charDamageEffect, forceWeaponData, tokenInfo, criticalDamageBonus
       );
 
       FoundryAdapter.showNotification(

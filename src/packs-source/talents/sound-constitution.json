@@ -13,6 +13,14 @@
     "subsequentCost": 1000,
     "stackable": true,
     "compendiumId": "tal00000000244",
-    "modifiers": []
+    "modifiers": [
+      {
+        "_id": "sound-constitution-mod",
+        "name": "Sound Constitution",
+        "modifier": 1,
+        "effectType": "wounds",
+        "enabled": true
+      }
+    ]
   }
 }
