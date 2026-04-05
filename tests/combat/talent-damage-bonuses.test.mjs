@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
 import { CombatHelper } from '../../src/module/helpers/combat/combat.mjs';
+import { ChatMessageBuilder } from '../../src/module/helpers/ui/chat-message-builder.mjs';
 
 describe('Talent Damage Bonuses', () => {
 
@@ -149,6 +150,85 @@ describe('Talent Damage Bonuses', () => {
         crushingBlowBonus: 2, mightyShotBonus: 2
       });
       expect(formula).toBe('1d10 + 2');
+    });
+  });
+
+  describe('CombatHelper.getCriticalDamageBonus', () => {
+    it('returns 2 for ranged with Crack Shot', () => {
+      const actor = { items: [{ type: 'talent', name: 'Crack Shot', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(2);
+    });
+
+    it('returns 0 for ranged without Crack Shot', () => {
+      const actor = { items: [] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(0);
+    });
+
+    it('returns 0 for melee with Crack Shot (ranged only)', () => {
+      const actor = { items: [{ type: 'talent', name: 'Crack Shot', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, true)).toBe(0);
+    });
+
+    it('returns 4 for melee with Crippling Strike', () => {
+      const actor = { items: [{ type: 'talent', name: 'Crippling Strike', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, true)).toBe(4);
+    });
+
+    it('returns 0 for ranged with Crippling Strike (melee only)', () => {
+      const actor = { items: [{ type: 'talent', name: 'Crippling Strike', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(0);
+    });
+
+    it('returns 2 for melee with Street Fighting and unarmed weapon', () => {
+      const actor = { items: [{ type: 'talent', name: 'Street Fighting', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Unarmed')).toBe(2);
+    });
+
+    it('returns 2 for melee with Street Fighting and knife weapon', () => {
+      const actor = { items: [{ type: 'talent', name: 'Street Fighting', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Combat Knife')).toBe(2);
+    });
+
+    it('returns 0 for melee with Street Fighting and non-knife weapon', () => {
+      const actor = { items: [{ type: 'talent', name: 'Street Fighting', system: {} }] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Power Sword')).toBe(0);
+    });
+
+    it('Crippling Strike and Street Fighting stack for knife', () => {
+      const actor = { items: [
+        { type: 'talent', name: 'Crippling Strike', system: {} },
+        { type: 'talent', name: 'Street Fighting', system: {} }
+      ] };
+      expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Combat Knife')).toBe(6);
+    });
+
+    it('returns 0 for null actor', () => {
+      expect(CombatHelper.getCriticalDamageBonus(null, true)).toBe(0);
+    });
+  });
+
+  describe('createDamageApplyButton - criticalDamageBonus', () => {
+    it('includes data attribute when bonus > 0', () => {
+      const html = ChatMessageBuilder.createDamageApplyButton({
+        damage: 15, penetration: 4, location: 'Body', targetId: 'abc',
+        criticalDamageBonus: 2
+      });
+      expect(html).toContain('data-critical-damage-bonus="2"');
+    });
+
+    it('omits data attribute when bonus is 0', () => {
+      const html = ChatMessageBuilder.createDamageApplyButton({
+        damage: 15, penetration: 4, location: 'Body', targetId: 'abc',
+        criticalDamageBonus: 0
+      });
+      expect(html).not.toContain('data-critical-damage-bonus');
+    });
+
+    it('omits data attribute when bonus not provided', () => {
+      const html = ChatMessageBuilder.createDamageApplyButton({
+        damage: 15, penetration: 4, location: 'Body', targetId: 'abc'
+      });
+      expect(html).not.toContain('data-critical-damage-bonus');
     });
   });
 });

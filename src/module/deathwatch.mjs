@@ -396,6 +396,7 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
         
         const magnitudeBonusDamage = parseInt(d.magnitudeBonusDamage) || 0;
         const ignoresNaturalArmour = d.ignoresNaturalArmour === 'true';
+        const criticalDamageBonus = parseInt(d.criticalDamageBonus) || 0;
         
         const sceneId = d.sceneId;
         const tokenId = d.tokenId;
@@ -407,7 +408,7 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
             return;
         }
         
-        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour });
+        await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour, criticalDamageBonus });
 
         const weaponQualitiesRaw = d.weaponQualities;
         const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? JSON.parse(weaponQualitiesRaw) : weaponQualitiesRaw) : [];

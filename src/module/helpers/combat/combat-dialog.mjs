@@ -292,7 +292,7 @@ export class CombatDialogHelper {
     return { newWounds, isCritical, criticalDamage };
   }
 
-  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null, forceWeaponData = null, tokenInfo = null) {
+  static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null, forceWeaponData = null, tokenInfo = null, criticalDamageBonus = 0) {
     const tokenData = tokenInfo ? ` data-scene-id="${tokenInfo.sceneId}" data-token-id="${tokenInfo.tokenId}"` : '';
     let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
@@ -320,6 +320,9 @@ export class CombatDialogHelper {
     
     if (isCritical) {
       message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ CRITICAL DAMAGE: ${criticalDamage} ☠</strong>`;
+      if (criticalDamageBonus > 0) {
+        message += `<br><em style="color: #888; font-size: 0.85em;">(${criticalDamage - criticalDamageBonus} base + ${criticalDamageBonus} talent bonus)</em>`;
+      }
       message += `<br><button class="roll-critical-btn" data-actor-id="${targetId}"${tokenData} data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
     }
     
