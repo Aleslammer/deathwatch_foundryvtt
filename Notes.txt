@@ -27,7 +27,9 @@ Traits
     TODO: review traits if they need modifiers
 
 Talents
-    TODO: Review all talents to determine if effects can be applied to anythig
+    TODO: Most auto handled.   Now need to do specific vlaues
+        Damage bonuses (Crushing Blow, Mighty Shot, Crack Shot, etc.) — Applied during combat rolls, not static character modifiers
+        We need to figure out how these might be listed
 
 Gear:
     Cybernetics
@@ -65,6 +67,51 @@ Orks:
 
 Gameplay:
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
+
+
+Here are the talents that provide static damage bonuses during combat:
+
+Talent	Benefit	Applies To
+Crushing Blow	+2 melee damage	All melee attacks
+Mighty Shot	+2 ranged damage	All ranged attacks
+Crack Shot	+2 Critical Damage	Ranged critical hits
+Crippling Strike	+4 Critical Damage	Melee critical hits
+Street Fighting	+2 Critical Damage with unarmed/knife	Unarmed or knife critical hits
+Hunter of Aliens	+10 WS and +2 melee damage vs aliens	Melee vs xenos only
+Scourge of Heretics	+10 WS and +2 melee damage vs heretics	Melee vs heretics only
+Slayer of Daemons	+10 WS and +2 melee damage vs daemons	Melee vs daemons only
+
+
+None of these damage bonus talents are currently implemented in the combat code. They're purely informational right now — the GM would manually add the bonus.
+
+So the breakdown is:
+
+Tier 1 — Always-on, simple flat bonus (easiest to automate):
+
+Crushing Blow — +2 damage on all melee attacks
+
+Mighty Shot — +2 damage on all ranged attacks
+
+Tier 2 — Always-on but affects critical damage (needs critical system integration):
+
+Crack Shot — +2 to critical damage from ranged
+
+Crippling Strike — +4 to critical damage from melee
+
+Street Fighting — +2 to critical damage with unarmed/knife
+
+Tier 3 — Conditional on target type (needs classification check during combat):
+
+Hunter of Aliens — +10 WS and +2 melee damage vs xenos
+
+Scourge of Heretics — +10 WS and +2 melee damage vs heretics
+
+Slayer of Daemons — +10 WS and +2 melee damage vs daemons
+
+None of these map to the existing modifier system since they're combat-time bonuses applied during damage formula building, not static character stat modifiers. They'd need to be detected by the combat helpers (checking actor.items for the talent by name or compendiumId) and wired into the damage formula in combat-dialog.mjs. Want me to dig into how the damage formula is built so we can plan the implementation?
+
+
+
 
 
 
