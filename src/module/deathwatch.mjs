@@ -26,6 +26,9 @@ import { ModeHelper } from "./helpers/mode-helper.mjs";
 import { applyOnFireEffects } from "./macros/on-fire-effects.mjs";
 import { flameAttack } from "./macros/flame-attack.mjs";
 import { createItemMacro, rollItemMacro } from "./macros/hotbar.mjs";
+// Import error handling utilities.
+import { ErrorHandler } from "./helpers/error-handler.mjs";
+import { Validation } from "./helpers/validation.mjs";
 
 
 /* -------------------------------------------- */
@@ -372,103 +375,96 @@ function resolveActor(button, actorIdAttr = 'targetId') {
 
 Hooks.on('renderChatMessageHTML', (message, html) => {
 
-    html.querySelectorAll('.apply-damage-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    html.querySelectorAll('.apply-damage-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const d = button.dataset;
-        const damage = parseInt(d.damage);
-        const penetration = parseInt(d.penetration);
+
+        // Validate and parse required fields
+        const damage = Validation.requireInt(d.damage, 'Damage');
+        const penetration = Validation.requireInt(d.penetration, 'Penetration');
         const location = d.location;
         const damageType = d.damageType || 'Impact';
-        const isPrimitive = d.isPrimitive === 'true';
-        const isRazorSharp = d.isRazorSharp === 'true';
+        const isPrimitive = Validation.parseBoolean(d.isPrimitive);
+        const isRazorSharp = Validation.parseBoolean(d.isRazorSharp);
         const degreesOfSuccess = parseInt(d.degreesOfSuccess) || 0;
-        const isScatter = d.isScatter === 'true';
-        const isLongOrExtremeRange = d.isLongOrExtremeRange === 'true';
-        const isShocking = d.isShocking === 'true';
-        const isToxic = d.isToxic === 'true';
-        const isMeltaRange = d.isMeltaRange === 'true';
-        
+        const isScatter = Validation.parseBoolean(d.isScatter);
+        const isLongOrExtremeRange = Validation.parseBoolean(d.isLongOrExtremeRange);
+        const isShocking = Validation.parseBoolean(d.isShocking);
+        const isToxic = Validation.parseBoolean(d.isToxic);
+        const isMeltaRange = Validation.parseBoolean(d.isMeltaRange);
+
         const charDamageFormula = d.charDamageFormula;
         const charDamageChar = d.charDamageChar;
         const charDamageName = d.charDamageName;
         const charDamageEffect = charDamageFormula ? { formula: charDamageFormula, characteristic: charDamageChar, name: charDamageName } : null;
-        
-        const isForce = d.isForce === 'true';
+
+        const isForce = Validation.parseBoolean(d.isForce);
         const forceAttackerId = d.forceAttackerId;
         const forcePsyRating = parseInt(d.forcePsyRating) || 0;
         const forceWeaponData = isForce ? { attackerId: forceAttackerId, psyRating: forcePsyRating } : null;
-        
+
         const magnitudeBonusDamage = parseInt(d.magnitudeBonusDamage) || 0;
-        const ignoresNaturalArmour = d.ignoresNaturalArmour === 'true';
+        const ignoresNaturalArmour = Validation.parseBoolean(d.ignoresNaturalArmour);
         const criticalDamageBonus = parseInt(d.criticalDamageBonus) || 0;
-        
+
         const sceneId = d.sceneId;
         const tokenId = d.tokenId;
         const tokenInfo = (sceneId && tokenId) ? { sceneId, tokenId } : null;
-        
+
         const targetActor = resolveActor(button);
-        if (!targetActor) {
-            ui.notifications.warn('Target actor not found!');
-            return;
-        }
-        
+        Validation.requireDocument(targetActor, 'Target Actor', 'Apply Damage');
+
         await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour, criticalDamageBonus });
 
         const weaponQualitiesRaw = d.weaponQualities;
-        const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? JSON.parse(weaponQualitiesRaw) : weaponQualitiesRaw) : [];
+        const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? Validation.parseJSON(weaponQualitiesRaw, 'Weapon Qualities') : weaponQualitiesRaw) : [];
         if (targetActor.type === 'character' && CohesionHelper.shouldTriggerCohesionDamage(damage, weaponQualities)) {
             await CohesionHelper.handleCohesionDamage(`${targetActor.name} took ${damage} raw damage from a qualifying weapon.`);
         }
-    }));
+    }, 'Apply Damage')));
     
-    html.querySelectorAll('.shocking-test-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    html.querySelectorAll('.shocking-test-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
-        const armorValue = parseInt(button.dataset.armorValue);
-        const stunRounds = parseInt(button.dataset.stunRounds);
-        
+        const armorValue = Validation.requireInt(button.dataset.armorValue, 'Armor Value');
+        const stunRounds = Validation.requireInt(button.dataset.stunRounds, 'Stun Rounds');
+
         const actor = resolveActor(button, 'actorId');
-        if (!actor) {
-            ui.notifications.warn('Actor not found!');
-            return;
-        }
-        
+        Validation.requireDocument(actor, 'Actor', 'Shocking Test');
+
         const tg = actor.system.characteristics?.tg?.value || 0;
         const armorBonus = armorValue * 10;
         const targetNumber = tg + armorBonus;
-        
+
         const roll = await new Roll('1d100').evaluate();
         const success = roll.total <= targetNumber;
-        
+
         let flavor = `<strong>Shocking Toughness Test</strong><br>Target: ${targetNumber} (TG ${tg} + ${armorBonus} armor bonus)<br>`;
         if (success) {
             flavor += '<strong style="color: green;">SUCCESS - Not Stunned</strong>';
         } else {
             flavor += `<strong style="color: red;">FAILED - Stunned for ${stunRounds} rounds!</strong>`;
         }
-        
+
         await roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
-    }));
+    }, 'Shocking Test')));
     
-    html.querySelectorAll('.toxic-test-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    html.querySelectorAll('.toxic-test-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
-        const penalty = parseInt(button.dataset.penalty);
-        
+        const penalty = Validation.requireInt(button.dataset.penalty, 'Penalty');
+
         const actor = resolveActor(button, 'actorId');
-        if (!actor) {
-            ui.notifications.warn('Actor not found!');
-            return;
-        }
-        
+        Validation.requireDocument(actor, 'Actor', 'Toxic Test');
+
         const tg = actor.system.characteristics?.tg?.value || 0;
         const targetNumber = tg - penalty;
-        
+
         const roll = await new Roll('1d100').evaluate();
         const success = roll.total <= targetNumber;
-        
+
         let flavor = `<strong>Toxic Toughness Test</strong><br>Target: ${targetNumber} (TG ${tg} - ${penalty} penalty)<br>`;
         if (success) {
             flavor += '<strong style="color: green;">SUCCESS - No Additional Damage</strong>';
@@ -476,33 +472,37 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
             const toxicRoll = await new Roll('1d10').evaluate();
             const toxicDamage = toxicRoll.total;
             flavor += `<strong style="color: red;">FAILED - Takes ${toxicDamage} Impact Damage (ignores armor & TB)</strong>`;
-            
+
             const currentWounds = actor.system.wounds.value || 0;
             await actor.update({ 'system.wounds.value': currentWounds + toxicDamage });
-            
+
             await toxicRoll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
                 flavor: '<strong>Toxic Damage</strong>',
                 rollMode: game.settings.get('core', 'rollMode')
             });
         }
-        
+
         await roll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
-    }));
-    
-    html.querySelectorAll('.char-damage-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    }, 'Toxic Test')));
+
+    html.querySelectorAll('.char-damage-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const formula = button.dataset.formula;
         const characteristic = button.dataset.characteristic;
-        
+
         const actor = resolveActor(button, 'actorId');
-        if (!actor) {
-            ui.notifications.warn('Actor not found!');
-            return;
+        Validation.requireDocument(actor, 'Actor', 'Characteristic Damage');
+
+        if (!formula) {
+            throw new Error('Damage formula not provided');
+        }
+        if (!characteristic) {
+            throw new Error('Characteristic not provided');
         }
         
         const roll = await new Roll(formula).evaluate();
@@ -521,19 +521,16 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
             flavor,
             rollMode: game.settings.get('core', 'rollMode')
         });
-    }));
+    }, 'Characteristic Damage')));
     
-    html.querySelectorAll('.force-channel-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    html.querySelectorAll('.force-channel-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const attackerId = button.dataset.attackerId;
-        const psyRating = parseInt(button.dataset.psyRating) || 0;
-        
-        const attacker = game.actors.get(attackerId);
+        const psyRating = Validation.requireInt(button.dataset.psyRating, 'Psy Rating');
+
+        const attacker = Validation.requireActor(attackerId, 'Force Channel');
         const target = resolveActor(button);
-        if (!attacker || !target) {
-            ui.notifications.warn('Attacker or target actor not found!');
-            return;
-        }
+        Validation.requireDocument(target, 'Target Actor', 'Force Channel');
         const targetId = button.dataset.targetId;
         
         const attackerWP = attacker.system.characteristics?.wil?.value || 0;
@@ -584,30 +581,23 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
                 rollMode: game.settings.get('core', 'rollMode')
             });
         }
-    }));
-    
-    html.querySelectorAll('.roll-critical-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    }, 'Force Channel')));
+
+    html.querySelectorAll('.roll-critical-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const location = button.dataset.location;
         const damageType = button.dataset.damageType;
-        
-        const actor = resolveActor(button, 'actorId');
-        if (!actor) {
-            ui.notifications.warn('Actor not found!');
-            return;
-        }
-        
-        await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
-    }));
 
-    html.querySelectorAll('.cohesion-rally-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+        const actor = resolveActor(button, 'actorId');
+        Validation.requireDocument(actor, 'Actor', 'Roll Critical');
+
+        await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
+    }, 'Roll Critical')));
+
+    html.querySelectorAll('.cohesion-rally-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const leaderId = button.dataset.leaderId;
-        const leader = leaderId ? game.actors.get(leaderId) : null;
-        if (!leader) {
-            ui.notifications.warn('Squad leader not found!');
-            return;
-        }
+        const leader = Validation.requireActor(leaderId, 'Rally Test');
 
         const commandTotal = leader.system.skills?.command?.total || 0;
         const fsValue = leader.system.characteristics?.fs?.value || 0;
@@ -629,23 +619,20 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
                 flavor: `<strong>\u26A0 Rally Failed!</strong><br>${leader.name} fails to rally! (Rolled ${roll.total} vs ${targetNumber})<br>Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}`
             });
         }
-    }));
+    }, 'Rally Test')));
 
-    html.querySelectorAll('.cohesion-damage-accept-btn').forEach(btn => btn.addEventListener('click', async () => {
+    html.querySelectorAll('.cohesion-damage-accept-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async () => {
         await CohesionHelper.applyCohesionDamage(1);
         const cohesion = game.settings.get('deathwatch', 'cohesion');
         await ChatMessage.create({
             content: `<div class="cohesion-chat"><strong>\u26A0 Cohesion Lost</strong> \u2014 Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}</div>`
         });
-    }));
+    }, 'Accept Cohesion Damage')));
 
-    html.querySelectorAll('.extinguish-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    html.querySelectorAll('.extinguish-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const actor = resolveActor(button, 'actorId');
-        if (!actor) {
-            ui.notifications.warn('Actor not found!');
-            return;
-        }
+        Validation.requireDocument(actor, 'Actor', 'Extinguish Test');
 
         const ag = actor.system.characteristics?.ag?.value || 0;
         const content = `
@@ -685,14 +672,14 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
                 { label: 'Cancel', action: 'cancel' }
             ]
         });
-    }));
+    }, 'Extinguish Test')));
 
-    html.querySelectorAll('.psychic-oppose-btn').forEach(btn => btn.addEventListener('click', async (ev) => {
+    html.querySelectorAll('.psychic-oppose-btn').forEach(btn => btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
         const button = ev.currentTarget;
         const powerName = button.dataset.powerName;
-        const psykerDoS = parseInt(button.dataset.psykerDos) || 0;
+        const psykerDoS = Validation.requireInt(button.dataset.psykerDos, 'Psyker DoS');
         const targetName = button.dataset.targetName || 'Target';
-        const targetWP = parseInt(button.dataset.targetWp) || 0;
+        const targetWP = Validation.requireInt(button.dataset.targetWp, 'Target WP');
         const targetId = button.dataset.targetId;
         const sceneId = button.dataset.sceneId;
         const tokenId = button.dataset.tokenId;
@@ -758,5 +745,5 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
                 { label: "Cancel", action: "cancel" }
             ]
         });
-    }));
+    }, 'Psychic Oppose Test')));
 });

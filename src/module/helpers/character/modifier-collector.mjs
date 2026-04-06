@@ -1,7 +1,24 @@
 import { debug } from "../debug.mjs";
 import { CHARACTERISTIC_CONSTANTS } from '../constants.mjs';
 
+/**
+ * Collects and applies modifiers from various sources to actor characteristics, skills, and attributes.
+ * Central hub for the modifier system that aggregates modifiers from items, talents, traits, chapters,
+ * active effects, and armor histories, then applies them to derived data during actor preparation.
+ *
+ * @example
+ * // Collect all modifiers from an actor
+ * const mods = ModifierCollector.collectAllModifiers(actor);
+ *
+ * // Apply them to characteristics
+ * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, mods);
+ */
 export class ModifierCollector {
+  /**
+   * Collect all modifiers from an actor: actor-level modifiers, item modifiers, and active effects.
+   * @param {Actor} actor - Actor document
+   * @returns {Array<Object>} Array of modifier objects with effectType, valueAffected, modifier, source
+   */
   static collectAllModifiers(actor) {
     const actorModifiers = actor.system.modifiers || [];
     const itemModifiers = this.collectItemModifiers(actor.items);
@@ -9,6 +26,12 @@ export class ModifierCollector {
     return [...actorModifiers, ...itemModifiers, ...effectModifiers];
   }
 
+  /**
+   * Collect modifiers from active status effects.
+   * Converts Foundry ActiveEffect changes to modifier format.
+   * @param {Actor} actor - Actor document
+   * @returns {Array<Object>} Array of modifier objects from active effects
+   */
   static collectActiveEffectModifiers(actor) {
     const modifiers = [];
     
@@ -35,6 +58,12 @@ export class ModifierCollector {
     return modifiers;
   }
 
+  /**
+   * Collect modifiers from all equipped items, talents, traits, and chapters.
+   * Includes modifiers from attached armor histories.
+   * @param {Map|Array} items - Actor items collection
+   * @returns {Array<Object>} Array of modifier objects from items
+   */
   static collectItemModifiers(items) {
     const modifiers = [];
     
@@ -68,6 +97,12 @@ export class ModifierCollector {
     return modifiers;
   }
 
+  /**
+   * Collect modifiers from armor history items attached to armor.
+   * @param {Item} armor - Armor item with attachedHistories
+   * @param {Map|Array} allItems - All items to look up history IDs
+   * @returns {Array<Object>} Array of modifier objects from armor histories
+   */
   static collectArmorHistoryModifiers(armor, allItems) {
     const modifiers = [];
     
@@ -94,6 +129,12 @@ export class ModifierCollector {
     return modifiers;
   }
 
+  /**
+   * Collect modifiers from weapon upgrades attached to a weapon.
+   * @param {Item} weapon - Weapon item with attachedUpgrades
+   * @param {Map|Array} allItems - All items to look up upgrade IDs
+   * @returns {Array<Object>} Array of modifier objects from weapon upgrades
+   */
   static collectWeaponUpgradeModifiers(weapon, allItems) {
     const modifiers = [];
     
@@ -121,6 +162,15 @@ export class ModifierCollector {
     return modifiers;
   }
 
+  /**
+   * Apply characteristic modifiers to actor characteristics.
+   * Handles characteristic advances, standard modifiers, post-multiplier modifiers,
+   * Unnatural Characteristic multipliers, and characteristic damage.
+   * @param {Object} characteristics - Actor characteristics object (ws, bs, str, etc.)
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   * @example
+   * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, modifiers);
+   */
   static applyCharacteristicModifiers(characteristics, modifiers) {
     for (const [key, characteristic] of Object.entries(characteristics)) {
       if (characteristic.base === undefined) {
@@ -238,6 +288,12 @@ export class ModifierCollector {
     }
   }
 
+  /**
+   * Apply skill modifiers to actor skills.
+   * Computes modifierTotal for each skill from all skill-type modifiers.
+   * @param {Object} skills - Actor skills object
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applySkillModifiers(skills, modifiers) {
     for (const [key, skill] of Object.entries(skills)) {
       let total = 0;
@@ -252,6 +308,11 @@ export class ModifierCollector {
     }
   }
 
+  /**
+   * Calculate total initiative bonus from modifiers.
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   * @returns {number} Total initiative bonus
+   */
   static applyInitiativeModifiers(modifiers) {
     let total = 0;
     
@@ -264,6 +325,12 @@ export class ModifierCollector {
     return total;
   }
 
+  /**
+   * Apply wound modifiers to actor wounds.
+   * Computes max wounds from base + modifiers.
+   * @param {Object} wounds - Actor wounds object (value, max, base)
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applyWoundModifiers(wounds, modifiers) {
     if (!wounds) return;
     
@@ -286,6 +353,12 @@ export class ModifierCollector {
     wounds.modifiers = appliedMods;
   }
 
+  /**
+   * Apply fatigue modifiers based on toughness bonus.
+   * Max fatigue = TB. Unconscious if fatigue > TB. Penalty = -10 if fatigued.
+   * @param {Object} fatigue - Actor fatigue object (value, max, unconscious, penalty)
+   * @param {number} toughnessBonus - Actor's toughness bonus
+   */
   static applyFatigueModifiers(fatigue, toughnessBonus) {
     if (!fatigue) return;
     
@@ -294,6 +367,12 @@ export class ModifierCollector {
     fatigue.penalty = fatigue.value > 0 ? -10 : 0;
   }
 
+  /**
+   * Apply Psy Rating modifiers to actor psychic power.
+   * Computes effective Psy Rating from base + modifiers.
+   * @param {Object} psyRating - Actor psyRating object (value, base, modifiers)
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applyPsyRatingModifiers(psyRating, modifiers) {
     if (!psyRating) return;
 
@@ -312,6 +391,13 @@ export class ModifierCollector {
     psyRating.modifiers = appliedMods;
   }
 
+  /**
+   * Apply movement modifiers to actor movement rates.
+   * Handles movement multipliers (e.g., Unnatural Speed) and movement restrictions (e.g., Terminator Armor).
+   * @param {Object} movement - Actor movement object (half, full, charge, run)
+   * @param {number} agBonus - Actor's Agility bonus
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applyMovementModifiers(movement, agBonus, modifiers) {
     if (!movement) return;
 
@@ -357,6 +443,12 @@ export class ModifierCollector {
     }
   }
 
+  /**
+   * Apply armor modifiers to equipped armor items.
+   * Increases armor values for all locations (head, body, arms, legs).
+   * @param {Map|Array} items - Actor items collection
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applyArmorModifiers(items, modifiers) {
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
     

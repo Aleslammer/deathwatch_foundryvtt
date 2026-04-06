@@ -9,6 +9,19 @@ import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
 import { debug } from "../debug.mjs";
 import { HordeCombatHelper } from "./horde-combat.mjs";
 
+/**
+ * Main combat helper providing attack resolution, damage application, and combat utilities.
+ * Handles both ranged and melee combat for all actor types (Character, Enemy, Horde).
+ *
+ * @example
+ * // Apply damage to an actor
+ * await CombatHelper.applyDamage(target, {
+ *   damage: 15,
+ *   penetration: 4,
+ *   location: 'Body',
+ *   damageType: 'Impact'
+ * });
+ */
 export class CombatHelper {
   static lastAttackRoll = null;
   static lastAttackTarget = null;
@@ -18,6 +31,16 @@ export class CombatHelper {
   static lastAttackDistance = null;
   static lastCalledShotLocation = null;
 
+  /**
+   * Calculate range modifier and band label for a ranged attack.
+   * Based on Deathwatch Core Rulebook p. 245.
+   * @param {number} distance - Distance to target in meters
+   * @param {number} weaponRange - Weapon's maximum range in meters
+   * @returns {{modifier: number, label: string}} Range modifier (+30 to -30) and band label
+   * @example
+   * const result = CombatHelper.calculateRangeModifier(15, 30);
+   * // Returns: { modifier: +10, label: "Short" }
+   */
   static calculateRangeModifier(distance, weaponRange) {
     debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
     if (distance <= 2) {
@@ -33,6 +56,12 @@ export class CombatHelper {
     }
   }
 
+  /**
+   * Get distance between two tokens in meters.
+   * @param {Token} token1 - First token
+   * @param {Token} token2 - Second token
+   * @returns {number|null} Distance in meters, or null if tokens are on different scenes
+   */
   static getTokenDistance(token1, token2) {
     if (!token1 || !token2) return null;
     if (token1.scene.id !== token2.scene.id) return null;
@@ -40,7 +69,13 @@ export class CombatHelper {
     const distance = CanvasHelper.measureDistance(token1, token2);
     return distance;
   }
-  
+
+  /**
+   * Clear a jammed weapon. Requires a BS test (Deathwatch Core p. 257).
+   * On success, weapon is cleared but needs reloading.
+   * @param {Actor} actor - Actor clearing the jam
+   * @param {Item} weapon - Jammed weapon item
+   */
   static async clearJam(actor, weapon) {
     if (!weapon.system.jammed) {
       FoundryAdapter.showNotification('info', `${weapon.name} is not jammed.`);
@@ -75,9 +110,12 @@ export class CombatHelper {
   }
 
   /**
-   * Determine the attack type for a weapon.
+   * Determine the attack type for a weapon based on class and qualities.
    * @param {Object} weapon - Weapon item
    * @returns {Promise<string>} 'melee', 'flame', or 'ranged'
+   * @example
+   * const type = await CombatHelper.getWeaponAttackType(boltgun);
+   * // Returns: 'ranged'
    */
   static async getWeaponAttackType(weapon) {
     if (weapon.system.class?.toLowerCase().includes('melee')) return 'melee';
@@ -85,6 +123,15 @@ export class CombatHelper {
     return 'ranged';
   }
 
+  /**
+   * Open the appropriate attack dialog based on weapon type.
+   * Delegates to RangedCombatHelper, MeleeCombatHelper, or flame weapon handling.
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Weapon item
+   * @param {Object} [options={}] - Optional preset attack parameters (aim, rof, etc.)
+   * @example
+   * await CombatHelper.weaponAttackDialog(actor, boltgun, { rateOfFire: 'full', aim: 1 });
+   */
   /* istanbul ignore next */
   static async weaponAttackDialog(actor, weapon, options = {}) {
     const attackType = await this.getWeaponAttackType(weapon);
@@ -115,6 +162,15 @@ export class CombatHelper {
     await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
   }
 
+  /**
+   * Determine hit location from reversed d100 attack roll (Deathwatch Core p. 243).
+   * Attack roll digits are reversed: roll of 42 → 24 → Body.
+   * @param {number} attackRoll - The d100 attack roll (1-100)
+   * @returns {string} Hit location: "Head", "Body", "Right Arm", "Left Arm", "Right Leg", or "Left Leg"
+   * @example
+   * const location = CombatHelper.determineHitLocation(42);
+   * // Roll 42 → reversed to 24 → "Left Arm"
+   */
   static determineHitLocation(attackRoll) {
     const normalizedRoll = attackRoll === 100 ? 0 : attackRoll;
     const paddedRoll = normalizedRoll.toString().padStart(2, '0');
@@ -127,6 +183,14 @@ export class CombatHelper {
     return "Left Leg";
   }
 
+  /**
+   * Determine multiple hit locations for multi-hit attacks (Full Auto, etc.).
+   * Uses hit pattern from first location: hits spread to adjacent body parts.
+   * @param {string} firstLocation - Initial hit location
+   * @param {number} totalHits - Total number of hits
+   * @returns {string[]} Array of hit locations for each hit
+   * @see {@link determineHitLocation} for single hit determination
+   */
   static determineMultipleHitLocations(firstLocation, totalHits) {
     if (totalHits <= 1) return [firstLocation];
 
@@ -161,28 +225,69 @@ export class CombatHelper {
     return locations;
   }
 
+  /**
+   * Get armor value for a specific location.
+   * Delegates to actor's DataModel for polymorphic handling.
+   * @param {Actor} actor - Actor document
+   * @param {string} location - Hit location ("Head", "Body", etc.)
+   * @returns {number} Armor points for that location
+   */
   static getArmorValue(actor, location) {
     return actor.system.getArmorValue(location);
   }
 
+  /**
+   * Get all defensive values for a target actor at a specific location.
+   * @param {Actor} targetActor - Target actor
+   * @param {string} location - Hit location
+   * @returns {Object} Defense data (armor, naturalArmor, toughnessBonus)
+   * @private
+   */
   static _getTargetDefenses(targetActor, location) {
     return targetActor.system.getDefenses(location);
   }
 
-
+  /**
+   * Apply damage to a target actor.
+   * Delegates to actor's DataModel for polymorphic damage handling.
+   * @param {Actor} targetActor - Target actor
+   * @param {Object} options - Damage data (damage, penetration, location, damageType, etc.)
+   * @returns {Promise<Object>} Result object with wounds dealt, critical damage, etc.
+   * @example
+   * await CombatHelper.applyDamage(target, {
+   *   damage: 15,
+   *   penetration: 4,
+   *   location: 'Body',
+   *   damageType: 'Impact'
+   * });
+   */
   static async applyDamage(targetActor, options) {
     return targetActor.system.receiveDamage(options);
   }
 
+  /**
+   * Check if a damage roll contains a natural 10 (for Righteous Fury).
+   * @param {Roll} roll - Foundry Roll object
+   * @returns {boolean} True if any d10 in the roll rolled a natural 10
+   * @see {@link RighteousFuryHelper.hasNaturalTen}
+   */
   static hasNaturalTen(roll) {
     return RighteousFuryHelper.hasNaturalTen(roll, 10);
   }
 
+  /**
+   * Get Righteous Fury threshold from loaded ammo modifiers.
+   * Some ammo types (e.g., Hellfire Rounds) lower the threshold from 10 to 9.
+   * @param {Item} weapon - Weapon item
+   * @param {Actor} actor - Actor with the weapon
+   * @returns {number} Fury threshold (default: 10)
+   * @private
+   */
   static _getFuryThreshold(weapon, actor) {
     if (!weapon.system.loadedAmmo || !actor) return 10;
     const ammo = actor.items.get(weapon.system.loadedAmmo);
     if (!ammo || !Array.isArray(ammo.system.modifiers)) return 10;
-    
+
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false && mod.effectType === 'righteous-fury-threshold') {
         return parseInt(mod.modifier) || 10;
@@ -191,11 +296,19 @@ export class CombatHelper {
     return 10;
   }
 
+  /**
+   * Get bonus damage against hordes from loaded ammo modifiers.
+   * Some ammo types deal extra damage to magnitude-based targets.
+   * @param {Item} weapon - Weapon item
+   * @param {Actor} actor - Actor with the weapon
+   * @returns {number} Bonus damage (default: 0)
+   * @private
+   */
   static _getMagnitudeBonusDamage(weapon, actor) {
     if (!weapon.system.loadedAmmo || !actor) return 0;
     const ammo = actor.items.get(weapon.system.loadedAmmo);
     if (!ammo || !Array.isArray(ammo.system.modifiers)) return 0;
-    
+
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false && mod.effectType === 'magnitude-bonus-damage') {
         return parseInt(mod.modifier) || 0;
@@ -204,11 +317,19 @@ export class CombatHelper {
     return 0;
   }
 
+  /**
+   * Get characteristic damage effect from loaded ammo modifiers.
+   * Some ammo types (e.g., Toxin rounds) deal characteristic damage.
+   * @param {Item} weapon - Weapon item
+   * @param {Actor} actor - Actor with the weapon
+   * @returns {Object|null} Characteristic damage data or null
+   * @private
+   */
   static _getCharacteristicDamageEffect(weapon, actor) {
     if (!weapon.system.loadedAmmo || !actor) return null;
     const ammo = actor.items.get(weapon.system.loadedAmmo);
     if (!ammo || !Array.isArray(ammo.system.modifiers)) return null;
-    
+
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false && mod.effectType === 'characteristic-damage') {
         return {
@@ -221,11 +342,19 @@ export class CombatHelper {
     return null;
   }
 
+  /**
+   * Check if loaded ammo ignores natural armor.
+   * Some ammo types bypass natural armor (e.g., Kraken rounds).
+   * @param {Item} weapon - Weapon item
+   * @param {Actor} actor - Actor with the weapon
+   * @returns {boolean} True if ammo ignores natural armor
+   * @private
+   */
   static _getIgnoresNaturalArmour(weapon, actor) {
     if (!weapon.system.loadedAmmo || !actor) return false;
     const ammo = actor.items.get(weapon.system.loadedAmmo);
     if (!ammo || !Array.isArray(ammo.system.modifiers)) return false;
-    
+
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false && mod.effectType === 'ignores-natural-armour') {
         return true;
@@ -285,10 +414,29 @@ export class CombatHelper {
     return bonus;
   }
 
+  /**
+   * Roll Righteous Fury confirmation and critical damage.
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Weapon used
+   * @param {number} targetNumber - Target number for confirmation roll
+   * @param {string} hitLocation - Hit location for critical damage
+   * @returns {Promise<Object>} Fury result with damage and critical effects
+   * @see {@link RighteousFuryHelper.rollConfirmation}
+   */
   static async rollRighteousFury(actor, weapon, targetNumber, hitLocation) {
     return RighteousFuryHelper.rollConfirmation(actor, targetNumber, hitLocation);
   }
 
+  /**
+   * Open weapon damage dialog and roll damage for one or more hits.
+   * Handles single/multi-hit damage, weapon qualities, Righteous Fury, and horde targets.
+   * Pre-loads attack roll data from lastAttackRoll/lastAttackTarget state.
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Weapon item
+   * @example
+   * // After an attack roll, roll damage
+   * await CombatHelper.weaponDamageRoll(actor, boltgun);
+   */
   /* istanbul ignore next */
   static async weaponDamageRoll(actor, weapon) {
     const dmg = weapon.system.effectiveDamage || weapon.system.dmg;
