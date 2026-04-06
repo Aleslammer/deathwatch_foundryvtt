@@ -211,14 +211,14 @@ describe('DeathwatchItemSheet', () => {
   });
 
   describe('_onWeaponAttack', () => {
-    it('warns if weapon has no actor', async () => {
+    it('shows error if weapon has no actor', async () => {
       const event = { preventDefault: jest.fn() };
       mockItem.actor = null;
 
       await mockSheet._onWeaponAttack(event);
 
-      expect(global.ui.notifications.warn).toHaveBeenCalledWith(
-        'This weapon must be owned by an actor to roll attacks.'
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        'Weapon Attack failed: Actor not found for Weapon Attack'
       );
     });
 
@@ -248,26 +248,26 @@ describe('DeathwatchItemSheet', () => {
   });
 
   describe('_onWeaponDamage', () => {
-    it('warns if weapon has no actor', async () => {
+    it('shows error if weapon has no actor', async () => {
       const event = { preventDefault: jest.fn() };
       mockItem.actor = null;
 
       await mockSheet._onWeaponDamage(event);
 
-      expect(global.ui.notifications.warn).toHaveBeenCalledWith(
-        'This weapon must be owned by an actor to roll damage.'
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        'Weapon Damage failed: Actor not found for Weapon Damage'
       );
     });
 
-    it('warns if weapon has no damage value', async () => {
+    it('shows error if weapon has no damage value', async () => {
       const event = { preventDefault: jest.fn() };
       mockItem.actor = { system: {} };
       mockItem.system.dmg = null;
 
       await mockSheet._onWeaponDamage(event);
 
-      expect(global.ui.notifications.warn).toHaveBeenCalledWith(
-        'This weapon has no damage value.'
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        'Weapon Damage failed: This weapon has no damage value'
       );
     });
 

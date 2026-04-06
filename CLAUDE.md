@@ -21,7 +21,7 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 
 ### Testing
 ```bash
-npm test                    # Run all tests (1567 tests across 95 suites)
+npm test                    # Run all tests (1633 tests across 98 suites)
 npm run test:watch          # Watch mode
 npm run test:coverage       # Generate coverage report at coverage/lcov-report/index.html
 
@@ -170,6 +170,252 @@ Toggle in Foundry: **Game Settings → System Settings → Use ApplicationV2 She
 
 ---
 
+## Error Handling
+
+The system uses comprehensive error handling to prevent silent failures and provide user-friendly error messages.
+
+### Error Handler Utility
+
+**Location**: `src/module/helpers/error-handler.mjs`
+
+The `ErrorHandler` class provides two key methods:
+
+#### `ErrorHandler.wrap(handler, context)`
+
+Wraps async event handlers with error boundaries. Catches errors, logs them to console, and shows user notifications.
+
+**Usage in sheets** (actor-sheet.mjs, item-sheet.mjs):
+```javascript
+import { ErrorHandler } from '../helpers/error-handler.mjs';
+
+// Wrap jQuery event handlers
+html.find('.weapon-attack-btn').click(ErrorHandler.wrap(async (ev) => {
+  const itemId = $(ev.currentTarget).data('itemId');
+  const weapon = Validation.requireDocument(this.actor.items.get(itemId), 'Weapon', 'Attack');
+  await CombatHelper.weaponAttackDialog(this.actor, weapon);
+}, 'Weapon Attack'));
+
+// Wrap native event listeners
+button.addEventListener('click', ErrorHandler.wrap(async (event) => {
+  // Your async logic here
+}, 'Button Action'));
+```
+
+**Usage in main hooks** (deathwatch.mjs):
+```javascript
+Hooks.on('renderChatMessageHTML', (message, html) => {
+  html.querySelectorAll('.apply-damage-btn').forEach(btn => {
+    btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
+      // Validate inputs
+      const damage = Validation.requireInt(ev.currentTarget.dataset.damage, 'Damage');
+      const targetActor = resolveActor(ev.currentTarget);
+      Validation.requireDocument(targetActor, 'Target Actor', 'Apply Damage');
+      
+      // Execute logic
+      await CombatHelper.applyDamage(targetActor, { damage, ... });
+    }, 'Apply Damage'));
+  });
+});
+```
+
+#### `ErrorHandler.safe(promise, fallback)`
+
+Wraps promises with fallback values for non-critical operations:
+
+```javascript
+// Returns fallback if promise fails
+const config = await ErrorHandler.safe(fetchConfig(), { default: true });
+
+// Returns null by default
+const optionalData = await ErrorHandler.safe(loadOptionalData());
+```
+
+### Validation Utility
+
+**Location**: `src/module/helpers/validation.mjs`
+
+The `Validation` class provides input validation helpers that throw descriptive errors:
+
+#### `Validation.requireInt(value, fieldName)`
+
+Parses and validates integer values from dataset attributes or inputs:
+
+```javascript
+const damage = Validation.requireInt(button.dataset.damage, 'Damage');
+// Throws: "Damage must be a valid integer (got: abc)" if invalid
+```
+
+#### `Validation.requireActor(actorId, context)`
+
+Validates actor existence and returns the actor:
+
+```javascript
+const actor = Validation.requireActor(button.dataset.actorId, 'Apply Damage');
+// Throws: "Actor not found for Apply Damage: abc123" if not found
+```
+
+#### `Validation.requireDocument(document, documentType, context)`
+
+Validates any document (actor, item, etc.) exists:
+
+```javascript
+const item = Validation.requireDocument(actor.items.get(itemId), 'Weapon', 'Attack');
+// Throws: "Weapon not found for Attack" if null/undefined
+```
+
+#### `Validation.parseBoolean(value)`
+
+Parses boolean values from strings or booleans:
+
+```javascript
+const isShocking = Validation.parseBoolean(button.dataset.isShocking);
+// "true" → true, "false" → false, other → false
+```
+
+#### `Validation.parseJSON(jsonString, fieldName)`
+
+Parses JSON with error handling:
+
+```javascript
+const qualities = Validation.parseJSON(button.dataset.weaponQualities, 'Weapon Qualities');
+// Throws: "Invalid JSON for Weapon Qualities: ..." if invalid
+```
+
+### Error Handling Patterns
+
+#### Sheet Event Listeners
+
+**ALWAYS wrap sheet event listeners** with `ErrorHandler.wrap()`:
+
+```javascript
+// ✅ CORRECT
+html.find('.item-delete').click(ErrorHandler.wrap(async (ev) => {
+  const itemId = $(ev.currentTarget).data('itemId');
+  const item = Validation.requireDocument(this.actor.items.get(itemId), 'Item', 'Delete');
+  await item.delete();
+}, 'Delete Item'));
+
+// ❌ WRONG - No error handling
+html.find('.item-delete').click(async (ev) => {
+  const item = this.actor.items.get($(ev.currentTarget).data('itemId'));
+  await item.delete(); // Can throw unhandled error
+});
+```
+
+#### Sheet Class Methods
+
+For sheet class methods (not jQuery handlers), use try-catch blocks:
+
+```javascript
+async _onItemCreate(event) {
+  try {
+    event.preventDefault();
+    const type = event.currentTarget.dataset.type;
+    if (!type) throw new Error('Item type not provided');
+    
+    const itemData = { name: `New ${type}`, type, system: {} };
+    await Item.create(itemData, { parent: this.actor });
+  } catch (error) {
+    console.error('[Deathwatch] Create Item failed:', error);
+    ui.notifications.error(`Create Item failed: ${error.message}`);
+  }
+}
+```
+
+#### Input Validation
+
+**ALWAYS validate user inputs** before processing:
+
+```javascript
+// ✅ CORRECT - Validate all inputs
+const damage = Validation.requireInt(dataset.damage, 'Damage');
+const penetration = Validation.requireInt(dataset.penetration, 'Penetration');
+const targetActor = resolveActor(button);
+Validation.requireDocument(targetActor, 'Target Actor', 'Apply Damage');
+
+// ❌ WRONG - No validation
+const damage = parseInt(dataset.damage); // Can be NaN
+const targetActor = game.actors.get(dataset.actorId); // Can be null
+await CombatHelper.applyDamage(targetActor, { damage }); // Will crash if null/NaN
+```
+
+#### Pure Helper Functions
+
+Combat helpers and other pure functions **do not need try-catch blocks** because:
+1. They are pure logic functions that don't interact with UI
+2. Errors are caught at the caller level (event handlers)
+3. They are thoroughly unit tested
+
+```javascript
+// ✅ CORRECT - No try-catch needed
+export class CombatHelper {
+  static calculateRangeModifier(distance, weaponRange) {
+    // Pure calculation - errors caught by caller
+    if (distance <= 2) return { modifier: 30, label: "Point Blank" };
+    // ...
+  }
+}
+```
+
+### Testing Error Handling
+
+Tests should verify error handling works correctly:
+
+```javascript
+describe('ErrorHandler', () => {
+  it('should catch errors and show notification', async () => {
+    const error = new Error('Test error');
+    const handler = jest.fn(async () => { throw error; });
+    const wrapped = ErrorHandler.wrap(handler, 'Test Operation');
+    
+    global.ui = { notifications: { error: jest.fn() } };
+    jest.spyOn(console, 'error').mockImplementation();
+    
+    await wrapped();
+    
+    expect(console.error).toHaveBeenCalledWith('[Deathwatch] Test Operation failed:', error);
+    expect(ui.notifications.error).toHaveBeenCalledWith('Test Operation failed: Test error');
+  });
+});
+
+describe('Sheet tests', () => {
+  it('shows error if weapon has no actor', async () => {
+    const event = { preventDefault: jest.fn() };
+    mockItem.actor = null;
+    
+    await mockSheet._onWeaponAttack(event);
+    
+    expect(ui.notifications.error).toHaveBeenCalledWith(
+      'Weapon Attack failed: Actor not found for Weapon Attack'
+    );
+  });
+});
+```
+
+### When to Use Error Handling
+
+**ALWAYS use error handling for**:
+- ✅ All sheet event listeners (click, change, drop handlers)
+- ✅ All chat message button handlers
+- ✅ All async operations that can fail (document updates, rolls, API calls)
+- ✅ All user input parsing and validation
+
+**NO error handling needed for**:
+- ❌ Pure helper functions (handled by callers)
+- ❌ Synchronous getters/setters
+- ❌ Simple data transformations
+- ❌ FoundryAdapter methods (they handle their own errors)
+
+### Error Message Guidelines
+
+- **Be specific**: "Weapon not found for Attack" not "Item not found"
+- **Include context**: "Apply Damage failed: Actor not found" not just "Actor not found"
+- **Use field names**: "Damage must be a valid integer (got: abc)" not "Invalid input"
+- **Keep it user-friendly**: Avoid technical jargon in `ui.notifications.error()`
+- **Log full details**: `console.error()` gets the full Error object with stack trace
+
+---
+
 ## Testing Approach
 
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.
@@ -185,6 +431,8 @@ Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/set
 - `tests/combat/weapon-qualities.test.mjs` — All 24+ weapon qualities
 - `tests/character/modifier-collector.test.mjs` — Modifier collection
 - `tests/character/xp-calculator.test.mjs` — XP and rank computation
+- `tests/helpers/error-handler.test.mjs` — Error handling utilities
+- `tests/helpers/validation.test.mjs` — Input validation utilities
 
 **FoundryAdapter pattern**: All Foundry API calls (e.g., `game.settings.get`, `ChatMessage.create`) are routed through `foundry-adapter.mjs`, which is mocked in tests. This allows 100% unit testing without a running Foundry instance.
 
