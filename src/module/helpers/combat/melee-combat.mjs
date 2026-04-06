@@ -2,6 +2,7 @@ import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS, HIT_LOCATIONS } from 
 import { CombatHelper } from "./combat.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
+import { Sanitizer } from "../sanitizer.mjs";
 
 export class MeleeCombatHelper {
   /**
@@ -106,9 +107,10 @@ export class MeleeCombatHelper {
 
     const ws = actor.system.characteristics.ws.value || 0;
 
+    const safeWeaponName = Sanitizer.escape(weapon.name);
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
-        <img src="${weapon.img}" alt="${weapon.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+        <img src="${weapon.img}" alt="${safeWeaponName}" style="max-width: 100px; max-height: 100px; border: none;" />
       </div>
       <div class="form-group">
         <label>Aim:</label>
@@ -147,7 +149,7 @@ export class MeleeCombatHelper {
     `;
 
     foundry.applications.api.DialogV2.wait({
-      window: { title: `Melee Attack: ${weapon.name}` },
+      window: { title: `Melee Attack: ${safeWeaponName}` },
       position: { width: 325 },
       content: content,
       render: (event, dialog) => {

@@ -8,6 +8,7 @@ import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
 import { debug } from "../debug.mjs";
 import { HordeCombatHelper } from "./horde-combat.mjs";
+import { Sanitizer } from "../sanitizer.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -78,7 +79,8 @@ export class CombatHelper {
    */
   static async clearJam(actor, weapon) {
     if (!weapon.system.jammed) {
-      FoundryAdapter.showNotification('info', `${weapon.name} is not jammed.`);
+      const safeWeaponName = Sanitizer.escape(weapon.name);
+      FoundryAdapter.showNotification('info', `${safeWeaponName} is not jammed.`);
       return;
     }
 
@@ -99,9 +101,11 @@ export class CombatHelper {
         }
         await FoundryAdapter.updateDocument(weapon, { "system.loadedAmmo": null });
       }
-      FoundryAdapter.showNotification('info', `${weapon.name} jam cleared! Weapon needs reloading.`);
+      const safeWeaponName = Sanitizer.escape(weapon.name);
+      FoundryAdapter.showNotification('info', `${safeWeaponName} jam cleared! Weapon needs reloading.`);
     } else {
-      FoundryAdapter.showNotification('warn', `Failed to clear jam on ${weapon.name}.`);
+      const safeWeaponName = Sanitizer.escape(weapon.name);
+      FoundryAdapter.showNotification('warn', `Failed to clear jam on ${safeWeaponName}.`);
     }
 
     const flavor = CombatDialogHelper.buildClearJamFlavor(weapon.name, targetNumber, success);
@@ -156,7 +160,8 @@ export class CombatHelper {
     const range = weapon.system.effectiveRange || weapon.system.range || '—';
 
     const roll = await FoundryAdapter.evaluateRoll(dmg);
-    const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD25 ${weapon.name}</strong><br><strong>Range:</strong> ${range}m | <strong>Damage:</strong> ${roll.total} | <strong>Pen:</strong> ${penetration} | <strong>Type:</strong> ${dmgType}<br><em>No attack roll — all targets in 30° cone must test Agility to dodge. Use \uD83D\uDD25 Flame Attack macro to apply damage per target.</em>`;
+    const safeWeaponName = Sanitizer.escape(weapon.name);
+    const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD25 ${safeWeaponName}</strong><br><strong>Range:</strong> ${range}m | <strong>Damage:</strong> ${roll.total} | <strong>Pen:</strong> ${penetration} | <strong>Type:</strong> ${dmgType}<br><em>No attack roll — all targets in 30° cone must test Agility to dodge. Use \uD83D\uDD25 Flame Attack macro to apply damage per target.</em>`;
 
     const speaker = FoundryAdapter.getChatSpeaker(actor);
     await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
@@ -470,11 +475,12 @@ export class CombatHelper {
         <label>Modifier:</label>
         <input type="text" id="miscDamageModifier" name="miscDamageModifier" value="" placeholder="e.g., 5 or 1d10" />
       </div>
-      ${targetToken ? `<div class="form-group"><strong>Target:</strong> ${targetToken.actor.name}</div>` : ''}
+      ${targetToken ? `<div class="form-group"><strong>Target:</strong> ${Sanitizer.escape(targetToken.actor.name)}</div>` : ''}
     `;
 
+    const safeWeaponName = Sanitizer.escape(weapon.name);
     foundry.applications.api.DialogV2.wait({
-      window: { title: `Damage: ${weapon.name}` },
+      window: { title: `Damage: ${safeWeaponName}` },
       content: content,
       buttons: [
         {

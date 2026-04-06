@@ -1,4 +1,5 @@
 import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, SIZE_HIT_MODIFIERS } from "../constants.mjs";
+import { Sanitizer } from "../sanitizer.mjs";
 
 export class CombatDialogHelper {
 
@@ -151,10 +152,11 @@ export class CombatDialogHelper {
   }
 
   static buildAttackLabel(weaponName, targetNumber, hitsTotal, isJammed, isOverheated = false) {
+    const safeWeaponName = Sanitizer.escape(weaponName);
     let warnings = '';
     if (isJammed) warnings += '<br><strong style="color: red;">WEAPON JAMMED!</strong>';
     if (isOverheated) warnings += '<br><strong style="color: orange;">WEAPON OVERHEATED!</strong>';
-    return `[Attack] ${weaponName} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${warnings}`;
+    return `[Attack] ${safeWeaponName} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${warnings}`;
   }
 
   static buildAttackFlavor(label, modifierParts) {
@@ -164,22 +166,23 @@ export class CombatDialogHelper {
 
   static validateWeaponForAttack(weapon, actor) {
     const isHorde = actor.type === 'horde';
+    const safeWeaponName = Sanitizer.escape(weapon.name);
 
     if (!isHorde && weapon.system.jammed) {
-      return { valid: false, message: `${weapon.name} is jammed! Clear the jam before firing.` };
+      return { valid: false, message: `${safeWeaponName} is jammed! Clear the jam before firing.` };
     }
 
     if (!isHorde) {
       const clip = weapon.system.clip;
       const hasAmmoManagement = clip && clip !== '—' && clip !== '-' && clip !== '';
-      
+
       if (hasAmmoManagement) {
         if (!weapon.system.loadedAmmo) {
-          return { valid: false, message: `${weapon.name} has no ammunition loaded!` };
+          return { valid: false, message: `${safeWeaponName} has no ammunition loaded!` };
         }
         const loadedAmmo = actor.items.get(weapon.system.loadedAmmo);
         if (!loadedAmmo || loadedAmmo.system.capacity.value <= 0) {
-          return { valid: false, message: `${weapon.name} is out of ammunition!` };
+          return { valid: false, message: `${safeWeaponName} is out of ammunition!` };
         }
       }
     }
@@ -293,11 +296,17 @@ export class CombatDialogHelper {
   }
 
   static buildDamageMessage(targetName, woundsTaken, location, damage, armorValue, penetration, effectiveArmor, toughnessBonus, isCritical, criticalDamage, targetId, damageType, isShocking = false, isToxic = false, drainLifeMessage = '', charDamageEffect = null, forceWeaponData = null, tokenInfo = null, criticalDamageBonus = 0) {
-    const tokenData = tokenInfo ? ` data-scene-id="${tokenInfo.sceneId}" data-token-id="${tokenInfo.tokenId}"` : '';
-    let message = `<strong>${targetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
+    const safeTargetName = Sanitizer.escape(targetName);
+    const safeLocation = Sanitizer.escape(location);
+    const safeDamageType = Sanitizer.escape(damageType);
+    const tokenData = tokenInfo ? ` data-scene-id="${Sanitizer.escape(tokenInfo.sceneId)}" data-token-id="${Sanitizer.escape(tokenInfo.tokenId)}"` : '';
+    let message = `<strong>${safeTargetName}</strong> takes <strong style="color: red;">${woundsTaken} wounds</strong> to ${safeLocation}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | Effective Armor: ${effectiveArmor} | TB: ${toughnessBonus}</em>`;
     
     if (charDamageEffect && woundsTaken > 0) {
-      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}"${tokenData} data-formula="${charDamageEffect.formula}" data-characteristic="${charDamageEffect.characteristic}">${charDamageEffect.name}: Roll ${charDamageEffect.formula}</button>`;
+      const safeEffectName = Sanitizer.escape(charDamageEffect.name);
+      const safeFormula = Sanitizer.escape(charDamageEffect.formula);
+      const safeChar = Sanitizer.escape(charDamageEffect.characteristic);
+      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}"${tokenData} data-formula="${safeFormula}" data-characteristic="${safeChar}">${safeEffectName}: Roll ${safeFormula}</button>`;
     }
     
     if (isShocking && woundsTaken > 0) {
@@ -323,14 +332,16 @@ export class CombatDialogHelper {
       if (criticalDamageBonus > 0) {
         message += `<br><em style="color: #888; font-size: 0.85em;">(${criticalDamage - criticalDamageBonus} base + ${criticalDamageBonus} talent bonus)</em>`;
       }
-      message += `<br><button class="roll-critical-btn" data-actor-id="${targetId}"${tokenData} data-location="${location}" data-damage-type="${damageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
+      message += `<br><button class="roll-critical-btn" data-actor-id="${targetId}"${tokenData} data-location="${safeLocation}" data-damage-type="${safeDamageType}" data-critical-damage="${criticalDamage}">Apply Critical Effect</button>`;
     }
     
     return message;
   }
 
   static buildArmorAbsorbMessage(targetName, location, damage, armorValue, penetration, toughnessBonus) {
-    return `<strong>${targetName}</strong>'s armor and toughness absorb all damage to ${location}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | TB: ${toughnessBonus}</em>`;
+    const safeTargetName = Sanitizer.escape(targetName);
+    const safeLocation = Sanitizer.escape(location);
+    return `<strong>${safeTargetName}</strong>'s armor and toughness absorb all damage to ${safeLocation}<br><em>Damage: ${damage} | Armor: ${armorValue} | Penetration: ${penetration} | TB: ${toughnessBonus}</em>`;
   }
 
   static calculateClearJamTarget(bs, bsAdv) {
@@ -338,7 +349,8 @@ export class CombatDialogHelper {
   }
 
   static buildClearJamFlavor(weaponName, targetNumber, success) {
-    return `<strong>Clear Jam: ${weaponName}</strong><br>Target: ${targetNumber}<br><strong style="color: ${success ? 'green' : 'red'};">${success ? 'SUCCESS - Jam Cleared!' : 'FAILED - Still Jammed'}</strong>${success ? '<br><em>Ammo lost, weapon needs reloading</em>' : ''}`;
+    const safeWeaponName = Sanitizer.escape(weaponName);
+    return `<strong>Clear Jam: ${safeWeaponName}</strong><br>Target: ${targetNumber}<br><strong style="color: ${success ? 'green' : 'red'};">${success ? 'SUCCESS - Jam Cleared!' : 'FAILED - Still Jammed'}</strong>${success ? '<br><em>Ammo lost, weapon needs reloading</em>' : ''}`;
   }
 
   /**
@@ -356,26 +368,27 @@ export class CombatDialogHelper {
     const loadedAmmo = hasAmmoManagement && weapon.system.loadedAmmo
       ? actor.items.get(weapon.system.loadedAmmo) : null;
     const currentAmmo = loadedAmmo?.system.capacity.value || 0;
+    const safeWeaponName = Sanitizer.escape(weapon.name);
 
     if (rofOption === 1) {
       if (!rofParts[1] || rofParts[1] === '-') {
-        return { valid: false, message: `${weapon.name} does not support Semi-Auto fire.` };
+        return { valid: false, message: `${safeWeaponName} does not support Semi-Auto fire.` };
       }
       if (hasAmmoManagement && loadedAmmo) {
         const semiAutoRounds = parseInt(rofParts[1]) || 0;
         if (currentAmmo < semiAutoRounds) {
-          return { valid: false, message: `${weapon.name} needs ${semiAutoRounds} rounds for Semi-Auto but only has ${currentAmmo}.` };
+          return { valid: false, message: `${safeWeaponName} needs ${semiAutoRounds} rounds for Semi-Auto but only has ${currentAmmo}.` };
         }
       }
     }
     if (rofOption === 2) {
       if (!rofParts[2] || rofParts[2] === '-') {
-        return { valid: false, message: `${weapon.name} does not support Full-Auto fire.` };
+        return { valid: false, message: `${safeWeaponName} does not support Full-Auto fire.` };
       }
       if (hasAmmoManagement && loadedAmmo) {
         const fullAutoRounds = parseInt(rofParts[2]) || 0;
         if (currentAmmo < fullAutoRounds) {
-          return { valid: false, message: `${weapon.name} needs ${fullAutoRounds} rounds for Full-Auto but only has ${currentAmmo}.` };
+          return { valid: false, message: `${safeWeaponName} needs ${fullAutoRounds} rounds for Full-Auto but only has ${currentAmmo}.` };
         }
       }
     }

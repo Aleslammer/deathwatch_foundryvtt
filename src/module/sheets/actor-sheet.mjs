@@ -12,6 +12,7 @@ import { ModeHelper } from "../helpers/mode-helper.mjs";
 import { CohesionPanel } from "../ui/cohesion-panel.mjs";
 import { ErrorHandler } from "../helpers/error-handler.mjs";
 import { Validation } from "../helpers/validation.mjs";
+import { Sanitizer } from "../helpers/sanitizer.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -931,8 +932,9 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
       </div>
     `;
 
+    const safeWeaponName = Sanitizer.escape(weapon.name);
     foundry.applications.api.DialogV2.wait({
-      window: { title: `Attack with ${weapon.name}` },
+      window: { title: `Attack with ${safeWeaponName}` },
       content: content,
       buttons: [
         {
@@ -968,8 +970,8 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
             
             const roll = new Roll(rollFormula);
             await roll.evaluate();
-            
-            const label = `[Attack] ${weapon.name}`;
+
+            const label = `[Attack] ${safeWeaponName}`;
             roll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor: this.actor }),
               flavor: modifierParts.length > 0 ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>` : label,

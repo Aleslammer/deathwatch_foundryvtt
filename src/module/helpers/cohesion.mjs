@@ -1,4 +1,5 @@
 import { COHESION } from './constants.mjs';
+import { Sanitizer } from './sanitizer.mjs';
 
 /**
  * Static helper class for Kill-team Cohesion calculations.
@@ -219,7 +220,8 @@ export class CohesionHelper {
     const status = result.success
       ? '<strong style="color: green;">✓ PASSED</strong>'
       : '<strong style="color: red;">✗ FAILED</strong>';
-    const flavor = `<strong>Cohesion Challenge — ${actor.name}</strong><br>Rolled ${result.roll} vs Cohesion ${result.target}<br>${status}`;
+    const safeActorName = Sanitizer.escape(actor.name);
+    const flavor = `<strong>Cohesion Challenge — ${safeActorName}</strong><br>Rolled ${result.roll} vs Cohesion ${result.target}<br>${status}`;
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor

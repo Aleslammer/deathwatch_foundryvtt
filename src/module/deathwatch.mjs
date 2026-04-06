@@ -29,6 +29,7 @@ import { createItemMacro, rollItemMacro } from "./macros/hotbar.mjs";
 // Import error handling utilities.
 import { ErrorHandler } from "./helpers/error-handler.mjs";
 import { Validation } from "./helpers/validation.mjs";
+import { Sanitizer } from "./helpers/sanitizer.mjs";
 
 
 /* -------------------------------------------- */
@@ -88,7 +89,7 @@ Hooks.once('init', async function () {
             
             await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor: combatant.actor, token: combatant.token }),
-                flavor: `${combatant.name} rolls for Initiative!`
+                flavor: `${Sanitizer.escape(combatant.name)} rolls for Initiative!`
             });
         }
         
@@ -204,9 +205,10 @@ Hooks.once('init', async function () {
         if (!combatant?.actor?.hasCondition?.('on-fire')) return;
 
         const actor = combatant.actor;
+        const safeActorName = Sanitizer.escape(actor.name);
         foundry.applications.api.DialogV2.wait({
-            window: { title: `\uD83D\uDD25 ${actor.name} is On Fire!` },
-            content: `<p><strong>${actor.name}</strong> is On Fire! Apply fire damage and effects?</p>`,
+            window: { title: `\uD83D\uDD25 ${safeActorName} is On Fire!` },
+            content: `<p><strong>${safeActorName}</strong> is On Fire! Apply fire damage and effects?</p>`,
             buttons: [
                 { label: '\uD83D\uDD25 Apply Fire', action: 'apply', callback: () => applyOnFireEffects(actor) },
                 { label: 'Skip', action: 'skip' }
@@ -419,7 +421,7 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
         const weaponQualitiesRaw = d.weaponQualities;
         const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? Validation.parseJSON(weaponQualitiesRaw, 'Weapon Qualities') : weaponQualitiesRaw) : [];
         if (targetActor.type === 'character' && CohesionHelper.shouldTriggerCohesionDamage(damage, weaponQualities)) {
-            await CohesionHelper.handleCohesionDamage(`${targetActor.name} took ${damage} raw damage from a qualifying weapon.`);
+            await CohesionHelper.handleCohesionDamage(`${Sanitizer.escape(targetActor.name)} took ${damage} raw damage from a qualifying weapon.`);
         }
     }, 'Apply Damage')));
     
@@ -544,10 +546,12 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
         
         const attackerWins = attackerDoS > targetDoS;
         const netDoS = attackerDoS - targetDoS;
-        
+
+        const safeAttackerName = Sanitizer.escape(attacker.name);
+        const safeTargetName = Sanitizer.escape(target.name);
         let flavor = `<strong style="background: #4a0080; color: #e0b0ff; padding: 2px 6px; border-radius: 3px;">🔮 Force: Channel Psychic Energy 🔮</strong>`;
-        flavor += `<br><strong>${attacker.name}</strong> WP ${attackerWP}: rolled ${attackerRoll.total} (${attackerDoS} DoS)`;
-        flavor += `<br><strong>${target.name}</strong> WP ${targetWP}: rolled ${targetRoll.total} (${targetDoS} DoS)`;
+        flavor += `<br><strong>${safeAttackerName}</strong> WP ${attackerWP}: rolled ${attackerRoll.total} (${attackerDoS} DoS)`;
+        flavor += `<br><strong>${safeTargetName}</strong> WP ${targetWP}: rolled ${targetRoll.total} (${targetDoS} DoS)`;
         
         if (attackerWins && netDoS > 0) {
             const forceDamageFormula = `${netDoS}d10`;
@@ -606,17 +610,18 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
         const roll = await new Roll('1d100').evaluate();
         const success = CohesionHelper.resolveRallyTest(targetNumber, roll.total);
 
+        const safeLeaderName = Sanitizer.escape(leader.name);
         if (success) {
             await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor: leader }),
-                flavor: `<strong>\uD83D\uDEE1 Rally Successful!</strong><br>${leader.name} rallies the Kill-team! (Rolled ${roll.total} vs ${targetNumber})<br>Cohesion damage negated.`
+                flavor: `<strong>\uD83D\uDEE1 Rally Successful!</strong><br>${safeLeaderName} rallies the Kill-team! (Rolled ${roll.total} vs ${targetNumber})<br>Cohesion damage negated.`
             });
         } else {
             await CohesionHelper.applyCohesionDamage(1);
             const cohesion = game.settings.get('deathwatch', 'cohesion');
             await roll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor: leader }),
-                flavor: `<strong>\u26A0 Rally Failed!</strong><br>${leader.name} fails to rally! (Rolled ${roll.total} vs ${targetNumber})<br>Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}`
+                flavor: `<strong>\u26A0 Rally Failed!</strong><br>${safeLeaderName} fails to rally! (Rolled ${roll.total} vs ${targetNumber})<br>Kill-team loses 1 Cohesion. Now ${cohesion.value} / ${cohesion.max}`
             });
         }
     }, 'Rally Test')));
@@ -635,8 +640,9 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
         Validation.requireDocument(actor, 'Actor', 'Extinguish Test');
 
         const ag = actor.system.characteristics?.ag?.value || 0;
+        const safeActorName = Sanitizer.escape(actor.name);
         const content = `
-          <div style="margin-bottom: 8px;"><strong>Extinguish Attempt: ${actor.name}</strong></div>
+          <div style="margin-bottom: 8px;"><strong>Extinguish Attempt: ${safeActorName}</strong></div>
           <div class="form-group">
             <label>AG: ${ag} | Base Target: ${ag - 20} (Hard \u221220)</label>
           </div>
@@ -647,7 +653,7 @@ Hooks.on('renderChatMessageHTML', (message, html) => {
         `;
 
         foundry.applications.api.DialogV2.wait({
-            window: { title: `\uD83D\uDD25 Extinguish: ${actor.name}` },
+            window: { title: `\uD83D\uDD25 Extinguish: ${safeActorName}` },
             content,
             buttons: [
                 {

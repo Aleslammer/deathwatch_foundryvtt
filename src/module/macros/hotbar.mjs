@@ -1,5 +1,6 @@
 import { CombatHelper } from '../helpers/combat/combat.mjs';
 import { PsychicCombatHelper } from '../helpers/combat/psychic-combat.mjs';
+import { Sanitizer } from '../helpers/sanitizer.mjs';
 
 /**
  * Create a Macro from an Item drop.
@@ -64,9 +65,10 @@ export function rollItemMacro(itemUuid, options = {}) {
             }
 
             // No options: show Attack/Damage choice dialog (original behavior)
+            const safeItemName = Sanitizer.escape(item.name);
             foundry.applications.api.DialogV2.wait({
-                window: { title: item.name },
-                content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${item.name}</strong></p>`,
+                window: { title: safeItemName },
+                content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${safeItemName}</strong></p>`,
                 buttons: [
                     {
                         icon: '<i class="fas fa-crosshairs"></i>',

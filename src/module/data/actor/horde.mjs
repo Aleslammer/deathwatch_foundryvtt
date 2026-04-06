@@ -1,6 +1,7 @@
 import DeathwatchEnemy from './enemy.mjs';
 import { HordeCombatHelper } from '../../helpers/combat/horde-combat.mjs';
 import { FoundryAdapter } from '../../helpers/foundry-adapter.mjs';
+import { Sanitizer } from '../../helpers/sanitizer.mjs';
 
 const { fields } = foundry.data;
 
@@ -125,7 +126,8 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
 
       await FoundryAdapter.createChatMessage(message);
     } else {
-      const message = `<strong>${actor.name}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''} — armor and toughness absorb all damage<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;
+      const safeActorName = Sanitizer.escape(actor.name);
+      const message = `<strong>${safeActorName}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''} — armor and toughness absorb all damage<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;
       await FoundryAdapter.createChatMessage(message);
     }
   }

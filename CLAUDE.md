@@ -416,6 +416,184 @@ describe('Sheet tests', () => {
 
 ---
 
+## HTML Sanitization (XSS Prevention)
+
+The system uses comprehensive HTML sanitization to prevent XSS attacks from malicious actor names, item names, and other user-provided strings.
+
+### Sanitizer Utility
+
+**Location**: `src/module/helpers/sanitizer.mjs`
+
+The `Sanitizer` class provides two key methods for preventing XSS:
+
+#### `Sanitizer.escape(text)`
+
+Escapes HTML special characters using Foundry's built-in `escapeHTML` utility:
+
+```javascript
+import { Sanitizer } from '../helpers/sanitizer.mjs';
+
+const actorName = '<script>alert("XSS")</script>';
+const safe = Sanitizer.escape(actorName);
+// Returns: '&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;'
+```
+
+#### `Sanitizer.html` (Tagged Template Literal)
+
+Automatically escapes all interpolated values in template strings:
+
+```javascript
+const actorName = '<img src=x onerror="alert(1)">';
+const damage = 10;
+const location = 'Head';
+
+const html = Sanitizer.html`<strong>${actorName}</strong> takes ${damage} wounds to ${location}`;
+// Returns: '<strong>&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</strong> takes 10 wounds to Head'
+```
+
+### When to Sanitize
+
+**ALWAYS sanitize user-provided strings before inserting into HTML**:
+- ✅ Actor names (`actor.name`)
+- ✅ Item/weapon names (`item.name`, `weapon.name`)
+- ✅ Character names in chat messages
+- ✅ Hit locations from user input
+- ✅ Any string from `dataset` attributes
+- ✅ Dialog titles and content with user data
+
+**NO sanitization needed for**:
+- ❌ System-generated constants (`"Impact"`, `"Energy"`)
+- ❌ Numeric values (`damage`, `penetration`)
+- ❌ Internal data structure names (for equality checks, not HTML output)
+- ❌ Foundry API calls (they handle their own escaping)
+
+### Sanitization Patterns
+
+#### Chat Message Builders
+
+**ALWAYS sanitize** user-provided strings in chat message helpers:
+
+```javascript
+// ✅ CORRECT
+export class ChatMessageBuilder {
+  static buildDamageMessage(actorName, damage, location) {
+    const safeName = Sanitizer.escape(actorName);
+    const safeLocation = Sanitizer.escape(location);
+    return `<strong>${safeName}</strong> takes ${damage} wounds to ${safeLocation}`;
+  }
+}
+
+// ❌ WRONG - No sanitization
+static buildDamageMessage(actorName, damage, location) {
+  return `<strong>${actorName}</strong> takes ${damage} wounds to ${location}`;
+  // XSS vulnerability if actorName contains <script> tags!
+}
+```
+
+#### Dialog Content
+
+**ALWAYS sanitize** user data in dialog content:
+
+```javascript
+// ✅ CORRECT
+const safeActorName = Sanitizer.escape(actor.name);
+foundry.applications.api.DialogV2.wait({
+  window: { title: `Attack: ${safeActorName}` },
+  content: `<p><strong>${safeActorName}</strong> attacks!</p>`,
+  buttons: [...]
+});
+
+// ❌ WRONG - No sanitization
+foundry.applications.api.DialogV2.wait({
+  window: { title: `Attack: ${actor.name}` }, // XSS in title!
+  content: `<p><strong>${actor.name}</strong> attacks!</p>`, // XSS in content!
+  buttons: [...]
+});
+```
+
+#### Data Attributes
+
+**ALWAYS sanitize** user strings going into data attributes:
+
+```javascript
+// ✅ CORRECT
+const safeLocation = Sanitizer.escape(location);
+const safeDamageType = Sanitizer.escape(damageType);
+return `<button class="apply-damage-btn" data-location="${safeLocation}" data-damage-type="${safeDamageType}">Apply</button>`;
+
+// ❌ WRONG - No sanitization
+return `<button class="apply-damage-btn" data-location="${location}" data-damage-type="${damageType}">Apply</button>`;
+// If location = '"><img src=x onerror="alert(1)">' this creates XSS!
+```
+
+#### Using Tagged Templates
+
+For complex HTML with multiple user values, use `Sanitizer.html`:
+
+```javascript
+// ✅ CORRECT - Auto-escapes all interpolations
+const html = Sanitizer.html`
+  <div class="damage-message">
+    <strong>${actorName}</strong> takes <span class="damage">${damage}</span> 
+    wounds to ${location}
+  </div>
+`;
+
+// ❌ WRONG - Manually escaping is error-prone
+const safeName = Sanitizer.escape(actorName);
+const safeLocation = Sanitizer.escape(location);
+const html = `
+  <div class="damage-message">
+    <strong>${safeName}</strong> takes <span class="damage">${damage}</span>
+    wounds to ${safeLocation}
+  </div>
+`;
+// Easy to forget escaping one field!
+```
+
+### Testing Sanitization
+
+Always test with XSS payloads to verify sanitization:
+
+```javascript
+describe('MyHelper', () => {
+  it('should sanitize actor names to prevent XSS', () => {
+    const maliciousName = '<script>alert("XSS")</script>';
+    const html = MyHelper.buildMessage(maliciousName, 10, 'Head');
+    
+    expect(html).not.toContain('<script>');
+    expect(html).toContain('&lt;script&gt;');
+  });
+  
+  it('should sanitize img onerror attacks', () => {
+    const maliciousName = '<img src=x onerror="alert(1)">';
+    const html = MyHelper.buildMessage(maliciousName, 10, 'Head');
+    
+    expect(html).toContain('&lt;img');
+    expect(html).toContain('&gt;');
+  });
+});
+```
+
+### Common XSS Payloads to Test
+
+Use these payloads when testing sanitization:
+
+```javascript
+const xssPayloads = [
+  '<script>alert("XSS")</script>',
+  '<img src=x onerror="alert(1)">',
+  '"><img src=x onerror="alert(1)">',
+  '<svg onload=alert(1)>',
+  '" onmouseover="alert(1)" x="',
+  '<iframe src="evil.com"></iframe>',
+  '<a href="javascript:alert(1)">Click</a>',
+  '<style>body{background:url("javascript:alert(1)")}</style>'
+];
+```
+
+---
+
 ## Testing Approach
 
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.

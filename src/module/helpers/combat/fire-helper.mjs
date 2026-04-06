@@ -1,3 +1,5 @@
+import { Sanitizer } from '../sanitizer.mjs';
+
 /**
  * Helper for fire-related combat effects.
  * Pure functions for calculating fire damage, WP test results, and extinguish results.
@@ -137,7 +139,8 @@ export class FireHelper {
    * @returns {string} HTML flavor
    */
   static buildExtinguishFlavor(name, ag, roll, result, miscMod = 0) {
-    let flavor = `<strong>\uD83D\uDD25 Extinguish Attempt \u2014 ${name}</strong><br>`;
+    const safeName = Sanitizer.escape(name);
+    let flavor = `<strong>\uD83D\uDD25 Extinguish Attempt \u2014 ${safeName}</strong><br>`;
     flavor += `Target: ${result.targetNumber} (AG ${ag} \u2212 20`;
     if (miscMod !== 0) flavor += ` ${miscMod >= 0 ? '+' : ''}${miscMod} Misc`;
     flavor += `)<br>`;

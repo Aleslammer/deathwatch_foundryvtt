@@ -3,6 +3,7 @@ import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { WeaponUpgradeHelper } from "./weapon-upgrade-helper.mjs";
+import { Sanitizer } from "../sanitizer.mjs";
 
 export class RangedCombatHelper {
   /**
@@ -235,9 +236,10 @@ export class RangedCombatHelper {
     if (hasSemiAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}" data-rounds="${semiAutoRounds}">Semi-Auto (+${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}, ${semiAutoRounds} rounds)</option>`;
     if (hasFullAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}" data-rounds="${fullAutoRounds}">Full-Auto (+${RATE_OF_FIRE_MODIFIERS.FULL_AUTO}, ${fullAutoRounds} rounds)</option>`;
 
+    const safeWeaponName = Sanitizer.escape(weapon.name);
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
-        <img src="${weapon.img}" alt="${weapon.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+        <img src="${weapon.img}" alt="${safeWeaponName}" style="max-width: 100px; max-height: 100px; border: none;" />
       </div>
       ${distanceText}
       <div class="form-group">
@@ -275,7 +277,7 @@ export class RangedCombatHelper {
     `;
 
     foundry.applications.api.DialogV2.wait({
-      window: { title: `Ranged Attack: ${weapon.name}` },
+      window: { title: `Ranged Attack: ${safeWeaponName}` },
       position: { width: 325 },
       content: content,
       render: (event, dialog) => {
@@ -363,9 +365,10 @@ export class RangedCombatHelper {
             // Reliable jam reroll
             if (isJammed && hasReliable) {
               const reliableRoll = await new Roll('1d10').evaluate();
+              const safeWeaponName = Sanitizer.escape(weapon.name);
               await reliableRoll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
-                flavor: `<strong>Reliable Check:</strong> ${weapon.name} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
+                flavor: `<strong>Reliable Check:</strong> ${safeWeaponName} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
                 rollMode: game.settings.get('core', 'rollMode')
               });
               isJammed = reliableRoll.total === 10;
@@ -379,7 +382,8 @@ export class RangedCombatHelper {
             // Premature detonation side effects
             if (hasPrematureDetonation) {
               await weapon.update({ "system.jammed": true });
-              ui.notifications.error(`${weapon.name} detonated prematurely!`);
+              const safeWeaponName = Sanitizer.escape(weapon.name);
+              ui.notifications.error(`${safeWeaponName} detonated prematurely!`);
               const armLocation = Math.random() < 0.5 ? "Right Arm" : "Left Arm";
               const weaponDamage = weapon.system.effectiveDamage || weapon.system.dmg;
               const damageRoll = await new Roll(weaponDamage).evaluate();
@@ -387,9 +391,10 @@ export class RangedCombatHelper {
                 damage: damageRoll.total, penetration: 5,
                 location: armLocation, damageType: 'Explosive'
               });
+              const safeActorName = Sanitizer.escape(actor.name);
               await damageRoll.toMessage({
                 speaker: ChatMessage.getSpeaker({ actor }),
-                flavor: `<h3>Premature Detonation!</h3><p><strong>${weapon.name}</strong> exploded in ${actor.name}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
+                flavor: `<h3>Premature Detonation!</h3><p><strong>${safeWeaponName}</strong> exploded in ${safeActorName}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
               });
             }
 
@@ -419,7 +424,8 @@ export class RangedCombatHelper {
                 const newAmmoValue = Math.max(0, loadedAmmo.system.capacity.value - ammoExpended);
                 await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
                 if (newAmmoValue === 0) {
-                  ui.notifications.warn(`${weapon.name} is out of ammunition!`);
+                  const safeWeaponName = Sanitizer.escape(weapon.name);
+                  ui.notifications.warn(`${safeWeaponName} is out of ammunition!`);
                 }
                 actor.sheet.render(false);
               }
@@ -516,9 +522,10 @@ export class RangedCombatHelper {
 
     if (isJammed && hasReliable) {
       const reliableRoll = await new Roll('1d10').evaluate();
+      const safeWeaponName = Sanitizer.escape(weapon.name);
       await reliableRoll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `<strong>Reliable Check:</strong> ${weapon.name} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
+        flavor: `<strong>Reliable Check:</strong> ${safeWeaponName} - ${reliableRoll.total === 10 ? 'Jammed!' : 'Not Jammed'}`,
         rollMode: game.settings.get('core', 'rollMode')
       });
       isJammed = reliableRoll.total === 10;
@@ -528,7 +535,8 @@ export class RangedCombatHelper {
 
     if (hasPrematureDetonation) {
       await weapon.update({ "system.jammed": true });
-      ui.notifications.error(`${weapon.name} detonated prematurely!`);
+      const safeWeaponName = Sanitizer.escape(weapon.name);
+      ui.notifications.error(`${safeWeaponName} detonated prematurely!`);
       const armLocation = Math.random() < 0.5 ? "Right Arm" : "Left Arm";
       const weaponDamage = weapon.system.effectiveDamage || weapon.system.dmg;
       const damageRoll = await new Roll(weaponDamage).evaluate();
@@ -536,9 +544,10 @@ export class RangedCombatHelper {
         damage: damageRoll.total, penetration: 5,
         location: armLocation, damageType: 'Explosive'
       });
+      const safeActorName = Sanitizer.escape(actor.name);
       await damageRoll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `<h3>Premature Detonation!</h3><p><strong>${weapon.name}</strong> exploded in ${actor.name}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
+        flavor: `<h3>Premature Detonation!</h3><p><strong>${safeWeaponName}</strong> exploded in ${safeActorName}'s hands!</p><p><strong>Location:</strong> ${armLocation}</p><p><strong>Penetration:</strong> 5</p>`
       });
     }
 
@@ -565,7 +574,8 @@ export class RangedCombatHelper {
         const newAmmoValue = Math.max(0, loadedAmmo.system.capacity.value - ammoExpended);
         await loadedAmmo.update({ "system.capacity.value": newAmmoValue });
         if (newAmmoValue === 0) {
-          ui.notifications.warn(`${weapon.name} is out of ammunition!`);
+          const safeWeaponName = Sanitizer.escape(weapon.name);
+          ui.notifications.warn(`${safeWeaponName} is out of ammunition!`);
         }
         actor.sheet.render(false);
       }

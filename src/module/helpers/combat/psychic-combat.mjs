@@ -4,6 +4,7 @@ import { ModifierCollector } from "../character/modifier-collector.mjs";
 import { FoundryAdapter } from "../foundry-adapter.mjs";
 import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";
 import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
+import { Sanitizer } from "../sanitizer.mjs";
 
 /**
  * Helper class for psychic power Focus Power Tests.
@@ -300,8 +301,9 @@ export class PsychicCombatHelper {
           'system.wounds.value': currentWounds + backlashDamage
         });
         const speaker = FoundryAdapter.getChatSpeaker(actor);
+        const safeActorName = Sanitizer.escape(actor.name);
         await FoundryAdapter.sendRollToChat(backlashRoll, speaker,
-          `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${actor.name}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
+          `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${safeActorName}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
         );
       } else {
         const draw = await this.rollPhenomena();
@@ -351,9 +353,10 @@ export class PsychicCombatHelper {
     const allModifiers = ModifierCollector.collectAllModifiers(actor);
     const psychicMods = this.collectPsychicModifiers(allModifiers);
 
+    const safePowerName = Sanitizer.escape(power.name);
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
-        <img src="${power.img}" alt="${power.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+        <img src="${power.img}" alt="${safePowerName}" style="max-width: 100px; max-height: 100px; border: none;" />
       </div>
       <div style="display: flex; gap: 20px; margin-bottom: 8px; font-size: 0.9em;">
         <span><strong>Action:</strong> ${power.system.action || "—"}</span>
@@ -383,7 +386,7 @@ export class PsychicCombatHelper {
     `;
 
     foundry.applications.api.DialogV2.wait({
-      window: { title: `Focus Power: ${power.name}` },
+      window: { title: `Focus Power: ${safePowerName}` },
       content,
       render: (event, dialog) => {
         const el = dialog.element;
@@ -439,7 +442,10 @@ export class PsychicCombatHelper {
               const targetWP = targetToken?.actor?.system?.characteristics?.wil?.value || 0;
               const sceneId = targetToken?.document?.parent?.id || "";
               const tokenId = targetToken?.document?.id || "";
-              const opposeContent = `<button class="psychic-oppose-btn" data-power-name="${power.name}" data-psyker-dos="${dos}" data-target-name="${targetName}" data-target-id="${targetId}" data-target-wp="${targetWP}" data-scene-id="${sceneId}" data-token-id="${tokenId}">⚔ Opposed Willpower Test: ${targetName} (WP ${targetWP})</button>`;
+              const safePowerNameData = Sanitizer.escape(power.name);
+              const safeTargetNameData = Sanitizer.escape(targetName);
+              const safeTargetNameDisplay = Sanitizer.escape(targetName);
+              const opposeContent = `<button class="psychic-oppose-btn" data-power-name="${safePowerNameData}" data-psyker-dos="${dos}" data-target-name="${safeTargetNameData}" data-target-id="${targetId}" data-target-wp="${targetWP}" data-scene-id="${sceneId}" data-token-id="${tokenId}">⚔ Opposed Willpower Test: ${safeTargetNameDisplay} (WP ${targetWP})</button>`;
               await FoundryAdapter.createChatMessage(opposeContent, speaker);
             }
 
@@ -508,7 +514,8 @@ export class PsychicCombatHelper {
         }) : "";
 
         const hitInfo = numHits > 1 ? ` (${i + 1}/${numHits})` : "";
-        const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${power.name}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
+        const safePowerName = Sanitizer.escape(power.name);
+        const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${safePowerName}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
         const speaker = FoundryAdapter.getChatSpeaker(actor);
         await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
       }
