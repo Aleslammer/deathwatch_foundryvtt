@@ -57,5 +57,26 @@ export class SettingsRegistrar {
       default: false,
       onChange: () => window.location.reload()
     });
+
+    // Log level setting
+    game.settings.register('deathwatch', 'logLevel', {
+      name: 'Log Level',
+      hint: 'Control console verbosity: DEBUG (verbose), INFO (normal), WARN (warnings only), ERROR (errors only)',
+      scope: 'client',
+      config: true,
+      type: String,
+      choices: {
+        'DEBUG': 'Debug (Verbose)',
+        'INFO': 'Info (Normal)',
+        'WARN': 'Warnings Only',
+        'ERROR': 'Errors Only'
+      },
+      default: 'INFO',
+      onChange: () => {
+        // Reinitialize logger with new level
+        const Logger = game.modules.get('deathwatch')?.api?.Logger;
+        if (Logger) Logger.init();
+      }
+    });
   }
 }

@@ -285,7 +285,9 @@ export * from './psychic-constants.mjs';
 
 ---
 
-## Issue 15: Debug Console Logs
+## Issue 15: Debug Console Logs ✅
+
+**Status**: COMPLETED (2026-04-06)
 
 ### Problem
 Direct use of `console.log/error` instead of Foundry's logging infrastructure.
@@ -410,9 +412,15 @@ game.settings.register('deathwatch', 'logLevel', {
 4. Replace console.log/error calls
 5. Test log levels work correctly
 
-**Effort**: ~3 hours
+**Effort**: ~3 hours (Actual: 3 hours)
 
-**When to Implement**: Nice-to-have, do alongside other improvements.
+**Implementation Summary**:
+- Created `src/module/helpers/logger.mjs` with Logger class using Foundry's logging infrastructure
+- Added `logLevel` setting (DEBUG/INFO/WARN/ERROR) in `src/module/init/settings.mjs`
+- Replaced all `console.log/error/warn` calls (17 occurrences across 5 files) with `Logger` methods
+- Updated `debug.mjs` to delegate to Logger with deprecation warning
+- Created comprehensive test suite (`tests/helpers/logger.test.mjs`) with 17 tests
+- All 1681 tests passing ✅
 
 ---
 
@@ -497,12 +505,12 @@ const result = await attack.resolve();
 |-------|--------|------|--------|
 | Caching for Derived Data | 10 hours | Medium | ⏳ Not Started |
 | Constants Organization | 4 hours (3h actual) | Low | ✅ COMPLETED |
-| Debug Console Logs | 3 hours | Low | ⏳ Not Started |
+| Debug Console Logs | 3 hours (3h actual) | Low | ✅ COMPLETED |
 | Static Helper Classes | 0 hours | N/A | 📝 Document Only |
 
 **Total**: ~17 hours (~1 week)  
-**Completed**: 3 hours  
-**Remaining**: ~14 hours
+**Completed**: 6 hours  
+**Remaining**: ~11 hours
 
 **Recommendation**: Only implement if time permits after all critical/high/medium work is done. These are polish items that improve developer experience but don't affect functionality or user experience significantly.
 

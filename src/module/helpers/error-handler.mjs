@@ -1,3 +1,5 @@
+import { Logger } from './logger.mjs';
+
 /**
  * Error handling utilities for wrapping async operations with error boundaries.
  * Provides user-friendly error messages while logging detailed errors to console.
@@ -19,7 +21,7 @@ export class ErrorHandler {
       try {
         await handler.call(this, event);
       } catch (error) {
-        console.error(`[Deathwatch] ${context} failed:`, error);
+        Logger.error('ERROR_HANDLER', `${context} failed:`, error);
         ui.notifications.error(`${context} failed: ${error.message}`);
       }
     };
@@ -38,7 +40,7 @@ export class ErrorHandler {
     try {
       return await promise;
     } catch (error) {
-      console.warn('[Deathwatch] Promise failed, using fallback:', error);
+      Logger.warn('ERROR_HANDLER', 'Promise failed, using fallback:', error);
       return fallback;
     }
   }

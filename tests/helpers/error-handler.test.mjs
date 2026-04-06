@@ -25,7 +25,7 @@ describe('ErrorHandler', () => {
 
       await wrapped();
 
-      expect(consoleSpy).toHaveBeenCalledWith('[Deathwatch] Test Operation failed:', error);
+      expect(consoleSpy).toHaveBeenCalledWith('[Deathwatch:ERROR_HANDLER]', 'Test Operation failed:', error);
       expect(ui.notifications.error).toHaveBeenCalledWith('Test Operation failed: Test error');
 
       consoleSpy.mockRestore();

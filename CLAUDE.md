@@ -373,6 +373,60 @@ const actor = FoundryAdapter.getActor(actorId);
 
 ---
 
+### Logging System
+
+**Location**: `src/module/helpers/logger.mjs`
+
+**Pattern**: Use `Logger` for all logging instead of direct `console.*` calls. Integrates with Foundry's logging infrastructure and provides user-configurable log levels.
+
+**Methods**:
+- `Logger.debug(context, ...args)` — Debug messages (verbose, for developers)
+- `Logger.info(context, ...args)` — Important events (system initialization, etc.)
+- `Logger.warn(context, ...args)` — Warnings (recoverable errors, deprecated usage)
+- `Logger.error(context, ...args)` — Errors (unrecoverable failures)
+- `Logger.compatibility(message, { since, until })` — Deprecation warnings
+
+**Log levels** (configurable in Foundry settings):
+- `DEBUG` — Shows all messages (verbose)
+- `INFO` — Shows info, warn, and error (default)
+- `WARN` — Shows warnings and errors only
+- `ERROR` — Shows errors only
+
+**When to use**:
+- ✅ System initialization/shutdown events
+- ✅ Error conditions (use `Logger.error()`)
+- ✅ Deprecation warnings (use `Logger.compatibility()`)
+- ✅ Debug information for developers (use `Logger.debug()`)
+- ❌ User-facing notifications (use `ui.notifications` instead)
+- ❌ Chat messages (use `ChatMessage.create()`)
+
+**Example usage**:
+```javascript
+import { Logger } from '../helpers/logger.mjs';
+
+// System events
+Logger.info('INIT', 'System initialized');
+
+// Debug information (only shown at DEBUG level)
+Logger.debug('COMBAT', 'Applying damage', { damage: 15, penetration: 4 });
+
+// Warnings
+Logger.warn('MODIFIERS', 'Deprecated modifier type used');
+
+// Errors
+Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
+
+// Deprecation warnings
+Logger.compatibility('rollItemMacro() is deprecated', {
+  since: '2.1.0',
+  until: '3.0.0'
+});
+```
+
+**Migration note**: The old `debug()` function from `debug.mjs` is deprecated and now delegates to `Logger.debug()`. Update code to use `Logger` directly.
+
+---
+
 ### Async/Await Consistency
 
 **Rules**:

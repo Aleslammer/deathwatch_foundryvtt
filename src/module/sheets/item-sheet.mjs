@@ -1,6 +1,7 @@
 import { ModifierHelper } from "../helpers/character/modifiers.mjs";
 import { ErrorHandler } from "../helpers/error-handler.mjs";
 import { Validation } from "../helpers/validation.mjs";
+import { Logger } from "../helpers/logger.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -217,7 +218,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
             });
             await this.item.update({ "system.modifiers": modifiers });
         } catch (error) {
-            console.error('[Deathwatch] Create Modifier failed:', error);
+            Logger.error('ITEM_SHEET', 'Create Modifier failed:', error);
             ui.notifications.error(`Create Modifier failed: ${error.message}`);
         }
     }
@@ -230,7 +231,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
             const modifiers = Array.isArray(this.item.system.modifiers) ? this.item.system.modifiers.filter(m => m._id !== modifierId) : [];
             await this.item.update({ "system.modifiers": modifiers });
         } catch (error) {
-            console.error('[Deathwatch] Delete Modifier failed:', error);
+            Logger.error('ITEM_SHEET', 'Delete Modifier failed:', error);
             ui.notifications.error(`Delete Modifier failed: ${error.message}`);
         }
     }
@@ -252,12 +253,12 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
                         await this.item.update({ "system.modifiers": modifiers });
                     }
                 } catch (error) {
-                    console.error('[Deathwatch] Edit Modifier update failed:', error);
+                    Logger.error('ITEM_SHEET', 'Edit Modifier update failed:', error);
                     ui.notifications.error(`Edit Modifier failed: ${error.message}`);
                 }
             });
         } catch (error) {
-            console.error('[Deathwatch] Edit Modifier failed:', error);
+            Logger.error('ITEM_SHEET', 'Edit Modifier failed:', error);
             ui.notifications.error(`Edit Modifier failed: ${error.message}`);
         }
     }
@@ -274,7 +275,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
                 await this.item.update({ "system.modifiers": modifiers });
             }
         } catch (error) {
-            console.error('[Deathwatch] Toggle Modifier failed:', error);
+            Logger.error('ITEM_SHEET', 'Toggle Modifier failed:', error);
             ui.notifications.error(`Toggle Modifier failed: ${error.message}`);
         }
     }
@@ -296,7 +297,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
                 flavor: flavor + `<p><strong>${isHit ? 'HIT!' : 'MISS!'}</strong></p>`
             });
         } catch (error) {
-            console.error('[Deathwatch] Weapon Attack failed:', error);
+            Logger.error('ITEM_SHEET', 'Weapon Attack failed:', error);
             ui.notifications.error(`Weapon Attack failed: ${error.message}`);
         }
     }
@@ -316,7 +317,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
                 flavor: flavor
             });
         } catch (error) {
-            console.error('[Deathwatch] Weapon Damage failed:', error);
+            Logger.error('ITEM_SHEET', 'Weapon Damage failed:', error);
             ui.notifications.error(`Weapon Damage failed: ${error.message}`);
         }
     }
@@ -378,7 +379,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
 
             return super._onDrop?.(event);
         } catch (error) {
-            console.error('[Deathwatch] Item Drop failed:', error);
+            Logger.error('ITEM_SHEET', 'Item Drop failed:', error);
             ui.notifications.error(`Item Drop failed: ${error.message}`);
             return false;
         }
@@ -393,7 +394,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
             await this.item.update({ "system.attachedHistories": attachedHistories });
             this.render(false);
         } catch (error) {
-            console.error('[Deathwatch] Remove History failed:', error);
+            Logger.error('ITEM_SHEET', 'Remove History failed:', error);
             ui.notifications.error(`Remove History failed: ${error.message}`);
         }
     }
@@ -410,7 +411,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
             await this.item.update({ "system.attachedQualities": attachedQualities });
             this.render(false);
         } catch (error) {
-            console.error('[Deathwatch] Remove Quality failed:', error);
+            Logger.error('ITEM_SHEET', 'Remove Quality failed:', error);
             ui.notifications.error(`Remove Quality failed: ${error.message}`);
         }
     }
@@ -430,7 +431,7 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
             });
             await this.item.update({ "system.attachedQualities": attachedQualities });
         } catch (error) {
-            console.error('[Deathwatch] Change Quality Value failed:', error);
+            Logger.error('ITEM_SHEET', 'Change Quality Value failed:', error);
             ui.notifications.error(`Change Quality Value failed: ${error.message}`);
         }
     }

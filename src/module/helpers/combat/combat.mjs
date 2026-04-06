@@ -6,7 +6,7 @@ import { RangedCombatHelper } from "./ranged-combat.mjs";
 import { MeleeCombatHelper } from "./melee-combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
-import { debug } from "../debug.mjs";
+import { Logger } from "../logger.mjs";
 import { HordeCombatHelper } from "./horde-combat.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 
@@ -43,7 +43,7 @@ export class CombatHelper {
    * // Returns: { modifier: +10, label: "Short" }
    */
   static calculateRangeModifier(distance, weaponRange) {
-    debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
+    Logger.debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
     if (distance <= 2) {
       return { modifier: RANGE_MODIFIERS.POINT_BLANK, label: "Point Blank" };
     } else if (distance < (weaponRange * 0.5)) {

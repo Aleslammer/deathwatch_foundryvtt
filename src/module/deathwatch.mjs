@@ -20,6 +20,7 @@ import { initializeHandlebars } from "./helpers/ui/handlebars.js";
 import { SkillLoader } from "./helpers/character/skill-loader.mjs";
 import { CohesionHelper } from "./helpers/cohesion.mjs";
 import { CohesionPanel } from "./ui/cohesion-panel.mjs";
+import { Logger } from "./helpers/logger.mjs";
 // Import macros.
 import { applyOnFireEffects } from "./macros/on-fire-effects.mjs";
 import { flameAttack } from "./macros/flame-attack.mjs";
@@ -30,7 +31,9 @@ import { rollItemMacro } from "./macros/hotbar.mjs";
 /* -------------------------------------------- */
 
 Hooks.once('init', async function () {
-  console.log('Deathwatch | Initializing system');
+  // Initialize logger first (before settings are registered)
+  Logger.init();
+  Logger.info('INIT', 'Initializing system');
 
   // Load skill definitions
   await SkillLoader.init();
@@ -44,7 +47,8 @@ Hooks.once('init', async function () {
     flameAttack,          // From macros/flame-attack.mjs
     applyOnFireEffects,   // From macros/on-fire-effects.mjs
     CohesionHelper,
-    CohesionPanel
+    CohesionPanel,
+    Logger
   };
 
   // Add custom constants for configuration.
@@ -52,6 +56,9 @@ Hooks.once('init', async function () {
 
   // Register world and client settings
   SettingsRegistrar.register();
+
+  // Reinitialize logger after settings are registered (to load log level setting)
+  Logger.init();
 
   // Configure Foundry CONFIG object
   ConfigRegistrar.configure();
@@ -74,7 +81,7 @@ Hooks.once('init', async function () {
   // Preload Handlebars templates
   await preloadHandlebarsTemplates();
 
-  console.log('Deathwatch | Initialization complete');
+  Logger.info('INIT', 'Initialization complete');
 });
 
 /* -------------------------------------------- */
@@ -82,7 +89,7 @@ Hooks.once('init', async function () {
 /* -------------------------------------------- */
 
 Hooks.once('ready', async function () {
-  console.log('Deathwatch | System ready');
+  Logger.info('READY', 'System ready');
 
   // Initialize socket communication
   SocketHandler.initialize();
@@ -93,5 +100,5 @@ Hooks.once('ready', async function () {
   // Initialize ready hook handlers (hotbar, combat tracker, system macros)
   await ReadyHook.initialize();
 
-  console.log('Deathwatch | Ready');
+  Logger.info('READY', 'Ready');
 });
