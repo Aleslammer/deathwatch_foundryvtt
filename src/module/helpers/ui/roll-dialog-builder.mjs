@@ -1,4 +1,5 @@
 import { DWConfig } from "../config.mjs";
+import { ROLL_CONSTANTS } from "../constants.mjs";
 
 export class RollDialogBuilder {
   static buildModifierDialog() {
@@ -82,15 +83,15 @@ export class RollDialogBuilder {
 
   static buildResultFlavor(label, target, roll, modifierParts) {
     const success = roll.total <= target;
-    const degrees = Math.floor(Math.abs(target - roll.total) / 10);
+    const degrees = Math.floor(Math.abs(target - roll.total) / ROLL_CONSTANTS.DEGREES_DIVISOR);
     const resultText = success ? `<span style="color: green;">SUCCESS! (${degrees} DoS)</span>` : `FAILED! (${degrees} DoF)`;
-    
+
     let flavor = `${label} - Target: ${target}<br><strong>${resultText}</strong>`;
-    
+
     if (modifierParts.length > 0) {
       flavor += `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`;
     }
-    
+
     return flavor;
   }
 }

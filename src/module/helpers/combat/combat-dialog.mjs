@@ -1,4 +1,4 @@
-import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, SIZE_HIT_MODIFIERS } from "../constants.mjs";
+import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, SIZE_HIT_MODIFIERS, ROLL_CONSTANTS } from "../constants.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 
 export class CombatDialogHelper {
@@ -79,8 +79,8 @@ export class CombatDialogHelper {
 
   static calculateHits(hitValue, targetNumber, maxHits, rateOfFire = RATE_OF_FIRE_MODIFIERS.SINGLE, isScatter = false, isPointBlank = false, isStorm = false, isTwinLinked = false) {
     if (hitValue > targetNumber) return 0;
-    
-    const degreesOfSuccess = Math.floor((targetNumber - hitValue) / 10);
+
+    const degreesOfSuccess = Math.floor((targetNumber - hitValue) / ROLL_CONSTANTS.DEGREES_DIVISOR);
     let calculatedHits = 1;
     
     if (isTwinLinked && degreesOfSuccess >= 2) {
@@ -252,7 +252,7 @@ export class CombatDialogHelper {
 
   static calculateDegreesOfSuccess(attackRoll, targetNumber) {
     if (attackRoll > targetNumber) return 0;
-    return Math.floor((targetNumber - attackRoll) / 10);
+    return Math.floor((targetNumber - attackRoll) / ROLL_CONSTANTS.DEGREES_DIVISOR);
   }
 
   static calculateDamageResult(options) {

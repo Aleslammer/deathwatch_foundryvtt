@@ -103,6 +103,7 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `mode-helper.mjs` — Solo/Squad Mode activation, Squad Ability tracking
 - `initiative.mjs` — Initiative dialog with modifier input
 - `foundry-adapter.mjs` — Wraps all Foundry API calls for unit testing (mocked in `tests/setup.mjs`)
+- `constants.mjs` — System-wide constants (characteristics, combat, hit locations, initiative, wounds, hordes)
 
 ### Modular Initialization Architecture
 
@@ -193,952 +194,131 @@ Toggle in Foundry: **Game Settings → System Settings → Use ApplicationV2 She
 
 ---
 
-## Error Handling
+## Constants and Magic Numbers
 
-The system uses comprehensive error handling to prevent silent failures and provide user-friendly error messages.
+**Location**: `src/module/helpers/constants.mjs`
 
-### Error Handler Utility
+All system-wide numeric constants are defined in `constants.mjs` with JSDoc comments referencing the source rulebook page. Use these constants instead of hardcoded "magic numbers".
 
-**Location**: `src/module/helpers/error-handler.mjs`
+**Key constant groups**:
 
-The `ErrorHandler` class provides two key methods:
+- `CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR` — Characteristic bonus = value / 10 (Core p. 31)
+- `ROLL_CONSTANTS.DEGREES_DIVISOR` — Degrees of Success/Failure = difference / 10 (Core p. 27)
+- `HIT_LOCATION_RANGES` — Hit location determination ranges (Core p. 243)
+- `INITIATIVE_CONSTANTS` — Initiative formula and decimal precision
+- `WOUNDS_CONSTANTS` — Wounds calculation multipliers (SB + 2×TB, Core p. 214)
+- `HORDE_CONSTANTS` — Horde damage bonus calculation (magnitude / 10, Core p. 358)
+- `RANGE_MODIFIERS` — Point Blank (+30), Short (+10), Normal (0), Long (-10), Extreme (-30)
+- `COMBAT_PENALTIES` — Called Shot (-20), Running Target (-20)
+- `COHESION` — Cohesion rank thresholds, command skill bonuses, damage thresholds
 
-#### `ErrorHandler.wrap(handler, context)`
-
-Wraps async event handlers with error boundaries. Catches errors, logs them to console, and shows user notifications.
-
-**Usage in sheets** (actor-sheet.mjs, item-sheet.mjs):
+**Usage examples**:
 ```javascript
-import { ErrorHandler } from '../helpers/error-handler.mjs';
+// ✅ Good: Uses constant with documented source
+const bonus = Math.floor(characteristic / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
+const dos = Math.floor((target - roll) / ROLL_CONSTANTS.DEGREES_DIVISOR);
 
-// Wrap jQuery event handlers
-html.find('.weapon-attack-btn').click(ErrorHandler.wrap(async (ev) => {
-  const itemId = $(ev.currentTarget).data('itemId');
-  const weapon = Validation.requireDocument(this.actor.items.get(itemId), 'Weapon', 'Attack');
-  await CombatHelper.weaponAttackDialog(this.actor, weapon);
-}, 'Weapon Attack'));
-
-// Wrap native event listeners
-button.addEventListener('click', ErrorHandler.wrap(async (event) => {
-  // Your async logic here
-}, 'Button Action'));
+// ❌ Bad: Magic number without explanation
+const bonus = Math.floor(characteristic / 10);
+const dos = Math.floor((target - roll) / 10);
 ```
 
-**Usage in main hooks** (deathwatch.mjs):
-```javascript
-Hooks.on('renderChatMessageHTML', (message, html) => {
-  html.querySelectorAll('.apply-damage-btn').forEach(btn => {
-    btn.addEventListener('click', ErrorHandler.wrap(async (ev) => {
-      // Validate inputs
-      const damage = Validation.requireInt(ev.currentTarget.dataset.damage, 'Damage');
-      const targetActor = resolveActor(ev.currentTarget);
-      Validation.requireDocument(targetActor, 'Target Actor', 'Apply Damage');
-      
-      // Execute logic
-      await CombatHelper.applyDamage(targetActor, { damage, ... });
-    }, 'Apply Damage'));
-  });
-});
-```
+---
 
-#### `ErrorHandler.safe(promise, fallback)`
+## Coding Standards
 
-Wraps promises with fallback values for non-critical operations:
+### Error Handling
 
-```javascript
-// Returns fallback if promise fails
-const config = await ErrorHandler.safe(fetchConfig(), { default: true });
+**Location**: `src/module/helpers/error-handler.mjs`, `validation.mjs`
 
-// Returns null by default
-const optionalData = await ErrorHandler.safe(loadOptionalData());
-```
+**Pattern**: Wrap all event listeners with `ErrorHandler.wrap(handler, context)`. Validate all user inputs with `Validation.requireX()` methods before processing.
 
-### Validation Utility
+**Utilities**:
+- `ErrorHandler.wrap(handler, context)` — Wraps async handlers, catches errors, shows notifications
+- `ErrorHandler.safe(promise, fallback)` — Returns fallback if promise fails (for non-critical operations)
+- `Validation.requireInt(value, fieldName)` — Parse and validate integer
+- `Validation.requireActor(actorId, context)` — Validate actor exists
+- `Validation.requireDocument(document, docType, context)` — Validate any document exists
+- `Validation.parseBoolean(value)` — Parse boolean from string
+- `Validation.parseJSON(jsonString, fieldName)` — Parse JSON with error handling
 
-**Location**: `src/module/helpers/validation.mjs`
-
-The `Validation` class provides input validation helpers that throw descriptive errors:
-
-#### `Validation.requireInt(value, fieldName)`
-
-Parses and validates integer values from dataset attributes or inputs:
-
-```javascript
-const damage = Validation.requireInt(button.dataset.damage, 'Damage');
-// Throws: "Damage must be a valid integer (got: abc)" if invalid
-```
-
-#### `Validation.requireActor(actorId, context)`
-
-Validates actor existence and returns the actor:
-
-```javascript
-const actor = Validation.requireActor(button.dataset.actorId, 'Apply Damage');
-// Throws: "Actor not found for Apply Damage: abc123" if not found
-```
-
-#### `Validation.requireDocument(document, documentType, context)`
-
-Validates any document (actor, item, etc.) exists:
-
-```javascript
-const item = Validation.requireDocument(actor.items.get(itemId), 'Weapon', 'Attack');
-// Throws: "Weapon not found for Attack" if null/undefined
-```
-
-#### `Validation.parseBoolean(value)`
-
-Parses boolean values from strings or booleans:
-
-```javascript
-const isShocking = Validation.parseBoolean(button.dataset.isShocking);
-// "true" → true, "false" → false, other → false
-```
-
-#### `Validation.parseJSON(jsonString, fieldName)`
-
-Parses JSON with error handling:
-
-```javascript
-const qualities = Validation.parseJSON(button.dataset.weaponQualities, 'Weapon Qualities');
-// Throws: "Invalid JSON for Weapon Qualities: ..." if invalid
-```
-
-### Error Handling Patterns
-
-#### Sheet Event Listeners
-
-**ALWAYS wrap sheet event listeners** with `ErrorHandler.wrap()`:
-
-```javascript
-// ✅ CORRECT
-html.find('.item-delete').click(ErrorHandler.wrap(async (ev) => {
-  const itemId = $(ev.currentTarget).data('itemId');
-  const item = Validation.requireDocument(this.actor.items.get(itemId), 'Item', 'Delete');
-  await item.delete();
-}, 'Delete Item'));
-
-// ❌ WRONG - No error handling
-html.find('.item-delete').click(async (ev) => {
-  const item = this.actor.items.get($(ev.currentTarget).data('itemId'));
-  await item.delete(); // Can throw unhandled error
-});
-```
-
-#### Sheet Class Methods
-
-For sheet class methods (not jQuery handlers), use try-catch blocks:
-
-```javascript
-async _onItemCreate(event) {
-  try {
-    event.preventDefault();
-    const type = event.currentTarget.dataset.type;
-    if (!type) throw new Error('Item type not provided');
-    
-    const itemData = { name: `New ${type}`, type, system: {} };
-    await Item.create(itemData, { parent: this.actor });
-  } catch (error) {
-    console.error('[Deathwatch] Create Item failed:', error);
-    ui.notifications.error(`Create Item failed: ${error.message}`);
-  }
-}
-```
-
-#### Input Validation
-
-**ALWAYS validate user inputs** before processing:
-
-```javascript
-// ✅ CORRECT - Validate all inputs
-const damage = Validation.requireInt(dataset.damage, 'Damage');
-const penetration = Validation.requireInt(dataset.penetration, 'Penetration');
-const targetActor = resolveActor(button);
-Validation.requireDocument(targetActor, 'Target Actor', 'Apply Damage');
-
-// ❌ WRONG - No validation
-const damage = parseInt(dataset.damage); // Can be NaN
-const targetActor = game.actors.get(dataset.actorId); // Can be null
-await CombatHelper.applyDamage(targetActor, { damage }); // Will crash if null/NaN
-```
-
-#### Pure Helper Functions
-
-Combat helpers and other pure functions **do not need try-catch blocks** because:
-1. They are pure logic functions that don't interact with UI
-2. Errors are caught at the caller level (event handlers)
-3. They are thoroughly unit tested
-
-```javascript
-// ✅ CORRECT - No try-catch needed
-export class CombatHelper {
-  static calculateRangeModifier(distance, weaponRange) {
-    // Pure calculation - errors caught by caller
-    if (distance <= 2) return { modifier: 30, label: "Point Blank" };
-    // ...
-  }
-}
-```
-
-### Testing Error Handling
-
-Tests should verify error handling works correctly:
-
-```javascript
-describe('ErrorHandler', () => {
-  it('should catch errors and show notification', async () => {
-    const error = new Error('Test error');
-    const handler = jest.fn(async () => { throw error; });
-    const wrapped = ErrorHandler.wrap(handler, 'Test Operation');
-    
-    global.ui = { notifications: { error: jest.fn() } };
-    jest.spyOn(console, 'error').mockImplementation();
-    
-    await wrapped();
-    
-    expect(console.error).toHaveBeenCalledWith('[Deathwatch] Test Operation failed:', error);
-    expect(ui.notifications.error).toHaveBeenCalledWith('Test Operation failed: Test error');
-  });
-});
-
-describe('Sheet tests', () => {
-  it('shows error if weapon has no actor', async () => {
-    const event = { preventDefault: jest.fn() };
-    mockItem.actor = null;
-    
-    await mockSheet._onWeaponAttack(event);
-    
-    expect(ui.notifications.error).toHaveBeenCalledWith(
-      'Weapon Attack failed: Actor not found for Weapon Attack'
-    );
-  });
-});
-```
-
-### When to Use Error Handling
-
-**ALWAYS use error handling for**:
+**When to use error handling**:
 - ✅ All sheet event listeners (click, change, drop handlers)
 - ✅ All chat message button handlers
 - ✅ All async operations that can fail (document updates, rolls, API calls)
 - ✅ All user input parsing and validation
-
-**NO error handling needed for**:
-- ❌ Pure helper functions (handled by callers)
+- ❌ Pure helper functions (errors caught at caller level)
 - ❌ Synchronous getters/setters
-- ❌ Simple data transformations
 - ❌ FoundryAdapter methods (they handle their own errors)
 
-### Error Message Guidelines
-
-- **Be specific**: "Weapon not found for Attack" not "Item not found"
-- **Include context**: "Apply Damage failed: Actor not found" not just "Actor not found"
-- **Use field names**: "Damage must be a valid integer (got: abc)" not "Invalid input"
-- **Keep it user-friendly**: Avoid technical jargon in `ui.notifications.error()`
-- **Log full details**: `console.error()` gets the full Error object with stack trace
+**Example pattern**: See `src/module/sheets/actor-sheet.mjs` for comprehensive usage examples.
 
 ---
 
-## HTML Sanitization (XSS Prevention)
-
-The system uses comprehensive HTML sanitization to prevent XSS attacks from malicious actor names, item names, and other user-provided strings.
-
-### Sanitizer Utility
+### HTML Sanitization (XSS Prevention)
 
 **Location**: `src/module/helpers/sanitizer.mjs`
 
-The `Sanitizer` class provides two key methods for preventing XSS:
+**Pattern**: Use `Sanitizer.escape(text)` or `Sanitizer.html` tagged template for all user-provided strings in HTML.
 
-#### `Sanitizer.escape(text)`
+**Methods**:
+- `Sanitizer.escape(text)` — Escapes HTML special characters
+- `Sanitizer.html`\`template\` — Tagged template that auto-escapes all interpolated values
 
-Escapes HTML special characters using Foundry's built-in `escapeHTML` utility:
-
-```javascript
-import { Sanitizer } from '../helpers/sanitizer.mjs';
-
-const actorName = '<script>alert("XSS")</script>';
-const safe = Sanitizer.escape(actorName);
-// Returns: '&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;'
-```
-
-#### `Sanitizer.html` (Tagged Template Literal)
-
-Automatically escapes all interpolated values in template strings:
-
-```javascript
-const actorName = '<img src=x onerror="alert(1)">';
-const damage = 10;
-const location = 'Head';
-
-const html = Sanitizer.html`<strong>${actorName}</strong> takes ${damage} wounds to ${location}`;
-// Returns: '<strong>&lt;img src=x onerror=&quot;alert(1)&quot;&gt;</strong> takes 10 wounds to Head'
-```
-
-### When to Sanitize
-
-**ALWAYS sanitize user-provided strings before inserting into HTML**:
-- ✅ Actor names (`actor.name`)
-- ✅ Item/weapon names (`item.name`, `weapon.name`)
-- ✅ Character names in chat messages
+**When to sanitize**:
+- ✅ Actor names, item names, weapon names (any `name` field)
 - ✅ Hit locations from user input
 - ✅ Any string from `dataset` attributes
 - ✅ Dialog titles and content with user data
-
-**NO sanitization needed for**:
-- ❌ System-generated constants (`"Impact"`, `"Energy"`)
-- ❌ Numeric values (`damage`, `penetration`)
-- ❌ Internal data structure names (for equality checks, not HTML output)
+- ❌ System-generated constants ("Impact", "Energy")
+- ❌ Numeric values (damage, penetration)
 - ❌ Foundry API calls (they handle their own escaping)
 
-### Sanitization Patterns
+**Example pattern**: See `src/module/helpers/chat-message-builder.mjs` for usage examples.
 
-#### Chat Message Builders
-
-**ALWAYS sanitize** user-provided strings in chat message helpers:
-
-```javascript
-// ✅ CORRECT
-export class ChatMessageBuilder {
-  static buildDamageMessage(actorName, damage, location) {
-    const safeName = Sanitizer.escape(actorName);
-    const safeLocation = Sanitizer.escape(location);
-    return `<strong>${safeName}</strong> takes ${damage} wounds to ${safeLocation}`;
-  }
-}
-
-// ❌ WRONG - No sanitization
-static buildDamageMessage(actorName, damage, location) {
-  return `<strong>${actorName}</strong> takes ${damage} wounds to ${location}`;
-  // XSS vulnerability if actorName contains <script> tags!
-}
-```
-
-#### Dialog Content
-
-**ALWAYS sanitize** user data in dialog content:
-
-```javascript
-// ✅ CORRECT
-const safeActorName = Sanitizer.escape(actor.name);
-foundry.applications.api.DialogV2.wait({
-  window: { title: `Attack: ${safeActorName}` },
-  content: `<p><strong>${safeActorName}</strong> attacks!</p>`,
-  buttons: [...]
-});
-
-// ❌ WRONG - No sanitization
-foundry.applications.api.DialogV2.wait({
-  window: { title: `Attack: ${actor.name}` }, // XSS in title!
-  content: `<p><strong>${actor.name}</strong> attacks!</p>`, // XSS in content!
-  buttons: [...]
-});
-```
-
-#### Data Attributes
-
-**ALWAYS sanitize** user strings going into data attributes:
-
-```javascript
-// ✅ CORRECT
-const safeLocation = Sanitizer.escape(location);
-const safeDamageType = Sanitizer.escape(damageType);
-return `<button class="apply-damage-btn" data-location="${safeLocation}" data-damage-type="${safeDamageType}">Apply</button>`;
-
-// ❌ WRONG - No sanitization
-return `<button class="apply-damage-btn" data-location="${location}" data-damage-type="${damageType}">Apply</button>`;
-// If location = '"><img src=x onerror="alert(1)">' this creates XSS!
-```
-
-#### Using Tagged Templates
-
-For complex HTML with multiple user values, use `Sanitizer.html`:
-
-```javascript
-// ✅ CORRECT - Auto-escapes all interpolations
-const html = Sanitizer.html`
-  <div class="damage-message">
-    <strong>${actorName}</strong> takes <span class="damage">${damage}</span> 
-    wounds to ${location}
-  </div>
-`;
-
-// ❌ WRONG - Manually escaping is error-prone
-const safeName = Sanitizer.escape(actorName);
-const safeLocation = Sanitizer.escape(location);
-const html = `
-  <div class="damage-message">
-    <strong>${safeName}</strong> takes <span class="damage">${damage}</span>
-    wounds to ${safeLocation}
-  </div>
-`;
-// Easy to forget escaping one field!
-```
-
-### Testing Sanitization
-
-Always test with XSS payloads to verify sanitization:
-
-```javascript
-describe('MyHelper', () => {
-  it('should sanitize actor names to prevent XSS', () => {
-    const maliciousName = '<script>alert("XSS")</script>';
-    const html = MyHelper.buildMessage(maliciousName, 10, 'Head');
-    
-    expect(html).not.toContain('<script>');
-    expect(html).toContain('&lt;script&gt;');
-  });
-  
-  it('should sanitize img onerror attacks', () => {
-    const maliciousName = '<img src=x onerror="alert(1)">';
-    const html = MyHelper.buildMessage(maliciousName, 10, 'Head');
-    
-    expect(html).toContain('&lt;img');
-    expect(html).toContain('&gt;');
-  });
-});
-```
-
-### Common XSS Payloads to Test
-
-Use these payloads when testing sanitization:
-
-```javascript
-const xssPayloads = [
-  '<script>alert("XSS")</script>',
-  '<img src=x onerror="alert(1)">',
-  '"><img src=x onerror="alert(1)">',
-  '<svg onload=alert(1)>',
-  '" onmouseover="alert(1)" x="',
-  '<iframe src="evil.com"></iframe>',
-  '<a href="javascript:alert(1)">Click</a>',
-  '<style>body{background:url("javascript:alert(1)")}</style>'
-];
-```
+**Testing**: Always test with XSS payloads like `<script>alert("XSS")</script>` and `<img src=x onerror="alert(1)">`.
 
 ---
 
-## Async/Await Consistency
+### Async/Await Consistency
 
-The codebase uses **consistent async/await patterns** throughout. All asynchronous operations use async/await syntax instead of promise chains or callbacks.
-
-### Standards
-
-**✅ ALWAYS use async/await**:
-- All async functions must use `async` keyword
-- All promise-returning operations must use `await`
-- No `.then()` or `.catch()` promise chains
+**Rules**:
+- All async functions must use `async`/`await` (no `.then()` or `.catch()` promise chains)
+- Extract dialog callbacks >20 lines to named functions
+- Each helper function should have single, clear responsibility
 - No nested callback pyramids
 
-**✅ Extract complex callbacks**:
-- Dialog callbacks with 20+ lines should be extracted to named functions
-- Nested dialogs should use helper functions for clarity
-- Each helper function should have a single, clear responsibility
-
-### Examples
-
-#### Converting .then() to async/await
-
-```javascript
-// ❌ WRONG - Promise chain
-export function rollItemMacro(itemUuid, options = {}) {
-  const dropData = { type: 'Item', uuid: itemUuid };
-  Item.fromDropData(dropData).then(item => {
-    if (!item || !item.parent) {
-      return ui.notifications.warn(`Could not find item...`);
-    }
-    item.roll();
-  });
-}
-
-// ✅ CORRECT - Async/await
-export async function rollItemMacro(itemUuid, options = {}) {
-  const dropData = { type: 'Item', uuid: itemUuid };
-  const item = await Item.fromDropData(dropData);
-  
-  if (!item || !item.parent) {
-    ui.notifications.warn(`Could not find item...`);
-    return;
-  }
-  
-  item.roll();
-}
-```
-
-#### Extracting nested callbacks
-
-```javascript
-// ❌ WRONG - Deeply nested callbacks
-foundry.applications.api.DialogV2.wait({
-  buttons: [{
-    label: 'Burn', action: 'burn',
-    callback: async (event, button, dialog) => {
-      // ... 50+ lines of nested logic
-      foundry.applications.api.DialogV2.wait({
-        buttons: [{
-          label: 'Roll Dodge', action: 'roll',
-          callback: async (event, button, dodgeDialog) => {
-            // ... another 30+ lines of nested logic
-          }
-        }]
-      });
-    }
-  }]
-});
-
-// ✅ CORRECT - Extracted helper functions
-async function handleDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType) {
-  const dodgeMod = parseInt(dodgeDialog.element.querySelector('#dodgeMod').value) || 0;
-  const dodgeRoll = await new Roll('1d100').evaluate();
-  const dodgeResult = FireHelper.resolveDodgeFlameTest(ag, dodgeRoll.total, dodgeMod);
-  // ... rest of logic
-}
-
-async function handleFlameAttack(targetActor, targetName, damageFormula, penetration, damageType) {
-  const ag = targetActor.system.characteristics?.ag?.value || 0;
-  
-  foundry.applications.api.DialogV2.wait({
-    buttons: [{
-      label: 'Roll Dodge', action: 'roll',
-      callback: (event, button, dodgeDialog) =>
-        handleDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType)
-    }]
-  });
-}
-
-foundry.applications.api.DialogV2.wait({
-  buttons: [{
-    label: 'Burn', action: 'burn',
-    callback: async (event, button, dialog) => {
-      // Parse inputs
-      const damageFormula = dialog.element.querySelector('#flameDamage').value?.trim();
-      const targetActor = game.user.targets.first()?.actor;
-      
-      // Delegate to helper
-      await handleFlameAttack(targetActor, targetActor.name, damageFormula, penetration, damageType);
-    }
-  }]
-});
-```
-
-#### Dialog callbacks
-
-```javascript
-// ✅ CORRECT - Inline for simple callbacks
-foundry.applications.api.DialogV2.wait({
-  buttons: [{
-    label: "Roll", action: "roll",
-    callback: async (event, button, dialog) => {
-      const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
-      const roll = new Roll('1d100');
-      await roll.evaluate();
-      ChatMessageBuilder.createRollMessage(roll, actor, flavor);
-    }
-  }]
-});
-
-// ✅ CORRECT - Extract for complex callbacks (20+ lines)
-async function handleComplexRoll(actor, dialog) {
-  const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
-  const roll = new Roll('1d100');
-  await roll.evaluate();
-  
-  // ... 20+ more lines of logic
-  
-  ChatMessageBuilder.createRollMessage(roll, actor, flavor);
-}
-
-foundry.applications.api.DialogV2.wait({
-  buttons: [{
-    label: "Roll", action: "roll",
-    callback: (event, button, dialog) => handleComplexRoll(actor, dialog)
-  }]
-});
-```
-
-### Error Handling with Async/Await
-
-Async functions wrapped with `ErrorHandler.wrap()` automatically catch errors:
-
-```javascript
-// ✅ CORRECT - ErrorHandler catches async errors
-html.find('.weapon-attack-btn').click(ErrorHandler.wrap(async (ev) => {
-  const weapon = this.actor.items.get(itemId);
-  await CombatHelper.weaponAttackDialog(this.actor, weapon);
-}, 'Weapon Attack'));
-
-// ✅ CORRECT - Try-catch for sheet methods
-async _onItemCreate(event) {
-  try {
-    event.preventDefault();
-    const itemData = { name: 'New Item', type: 'weapon' };
-    await Item.create(itemData, { parent: this.actor });
-  } catch (error) {
-    console.error('[Deathwatch] Create Item failed:', error);
-    ui.notifications.error(`Create Item failed: ${error.message}`);
-  }
-}
-```
+**Error handling**: Async functions wrapped with `ErrorHandler.wrap()` automatically catch errors. Sheet class methods use try-catch blocks.
 
 ---
 
-## JSDoc Documentation Standards
+### JSDoc Documentation
 
-All public methods in the codebase must have comprehensive JSDoc comments with parameter and return types. This improves IDE autocomplete, makes the codebase easier to understand, and serves as inline documentation.
+**Required**: All public methods in helper classes, DataModels, sheets, and init modules must have JSDoc with `@param`, `@returns`, and brief description.
 
-### Required for All Public Methods
-
-Every public static method and class method must include:
-
+**Format**:
 ```javascript
 /**
- * Brief one-line description (imperative form: "Calculate", "Apply", "Get").
+ * Brief one-line description (imperative: "Calculate", "Apply", "Get").
  * 
- * Optional longer description with details, algorithm explanation, or caveats.
- * Use multiple paragraphs if needed to explain complex behavior.
+ * Optional longer explanation of algorithm, edge cases, or behavior.
  * 
  * @param {Type} paramName - Parameter description
- * @param {Type} [optionalParam] - Optional parameter (note brackets)
- * @param {Type} [optionalParam=default] - Optional with default value
+ * @param {Type} [optionalParam] - Optional parameter
  * @returns {Type} Return value description
- * @throws {ErrorType} When this error is thrown (if applicable)
- * @example
- * // Usage example with expected result
- * const result = MyClass.myMethod(arg1, arg2);
- * // result = { expected: "value" }
- * @see {@link RelatedFunction} for related functionality
- * @since v1.2.0 (if recently added)
- * @deprecated Use {@link NewFunction} instead (if deprecated)
  */
 ```
 
-### Tag Reference
+**When required**:
+- ✅ All public static methods in helper classes
+- ✅ All public instance methods in DataModel classes
+- ✅ All sheet class methods (getData, activateListeners, etc.)
+- ✅ All methods in initialization modules
+- ❌ Private methods (prefixed with `_`)
+- ❌ Trivial getters/setters with obvious behavior
+- ❌ Test helper methods
 
-#### Required Tags
-
-- **`@param`**: Every parameter must be documented with type and description
-  - Use brackets `[paramName]` for optional parameters
-  - Use `[paramName=default]` to document default values
-  - Include the type in curly braces: `{string}`, `{number}`, `{Actor}`, `{Object}`
-  
-- **`@returns`**: Every method that returns a value must document the type and meaning
-  - Use `@returns {void}` if the method has no return value
-  - For objects, document the shape using `@typedef` (see below)
-
-#### Optional Tags
-
-- **`@example`**: Strongly recommended for non-obvious APIs
-  - Show realistic usage with input and expected output
-  - Include comments explaining the result
-  
-- **`@throws`**: Document any errors the method throws
-  - Helps callers understand error handling requirements
-  
-- **`@see`**: Link to related methods or documentation
-  - Use `{@link MethodName}` for cross-references
-  
-- **`@modifies`**: Document if method mutates parameters
-  - Example: `@modifies {characteristics} Updates characteristic.value and characteristic.mod`
-  
-- **`@since`**: Version when method was added (useful for new APIs)
-  
-- **`@deprecated`**: Mark deprecated methods and suggest alternatives
-
-### Complex Return Types
-
-For methods that return complex objects, use `@typedef` to define the shape:
-
-```javascript
-/**
- * @typedef {Object} AttackResult
- * @property {boolean} success - Whether attack hit
- * @property {number} degreesOfSuccess - Degrees of success/failure
- * @property {number} hitsTotal - Total hits landed
- * @property {string[]} hitLocations - Hit locations for each hit
- * @property {boolean} isRighteousFury - Whether Righteous Fury triggered
- */
-
-/**
- * Resolve a ranged attack roll.
- * 
- * @param {Actor} actor - Attacking actor
- * @param {Item} weapon - Weapon item being used
- * @param {Object} options - Attack options (aim, range, modifiers)
- * @returns {Promise<AttackResult>} Attack resolution result
- * @example
- * const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, { aim: 1 });
- * // result = { success: true, degreesOfSuccess: 3, hitsTotal: 3, ... }
- */
-static async resolveRangedAttack(actor, weapon, options) {
-  // ...
-}
-```
-
-### Type Annotations
-
-Use these type patterns consistently:
-
-**Primitive types**:
-- `{string}`, `{number}`, `{boolean}`, `{null}`, `{undefined}`
-
-**Arrays**:
-- `{string[]}` — Array of strings
-- `{number[]}` — Array of numbers
-- `{Actor[]}` — Array of Actors
-- `{Array<Object>}` — Generic array of objects
-
-**Unions**:
-- `{string|number}` — Either string or number
-- `{Actor|null}` — Actor or null
-
-**Objects**:
-- `{Object}` — Generic object
-- `{Object<string, number>}` — Object with string keys and number values
-- Define complex objects with `@typedef`
-
-**Functions**:
-- `{Function}` — Generic function
-- `{(arg: string) => number}` — Function signature
-
-**Foundry types**:
-- `{Actor}`, `{Item}`, `{Token}`, `{Roll}`, `{ChatMessage}`
-
-**Promises**:
-- `{Promise<Actor>}` — Promise that resolves to Actor
-- `{Promise<void>}` — Promise with no return value
-
-### Examples by Helper Class
-
-#### Combat Helper Example
-
-```javascript
-/**
- * Calculate range modifier and label for an attack.
- * 
- * Distance is compared to weapon range to determine the range band:
- * - Point Blank (≤2m): +30
- * - Short (≤range÷2): +10
- * - Standard (≤range): +0
- * - Long (≤range×2): −10
- * - Extreme (≤range×3): −30
- * 
- * @param {number} distance - Distance to target in meters
- * @param {number} weaponRange - Weapon's maximum range in meters
- * @returns {{modifier: number, label: string}} Range modifier and range band label
- * @example
- * const result = CombatHelper.calculateRangeModifier(5, 30);
- * // result = { modifier: +10, label: "Short" }
- */
-static calculateRangeModifier(distance, weaponRange) {
-  // ...
-}
-
-/**
- * Determine hit location from reversed d100 roll.
- * 
- * Hit locations are determined by reversing the roll digits:
- * - 01-10: Head
- * - 11-20: Right Arm
- * - 21-30: Left Arm
- * - 31-70: Body
- * - 71-85: Right Leg
- * - 86-00: Left Leg
- * 
- * @param {number} attackRoll - The d100 attack roll result (1-100)
- * @returns {string} Hit location name (Head, Body, Right Arm, Left Arm, Right Leg, Left Leg)
- * @see {@link determineMultipleHitLocations} for multi-hit attacks
- */
-static determineHitLocation(attackRoll) {
-  // ...
-}
-```
-
-#### Modifier Collector Example
-
-```javascript
-/**
- * Collect all modifiers from actor, items, and active effects.
- * 
- * Modifiers are gathered from multiple sources:
- * 1. Actor system.modifiers array
- * 2. Item modifiers (talents, traits, equipment)
- * 3. Active effect modifiers
- * 4. Chapter and specialty modifiers
- * 
- * @param {Actor} actor - The actor document
- * @param {Item[]|Map<string, Item>} items - Actor's items (array or Map)
- * @returns {Object[]} Array of modifier objects
- * @property {string} return[].name - Modifier display name
- * @property {number|string} return[].modifier - Modifier value (number or "x2" for multipliers)
- * @property {string} return[].effectType - Effect type (characteristic, skill, armor, etc.)
- * @property {string} return[].valueAffected - The characteristic/skill being modified
- * @property {boolean} return[].enabled - Whether modifier is currently active
- * @property {string} return[].source - Item/trait/chapter that provides the modifier
- * @example
- * const modifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
- * // modifiers = [
- * //   { name: "+10 BS", modifier: 10, effectType: "characteristic", valueAffected: "bs", enabled: true, source: "Marksman Training" },
- * //   ...
- * // ]
- */
-static collectAllModifiers(actor, items) {
-  // ...
-}
-
-/**
- * Apply characteristic modifiers to calculate final values and bonuses.
- * 
- * Modifiers are applied in this order:
- * 1. Base characteristic value
- * 2. Advances (+5 each)
- * 3. Standard modifiers (added to value)
- * 4. Post-multiplier modifiers (added after Unnatural)
- * 5. Characteristic damage (subtracted)
- * 6. Calculate base bonus (value / 10)
- * 7. Apply Unnatural multipliers to base bonus
- * 8. Add post-multiplier bonus adjustments
- * 
- * @param {Object} characteristics - Characteristics object from actor.system.characteristics
- * @param {Object[]} modifiers - Array of modifier objects from collectAllModifiers
- * @modifies {characteristics} Updates characteristic.value, characteristic.mod, etc.
- * @see {@link CHARACTERISTIC_CONSTANTS} for bonus divisor (default 10)
- */
-static applyCharacteristicModifiers(characteristics, modifiers) {
-  // ...
-}
-```
-
-#### Data Model Example
-
-```javascript
-/**
- * Character DataModel for player characters and NPCs.
- * 
- * Manages full character data including:
- * - Characteristics with derived bonuses
- * - Skills with computed totals
- * - Wounds, fatigue, corruption, insanity
- * - Movement rates
- * - XP and rank progression
- * - Chapter and specialty benefits
- * 
- * Computed properties (updated in prepareDerivedData):
- * - `characteristics.*.value`: Final characteristic values after modifiers
- * - `characteristics.*.mod`: Final characteristic bonus
- * - `skills.*.total`: Final skill test target numbers
- * - `wounds.max`: Maximum wounds from SB + 2×TB + advances + modifiers
- * - `movement.half/full/charge/run`: Movement rates from AG Bonus
- * 
- * @extends {DeathwatchActorBase}
- */
-export default class DeathwatchCharacter extends DeathwatchActorBase {
-  /**
-   * Compute all character derived data.
-   * 
-   * Called automatically by Foundry when actor data changes.
-   * 
-   * Order of operations:
-   * 1. Load skills from JSON
-   * 2. Calculate rank and XP totals
-   * 3. Collect modifiers from items/effects/chapter/specialty
-   * 4. Apply modifiers to characteristics
-   * 5. Apply modifiers to skills
-   * 6. Calculate wounds, fatigue, initiative
-   * 7. Calculate movement rates
-   * 8. Apply force weapon modifiers (psykers only)
-   * 
-   * @override
-   * @returns {void}
-   */
-  prepareDerivedData() {
-    // ...
-  }
-}
-```
-
-### When JSDoc is Required
-
-**✅ ALWAYS document**:
-- All public static methods in helper classes
-- All public instance methods in DataModel classes
-- All sheet class methods (getData, activateListeners, etc.)
-- All methods in initialization modules (register, initialize, etc.)
-- Methods with complex parameters or return values
-- Methods that modify parameters (use `@modifies`)
-
-**❌ NOT required**:
-- Private methods (prefixed with `_`)
-- Trivial getters/setters with obvious behavior
-- Methods already documented by Foundry base classes (unless overriding behavior)
-- Test helper methods (tests themselves should be self-documenting)
-
-### Description Writing Guidelines
-
-**Brief description (first line)**:
-- Use imperative form: "Calculate", "Apply", "Get", "Create", "Validate"
-- Be specific about what the method does
-- Keep under 80 characters
-- No period at the end
-
-**Longer description (subsequent paragraphs)**:
-- Explain the algorithm or approach
-- Document edge cases and special behavior
-- Mention performance considerations if relevant
-- Link to related methods with `@see`
-- Explain the "why" not just the "what"
-
-**Parameter descriptions**:
-- Be specific about expected format
-- Document units (meters, milliseconds, etc.)
-- Note if parameter is mutated
-- Explain relationship to other parameters
-
-**Return descriptions**:
-- Describe what the value represents
-- Document null/undefined returns
-- Explain object structure for complex returns
-- Note if return value is used for control flow
-
-### Common Patterns
-
-**Array parameters**:
-```javascript
-/**
- * @param {Item[]|Map<string, Item>} items - Actor's items (accepts array or Map for backward compatibility)
- */
-```
-
-**Optional parameters with defaults**:
-```javascript
-/**
- * @param {number} [modifier=0] - Optional modifier to apply (default: 0)
- * @param {string} [damageType="Impact"] - Damage type (default: "Impact")
- */
-```
-
-**Modifying parameters**:
-```javascript
-/**
- * @param {Object} characteristics - Characteristics object
- * @modifies {characteristics} Updates characteristic.value and characteristic.mod in place
- */
-```
-
-**Multiple return types**:
-```javascript
-/**
- * @returns {Actor|null} The actor if found, null otherwise
- */
-```
-
-**Async methods**:
-```javascript
-/**
- * @returns {Promise<void>} Resolves when damage is applied
- */
-async applyDamage(actor, damageData) {
-  // ...
-}
-```
+**Example**: See `src/module/helpers/combat/combat.mjs` for comprehensive JSDoc examples.
 
 ---
 
@@ -1258,23 +438,7 @@ Each pack has a prefix pattern for IDs:
 - **Psychic powers** → Opens Focus Power Test directly
 - **Other items** → Generic item roll (posts description to chat)
 
-**Macro presets**: Edit the macro command to pre-load attack options:
-```javascript
-// Standard weapon macro (shows Attack/Damage choice)
-game.deathwatch.rollItemMacro("Actor.abc123.Item.def456");
-
-// Pre-loaded attack macro (skips choice, opens attack dialog with preset options)
-game.deathwatch.rollItemMacro("Actor.abc123.Item.def456", {
-  rateOfFire: "full",
-  aim: 1,
-  calledShot: "Head"
-});
-
-// Pre-loaded damage macro (skips choice, rolls damage immediately)
-game.deathwatch.rollItemMacro("Actor.abc123.Item.def456", { action: "damage" });
-```
-
-See `docs/hotbar-macros.md` for full list of options.
+**Macro presets**: Edit the macro command to pre-load attack options. See `docs/hotbar-macros.md` for full list of options.
 
 ---
 

@@ -1,4 +1,4 @@
-import { RANGE_MODIFIERS } from "../constants.mjs";
+import { RANGE_MODIFIERS, HIT_LOCATION_RANGES } from "../constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CanvasHelper, FoundryAdapter } from "../foundry-adapter.mjs";
 import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";
@@ -180,12 +180,14 @@ export class CombatHelper {
     const normalizedRoll = attackRoll === 100 ? 0 : attackRoll;
     const paddedRoll = normalizedRoll.toString().padStart(2, '0');
     const reversed = parseInt(paddedRoll.split('').reverse().join(''));
-    if (reversed >= 1 && reversed <= 10) return "Head";
-    if (reversed >= 11 && reversed <= 20) return "Right Arm";
-    if (reversed >= 21 && reversed <= 30) return "Left Arm";
-    if (reversed >= 31 && reversed <= 70) return "Body";
-    if (reversed >= 71 && reversed <= 85) return "Right Leg";
-    return "Left Leg";
+
+    for (const [, range] of Object.entries(HIT_LOCATION_RANGES)) {
+      if (reversed >= range.min && reversed <= range.max) {
+        return range.label;
+      }
+    }
+
+    return HIT_LOCATION_RANGES.LEFT_LEG.label;  // Default fallback
   }
 
   /**

@@ -1,6 +1,6 @@
 import { CohesionHelper } from "../helpers/cohesion.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
-import { MODES } from "../helpers/constants.mjs";
+import { MODES, CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
 import { Sanitizer } from "../helpers/sanitizer.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
@@ -248,7 +248,7 @@ export class CohesionPanel extends HandlebarsApplicationMixin(
     if (!leader) return ui.notifications.warn('No squad leader assigned.');
 
     const currentGmMod = game.settings.get('deathwatch', 'cohesionModifier');
-    const fsBonus = Math.floor((leader.system.characteristics?.fs?.value || 0) / 10);
+    const fsBonus = Math.floor((leader.system.characteristics?.fs?.value || 0) / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     const rankMod = CohesionHelper.getRankModifier(leader.system.rank || 1);
     const commandMod = CohesionHelper.getCommandModifier(leader.system.skills?.command || {});
 

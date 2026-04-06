@@ -6,6 +6,7 @@ import { CohesionHelper } from "../helpers/cohesion.mjs";
 import { ErrorHandler } from "../helpers/error-handler.mjs";
 import { Validation } from "../helpers/validation.mjs";
 import { Sanitizer } from "../helpers/sanitizer.mjs";
+import { ROLL_CONSTANTS } from "../helpers/constants.mjs";
 
 /**
  * Handles chat message button event listeners.
@@ -235,8 +236,8 @@ export class ChatButtonHandlers {
       const attackerRoll = await new Roll('1d100').evaluate();
       const targetRoll = await new Roll('1d100').evaluate();
 
-      const attackerDoS = attackerRoll.total <= attackerWP ? Math.floor((attackerWP - attackerRoll.total) / 10) + 1 : 0;
-      const targetDoS = targetRoll.total <= targetWP ? Math.floor((targetWP - targetRoll.total) / 10) + 1 : 0;
+      const attackerDoS = attackerRoll.total <= attackerWP ? Math.floor((attackerWP - attackerRoll.total) / ROLL_CONSTANTS.DEGREES_DIVISOR) + 1 : 0;
+      const targetDoS = targetRoll.total <= targetWP ? Math.floor((targetWP - targetRoll.total) / ROLL_CONSTANTS.DEGREES_DIVISOR) + 1 : 0;
 
       const attackerWins = attackerDoS > targetDoS;
       const netDoS = attackerDoS - targetDoS;

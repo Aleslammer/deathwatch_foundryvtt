@@ -148,7 +148,7 @@ export const XP_CONSTANTS = {
 
 // Characteristic Constants
 export const CHARACTERISTIC_CONSTANTS = {
-  BONUS_DIVISOR: 10,
+  BONUS_DIVISOR: 10,  // Characteristic bonus = value / 10 (Deathwatch Core p. 31)
   MAX_VALUE: 100
 };
 
@@ -156,7 +156,30 @@ export const CHARACTERISTIC_CONSTANTS = {
 export const ROLL_CONSTANTS = {
   D100_MAX: 100,
   D10_MAX: 10,
-  DEGREES_DIVISOR: 10
+  DEGREES_DIVISOR: 10  // Degrees of Success/Failure = difference / 10 (Deathwatch Core p. 27)
+};
+
+// Hit Location Ranges (Deathwatch Core p. 243)
+// Attack roll digits are reversed to determine hit location
+export const HIT_LOCATION_RANGES = {
+  HEAD: { min: 1, max: 10, label: "Head" },
+  RIGHT_ARM: { min: 11, max: 20, label: "Right Arm" },
+  LEFT_ARM: { min: 21, max: 30, label: "Left Arm" },
+  BODY: { min: 31, max: 70, label: "Body" },
+  RIGHT_LEG: { min: 71, max: 85, label: "Right Leg" },
+  LEFT_LEG: { min: 86, max: 100, label: "Left Leg" }
+};
+
+// Wounds Calculation Constants (Deathwatch Core p. 214)
+export const WOUNDS_CONSTANTS = {
+  STRENGTH_BONUS_MULTIPLIER: 1,     // Wounds = SB + (2 × TB)
+  TOUGHNESS_BONUS_MULTIPLIER: 2
+};
+
+// Initiative Constants (Deathwatch Core p. 245)
+export const INITIATIVE_CONSTANTS = {
+  DECIMALS: 2,  // For tie-breaking in combat tracker (e.g., 15.23 vs 15.45)
+  FORMULA: "1d10 + @agBonus + @initiativeBonus"
 };
 
 // Enemy Classifications
@@ -207,4 +230,10 @@ export const COHESION = {
   COMMAND_EXPERT: 3,
   DAMAGE_THRESHOLD: 10,
   MAX_DAMAGE_PER_ROUND: 1
+};
+
+// Horde Constants (Deathwatch Core p. 358-360)
+export const HORDE_CONSTANTS = {
+  MAGNITUDE_DAMAGE_DIVISOR: 10,  // Horde damage bonus = magnitude / 10 d10s
+  MAX_MAGNITUDE_BONUS_DICE: 2    // Maximum +2d10 from magnitude
 };

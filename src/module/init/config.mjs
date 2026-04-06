@@ -2,6 +2,7 @@ import { DeathwatchActor } from "../documents/actor.mjs";
 import { DeathwatchItem } from "../documents/item.mjs";
 import * as models from '../data/_module.mjs';
 import { DW_STATUS_EFFECTS } from "../helpers/status-effects.mjs";
+import { INITIATIVE_CONSTANTS } from "../helpers/constants.mjs";
 
 /**
  * Configures Foundry CONFIG object for the Deathwatch system.
@@ -13,8 +14,8 @@ export class ConfigRegistrar {
   static configure() {
     // Set initiative formula
     CONFIG.Combat.initiative = {
-      formula: "1d10 + @agBonus + @initiativeBonus",
-      decimals: 2
+      formula: INITIATIVE_CONSTANTS.FORMULA,
+      decimals: INITIATIVE_CONSTANTS.DECIMALS
     };
 
     // Set combat turn marker

@@ -1,4 +1,4 @@
-import { POWER_LEVELS, POWER_LEVEL_LABELS } from "../constants.mjs";
+import { POWER_LEVELS, POWER_LEVEL_LABELS, ROLL_CONSTANTS } from "../constants.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { ModifierCollector } from "../character/modifier-collector.mjs";
 import { FoundryAdapter } from "../foundry-adapter.mjs";
@@ -163,7 +163,7 @@ export class PsychicCombatHelper {
     } else if (success) {
       resultText = `<strong style="color: green;">SUCCESS</strong> (${dos} Degree${dos !== 1 ? "s" : ""} of Success)`;
     } else {
-      const dof = Math.floor((roll - targetNumber) / 10);
+      const dof = Math.floor((roll - targetNumber) / ROLL_CONSTANTS.DEGREES_DIVISOR);
       resultText = `<strong style="color: red;">FAILED</strong> (${dof} Degree${dof !== 1 ? "s" : ""} of Failure)`;
     }
     return `[Focus Power] ${powerName} — Target: ${targetNumber}<br>Effective Psy Rating: ${effectivePR} (${levelLabel})<br>${resultText}`;
@@ -238,7 +238,7 @@ export class PsychicCombatHelper {
   static resolveOpposedTest(psykerDoS, targetWP, targetRoll, targetMiscMod = 0) {
     const targetNumber = targetWP + targetMiscMod;
     const targetSuccess = targetRoll <= targetNumber;
-    const targetDoS = targetSuccess ? Math.floor((targetNumber - targetRoll) / 10) : 0;
+    const targetDoS = targetSuccess ? Math.floor((targetNumber - targetRoll) / ROLL_CONSTANTS.DEGREES_DIVISOR) : 0;
     const psykerWins = psykerDoS > targetDoS;
     const netDoS = psykerDoS - targetDoS;
     return { targetSuccess, targetDoS, psykerWins, netDoS, targetNumber };

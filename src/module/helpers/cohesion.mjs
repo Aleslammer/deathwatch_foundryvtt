@@ -1,4 +1,4 @@
-import { COHESION } from './constants.mjs';
+import { COHESION, CHARACTERISTIC_CONSTANTS } from './constants.mjs';
 import { Sanitizer } from './sanitizer.mjs';
 
 /**
@@ -16,7 +16,7 @@ export class CohesionHelper {
    * @returns {number}
    */
   static calculateCohesionMax(fellowshipValue, rank, commandSkill, gmModifier = 0) {
-    const fsBonus = Math.floor(fellowshipValue / 10);
+    const fsBonus = Math.floor(fellowshipValue / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     const rankMod = CohesionHelper.getRankModifier(rank);
     const commandMod = CohesionHelper.getCommandModifier(commandSkill);
     return Math.max(0, fsBonus + rankMod + commandMod + gmModifier);
@@ -70,7 +70,7 @@ export class CohesionHelper {
   static buildCohesionBreakdown(leader, gmModifier = 0) {
     if (!leader || leader.type !== 'character') return 'No squad leader assigned';
     const fs = leader.system.characteristics?.fs?.value || 0;
-    const fsBonus = Math.floor(fs / 10);
+    const fsBonus = Math.floor(fs / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     const rankMod = CohesionHelper.getRankModifier(leader.system.rank || 1);
     const commandMod = CohesionHelper.getCommandModifier(leader.system.skills?.command || {});
     const total = Math.max(0, fsBonus + rankMod + commandMod + gmModifier);
