@@ -134,8 +134,14 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
       this.xp.available = (this.xp.total || XPCalculator.STARTING_XP) - spentXP;
     }
 
+    // Convert items Map to Array once (performance optimization)
+    // If items has .get() method (Map or test mock), keep it as-is; otherwise convert to array
+    const itemsArray = typeof actor.items.get === 'function'
+      ? (actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items)
+      : Array.from(actor.items);
+
     // Collect and apply modifiers
-    const allModifiers = ModifierCollector.collectAllModifiers(actor);
+    const allModifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
     ModifierCollector.applyCharacteristicModifiers(this.characteristics, allModifiers);
 
     if (this.skills) {
@@ -145,12 +151,12 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
     this.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(this.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(this.fatigue, this.characteristics?.tg?.mod || 0);
-    ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
-    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, actor.items);
+    ModifierCollector.applyArmorModifiers(itemsArray, allModifiers);
+    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, itemsArray);
     ModifierCollector.applyPsyRatingModifiers(this.psyRating, allModifiers);
 
     // Apply force weapon modifiers after psy rating is computed
-    for (const item of actor.items) {
+    for (const item of itemsArray) {
       if (item.type === 'weapon') {
         item.system._applyOwnModifiers();
         item.system.applyForceWeaponModifiers();

@@ -8,7 +8,8 @@ import { CHARACTERISTIC_CONSTANTS } from '../constants.mjs';
  *
  * @example
  * // Collect all modifiers from an actor
- * const mods = ModifierCollector.collectAllModifiers(actor);
+ * const itemsArray = Array.from(actor.items.values());
+ * const mods = ModifierCollector.collectAllModifiers(actor, itemsArray);
  *
  * // Apply them to characteristics
  * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, mods);
@@ -17,11 +18,12 @@ export class ModifierCollector {
   /**
    * Collect all modifiers from an actor: actor-level modifiers, item modifiers, and active effects.
    * @param {Actor} actor - Actor document
+   * @param {Array|Map} itemsArray - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
    * @returns {Array<Object>} Array of modifier objects with effectType, valueAffected, modifier, source
    */
-  static collectAllModifiers(actor) {
+  static collectAllModifiers(actor, itemsArray) {
     const actorModifiers = actor.system.modifiers || [];
-    const itemModifiers = this.collectItemModifiers(actor.items);
+    const itemModifiers = this.collectItemModifiers(itemsArray);
     const effectModifiers = this.collectActiveEffectModifiers(actor);
     return [...actorModifiers, ...itemModifiers, ...effectModifiers];
   }
@@ -61,24 +63,24 @@ export class ModifierCollector {
   /**
    * Collect modifiers from all equipped items, talents, traits, and chapters.
    * Includes modifiers from attached armor histories.
-   * @param {Map|Array} items - Actor items collection
+   * @param {Array|Map} items - Array of actor's items, or Map for backward compatibility
    * @returns {Array<Object>} Array of modifier objects from items
    */
   static collectItemModifiers(items) {
     const modifiers = [];
-    
-    // Handle both Map (from actor.items) and Array (from tests)
+
+    // Handle both Map (from actor.items) and Array (from prepareDerivedData optimization)
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
-    
+
     for (const item of itemsArray) {
       if (!item?.system) continue;
-      
+
       // Chapter, trait, and talent items are always active (no equipped check)
       const isActive = item.type === 'chapter' || item.type === 'trait' || item.type === 'talent' || item.system.equipped;
       if (!isActive) continue;
-      
+
       debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
-      
+
       if (item.system.modifiers) {
         debug('MODIFIERS', `  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
         for (const mod of item.system.modifiers) {
@@ -87,12 +89,12 @@ export class ModifierCollector {
           }
         }
       }
-      
+
       if (item.type === 'armor' && Array.isArray(item.system.attachedHistories)) {
-        modifiers.push(...this.collectArmorHistoryModifiers(item, items));
+        modifiers.push(...this.collectArmorHistoryModifiers(item, itemsArray));
       }
     }
-    
+
     debug('MODIFIERS', `Total item modifiers collected: ${modifiers.length}`);
     return modifiers;
   }
@@ -100,22 +102,25 @@ export class ModifierCollector {
   /**
    * Collect modifiers from armor history items attached to armor.
    * @param {Item} armor - Armor item with attachedHistories
-   * @param {Map|Array} allItems - All items to look up history IDs
+   * @param {Array|Map} allItems - All items to look up history IDs
    * @returns {Array<Object>} Array of modifier objects from armor histories
    */
   static collectArmorHistoryModifiers(armor, allItems) {
     const modifiers = [];
-    
+
     debug('MODIFIERS', `  Armor ${armor.name} has ${armor.system.attachedHistories.length} attached histories`);
-    
+
     for (const historyId of armor.system.attachedHistories) {
-      const history = allItems.get(historyId);
+      // Use .get() if available (Map or test mock), otherwise use .find() (Array)
+      const history = typeof allItems.get === 'function'
+        ? allItems.get(historyId)
+        : allItems.find(item => item._id === historyId || item.id === historyId);
       debug('MODIFIERS', `    History ID: ${historyId}, found: ${!!history}`);
-      
+
       if (history) {
         debug('MODIFIERS', `    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
       }
-      
+
       if (history && Array.isArray(history.system.modifiers)) {
         for (const mod of history.system.modifiers) {
           debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
@@ -125,30 +130,33 @@ export class ModifierCollector {
         }
       }
     }
-    
+
     return modifiers;
   }
 
   /**
    * Collect modifiers from weapon upgrades attached to a weapon.
    * @param {Item} weapon - Weapon item with attachedUpgrades
-   * @param {Map|Array} allItems - All items to look up upgrade IDs
+   * @param {Array|Map} allItems - All items to look up upgrade IDs
    * @returns {Array<Object>} Array of modifier objects from weapon upgrades
    */
   static collectWeaponUpgradeModifiers(weapon, allItems) {
     const modifiers = [];
-    
+
     debug('MODIFIERS', `  Weapon ${weapon.name} has ${weapon.system.attachedUpgrades.length} attached upgrades`);
-    
+
     for (const upgradeRef of weapon.system.attachedUpgrades) {
       const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
-      const upgrade = allItems.get(upgradeId);
+      // Use .get() if available (Map or test mock), otherwise use .find() (Array)
+      const upgrade = typeof allItems.get === 'function'
+        ? allItems.get(upgradeId)
+        : allItems.find(item => item._id === upgradeId || item.id === upgradeId);
       debug('MODIFIERS', `    Upgrade ID: ${upgradeId}, found: ${!!upgrade}`);
-      
+
       if (upgrade) {
         debug('MODIFIERS', `    Upgrade: ${upgrade.name}, modifiers: ${upgrade.system.modifiers?.length || 0}`);
       }
-      
+
       if (upgrade && Array.isArray(upgrade.system.modifiers)) {
         for (const mod of upgrade.system.modifiers) {
           debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
@@ -158,7 +166,7 @@ export class ModifierCollector {
         }
       }
     }
-    
+
     return modifiers;
   }
 
@@ -446,16 +454,17 @@ export class ModifierCollector {
   /**
    * Apply armor modifiers to equipped armor items.
    * Increases armor values for all locations (head, body, arms, legs).
-   * @param {Map|Array} items - Actor items collection
+   * @param {Array|Map} items - Array of actor's items, or Map for backward compatibility
    * @param {Array<Object>} modifiers - Array of modifier objects
    */
   static applyArmorModifiers(items, modifiers) {
+    // Handle both Map (backward compatibility) and Array (from prepareDerivedData optimization)
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
-    
+
     for (const item of itemsArray) {
       if (item?.type === 'armor' && item.system.equipped) {
         const locations = ['head', 'body', 'left_arm', 'right_arm', 'left_leg', 'right_leg'];
-        
+
         for (const location of locations) {
           if (item.system[location] !== undefined) {
             if (item.system[`${location}_base`] === undefined) {
@@ -463,13 +472,13 @@ export class ModifierCollector {
             }
             const base = item.system[`${location}_base`];
             let total = base;
-            
+
             for (const mod of modifiers) {
               if (mod.enabled !== false && mod.effectType === 'armor') {
                 total += parseInt(mod.modifier) || 0;
               }
             }
-            
+
             item.system[location] = total;
           }
         }
@@ -480,11 +489,13 @@ export class ModifierCollector {
   /**
    * Calculate total natural armor value from trait-sourced armor modifiers.
    * @param {Array} modifiers - All collected modifiers
-   * @param {Map|Array} items - Actor items collection
+   * @param {Array|Map} items - Array of actor's items, or Map for backward compatibility
    * @returns {number} Total natural armor bonus from traits
    */
   static calculateNaturalArmor(modifiers, items) {
+    // Handle both Map (backward compatibility) and Array (from prepareDerivedData optimization)
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
+
     let total = 0;
     for (const mod of modifiers) {
       if (mod.enabled !== false && mod.effectType === 'armor') {

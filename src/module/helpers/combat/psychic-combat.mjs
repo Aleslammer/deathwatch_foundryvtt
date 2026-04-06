@@ -350,7 +350,11 @@ export class PsychicCombatHelper {
       return;
     }
 
-    const allModifiers = ModifierCollector.collectAllModifiers(actor);
+    // If items has .get() method (Map or test mock), keep it as-is; otherwise convert to array
+    const itemsArray = typeof actor.items.get === 'function'
+      ? (actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items)
+      : Array.from(actor.items);
+    const allModifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
     const psychicMods = this.collectPsychicModifiers(allModifiers);
 
     const safePowerName = Sanitizer.escape(power.name);
