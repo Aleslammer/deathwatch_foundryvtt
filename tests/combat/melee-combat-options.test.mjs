@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { MeleeCombatHelper } from '../../src/module/helpers/combat/melee-combat.mjs';
 import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
-import { MELEE_MODIFIERS, COMBAT_PENALTIES, AIM_MODIFIERS } from '../../src/module/helpers/constants.mjs';
+import { MELEE_MODIFIERS, COMBAT_PENALTIES, AIM_MODIFIERS } from "../../src/module/helpers/constants/index.mjs";
 
 function makeActor(ws = 40) {
   return {

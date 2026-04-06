@@ -3,7 +3,7 @@
  * Derived data computation lives in DataModel classes (character.mjs, npc.mjs).
  * @extends {Actor}
  */
-import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
+import { CHARACTERISTIC_CONSTANTS } from "../helpers/constants/index.mjs";
 import { ActorConditionsMixin } from "./actor-conditions.mjs";
 
 export class DeathwatchActor extends ActorConditionsMixin(Actor) {

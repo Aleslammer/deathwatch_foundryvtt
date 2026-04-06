@@ -1,5 +1,5 @@
 import { debug } from "../debug.mjs";
-import { CHARACTERISTIC_CONSTANTS } from '../constants.mjs';
+import { CHARACTERISTIC_CONSTANTS } from "../constants/index.mjs";
 
 /**
  * Collects and applies modifiers from various sources to actor characteristics, skills, and attributes.

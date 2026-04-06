@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { CombatHelper } from '../../src/module/helpers/combat/combat.mjs';
-import { HIT_LOCATIONS } from '../../src/module/helpers/constants.mjs';
+import { HIT_LOCATIONS } from "../../src/module/helpers/constants/index.mjs";
 
 describe('Called Shot', () => {
   beforeEach(() => {

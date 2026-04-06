@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { RighteousFuryHelper } from '../../src/module/helpers/combat/righteous-fury-helper.mjs';
 import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
-import { ENEMY_CLASSIFICATIONS } from '../../src/module/helpers/constants.mjs';
+import { ENEMY_CLASSIFICATIONS } from "../../src/module/helpers/constants/index.mjs";
 
 describe('Deathwatch Training', () => {
   beforeEach(() => {

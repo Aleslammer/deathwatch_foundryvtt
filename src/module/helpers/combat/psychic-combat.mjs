@@ -1,4 +1,4 @@
-import { POWER_LEVELS, POWER_LEVEL_LABELS, ROLL_CONSTANTS } from "../constants.mjs";
+import { POWER_LEVELS, POWER_LEVEL_LABELS, ROLL_CONSTANTS } from "../constants/index.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { ModifierCollector } from "../character/modifier-collector.mjs";
 import { FoundryAdapter } from "../foundry-adapter.mjs";

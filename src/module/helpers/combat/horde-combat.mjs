@@ -1,4 +1,4 @@
-import { HORDE_CONSTANTS } from "../constants.mjs";
+import { HORDE_CONSTANTS } from "../constants/index.mjs";
 
 /**
  * Helper for horde-specific combat mechanics.

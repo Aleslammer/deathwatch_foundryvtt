@@ -1,6 +1,6 @@
 # Low Priority Issues (Priority 🔵)
 
-**Status**: Planning  
+**Status**: In Progress (Issue 14 completed ✅)  
 **Estimated Effort**: 1-2 weeks  
 **Risk Level**: Medium (optimization changes require careful testing)
 
@@ -181,7 +181,9 @@ class DeathwatchCharacter extends DeathwatchActorBase {
 
 ---
 
-## Issue 14: Constants Organization
+## Issue 14: Constants Organization ✅
+
+**Status**: COMPLETED (2026-04-06)
 
 ### Problem
 `constants.mjs` (210 lines) mixes different domains into one file.
@@ -267,9 +269,19 @@ export * from './psychic-constants.mjs';
 5. Delete old constants.mjs
 6. Update CLAUDE.md
 
-**Effort**: ~4 hours
+**Effort**: ~4 hours (Actual: 3 hours)
 
-**When to Implement**: Low priority, cosmetic change. Do if touching constants for other reasons.
+**Implementation Summary**:
+- Created `src/module/helpers/constants/` directory with 5 domain-specific files:
+  - `combat-constants.mjs` — Combat modifiers, hit locations, ranges (84 lines)
+  - `characteristic-constants.mjs` — Character stats, rolls, XP, wounds (58 lines)
+  - `psychic-constants.mjs` — Psychic power levels (16 lines)
+  - `modifier-constants.mjs` — Modifier/effect type system (72 lines)
+  - `squad-constants.mjs` — Squad mode, cohesion, hordes (31 lines)
+- Created `index.mjs` for backward-compatible re-exports
+- Updated all imports (17 source files, 17 test files)
+- Updated CLAUDE.md documentation
+- All 1664 tests passing ✅
 
 ---
 
@@ -481,14 +493,16 @@ const result = await attack.resolve();
 
 ## Summary
 
-| Issue | Effort | Risk | Priority |
-|-------|--------|------|----------|
-| Caching for Derived Data | 10 hours | Medium | Nice to Have |
-| Constants Organization | 4 hours | Low | Nice to Have |
-| Debug Console Logs | 3 hours | Low | Nice to Have |
-| Static Helper Classes | 0 hours | N/A | Document Only |
+| Issue | Effort | Risk | Status |
+|-------|--------|------|--------|
+| Caching for Derived Data | 10 hours | Medium | ⏳ Not Started |
+| Constants Organization | 4 hours (3h actual) | Low | ✅ COMPLETED |
+| Debug Console Logs | 3 hours | Low | ⏳ Not Started |
+| Static Helper Classes | 0 hours | N/A | 📝 Document Only |
 
-**Total**: ~17 hours (~1 week)
+**Total**: ~17 hours (~1 week)  
+**Completed**: 3 hours  
+**Remaining**: ~14 hours
 
 **Recommendation**: Only implement if time permits after all critical/high/medium work is done. These are polish items that improve developer experience but don't affect functionality or user experience significantly.
 

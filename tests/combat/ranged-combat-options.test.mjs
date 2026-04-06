@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { RangedCombatHelper } from '../../src/module/helpers/combat/ranged-combat.mjs';
 import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
-import { RATE_OF_FIRE_MODIFIERS, AIM_MODIFIERS, COMBAT_PENALTIES } from '../../src/module/helpers/constants.mjs';
+import { RATE_OF_FIRE_MODIFIERS, AIM_MODIFIERS, COMBAT_PENALTIES } from "../../src/module/helpers/constants/index.mjs";
 
 function makeActor(bs = 40) {
   return {

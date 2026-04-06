@@ -1,4 +1,4 @@
-import { COHESION, CHARACTERISTIC_CONSTANTS } from './constants.mjs';
+import { COHESION, CHARACTERISTIC_CONSTANTS } from "./constants/index.mjs";
 import { Sanitizer } from './sanitizer.mjs';
 import { FoundryAdapter } from './foundry-adapter.mjs';
 

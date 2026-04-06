@@ -1,4 +1,4 @@
-import { RANGE_MODIFIERS, HIT_LOCATION_RANGES } from "../constants.mjs";
+import { RANGE_MODIFIERS, HIT_LOCATION_RANGES } from "../constants/index.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CanvasHelper, FoundryAdapter } from "../foundry-adapter.mjs";
 import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";

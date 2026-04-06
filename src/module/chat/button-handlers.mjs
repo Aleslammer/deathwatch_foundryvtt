@@ -6,7 +6,7 @@ import { CohesionHelper } from "../helpers/cohesion.mjs";
 import { ErrorHandler } from "../helpers/error-handler.mjs";
 import { Validation } from "../helpers/validation.mjs";
 import { Sanitizer } from "../helpers/sanitizer.mjs";
-import { ROLL_CONSTANTS } from "../helpers/constants.mjs";
+import { ROLL_CONSTANTS } from "../helpers/constants/index.mjs";
 
 /**
  * Handles chat message button event listeners.

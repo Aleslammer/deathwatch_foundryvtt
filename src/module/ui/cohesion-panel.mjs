@@ -1,6 +1,6 @@
 import { CohesionHelper } from "../helpers/cohesion.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
-import { MODES, CHARACTERISTIC_CONSTANTS } from "../helpers/constants.mjs";
+import { MODES, CHARACTERISTIC_CONSTANTS } from "../helpers/constants/index.mjs";
 import { Sanitizer } from "../helpers/sanitizer.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;

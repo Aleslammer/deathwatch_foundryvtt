@@ -103,7 +103,7 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `mode-helper.mjs` — Solo/Squad Mode activation, Squad Ability tracking
 - `initiative.mjs` — Initiative dialog with modifier input
 - `foundry-adapter.mjs` — Wraps Foundry API calls for testability (see below)
-- `constants.mjs` — System-wide constants (characteristics, combat, hit locations, initiative, wounds, hordes)
+- `constants/` — System-wide constants organized by domain (combat, character, psychic, modifiers, squad)
 
 ### Modular Initialization Architecture
 
@@ -218,12 +218,19 @@ WeaponHandlers.attach(html, this.actor, this);
 
 ## Constants and Magic Numbers
 
-**Location**: `src/module/helpers/constants.mjs`
+**Location**: `src/module/helpers/constants/` (organized by domain)
 
-All system-wide numeric constants are defined in `constants.mjs` with JSDoc comments referencing the source rulebook page. Use these constants instead of hardcoded "magic numbers".
+All system-wide numeric constants are organized into domain-specific files with JSDoc comments referencing the source rulebook page. Use these constants instead of hardcoded "magic numbers".
 
-**Key constant groups**:
+**Constant files**:
+- `combat-constants.mjs` — Combat modifiers, hit locations, ranges, enemy classifications
+- `characteristic-constants.mjs` — Character stats, rolls, XP, wounds, initiative
+- `psychic-constants.mjs` — Psychic power levels
+- `modifier-constants.mjs` — Modifier and effect type system
+- `squad-constants.mjs` — Squad mode, cohesion, hordes
+- `index.mjs` — Re-exports all constants for convenience
 
+**Key constants**:
 - `CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR` — Characteristic bonus = value / 10 (Core p. 31)
 - `ROLL_CONSTANTS.DEGREES_DIVISOR` — Degrees of Success/Failure = difference / 10 (Core p. 27)
 - `HIT_LOCATION_RANGES` — Hit location determination ranges (Core p. 243)
@@ -236,6 +243,13 @@ All system-wide numeric constants are defined in `constants.mjs` with JSDoc comm
 
 **Usage examples**:
 ```javascript
+// Import from index.mjs (re-exports all)
+import { CHARACTERISTIC_CONSTANTS, ROLL_CONSTANTS } from '../helpers/constants/index.mjs';
+
+// Or import from specific domain files
+import { RANGE_MODIFIERS, HIT_LOCATIONS } from '../helpers/constants/combat-constants.mjs';
+import { CHARACTERISTICS } from '../helpers/constants/characteristic-constants.mjs';
+
 // ✅ Good: Uses constant with documented source
 const bonus = Math.floor(characteristic / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
 const dos = Math.floor((target - roll) / ROLL_CONSTANTS.DEGREES_DIVISOR);

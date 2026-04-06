@@ -1,4 +1,4 @@
-import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS, HIT_LOCATIONS } from "../constants.mjs";
+import { AIM_MODIFIERS, COMBAT_PENALTIES, MELEE_MODIFIERS, HIT_LOCATIONS } from "../constants/index.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";

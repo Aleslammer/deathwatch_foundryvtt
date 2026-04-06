@@ -1,4 +1,4 @@
-import { MODES, MODE_LABELS } from './constants.mjs';
+import { MODES, MODE_LABELS } from "./constants/index.mjs";
 
 /**
  * Static helper class for Solo/Squad Mode logic.

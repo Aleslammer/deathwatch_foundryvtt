@@ -1,5 +1,5 @@
 import { DWConfig } from "../config.mjs";
-import { ROLL_CONSTANTS } from "../constants.mjs";
+import { ROLL_CONSTANTS } from "../constants/index.mjs";
 
 export class RollDialogBuilder {
   static buildModifierDialog() {

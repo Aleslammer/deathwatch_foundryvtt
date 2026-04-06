@@ -1,4 +1,4 @@
-import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, SIZE_HIT_MODIFIERS, ROLL_CONSTANTS } from "../constants.mjs";
+import { AIM_MODIFIERS, RATE_OF_FIRE_MODIFIERS, COMBAT_PENALTIES, SIZE_HIT_MODIFIERS, ROLL_CONSTANTS } from "../constants/index.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 
 export class CombatDialogHelper {

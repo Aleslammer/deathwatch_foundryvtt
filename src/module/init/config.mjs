@@ -2,7 +2,7 @@ import { DeathwatchActor } from "../documents/actor.mjs";
 import { DeathwatchItem } from "../documents/item.mjs";
 import * as models from '../data/_module.mjs';
 import { DW_STATUS_EFFECTS } from "../helpers/status-effects.mjs";
-import { INITIATIVE_CONSTANTS } from "../helpers/constants.mjs";
+import { INITIATIVE_CONSTANTS } from "../helpers/constants/index.mjs";
 
 /**
  * Configures Foundry CONFIG object for the Deathwatch system.
