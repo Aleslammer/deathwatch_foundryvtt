@@ -99,10 +99,10 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `handlebars.js` — Custom Handlebars helpers
 
 **Other Helpers**:
-- `cohesion.mjs` — Cohesion pool calculation, damage, rally tests
+- `cohesion.mjs` — Cohesion pool calculation, damage, rally tests (migrated to FoundryAdapter ✅)
 - `mode-helper.mjs` — Solo/Squad Mode activation, Squad Ability tracking
 - `initiative.mjs` — Initiative dialog with modifier input
-- `foundry-adapter.mjs` — Wraps all Foundry API calls for unit testing (mocked in `tests/setup.mjs`)
+- `foundry-adapter.mjs` — Wraps Foundry API calls for testability (see below)
 - `constants.mjs` — System-wide constants (characteristics, combat, hit locations, initiative, wounds, hordes)
 
 ### Modular Initialization Architecture
@@ -244,6 +244,63 @@ const dos = Math.floor((target - roll) / ROLL_CONSTANTS.DEGREES_DIVISOR);
 const bonus = Math.floor(characteristic / 10);
 const dos = Math.floor((target - roll) / 10);
 ```
+
+---
+
+## FoundryAdapter Pattern
+
+**Location**: `src/module/helpers/foundry-adapter.mjs`
+
+All Foundry VTT API calls should be routed through `FoundryAdapter` to enable:
+1. **Testability** - Mock entire Foundry API in one place (see `tests/setup.mjs`)
+2. **Version Migration** - Update Foundry API calls in one place when upgrading
+3. **Error Handling** - Centralized error handling and logging
+4. **Type Safety** - Consistent JSDoc documentation
+
+**Adapter Coverage** (26 methods):
+
+- **Rolls**: `evaluateRoll()`, `sendRollToChat()`
+- **Chat**: `createChatMessage()`, `getChatSpeaker()`
+- **Notifications**: `showNotification()`
+- **Documents**: `updateDocument()`, `createEmbeddedDocuments()`, `deleteEmbeddedDocuments()`, `deleteDocument()`
+- **Settings**: `getSetting()`, `setSetting()`, `registerSetting()` ⭐
+- **Dialogs**: `showDialog()`, `showConfirmDialog()`, `showPromptDialog()` ⭐
+- **Actors/Items**: `getActor()`, `getItem()`, `createActor()`, `createItem()`
+- **User**: `isGM()`, `getUser()`
+- **Socket**: `onSocketMessage()`, `emitSocketMessage()`
+
+**Migration Status** (⏳ Gradual):
+
+✅ **Fully migrated files**:
+- `helpers/cohesion.mjs` - All 9 API calls migrated
+
+⏳ **Partially migrated** (73+ settings calls, 21+ dialog calls across 20+ files):
+- Pattern established, migration ongoing
+- Priority: Settings API (most common), Dialog API (UI-heavy)
+
+**Pattern Example**:
+
+```javascript
+// ❌ Before: Direct Foundry API call
+const cohesion = game.settings.get('deathwatch', 'cohesion');
+await game.settings.set('deathwatch', 'cohesion', newValue);
+const actor = game.actors.get(actorId);
+
+// ✅ After: Use FoundryAdapter
+import { FoundryAdapter } from './helpers/foundry-adapter.mjs';
+
+const cohesion = FoundryAdapter.getSetting('deathwatch', 'cohesion');
+await FoundryAdapter.setSetting('deathwatch', 'cohesion', newValue);
+const actor = FoundryAdapter.getActor(actorId);
+```
+
+**When Migrating**:
+1. Import `FoundryAdapter` at the top of the file
+2. Replace direct API calls with adapter methods
+3. Run tests to verify functionality
+4. Document JSDoc comments clearly marking "Non-pure — uses Foundry API via FoundryAdapter"
+
+**Note**: This is a gradual migration. New code should use the adapter. Existing code can be migrated opportunistically.
 
 ---
 

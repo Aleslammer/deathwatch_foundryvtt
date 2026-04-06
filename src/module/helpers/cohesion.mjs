@@ -1,9 +1,11 @@
 import { COHESION, CHARACTERISTIC_CONSTANTS } from './constants.mjs';
 import { Sanitizer } from './sanitizer.mjs';
+import { FoundryAdapter } from './foundry-adapter.mjs';
 
 /**
  * Static helper class for Kill-team Cohesion calculations.
  * Pure functions — no Foundry API calls unless explicitly noted.
+ * Non-pure functions use FoundryAdapter for Foundry API access.
  */
 export class CohesionHelper {
 
@@ -123,13 +125,13 @@ export class CohesionHelper {
    * @param {string} reason - Description of what caused the damage
    */
   static async handleCohesionDamage(reason = 'A devastating attack threatens Kill-team cohesion.') {
-    const cohesion = game.settings.get('deathwatch', 'cohesion');
-    const alreadyDamaged = game.settings.get('deathwatch', 'cohesionDamageThisRound');
+    const cohesion = FoundryAdapter.getSetting('deathwatch', 'cohesion');
+    const alreadyDamaged = FoundryAdapter.getSetting('deathwatch', 'cohesionDamageThisRound');
     if (cohesion.value <= 0) return;
     if (alreadyDamaged) return;
 
-    const leaderId = game.settings.get('deathwatch', 'squadLeader');
-    const leader = leaderId ? game.actors.get(leaderId) : null;
+    const leaderId = FoundryAdapter.getSetting('deathwatch', 'squadLeader');
+    const leader = leaderId ? FoundryAdapter.getActor(leaderId) : null;
     const leaderName = leader?.name || 'Squad Leader';
 
     const content = `<div class="cohesion-damage-prompt">
@@ -143,19 +145,20 @@ export class CohesionHelper {
         \u2717 Accept Cohesion Damage
       </button>
     </div>`;
-    await ChatMessage.create({ content, speaker: ChatMessage.getSpeaker() });
+    const speaker = FoundryAdapter.getChatSpeaker();
+    await FoundryAdapter.createChatMessage(content, speaker);
   }
 
   /**
    * Apply Cohesion damage and mark the round as damaged.
-   * Non-pure — uses Foundry API.
+   * Non-pure — uses Foundry API via FoundryAdapter.
    * @param {number} amount
    */
   static async applyCohesionDamage(amount) {
-    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    const cohesion = FoundryAdapter.getSetting('deathwatch', 'cohesion');
     const newValue = Math.max(0, cohesion.value - amount);
-    await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
-    await game.settings.set('deathwatch', 'cohesionDamageThisRound', true);
+    await FoundryAdapter.setSetting('deathwatch', 'cohesion', { ...cohesion, value: newValue });
+    await FoundryAdapter.setSetting('deathwatch', 'cohesionDamageThisRound', true);
   }
 
   /* -------------------------------------------- */
@@ -180,17 +183,19 @@ export class CohesionHelper {
    * @returns {Promise<boolean>} true if recovered, false if already at max
    */
   static async recoverCohesion(amount, reason = '') {
-    const cohesion = game.settings.get('deathwatch', 'cohesion');
+    const cohesion = FoundryAdapter.getSetting('deathwatch', 'cohesion');
     if (!CohesionHelper.canRecoverCohesion(cohesion.value, cohesion.max)) {
-      ui.notifications.info('Cohesion is already at maximum.');
+      FoundryAdapter.showNotification('info', 'Cohesion is already at maximum.');
       return false;
     }
     const newValue = Math.min(cohesion.max, cohesion.value + amount);
-    await game.settings.set('deathwatch', 'cohesion', { ...cohesion, value: newValue });
+    await FoundryAdapter.setSetting('deathwatch', 'cohesion', { ...cohesion, value: newValue });
     const reasonText = reason ? ` ${reason}` : '';
-    await ChatMessage.create({
-      content: `<div class="cohesion-chat"><strong>\u2694 Cohesion Recovered</strong> \u2014 now ${newValue} / ${cohesion.max}${reasonText}</div>`
-    });
+    const speaker = FoundryAdapter.getChatSpeaker();
+    await FoundryAdapter.createChatMessage(
+      `<div class="cohesion-chat"><strong>\u2694 Cohesion Recovered</strong> \u2014 now ${newValue} / ${cohesion.max}${reasonText}</div>`,
+      speaker
+    );
     return true;
   }
 
@@ -210,22 +215,20 @@ export class CohesionHelper {
 
   /**
    * Roll a Cohesion Challenge and post result to chat.
-   * Non-pure — uses Foundry Roll and ChatMessage.
+   * Non-pure — uses Foundry API via FoundryAdapter.
    * @param {Object} actor - Actor making the challenge
    */
   static async rollCohesionChallenge(actor) {
-    const cohesion = game.settings.get('deathwatch', 'cohesion');
-    const roll = await new Roll('1d10').evaluate();
+    const cohesion = FoundryAdapter.getSetting('deathwatch', 'cohesion');
+    const roll = await FoundryAdapter.evaluateRoll('1d10');
     const result = CohesionHelper.resolveCohesionChallenge(cohesion.value, roll.total);
     const status = result.success
       ? '<strong style="color: green;">✓ PASSED</strong>'
       : '<strong style="color: red;">✗ FAILED</strong>';
     const safeActorName = Sanitizer.escape(actor.name);
     const flavor = `<strong>Cohesion Challenge — ${safeActorName}</strong><br>Rolled ${result.roll} vs Cohesion ${result.target}<br>${status}`;
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor
-    });
+    const speaker = FoundryAdapter.getChatSpeaker(actor);
+    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
     return result;
   }
 }
