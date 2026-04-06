@@ -18,6 +18,7 @@ import { ItemListPreparer } from "./shared/data-preparers/item-list-preparer.mjs
 import { CharacteristicHandlers } from "./shared/handlers/characteristic-handlers.mjs";
 import { SkillHandlers } from "./shared/handlers/skill-handlers.mjs";
 import { SheetHandlers } from "./shared/handlers/sheet-handlers.mjs";
+import { DropHandlers } from "./shared/handlers/drop-handlers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -352,7 +353,7 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
       ui.notifications.info('Weapon upgrade removed.');
     }, 'Remove Weapon Upgrade'));
 
-    // Drag events for macros.
+    // Drag events for macros
     if (this.actor.isOwner) {
       let handler = ev => this._onDragStart(ev);
       html.find('li.item').each((i, li) => {
@@ -362,17 +363,8 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
       });
     }
 
-    // Drop handler for armor histories on armor
-    html.find('.inventory .items-list li.item').each((i, li) => {
-      li.addEventListener('drop', this._onDropItemOnItem.bind(this), false);
-      li.addEventListener('dragover', ev => ev.preventDefault(), false);
-    });
-
-    // Drop handler for chapter
-    html.find('.chapter-drop-zone').each((i, el) => {
-      el.addEventListener('drop', this._onDropChapter.bind(this), false);
-      el.addEventListener('dragover', ev => ev.preventDefault(), false);
-    });
+    // Attach drop handlers
+    DropHandlers.attach(html, this.actor);
 
     // Remove chapter
     html.find('.chapter-remove').click(ErrorHandler.wrap(async (ev) => {
@@ -386,12 +378,6 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
       await this.actor.update({ "system.chapterId": "" });
       ui.notifications.info('Chapter removed.');
     }, 'Remove Chapter'));
-
-    // Drop handler for specialty
-    html.find('.specialty-drop-zone').each((i, el) => {
-      el.addEventListener('drop', this._onDropSpecialty.bind(this), false);
-      el.addEventListener('dragover', ev => ev.preventDefault(), false);
-    });
 
     // Remove specialty
     html.find('.specialty-remove').click(ErrorHandler.wrap(async (ev) => {
@@ -558,186 +544,6 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
         { label: "Cancel", action: "cancel" }
       ]
     });
-  }
-
-  /**
-   * Handle dropping an item on another item (e.g., armor history on armor, ammo on weapon)
-   * @param {Event} event The drop event
-   * @private
-   */
-  /* istanbul ignore next */
-  async _onDropItemOnItem(event) {
-    event.preventDefault();
-
-    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
-    if (data.type !== 'Item') return;
-
-    const droppedItem = await Item.implementation.fromDropData(data);
-    if (!droppedItem) return;
-
-    // Handle armor history drops
-    if (droppedItem.type === 'armor-history') {
-      event.stopPropagation();
-      let historyItem = droppedItem;
-      if (!droppedItem.parent) {
-        const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
-        historyItem = imported;
-      }
-
-      let targetItemId = $(event.currentTarget).data('itemId');
-      let targetItem = this.actor.items.get(targetItemId);
-      
-      if (!targetItem || targetItem.type !== 'armor') {
-        const armorItems = this.actor.items.filter(i => i.type === 'armor');
-        if (armorItems.length === 1) targetItem = armorItems[0];
-        else {
-          ui.notifications.warn(armorItems.length > 1 ? 'Multiple armor items found. Please drop directly on the armor item.' : 'No armor items found.');
-          return;
-        }
-      }
-
-      const currentHistories = targetItem.system.attachedHistories || [];
-      const existingHistory = currentHistories.find(histId => {
-        const existing = this.actor.items.get(histId);
-        if (!existing) return false;
-        const sourceId = historyItem.flags?.core?.sourceId || historyItem.name;
-        const existingSourceId = existing.flags?.core?.sourceId || existing.name;
-        return sourceId === existingSourceId;
-      });
-      
-      if (existingHistory) {
-        ui.notifications.warn(`${historyItem.name} is already attached to ${targetItem.name}.`);
-        return;
-      }
-      
-      let maxHistories = targetItem.name.toLowerCase().includes('artificer') ? 2 : 1;
-      if (currentHistories.length >= maxHistories) {
-        ui.notifications.warn(`${targetItem.name} can only have ${maxHistories} armor ${maxHistories === 1 ? 'history' : 'histories'}.`);
-        return;
-      }
-      
-      await targetItem.update({ "system.attachedHistories": [...currentHistories, historyItem.id] });
-      ui.notifications.info(`${historyItem.name} attached to ${targetItem.name}.`);
-    }
-    // Handle ammunition drops on weapons
-    else if (droppedItem.type === 'ammunition') {
-      let targetItemId = $(event.currentTarget).data('itemId');
-      let targetItem = this.actor.items.get(targetItemId);
-      
-      if (!targetItem || targetItem.type !== 'weapon') {
-        return;
-      }
-      event.stopPropagation();
-
-      const weaponClass = targetItem.system.class?.toLowerCase();
-      if (weaponClass?.includes('melee')) {
-        ui.notifications.warn('Ammunition cannot be loaded into melee weapons.');
-        return;
-      }
-
-      if (targetItem.system.loadedAmmo) {
-        ui.notifications.warn(`${targetItem.name} already has ammunition loaded.`);
-        return;
-      }
-
-      // Ensure the ammo is owned by this actor
-      let ammoItem = droppedItem;
-      if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
-        ui.notifications.warn('Ammunition must be in your inventory to load it.');
-        return;
-      }
-
-      await targetItem.update({ "system.loadedAmmo": ammoItem.id });
-      ui.notifications.info(`${ammoItem.name} loaded into ${targetItem.name}.`);
-    }
-    // Handle weapon upgrade drops
-    else if (droppedItem.type === 'weapon-upgrade') {
-      event.stopPropagation();
-      let upgradeItem = droppedItem;
-      if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
-        const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
-        upgradeItem = imported;
-      }
-
-      let targetItemId = $(event.currentTarget).data('itemId');
-      let targetItem = this.actor.items.get(targetItemId);
-      
-      if (!targetItem || targetItem.type !== 'weapon') {
-        ui.notifications.warn('Weapon upgrades can only be attached to weapons.');
-        return;
-      }
-
-      const currentUpgrades = targetItem.system.attachedUpgrades || [];
-      if (currentUpgrades.find(u => u.id === upgradeItem.id)) {
-        ui.notifications.warn(`${upgradeItem.name} is already attached to ${targetItem.name}.`);
-        return;
-      }
-      
-      await targetItem.update({ "system.attachedUpgrades": [...currentUpgrades, { id: upgradeItem.id }] });
-      ui.notifications.info(`${upgradeItem.name} attached to ${targetItem.name}.`);
-    }
-  }
-
-  /**
-   * Handle dropping a chapter item
-   * @param {Event} event The drop event
-   * @private
-   */
-  /* istanbul ignore next */
-  async _onDropChapter(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
-    if (data.type !== 'Item') return;
-
-    const droppedItem = await Item.implementation.fromDropData(data);
-    if (!droppedItem || droppedItem.type !== 'chapter') {
-      ui.notifications.warn('Only chapter items can be dropped here.');
-      return;
-    }
-
-    if (this.actor.system.chapterId) {
-      const existingChapter = this.actor.items.get(this.actor.system.chapterId);
-      if (existingChapter) {
-        await existingChapter.delete();
-      }
-    }
-
-    const chapterItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
-    await this.actor.update({ "system.chapterId": chapterItem.id });
-    ui.notifications.info(`Chapter set to ${chapterItem.name}.`);
-  }
-
-  /**
-   * Handle dropping a specialty item
-   * @param {Event} event The drop event
-   * @private
-   */
-  /* istanbul ignore next */
-  async _onDropSpecialty(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
-    if (data.type !== 'Item') return;
-
-    const droppedItem = await Item.implementation.fromDropData(data);
-    if (!droppedItem || droppedItem.type !== 'specialty') {
-      ui.notifications.warn('Only specialty items can be dropped here.');
-      return;
-    }
-
-    if (this.actor.system.specialtyId) {
-      const existingSpecialty = this.actor.items.get(this.actor.system.specialtyId);
-      if (existingSpecialty) {
-        await existingSpecialty.delete();
-      }
-    }
-
-    const specialtyItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
-    await this.actor.update({ "system.specialtyId": specialtyItem.id });
-    ui.notifications.info(`Specialty set to ${specialtyItem.name}.`);
   }
 
 }

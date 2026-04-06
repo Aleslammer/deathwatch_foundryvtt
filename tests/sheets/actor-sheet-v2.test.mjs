@@ -1,5 +1,8 @@
 import { jest } from '@jest/globals';
 import { DeathwatchActorSheetV2 } from '../../src/module/sheets/actor-sheet-v2.mjs';
+import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
+import { ItemListPreparer } from '../../src/module/sheets/shared/data-preparers/item-list-preparer.mjs';
+import { CharacterDataPreparer } from '../../src/module/sheets/shared/data-preparers/character-data-preparer.mjs';
 
 global.duplicate = jest.fn((obj) => JSON.parse(JSON.stringify(obj)));
 
@@ -61,59 +64,57 @@ describe('DeathwatchActorSheetV2', () => {
     it('calculates skill total for trained skill', () => {
       const skill = { characteristic: 'ws', trained: true, expert: false, mastered: false, modifier: 5 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheetV2.calculateSkillTotal(skill, characteristics)).toBe(45);
+      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(45);
     });
 
     it('calculates skill total for untrained skill', () => {
       const skill = { characteristic: 'ws', trained: false, expert: false, mastered: false, modifier: 0 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheetV2.calculateSkillTotal(skill, characteristics)).toBe(20);
+      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(20);
     });
 
     it('calculates skill total for mastered skill', () => {
       const skill = { characteristic: 'ws', trained: true, expert: false, mastered: true, modifier: 0 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheetV2.calculateSkillTotal(skill, characteristics)).toBe(50);
+      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(50);
     });
 
     it('calculates skill total for expert skill', () => {
       const skill = { characteristic: 'ws', trained: true, expert: true, mastered: false, modifier: 0 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheetV2.calculateSkillTotal(skill, characteristics)).toBe(60);
+      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(60);
     });
   });
 
-  describe('_getRenownRank', () => {
-    let sheet;
-
-    beforeEach(() => {
-      // Create a minimal instance to test instance methods
-      sheet = Object.create(DeathwatchActorSheetV2.prototype);
+  describe('renown rank (via CharacterDataPreparer)', () => {
+    it('sets renownRank to Initiated for renown 0-19', () => {
+      const context = { system: { characteristics: {}, skills: {}, renown: 10 } };
+      CharacterDataPreparer.prepare(context, mockActor);
+      expect(context.renownRank).toBe('Initiated');
     });
 
-    it('returns Initiated for renown 0-19', () => {
-      expect(sheet._getRenownRank(0)).toBe('Initiated');
-      expect(sheet._getRenownRank(19)).toBe('Initiated');
+    it('sets renownRank to Respected for renown 20-39', () => {
+      const context = { system: { characteristics: {}, skills: {}, renown: 30 } };
+      CharacterDataPreparer.prepare(context, mockActor);
+      expect(context.renownRank).toBe('Respected');
     });
 
-    it('returns Respected for renown 20-39', () => {
-      expect(sheet._getRenownRank(20)).toBe('Respected');
-      expect(sheet._getRenownRank(39)).toBe('Respected');
+    it('sets renownRank to Distinguished for renown 40-59', () => {
+      const context = { system: { characteristics: {}, skills: {}, renown: 50 } };
+      CharacterDataPreparer.prepare(context, mockActor);
+      expect(context.renownRank).toBe('Distinguished');
     });
 
-    it('returns Distinguished for renown 40-59', () => {
-      expect(sheet._getRenownRank(40)).toBe('Distinguished');
-      expect(sheet._getRenownRank(59)).toBe('Distinguished');
+    it('sets renownRank to Famed for renown 60-79', () => {
+      const context = { system: { characteristics: {}, skills: {}, renown: 70 } };
+      CharacterDataPreparer.prepare(context, mockActor);
+      expect(context.renownRank).toBe('Famed');
     });
 
-    it('returns Famed for renown 60-79', () => {
-      expect(sheet._getRenownRank(60)).toBe('Famed');
-      expect(sheet._getRenownRank(79)).toBe('Famed');
-    });
-
-    it('returns Hero for renown 80+', () => {
-      expect(sheet._getRenownRank(80)).toBe('Hero');
-      expect(sheet._getRenownRank(100)).toBe('Hero');
+    it('sets renownRank to Hero for renown 80+', () => {
+      const context = { system: { characteristics: {}, skills: {}, renown: 90 } };
+      CharacterDataPreparer.prepare(context, mockActor);
+      expect(context.renownRank).toBe('Hero');
     });
   });
 
@@ -133,7 +134,7 @@ describe('DeathwatchActorSheetV2', () => {
           { _id: 'w1', type: 'weapon', name: 'Bolter', img: 'icon.png', system: { equipped: false, loadedAmmo: null, modifiers: [] } }
         ]
       };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.weapons).toHaveLength(1);
       expect(context.weapons[0].name).toBe('Bolter');
     });
@@ -144,13 +145,13 @@ describe('DeathwatchActorSheetV2', () => {
           { _id: 'a1', type: 'armor', name: 'Power Armor', img: 'icon.png', system: { equipped: false, attachedHistories: [], modifiers: [] } }
         ]
       };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.armor).toHaveLength(1);
     });
 
     it('initializes empty arrays for all categories', () => {
       const context = { items: [] };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.weapons).toEqual([]);
       expect(context.armor).toEqual([]);
       expect(context.gear).toEqual([]);
@@ -165,7 +166,7 @@ describe('DeathwatchActorSheetV2', () => {
         chapterTalentCosts: { 'tal00000000001': 500 },
         specialtyTalentCosts: {}
       };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.talents[0].system.effectiveCost).toBe(500);
     });
 
@@ -177,7 +178,7 @@ describe('DeathwatchActorSheetV2', () => {
         chapterTalentCosts: { 'tal00000000001': 500 },
         specialtyTalentCosts: { 'tal00000000001': [300] }
       };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.talents[0].system.effectiveCost).toBe(300);
     });
 
@@ -190,7 +191,7 @@ describe('DeathwatchActorSheetV2', () => {
         specialtyBaseTalentCosts: { 'tal00000000275': 0 },
         specialtyTalentCosts: {}
       };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.talents[0].system.effectiveCost).toBe(0);
     });
 
@@ -202,7 +203,7 @@ describe('DeathwatchActorSheetV2', () => {
         chapterTalentCosts: { 'tal00000000002': 500 },
         specialtyTalentCosts: { 'tal00000000003': 300 }
       };
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
       expect(context.talents[0].system.effectiveCost).toBe(1000);
     });
   });
@@ -231,7 +232,7 @@ describe('DeathwatchActorSheetV2', () => {
         if (id === 'spec1') return { _id: 'spec1', system: { hasPsyRating: true, talentCosts: {} } };
         return null;
       });
-      sheet._prepareCharacterData(context);
+      CharacterDataPreparer.prepare(context, mockActor);
       expect(context.showPsyRating).toBe(true);
     });
 
@@ -251,7 +252,7 @@ describe('DeathwatchActorSheetV2', () => {
         if (id === 'spec1') return { _id: 'spec1', system: { hasPsyRating: false, talentCosts: {} } };
         return null;
       });
-      sheet._prepareCharacterData(context);
+      CharacterDataPreparer.prepare(context, mockActor);
       expect(context.showPsyRating).toBe(false);
     });
 
@@ -267,7 +268,7 @@ describe('DeathwatchActorSheetV2', () => {
           renown: 0
         }
       };
-      sheet._prepareCharacterData(context);
+      CharacterDataPreparer.prepare(context, mockActor);
       expect(context.showPsyRating).toBe(false);
     });
   });
