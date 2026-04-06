@@ -1,8 +1,10 @@
+import { Sanitizer } from '../sanitizer.mjs';
+
 export class ChatMessageBuilder {
   static createItemCard(item, actor) {
     const speaker = ChatMessage.getSpeaker({ actor });
     const { title, content } = this._buildItemCardContent(item);
-    
+
     return ChatMessage.create({
       speaker,
       content: `<div class="${item.type}-card">${title}${content}</div>`
@@ -10,55 +12,56 @@ export class ChatMessageBuilder {
   }
 
   static _buildItemCardContent(item) {
-    const book = item.system.book ? `<p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${item.system.book}, p${item.system.page}</em></p>` : '';
-    
+    const safeName = Sanitizer.escape(item.name);
+    const book = item.system.book ? `<p style="font-size: 0.85em; color: #666; margin-top: 10px;"><em>${Sanitizer.escape(item.system.book)}, p${item.system.page}</em></p>` : '';
+
     switch (item.type) {
       case 'armor-history':
         return {
-          title: `<h3>${item.name}</h3>`,
+          title: `<h3>${safeName}</h3>`,
           content: `${item.system.description}${book}`
         };
-      
+
       case 'critical-effect':
         return {
           title: `<div style="display: flex; align-items: start; gap: 10px;">
             <img src="${item.img}" style="width: 36px; height: 36px; flex-shrink: 0;" />
             <div>
-              <h3 style="font-size: 1em; margin: 0 0 5px 0;">${item.name}</h3>
-              <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${item.system.location} | <strong>Type:</strong> ${item.system.damageType}</p>`,
+              <h3 style="font-size: 1em; margin: 0 0 5px 0;">${safeName}</h3>
+              <p style="margin: 0 0 8px 0;"><strong>Location:</strong> ${Sanitizer.escape(item.system.location)} | <strong>Type:</strong> ${Sanitizer.escape(item.system.damageType)}</p>`,
           content: `${item.system.description}</div></div>`
         };
-      
+
       case 'characteristic':
         return {
-          title: `<h3>${item.name}</h3>`,
-          content: `<p style="margin: 5px 0;"><strong>Chapter:</strong> ${item.system.chapter}</p>${item.system.description}${book}`
+          title: `<h3>${safeName}</h3>`,
+          content: `<p style="margin: 5px 0;"><strong>Chapter:</strong> ${Sanitizer.escape(item.system.chapter)}</p>${item.system.description}${book}`
         };
-      
+
       case 'talent':
-        const prereq = item.system.prerequisite ? `<p style="margin: 5px 0;"><strong>Prerequisite:</strong> ${item.system.prerequisite}</p>` : '';
-        const benefit = item.system.benefit ? `<p style="margin: 5px 0;"><strong>Benefit:</strong> ${item.system.benefit}</p>` : '';
+        const prereq = item.system.prerequisite ? `<p style="margin: 5px 0;"><strong>Prerequisite:</strong> ${Sanitizer.escape(item.system.prerequisite)}</p>` : '';
+        const benefit = item.system.benefit ? `<p style="margin: 5px 0;"><strong>Benefit:</strong> ${Sanitizer.escape(item.system.benefit)}</p>` : '';
         return {
-          title: `<h3>${item.name}</h3>`,
+          title: `<h3>${safeName}</h3>`,
           content: `${prereq}${benefit}${item.system.description}${book}`
         };
-      
+
       case 'trait':
         return {
-          title: `<h3>${item.name}</h3>`,
+          title: `<h3>${safeName}</h3>`,
           content: `${item.system.description}${book}`
         };
-      
+
       case 'special-ability':
-        const specialty = item.system.specialty ? `<p style="margin: 5px 0;"><strong>Specialty:</strong> ${item.system.specialty}</p>` : '';
+        const specialty = item.system.specialty ? `<p style="margin: 5px 0;"><strong>Specialty:</strong> ${Sanitizer.escape(item.system.specialty)}</p>` : '';
         return {
-          title: `<h3>${item.name}</h3>`,
+          title: `<h3>${safeName}</h3>`,
           content: `${specialty}${item.system.description}${book}`
         };
-      
+
       default:
         return {
-          title: `<h3>${item.name}</h3>`,
+          title: `<h3>${safeName}</h3>`,
           content: item.system.description || ''
         };
     }
@@ -79,23 +82,28 @@ export class ChatMessageBuilder {
       isToxic = false, isMeltaRange = false, charDamageEffect = null,
       forceWeaponData = null, tokenInfo = null, magnitudeBonusDamage = 0,
       ignoresNaturalArmour = false, criticalDamageBonus = 0, weaponQualities = [] } = options;
-    const charDamageData = charDamageEffect ? ` data-char-damage-formula="${charDamageEffect.formula}" data-char-damage-char="${charDamageEffect.characteristic}" data-char-damage-name="${charDamageEffect.name}"` : '';
-    const forceData = forceWeaponData ? ` data-is-force="true" data-force-attacker-id="${forceWeaponData.attackerId}" data-force-psy-rating="${forceWeaponData.psyRating}"` : '';
-    const tokenData = tokenInfo ? ` data-scene-id="${tokenInfo.sceneId}" data-token-id="${tokenInfo.tokenId}"` : '';
+    // Sanitize string values that go into data attributes
+    const safeLocation = Sanitizer.escape(location);
+    const safeDamageType = Sanitizer.escape(damageType);
+    const charDamageData = charDamageEffect ? ` data-char-damage-formula="${Sanitizer.escape(charDamageEffect.formula)}" data-char-damage-char="${Sanitizer.escape(charDamageEffect.characteristic)}" data-char-damage-name="${Sanitizer.escape(charDamageEffect.name)}"` : '';
+    const forceData = forceWeaponData ? ` data-is-force="true" data-force-attacker-id="${Sanitizer.escape(forceWeaponData.attackerId)}" data-force-psy-rating="${forceWeaponData.psyRating}"` : '';
+    const tokenData = tokenInfo ? ` data-scene-id="${Sanitizer.escape(tokenInfo.sceneId)}" data-token-id="${Sanitizer.escape(tokenInfo.tokenId)}"` : '';
     const magnitudeData = magnitudeBonusDamage > 0 ? ` data-magnitude-bonus-damage="${magnitudeBonusDamage}"` : '';
     const naturalArmourData = ignoresNaturalArmour ? ` data-ignores-natural-armour="true"` : '';
     const critBonusData = criticalDamageBonus > 0 ? ` data-critical-damage-bonus="${criticalDamageBonus}"` : '';
     const qualitiesData = weaponQualities.length > 0 ? ` data-weapon-qualities='${JSON.stringify(weaponQualities)}'` : '';
-    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${location}" data-target-id="${targetId}" data-damage-type="${damageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}" data-is-toxic="${isToxic}" data-is-melta-range="${isMeltaRange}"${charDamageData}${forceData}${tokenData}${magnitudeData}${naturalArmourData}${critBonusData}${qualitiesData}>Apply Damage</button>`;
+    return `<button class="apply-damage-btn" data-damage="${damage}" data-penetration="${penetration}" data-location="${safeLocation}" data-target-id="${targetId}" data-damage-type="${safeDamageType}" data-is-primitive="${isPrimitive}" data-is-razor-sharp="${isRazorSharp}" data-degrees-of-success="${degreesOfSuccess}" data-is-scatter="${isScatter}" data-is-long-or-extreme-range="${isLongOrExtremeRange}" data-is-shocking="${isShocking}" data-is-toxic="${isToxic}" data-is-melta-range="${isMeltaRange}"${charDamageData}${forceData}${tokenData}${magnitudeData}${naturalArmourData}${critBonusData}${qualitiesData}>Apply Damage</button>`;
   }
 
   static createDamageFlavor(weapon, hitNumber, totalHits, location, degreesOfSuccess, penetration, isMelee, strBonus, applyButton = '') {
+    const safeWeapon = Sanitizer.escape(weapon);
+    const safeLocation = Sanitizer.escape(location);
     const hitInfo = totalHits > 1 ? ` (${hitNumber}/${totalHits})` : '';
     const dosInfo = hitNumber === 1 && degreesOfSuccess > 0 ? `<br><strong>DoS:</strong> ${degreesOfSuccess}` : '';
     const strInfo = isMelee && strBonus !== 0 && hitNumber === 1 ? `<br><em>Includes STR Bonus: ${strBonus}</em>` : '';
     const applyInfo = applyButton ? `<br>${applyButton}` : '';
-    
-    return `<strong style="font-size: 1.1em;">${weapon}${hitInfo}</strong><br><strong>Hit ${hitNumber}:</strong> ${location}${dosInfo}<br><strong>Penetration:</strong> ${penetration}${strInfo}${applyInfo}`;
+
+    return `<strong style="font-size: 1.1em;">${safeWeapon}${hitInfo}</strong><br><strong>Hit ${hitNumber}:</strong> ${safeLocation}${dosInfo}<br><strong>Penetration:</strong> ${penetration}${strInfo}${applyInfo}`;
   }
 
   static createVolatileAutoConfirmFlavor() {

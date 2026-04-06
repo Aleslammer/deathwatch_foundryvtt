@@ -8,16 +8,6 @@ function registerHandlebarsHelpers() {
         return text.replace(markup, "");
     });
 
-    /*
-    Handlebars.registerHelper("ifIsGM", function (options) {
-        return game.user.isGM ? options.fn(this) : options.inverse(this)
-    })
-
-    Handlebars.registerHelper("isGM", function (options) {
-        return game.user.isGM
-    })
-    */
-
     Handlebars.registerHelper("config", function (key) {
         return game.deathwatch.config[key]
     })
