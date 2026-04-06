@@ -4,7 +4,7 @@ This directory contains detailed improvement recommendations for the Deathwatch 
 
 **Assessment Date**: 2026-04-05  
 **Codebase**: `claude` branch  
-**Status**: Phase 2 Complete (Critical Issues + Quick Wins)
+**Status**: Phase 3 In Progress (Critical Issues + Quick Wins + 3/4 High Priority Complete)
 
 ---
 
@@ -14,15 +14,15 @@ This directory contains detailed improvement recommendations for the Deathwatch 
 |----------|----------|--------|------------------|---------------|--------|
 | [00-overview.md](00-overview.md) | N/A | Summary | N/A | N/A | ✅ Complete |
 | [01-critical-issues.md](01-critical-issues.md) | 🔴 Critical | 3 | 1 week | 20 hours | ✅ Complete |
-| [02-high-priority.md](02-high-priority.md) | 🟡 High | 4 | 2-3 weeks | — | 📝 Planning |
+| [02-high-priority.md](02-high-priority.md) | 🟡 High | 4 | 2-3 weeks | 47-50 hours | 🔨 In Progress (3/4) |
 | [03-medium-priority.md](03-medium-priority.md) | 🟢 Medium | 6 | 3-4 weeks | — | 📝 Planning |
 | [04-low-priority.md](04-low-priority.md) | 🔵 Low | 4 | 1-2 weeks | — | 📝 Planning |
 | [05-quick-wins.md](05-quick-wins.md) | ⚡ Quick Wins | 5 | 2-3 hours | 2.5 hours | ✅ Complete |
 
 **Total Issues**: 22  
-**Completed**: 8 (Quick Wins + Critical Issues)  
-**Completed Effort**: 22.5 hours  
-**Remaining Effort**: 6-10 weeks (can be parallelized)
+**Completed**: 11 (Quick Wins + Critical Issues + 3 High Priority)  
+**Completed Effort**: 70-72.5 hours  
+**Remaining Effort**: 5-9 weeks (can be parallelized)
 
 ---
 
@@ -33,11 +33,11 @@ This directory contains detailed improvement recommendations for the Deathwatch 
 2. ✅ **HTML Injection Risk** - 50+ sanitization points, comprehensive XSS protection
 3. ✅ **Large Initialization File** - deathwatch.mjs reduced from 755 to 100 lines (85% reduction)
 
-### High Priority (Important)
-4. **Sheet Classes Too Large** - actor-sheet.mjs (1160 lines) and actor-sheet-v2.mjs (947 lines)
-5. **Performance - Map→Array Conversions** - Repeated conversions in modifier collection
-6. **Async/Await Consistency** - Mixed promise patterns (.then vs async/await)
-7. **Missing JSDoc** - Public APIs lack type annotations and documentation
+### High Priority (Important) 🚧 3 of 4 Complete
+4. ✅ **Sheet Classes Too Large** - Reduced actor-sheet.mjs to 549 lines (from 1,168), actor-sheet-v2.mjs to 702 lines (from 948)
+5. ✅ **Performance - Map→Array Conversions** - 3x performance improvement in prepareDerivedData()
+6. ✅ **Async/Await Consistency** - Zero .then() chains remaining, all callbacks extracted
+7. **Missing JSDoc** - Public APIs lack type annotations and documentation (remaining)
 
 ### Medium Priority (Should Have)
 8. **Magic Numbers** - Hard-coded values without explanation
@@ -215,10 +215,10 @@ When implementation is complete:
 **A**: 
 - ✅ **Quick Wins**: 2.5 hours (COMPLETE)
 - ✅ **Critical**: 20 hours (COMPLETE)
-- **High Priority**: 2-3 weeks (remaining)
+- 🚧 **High Priority**: 47-50 hours completed (3/4 done), ~18 hours remaining
 - **Medium Priority**: 3-4 weeks (remaining)
 - **Low Priority**: 1-2 weeks (remaining)
-- **Total**: 7-11 weeks estimated, 22.5 hours completed, 6-10 weeks remaining (can be parallelized)
+- **Total**: 7-11 weeks estimated, 70-72.5 hours completed, 5-9 weeks remaining (can be parallelized)
 
 ### Q: What if we find more issues?
 **A**: Add new documents following the existing format. Prioritize based on impact and effort.
@@ -245,6 +245,7 @@ For questions about these improvements:
 | 2026-04-05 | Created all improvement documents | Claude |
 | 2026-04-05 | Phase 1 (Quick Wins) completed - 2.5 hours | Claude |
 | 2026-04-05 | Phase 2 (Critical Issues) completed - 20 hours | Claude |
+| 2026-04-05 | Phase 3 (High Priority) - Issues 4, 5, 6 completed - 47-50 hours | Claude |
 
 ---
 

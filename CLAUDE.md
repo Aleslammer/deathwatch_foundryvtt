@@ -617,6 +617,170 @@ const xssPayloads = [
 
 ---
 
+## Async/Await Consistency
+
+The codebase uses **consistent async/await patterns** throughout. All asynchronous operations use async/await syntax instead of promise chains or callbacks.
+
+### Standards
+
+**✅ ALWAYS use async/await**:
+- All async functions must use `async` keyword
+- All promise-returning operations must use `await`
+- No `.then()` or `.catch()` promise chains
+- No nested callback pyramids
+
+**✅ Extract complex callbacks**:
+- Dialog callbacks with 20+ lines should be extracted to named functions
+- Nested dialogs should use helper functions for clarity
+- Each helper function should have a single, clear responsibility
+
+### Examples
+
+#### Converting .then() to async/await
+
+```javascript
+// ❌ WRONG - Promise chain
+export function rollItemMacro(itemUuid, options = {}) {
+  const dropData = { type: 'Item', uuid: itemUuid };
+  Item.fromDropData(dropData).then(item => {
+    if (!item || !item.parent) {
+      return ui.notifications.warn(`Could not find item...`);
+    }
+    item.roll();
+  });
+}
+
+// ✅ CORRECT - Async/await
+export async function rollItemMacro(itemUuid, options = {}) {
+  const dropData = { type: 'Item', uuid: itemUuid };
+  const item = await Item.fromDropData(dropData);
+  
+  if (!item || !item.parent) {
+    ui.notifications.warn(`Could not find item...`);
+    return;
+  }
+  
+  item.roll();
+}
+```
+
+#### Extracting nested callbacks
+
+```javascript
+// ❌ WRONG - Deeply nested callbacks
+foundry.applications.api.DialogV2.wait({
+  buttons: [{
+    label: 'Burn', action: 'burn',
+    callback: async (event, button, dialog) => {
+      // ... 50+ lines of nested logic
+      foundry.applications.api.DialogV2.wait({
+        buttons: [{
+          label: 'Roll Dodge', action: 'roll',
+          callback: async (event, button, dodgeDialog) => {
+            // ... another 30+ lines of nested logic
+          }
+        }]
+      });
+    }
+  }]
+});
+
+// ✅ CORRECT - Extracted helper functions
+async function handleDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType) {
+  const dodgeMod = parseInt(dodgeDialog.element.querySelector('#dodgeMod').value) || 0;
+  const dodgeRoll = await new Roll('1d100').evaluate();
+  const dodgeResult = FireHelper.resolveDodgeFlameTest(ag, dodgeRoll.total, dodgeMod);
+  // ... rest of logic
+}
+
+async function handleFlameAttack(targetActor, targetName, damageFormula, penetration, damageType) {
+  const ag = targetActor.system.characteristics?.ag?.value || 0;
+  
+  foundry.applications.api.DialogV2.wait({
+    buttons: [{
+      label: 'Roll Dodge', action: 'roll',
+      callback: (event, button, dodgeDialog) =>
+        handleDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType)
+    }]
+  });
+}
+
+foundry.applications.api.DialogV2.wait({
+  buttons: [{
+    label: 'Burn', action: 'burn',
+    callback: async (event, button, dialog) => {
+      // Parse inputs
+      const damageFormula = dialog.element.querySelector('#flameDamage').value?.trim();
+      const targetActor = game.user.targets.first()?.actor;
+      
+      // Delegate to helper
+      await handleFlameAttack(targetActor, targetActor.name, damageFormula, penetration, damageType);
+    }
+  }]
+});
+```
+
+#### Dialog callbacks
+
+```javascript
+// ✅ CORRECT - Inline for simple callbacks
+foundry.applications.api.DialogV2.wait({
+  buttons: [{
+    label: "Roll", action: "roll",
+    callback: async (event, button, dialog) => {
+      const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
+      const roll = new Roll('1d100');
+      await roll.evaluate();
+      ChatMessageBuilder.createRollMessage(roll, actor, flavor);
+    }
+  }]
+});
+
+// ✅ CORRECT - Extract for complex callbacks (20+ lines)
+async function handleComplexRoll(actor, dialog) {
+  const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
+  const roll = new Roll('1d100');
+  await roll.evaluate();
+  
+  // ... 20+ more lines of logic
+  
+  ChatMessageBuilder.createRollMessage(roll, actor, flavor);
+}
+
+foundry.applications.api.DialogV2.wait({
+  buttons: [{
+    label: "Roll", action: "roll",
+    callback: (event, button, dialog) => handleComplexRoll(actor, dialog)
+  }]
+});
+```
+
+### Error Handling with Async/Await
+
+Async functions wrapped with `ErrorHandler.wrap()` automatically catch errors:
+
+```javascript
+// ✅ CORRECT - ErrorHandler catches async errors
+html.find('.weapon-attack-btn').click(ErrorHandler.wrap(async (ev) => {
+  const weapon = this.actor.items.get(itemId);
+  await CombatHelper.weaponAttackDialog(this.actor, weapon);
+}, 'Weapon Attack'));
+
+// ✅ CORRECT - Try-catch for sheet methods
+async _onItemCreate(event) {
+  try {
+    event.preventDefault();
+    const itemData = { name: 'New Item', type: 'weapon' };
+    await Item.create(itemData, { parent: this.actor });
+  } catch (error) {
+    console.error('[Deathwatch] Create Item failed:', error);
+    ui.notifications.error(`Create Item failed: ${error.message}`);
+  }
+}
+```
+
+---
+
 ## Testing Approach
 
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.

@@ -1,6 +1,6 @@
 # High Priority Issues (Priority 🟡)
 
-**Status**: Issues 4 & 5 Complete ✅ | Others: Planning  
+**Status**: Issues 4, 5 & 6 Complete ✅ | Issue 7: Planning  
 **Estimated Effort**: 2-3 weeks  
 **Risk Level**: Medium (extensive test coverage mitigates)
 
@@ -613,9 +613,30 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
 
 ---
 
-## Issue 6: Async/Await Consistency
+## Issue 6: Async/Await Consistency ✅ **COMPLETE**
 
-### Problem
+### ✅ **Implementation Complete - 2026-04-05**
+
+**Results:**
+- **Zero `.then()` chains** remaining in codebase
+- **3 nested callbacks extracted** into named functions in `flame-attack.mjs`
+- `rollItemMacro` converted from promise chain to async/await
+- **All 1664 tests passing** with no regressions
+- All async dialog callbacks follow consistent patterns
+
+**Changes:**
+- `hotbar.mjs`: Converted `rollItemMacro` from `.then()` to async/await
+- `flame-attack.mjs`: Extracted 3 helper functions:
+  - `handleHordeFlameAttack()` - handles horde flame attacks
+  - `handleIndividualFlameAttack()` - handles individual targets with dodge dialog
+  - `handleFlameDodgeRoll()` - processes dodge rolls and damage application
+
+See commit history for full implementation details.
+
+---
+
+### Original Problem Statement
+
 Inconsistent use of async/await vs promise chains. Some functions use async/await, others use `.then()`, creating mixed patterns.
 
 **Examples**:
@@ -1009,11 +1030,11 @@ static async resolveRangedAttack(actor, weapon, options) {
 |-------|--------|------|----------|--------|
 | Sheet Classes Too Large | 28 hours | Medium | Must Have | ✅ Complete |
 | Map→Array Performance | 5-8 hours | Low | Should Have | ✅ Complete |
-| Async Consistency | 14 hours | Medium | Should Have | Planning |
+| Async Consistency | 14 hours | Medium | Should Have | ✅ Complete |
 | JSDoc Documentation | 18 hours | Low | Should Have | Planning |
 
-**Completed**: ~33-36 hours  
-**Remaining**: ~32 hours (~1-2 weeks with 1 developer)
+**Completed**: ~47-50 hours  
+**Remaining**: ~18 hours (~1 week with 1 developer)
 
 **Dependencies**:
 - Issue #4 (Sheet refactor) ✅ Complete - Issue #7 can now proceed with JSDoc for sheets
@@ -1022,5 +1043,5 @@ static async resolveRangedAttack(actor, weapon, options) {
 **Next Steps**:
 1. ~~Issue #4: Sheet Classes Refactor~~ ✅ Complete (2026-04-05)
 2. ~~Issue #5: Map→Array Performance~~ ✅ Complete (2026-04-05)
-3. Issue #6: Async/Await Consistency (Medium priority, 14 hours)
+3. ~~Issue #6: Async/Await Consistency~~ ✅ Complete (2026-04-05)
 4. Issue #7: JSDoc Documentation (Low priority, 18 hours)

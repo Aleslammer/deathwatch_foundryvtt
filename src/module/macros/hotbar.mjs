@@ -41,55 +41,56 @@ export async function createItemMacro(data, slot) {
  * @param {string} itemUuid - UUID of the item
  * @param {Object} [options={}] - Preset attack options (see docs/hotbar-macros.md)
  */
-export function rollItemMacro(itemUuid, options = {}) {
+export async function rollItemMacro(itemUuid, options = {}) {
     const dropData = { type: 'Item', uuid: itemUuid };
-    Item.fromDropData(dropData).then(item => {
-        if (!item || !item.parent) {
-            const itemName = item?.name ?? itemUuid;
-            return ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
-        }
+    const item = await Item.fromDropData(dropData);
 
-        if (item.type === 'weapon') {
-            const hasOptions = Object.keys(options).length > 0;
+    if (!item || !item.parent) {
+        const itemName = item?.name ?? itemUuid;
+        ui.notifications.warn(`Could not find item ${itemName}. You may need to delete and recreate this macro.`);
+        return;
+    }
 
-            // action: "damage" goes straight to damage roll
-            if (hasOptions && options.action === 'damage') {
-                CombatHelper.weaponDamageRoll(item.parent, item);
-                return;
-            }
+    if (item.type === 'weapon') {
+        const hasOptions = Object.keys(options).length > 0;
 
-            // With options: skip Attack/Damage choice, go straight to attack
-            if (hasOptions) {
-                CombatHelper.weaponAttackDialog(item.parent, item, options);
-                return;
-            }
-
-            // No options: show Attack/Damage choice dialog (original behavior)
-            const safeItemName = Sanitizer.escape(item.name);
-            foundry.applications.api.DialogV2.wait({
-                window: { title: safeItemName },
-                content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${safeItemName}</strong></p>`,
-                buttons: [
-                    {
-                        icon: '<i class="fas fa-crosshairs"></i>',
-                        label: "Attack", action: "attack",
-                        callback: () => CombatHelper.weaponAttackDialog(item.parent, item)
-                    },
-                    {
-                        icon: '<i class="fas fa-burst"></i>',
-                        label: "Damage", action: "damage",
-                        callback: () => CombatHelper.weaponDamageRoll(item.parent, item)
-                    }
-                ]
-            });
+        // action: "damage" goes straight to damage roll
+        if (hasOptions && options.action === 'damage') {
+            CombatHelper.weaponDamageRoll(item.parent, item);
             return;
         }
 
-        if (item.type === 'psychic-power') {
-            PsychicCombatHelper.focusPowerDialog(item.parent, item);
+        // With options: skip Attack/Damage choice, go straight to attack
+        if (hasOptions) {
+            CombatHelper.weaponAttackDialog(item.parent, item, options);
             return;
         }
 
-        item.roll();
-    });
+        // No options: show Attack/Damage choice dialog (original behavior)
+        const safeItemName = Sanitizer.escape(item.name);
+        foundry.applications.api.DialogV2.wait({
+            window: { title: safeItemName },
+            content: `<p style="text-align: center;"><img src="${item.img}" width="50" height="50" style="border: none;" /><br><strong>${safeItemName}</strong></p>`,
+            buttons: [
+                {
+                    icon: '<i class="fas fa-crosshairs"></i>',
+                    label: "Attack", action: "attack",
+                    callback: () => CombatHelper.weaponAttackDialog(item.parent, item)
+                },
+                {
+                    icon: '<i class="fas fa-burst"></i>',
+                    label: "Damage", action: "damage",
+                    callback: () => CombatHelper.weaponDamageRoll(item.parent, item)
+                }
+            ]
+        });
+        return;
+    }
+
+    if (item.type === 'psychic-power') {
+        PsychicCombatHelper.focusPowerDialog(item.parent, item);
+        return;
+    }
+
+    item.roll();
 }
