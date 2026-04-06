@@ -192,6 +192,28 @@ The system has **two sheet implementations** (toggled via user setting):
 
 Toggle in Foundry: **Game Settings → System Settings → Use ApplicationV2 Sheets**
 
+#### Sheet Handler Modules
+
+Sheet event listeners are organized into modular handler classes in `src/module/sheets/shared/handlers/`:
+
+- **`sheet-handlers.mjs`** — Input focus, status effects, collapsible sections
+- **`skill-handlers.mjs`** — Skill roll dialogs, checkbox cascade logic
+- **`characteristic-handlers.mjs`** — Characteristic test dialogs
+- **`item-display-handlers.mjs`** — Show items in chat, use powers, activate abilities
+- **`item-management-handlers.mjs`** — Item CRUD, equip, attachments, modifiers, effects
+- **`weapon-handlers.mjs`** — Weapon attacks, damage rolls, jam clearing
+- **`drop-handlers.mjs`** — Drag-and-drop item handling
+
+**Pattern**: Each handler class exports a static `attach(html, actor, sheet)` method that registers all relevant event listeners. This keeps `activateListeners()` concise (37 lines) and makes handlers independently testable and reusable across sheet versions.
+
+**Example**:
+```javascript
+// In actor-sheet.mjs activateListeners()
+ItemDisplayHandlers.attach(html, this.actor);
+ItemManagementHandlers.attach(html, this.actor, this);
+WeaponHandlers.attach(html, this.actor, this);
+```
+
 ---
 
 ## Constants and Magic Numbers

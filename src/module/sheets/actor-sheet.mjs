@@ -1,15 +1,8 @@
-import { onManageActiveEffect, prepareActiveEffectCategories } from "../helpers/effects.mjs";
+import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { DWConfig } from "../helpers/config.mjs";
-import { CombatHelper } from "../helpers/combat/combat.mjs";
-import { PsychicCombatHelper } from "../helpers/combat/psychic-combat.mjs";
-import { ModifierHelper } from "../helpers/character/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/ui/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/ui/chat-message-builder.mjs";
 import { ItemHandlers } from "../helpers/ui/item-handlers.mjs";
-import { ModeHelper } from "../helpers/mode-helper.mjs";
-import { CohesionPanel } from "../ui/cohesion-panel.mjs";
-import { ErrorHandler } from "../helpers/error-handler.mjs";
-import { Validation } from "../helpers/validation.mjs";
 import { Sanitizer } from "../helpers/sanitizer.mjs";
 import { CharacterDataPreparer } from "./shared/data-preparers/character-data-preparer.mjs";
 import { NPCDataPreparer } from "./shared/data-preparers/npc-data-preparer.mjs";
@@ -19,6 +12,9 @@ import { CharacteristicHandlers } from "./shared/handlers/characteristic-handler
 import { SkillHandlers } from "./shared/handlers/skill-handlers.mjs";
 import { SheetHandlers } from "./shared/handlers/sheet-handlers.mjs";
 import { DropHandlers } from "./shared/handlers/drop-handlers.mjs";
+import { ItemDisplayHandlers } from "./shared/handlers/item-display-handlers.mjs";
+import { ItemManagementHandlers } from "./shared/handlers/item-management-handlers.mjs";
+import { WeaponHandlers } from "./shared/handlers/weapon-handlers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -139,219 +135,21 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
     // Attach skill handlers (checkbox cascade)
     SkillHandlers.attach(html, this.actor);
 
-    // Render the item sheet for viewing/editing prior to the editable check.
-    html.find('.item-edit').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).parents(".item");
-      const itemId = li.data("itemId");
-      const item = Validation.requireDocument(this.actor.items.get(itemId), 'Item', 'Edit Item');
-      item.sheet.render(true);
-    }, 'Edit Item'));
-
-    // Show armor history in chat
-    html.find('.history-show').click(ErrorHandler.wrap(async (ev) => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const history = Validation.requireDocument(this.actor.items.get(itemId), 'Armor History', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(history, this.actor);
-    }, 'Show Armor History'));
-
-    // Show critical effect in chat
-    html.find('.critical-show').click(ErrorHandler.wrap(async (ev) => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const critical = Validation.requireDocument(this.actor.items.get(itemId), 'Critical Effect', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(critical, this.actor);
-    }, 'Show Critical Effect'));
-
-    // Show demeanour in chat
-    html.find('.demeanour-show').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const demeanour = Validation.requireDocument(this.actor.items.get(itemId), 'Demeanour', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(demeanour, this.actor);
-    }, 'Show Demeanour'));
-
-    // Show talent in chat
-    html.find('.talent-show').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const talent = Validation.requireDocument(this.actor.items.get(itemId), 'Talent', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(talent, this.actor);
-    }, 'Show Talent'));
-
-    // Show trait in chat
-    html.find('.trait-show').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const trait = Validation.requireDocument(this.actor.items.get(itemId), 'Trait', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(trait, this.actor);
-    }, 'Show Trait'));
-
-    // Show implant in chat
-    html.find('.implant-show').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const implant = Validation.requireDocument(this.actor.items.get(itemId), 'Implant', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(implant, this.actor);
-    }, 'Show Implant'));
-
-    // Show psychic power in chat
-    html.find('.psychic-power-show').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const power = Validation.requireDocument(this.actor.items.get(itemId), 'Psychic Power', 'Show in Chat');
-      await ChatMessageBuilder.createItemCard(power, this.actor);
-    }, 'Show Psychic Power'));
-
-    // Use psychic power (Focus Power Test)
-    html.find('.psychic-power-use').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const power = Validation.requireDocument(this.actor.items.get(itemId), 'Psychic Power', 'Use Power');
-      await PsychicCombatHelper.focusPowerDialog(this.actor, power);
-    }, 'Use Psychic Power'));
-
-    // Show special ability in chat (with mode activation message support)
-    html.find('.special-ability-show').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).closest('.item');
-      const itemId = li.data('itemId');
-      const ability = Validation.requireDocument(this.actor.items.get(itemId), 'Special Ability', 'Show in Chat');
-
-      const sys = ability.system;
-      if (sys.effect && sys.modeRequirement) {
-        const msg = ModeHelper.buildAbilityActivationMessage(
-          this.actor.name, ability.name, sys.modeRequirement,
-          sys.effect, sys.improvements || [], this.actor.system.rank || 1
-        );
-        if (msg) {
-          await ChatMessage.create({ content: msg, speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
-          return;
-        }
-      }
-      await ChatMessageBuilder.createItemCard(ability, this.actor);
-    }, 'Show Special Ability'));
-
-    // Activate Squad Mode ability
-    html.find('.squad-ability-activate').click(ErrorHandler.wrap(async (ev) => {
-      ev.stopPropagation();
-      const itemId = $(ev.currentTarget).data('itemId');
-      const ability = Validation.requireDocument(this.actor.items.get(itemId), 'Squad Ability', 'Activate');
-      await CohesionPanel.activateSquadAbility(this.actor, ability);
-    }, 'Activate Squad Ability'));
-
-    // Remove armor history from armor
-    html.find('.history-remove').click(ErrorHandler.wrap(async (ev) => {
-      const historyId = $(ev.currentTarget).data('historyId');
-      const armorId = $(ev.currentTarget).data('armorId');
-      const armor = Validation.requireDocument(this.actor.items.get(armorId), 'Armor', 'Remove History');
-
-      const currentHistories = armor.system.attachedHistories || [];
-      const updatedHistories = currentHistories.filter(id => id !== historyId);
-
-      await armor.update({ "system.attachedHistories": updatedHistories });
-      ui.notifications.info('Armor history removed.');
-    }, 'Remove Armor History'));
+    // Attach item display handlers (show in chat, use power, activate ability)
+    ItemDisplayHandlers.attach(html, this.actor);
 
     // -------------------------------------------------------------
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
-    // Toggle Equip Item
-    html.find('.item-equip').click(ErrorHandler.wrap(async (ev) => {
-      ev.preventDefault();
-      const li = $(ev.currentTarget).closest(".item");
-      const itemId = li.data("itemId");
-      const item = Validation.requireDocument(this.actor.items.get(itemId), 'Item', 'Toggle Equip');
-      await item.update({ "system.equipped": !item.system.equipped });
-    }, 'Toggle Equip'));
+    // Attach item management handlers (equip, create, delete, effects, modifiers)
+    ItemManagementHandlers.attach(html, this.actor, this);
 
-    // Add Inventory Item
-    html.find('.item-create').click(this._onItemCreate.bind(this));
-
-    // Delete Inventory Item
-    html.find('.item-delete').click(ErrorHandler.wrap(async (ev) => {
-      const li = $(ev.currentTarget).parents(".item");
-      const itemId = li.data("itemId");
-      const item = Validation.requireDocument(this.actor.items.get(itemId), 'Item', 'Delete');
-      await item.delete();
-      li.slideUp(200, () => this.render(false));
-    }, 'Delete Item'));
-
-    // Active Effect management
-    html.find(".effect-control").click(ev => onManageActiveEffect(ev, this.actor));
-
-    // Modifier management
-    html.find('.modifier-create').click(ErrorHandler.wrap(async (ev) => {
-      await ModifierHelper.createModifier(this.actor);
-    }, 'Create Modifier'));
-    html.find('.modifier-edit').click(ErrorHandler.wrap(async (ev) => {
-      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
-      if (modifierId === undefined) throw new Error('Modifier ID not found');
-      await ModifierHelper.editModifierDialog(this.actor, modifierId);
-    }, 'Edit Modifier'));
-    html.find('.modifier-delete').click(ErrorHandler.wrap(async (ev) => {
-      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
-      if (modifierId === undefined) throw new Error('Modifier ID not found');
-      await ModifierHelper.deleteModifier(this.actor, modifierId);
-    }, 'Delete Modifier'));
-    html.find('.modifier-toggle').click(ErrorHandler.wrap(async (ev) => {
-      const modifierId = $(ev.currentTarget).closest('.modifier').data('modifierId');
-      if (modifierId === undefined) throw new Error('Modifier ID not found');
-      await ModifierHelper.toggleModifierEnabled(this.actor, modifierId);
-    }, 'Toggle Modifier'));
-
-    // Rollable abilities.
+    // Rollable abilities (characteristics)
     html.find('.rollable').click(this._onRoll.bind(this));
 
-    // Rollable weapon images for attacks
-    html.find('.item-image.rollable').click(this._onWeaponAttack.bind(this));
-
-    // Weapon attack and damage buttons
-    html.find('.weapon-attack-btn').click(ErrorHandler.wrap(async (ev) => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const weapon = Validation.requireDocument(this.actor.items.get(itemId), 'Weapon', 'Attack');
-      await CombatHelper.weaponAttackDialog(this.actor, weapon);
-    }, 'Weapon Attack'));
-    html.find('.weapon-damage-btn').click(ErrorHandler.wrap(async (ev) => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const weapon = Validation.requireDocument(this.actor.items.get(itemId), 'Weapon', 'Roll Damage');
-      await CombatHelper.weaponDamageRoll(this.actor, weapon);
-    }, 'Weapon Damage'));
-    html.find('.weapon-unjam-btn').click(ErrorHandler.wrap(async (ev) => {
-      const itemId = $(ev.currentTarget).data('itemId');
-      const weapon = Validation.requireDocument(this.actor.items.get(itemId), 'Weapon', 'Clear Jam');
-      await CombatHelper.clearJam(this.actor, weapon);
-    }, 'Clear Jam'));
-
-    // Remove ammunition from weapon
-    html.find('.ammo-remove').click(ErrorHandler.wrap(async (ev) => {
-      const ammoId = $(ev.currentTarget).data('ammoId');
-      const weaponId = $(ev.currentTarget).data('weaponId');
-      const weapon = Validation.requireDocument(this.actor.items.get(weaponId), 'Weapon', 'Remove Ammo');
-      Validation.requireDocument(this.actor.items.get(ammoId), 'Ammunition', 'Remove Ammo');
-
-      await weapon.update({ "system.loadedAmmo": null });
-      ui.notifications.info('Ammunition removed.');
-    }, 'Remove Ammunition'));
-
-    // Edit ammunition from inline ammo display
-    html.find('.ammo-edit-btn').click(ErrorHandler.wrap(async (ev) => {
-      ev.stopPropagation();
-      const itemId = $(ev.currentTarget).data('itemId');
-      const item = Validation.requireDocument(this.actor.items.get(itemId), 'Ammunition', 'Edit');
-      item.sheet.render(true);
-    }, 'Edit Ammunition'));
-
-    // Remove upgrade from weapon
-    html.find('.upgrade-remove').click(ErrorHandler.wrap(async (ev) => {
-      const upgradeId = $(ev.currentTarget).data('upgradeId');
-      const weaponId = $(ev.currentTarget).data('weaponId');
-      const weapon = Validation.requireDocument(this.actor.items.get(weaponId), 'Weapon', 'Remove Upgrade');
-
-      const currentUpgrades = weapon.system.attachedUpgrades || [];
-      const updatedUpgrades = currentUpgrades.filter(u => u.id !== upgradeId);
-
-      await weapon.update({ "system.attachedUpgrades": updatedUpgrades });
-      ui.notifications.info('Weapon upgrade removed.');
-    }, 'Remove Weapon Upgrade'));
+    // Attach weapon handlers (attack, damage, unjam)
+    WeaponHandlers.attach(html, this.actor, this);
 
     // Drag events for macros
     if (this.actor.isOwner) {
@@ -365,32 +163,6 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     // Attach drop handlers
     DropHandlers.attach(html, this.actor);
-
-    // Remove chapter
-    html.find('.chapter-remove').click(ErrorHandler.wrap(async (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      const chapterId = this.actor.system.chapterId;
-      if (chapterId) {
-        const chapter = this.actor.items.get(chapterId);
-        if (chapter) await chapter.delete();
-      }
-      await this.actor.update({ "system.chapterId": "" });
-      ui.notifications.info('Chapter removed.');
-    }, 'Remove Chapter'));
-
-    // Remove specialty
-    html.find('.specialty-remove').click(ErrorHandler.wrap(async (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      const specialtyId = this.actor.system.specialtyId;
-      if (specialtyId) {
-        const specialty = this.actor.items.get(specialtyId);
-        if (specialty) await specialty.delete();
-      }
-      await this.actor.update({ "system.specialtyId": "" });
-      ui.notifications.info('Specialty removed.');
-    }, 'Remove Specialty'));
   }
 
   /**
