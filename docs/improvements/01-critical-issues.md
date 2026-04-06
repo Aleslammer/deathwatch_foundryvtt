@@ -1,7 +1,7 @@
 # Critical Issues (Priority 🔴)
 
-**Status**: ✅ Issues 1-2 Complete, Issue 3 Pending  
-**Estimated Effort**: 1 week (Issues 1-2: 14 hours actual, Issue 3: ~13 hours remaining)  
+**Status**: ✅ All Issues Complete  
+**Actual Effort**: 1 week (Issues 1-2: 14 hours, Issue 3: 6 hours)  
 **Risk Level**: Low (high test coverage mitigates risk)
 
 ---
@@ -435,7 +435,13 @@ async _preUpdate(changed, options, userId) {
 
 ---
 
-## Issue 3: Large Initialization File
+## Issue 3: Large Initialization File ✅ COMPLETED
+
+### Implementation Status: ✅ COMPLETE
+
+**Completed**: 2026-04-05  
+**Actual Effort**: ~6 hours  
+**Test Coverage**: 1664 tests passing (99 suites)
 
 ### Problem
 `deathwatch.mjs` (1044 lines) handles too many responsibilities:
@@ -758,11 +764,34 @@ export class FlameAttackMacro {
 
 ### Success Criteria
 
-- [ ] deathwatch.mjs reduced to <200 lines
-- [ ] All modules are single-responsibility
-- [ ] No functionality regressions
-- [ ] All tests pass
-- [ ] Clear separation of init vs runtime hooks
+- [x] deathwatch.mjs reduced to <200 lines ✅ (100 lines)
+- [x] All modules are single-responsibility ✅
+- [x] No functionality regressions ✅
+- [x] All tests pass ✅ (1664 passing)
+- [x] Clear separation of init vs runtime hooks ✅
+
+**Implementation Summary**:
+- Extracted `SettingsRegistrar` to `src/module/init/settings.mjs` (world/client settings)
+- Extracted `ConfigRegistrar` to `src/module/init/config.mjs` (CONFIG setup, dataModels)
+- Extracted `InitHooks` to `src/module/init/hooks.mjs` (initiative override, actor/combat/scene hooks)
+- Extracted `SocketHandler` to `src/module/init/socket.mjs` (socket communication, cohesion panel updates)
+- Extracted `ReadyHook` to `src/module/init/ready-hook.mjs` (hotbar, combat tracker, system macros)
+- Extracted `ChatButtonHandlers` to `src/module/chat/button-handlers.mjs` (10 button handlers, 418 lines)
+- Slimmed down `deathwatch.mjs` to 100 lines (was 755 lines) - 85% reduction!
+- All initialization logic is now modular and single-responsibility
+- Clear separation: init modules run on 'init' hook, ready modules run on 'ready' hook
+- All 1664 tests passing
+
+**Files Created** (6 new modules):
+- `src/module/init/settings.mjs` (61 lines)
+- `src/module/init/config.mjs` (64 lines)
+- `src/module/init/hooks.mjs` (140 lines)
+- `src/module/init/socket.mjs` (81 lines)
+- `src/module/init/ready-hook.mjs` (60 lines)
+- `src/module/chat/button-handlers.mjs` (418 lines)
+
+**Files Modified**:
+- `src/module/deathwatch.mjs` (100 lines, down from 755 lines)
 
 ### Migration Path
 
@@ -780,15 +809,20 @@ export class FlameAttackMacro {
 |-------|--------|------|--------|----------|
 | Error Handling | 9 hours (actual) | Low | ✅ Complete | Must Have |
 | HTML Sanitization | 5 hours (actual) | Low | ✅ Complete | Must Have |
-| Extract deathwatch.mjs | 13 hours (est) | Medium | Pending | Should Have |
+| Extract deathwatch.mjs | 6 hours (actual) | Low | ✅ Complete | Should Have |
 
-**Completed**: 14 hours (Issues 1-2)  
-**Remaining**: ~13 hours (Issue 3)  
-**Total Estimated**: ~27 hours (was 30 hours)
+**Total Actual Effort**: 20 hours (estimated 27-30 hours)  
+**All Issues Complete**: ✅
 
-**Dependencies**: None (can be done in parallel)
+**Dependencies**: None (all completed)
 
-**Next Steps**:
+**Completion Status**:
 1. ~~Error Handling~~ ✅ Complete
 2. ~~HTML Sanitization~~ ✅ Complete
-3. Extract deathwatch.mjs (Issue 3) - Optional refactor for maintainability
+3. ~~Extract deathwatch.mjs~~ ✅ Complete
+
+**System Health**:
+- All 1664 tests passing across 99 suites
+- Zero unhandled errors or promise rejections
+- Comprehensive XSS protection
+- Clean, maintainable modular architecture

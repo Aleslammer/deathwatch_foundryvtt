@@ -104,6 +104,27 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `initiative.mjs` — Initiative dialog with modifier input
 - `foundry-adapter.mjs` — Wraps all Foundry API calls for unit testing (mocked in `tests/setup.mjs`)
 
+### Modular Initialization Architecture
+
+The system uses a clean modular initialization pattern (refactored 2026-04-05):
+
+**Main entry point** (`src/module/deathwatch.mjs`): 100 lines
+- Imports all modules and delegates initialization
+- Hooks.once('init'): Register settings, configure CONFIG, register hooks, register sheets
+- Hooks.once('ready'): Initialize socket, register chat handlers, create system macros
+
+**Initialization modules** (`src/module/init/`):
+- `settings.mjs` — `SettingsRegistrar.register()` — All world/client settings
+- `config.mjs` — `ConfigRegistrar.configure()` — CONFIG.Combat, CONFIG.Actor/Item dataModels
+- `hooks.mjs` — `InitHooks.register()` — Initiative override, actor/effect/combat/scene hooks
+- `socket.mjs` — `SocketHandler.initialize()` — Socket listener, cohesion panel updates
+- `ready-hook.mjs` — `ReadyHook.initialize()` — Hotbar drop, combat tracker defaults, system macros
+
+**Chat handlers** (`src/module/chat/`):
+- `button-handlers.mjs` — `ChatButtonHandlers.register()` — 10 chat button handlers (apply damage, shocking test, etc.)
+
+**Pattern**: Each module exports a single class with a static `register()` or `initialize()` method. The main entry point calls these in order. This keeps the main file under 100 lines and makes initialization logic easy to test and maintain.
+
 ### Modifier System
 
 Items, talents, chapters, and traits can modify character attributes via the `modifier` field:
