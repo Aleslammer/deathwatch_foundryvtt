@@ -21,7 +21,7 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 
 ### Testing
 ```bash
-npm test                    # Run all tests (1633 tests across 98 suites)
+npm test                    # Run all tests (1664 tests across 99 suites)
 npm run test:watch          # Watch mode
 npm run test:coverage       # Generate coverage report at coverage/lcov-report/index.html
 

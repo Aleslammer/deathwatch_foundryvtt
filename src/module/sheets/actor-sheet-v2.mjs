@@ -6,10 +6,12 @@ import { ModifierHelper } from "../helpers/character/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/ui/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/ui/chat-message-builder.mjs";
 import { ItemHandlers } from "../helpers/ui/item-handlers.mjs";
-import { getRankImage } from "../helpers/character/rank-helper.mjs";
-import { WoundHelper } from "../helpers/character/wound-helper.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
 import { CohesionPanel } from "../ui/cohesion-panel.mjs";
+import { CharacterDataPreparer } from "./shared/data-preparers/character-data-preparer.mjs";
+import { NPCDataPreparer } from "./shared/data-preparers/npc-data-preparer.mjs";
+import { EnemyDataPreparer } from "./shared/data-preparers/enemy-data-preparer.mjs";
+import { ItemListPreparer } from "./shared/data-preparers/item-list-preparer.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -130,17 +132,16 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     context.editable = this.isEditable;
     context.owner = this.actor.isOwner;
 
+    // Prepare type-specific data using data preparers
     if (this.actor.type === 'character') {
-      this._prepareCharacterData(context);
-      this._prepareItems(context);
-    }
-    if (this.actor.type === 'npc') {
-      this._prepareNPCData(context);
-      this._prepareItems(context);
-    }
-    if (this.actor.type === 'enemy' || this.actor.type === 'horde') {
-      this._prepareEnemyData(context);
-      this._prepareItems(context);
+      CharacterDataPreparer.prepare(context, this.actor);
+      ItemListPreparer.prepare(context, this.actor);
+    } else if (this.actor.type === 'npc') {
+      NPCDataPreparer.prepare(context, this.actor);
+      ItemListPreparer.prepare(context, this.actor);
+    } else if (this.actor.type === 'enemy' || this.actor.type === 'horde') {
+      EnemyDataPreparer.prepare(context, this.actor);
+      ItemListPreparer.prepare(context, this.actor);
     }
 
     context.rollData = this.actor.getRollData();
