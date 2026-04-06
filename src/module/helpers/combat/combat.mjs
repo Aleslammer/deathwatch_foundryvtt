@@ -282,10 +282,16 @@ export class CombatHelper {
 
   /**
    * Get Righteous Fury threshold from loaded ammo modifiers.
-   * Some ammo types (e.g., Hellfire Rounds) lower the threshold from 10 to 9.
+   *
+   * Some ammo types (e.g., Hellfire Rounds) lower the threshold from 10 to 9,
+   * making Righteous Fury trigger on 9-10 instead of just 10.
+   *
    * @param {Item} weapon - Weapon item
-   * @param {Actor} actor - Actor with the weapon
-   * @returns {number} Fury threshold (default: 10)
+   * @param {Actor} actor - Actor with the weapon (to access loaded ammo)
+   * @returns {number} Fury threshold (default: 10, can be lowered to 9 or 8)
+   * @example
+   * const threshold = CombatHelper._getFuryThreshold(boltgun, actor);
+   * // Returns: 9 if Hellfire Rounds loaded, 10 otherwise
    * @private
    */
   static _getFuryThreshold(weapon, actor) {
@@ -303,10 +309,17 @@ export class CombatHelper {
 
   /**
    * Get bonus damage against hordes from loaded ammo modifiers.
-   * Some ammo types deal extra damage to magnitude-based targets.
+   *
+   * Some ammo types (e.g., Frag Missiles, Metal Storm rounds) deal extra
+   * damage to magnitude-based targets (hordes). This bonus is added to each
+   * hit against a horde.
+   *
    * @param {Item} weapon - Weapon item
-   * @param {Actor} actor - Actor with the weapon
-   * @returns {number} Bonus damage (default: 0)
+   * @param {Actor} actor - Actor with the weapon (to access loaded ammo)
+   * @returns {number} Bonus damage per hit against hordes (default: 0)
+   * @example
+   * const bonus = CombatHelper._getMagnitudeBonusDamage(bolter, actor);
+   * // Returns: 1d10 if Metal Storm rounds loaded, 0 otherwise
    * @private
    */
   static _getMagnitudeBonusDamage(weapon, actor) {
@@ -324,10 +337,19 @@ export class CombatHelper {
 
   /**
    * Get characteristic damage effect from loaded ammo modifiers.
-   * Some ammo types (e.g., Toxin rounds) deal characteristic damage.
+   *
+   * Some ammo types (e.g., Toxin rounds) deal characteristic damage on hit.
+   * This is applied in addition to normal wounds.
+   *
    * @param {Item} weapon - Weapon item
-   * @param {Actor} actor - Actor with the weapon
-   * @returns {Object|null} Characteristic damage data or null
+   * @param {Actor} actor - Actor with the weapon (to access loaded ammo)
+   * @returns {Object|null} Characteristic damage data or null if no effect
+   * @property {string} return.formula - Damage formula (e.g., "1d10")
+   * @property {string} return.characteristic - Characteristic key (e.g., "tgh", "str")
+   * @property {string} return.name - Display name of the effect
+   * @example
+   * const effect = CombatHelper._getCharacteristicDamageEffect(pistol, actor);
+   * // Returns: { formula: "1d10", characteristic: "tgh", name: "Toxin" } for Toxin rounds
    * @private
    */
   static _getCharacteristicDamageEffect(weapon, actor) {
@@ -349,10 +371,17 @@ export class CombatHelper {
 
   /**
    * Check if loaded ammo ignores natural armor.
-   * Some ammo types bypass natural armor (e.g., Kraken rounds).
+   *
+   * Some ammo types (e.g., Kraken rounds) bypass natural armor completely.
+   * This allows weapons to bypass the natural armor of Tyranids and other
+   * creatures with thick hides.
+   *
    * @param {Item} weapon - Weapon item
-   * @param {Actor} actor - Actor with the weapon
+   * @param {Actor} actor - Actor with the weapon (to access loaded ammo)
    * @returns {boolean} True if ammo ignores natural armor
+   * @example
+   * const ignores = CombatHelper._getIgnoresNaturalArmour(boltgun, actor);
+   * // Returns: true if Kraken rounds loaded, false otherwise
    * @private
    */
   static _getIgnoresNaturalArmour(weapon, actor) {
@@ -369,10 +398,17 @@ export class CombatHelper {
   }
 
   /**
-   * Check if an actor has a talent by name.
-   * @param {Object} actor - Actor document
-   * @param {string} talentName - Talent name to search for
-   * @returns {boolean}
+   * Check if an actor has a specific talent by name.
+   *
+   * Searches the actor's items for a talent with the exact name match.
+   * Handles both Map and Array item collections for compatibility.
+   *
+   * @param {Actor} actor - Actor document
+   * @param {string} talentName - Exact talent name to search for (case-sensitive)
+   * @returns {boolean} True if actor has the talent
+   * @example
+   * const hasTalent = CombatHelper.hasTalent(actor, 'Mighty Shot');
+   * // Returns: true if actor has Mighty Shot talent
    */
   static hasTalent(actor, talentName) {
     if (!actor?.items) return false;
@@ -382,8 +418,14 @@ export class CombatHelper {
 
   /**
    * Get the Crushing Blow bonus (+2 melee damage) if the actor has the talent.
-   * @param {Object} actor - Actor document
-   * @returns {number}
+   *
+   * Crushing Blow (Deathwatch Core p. 207) grants +2 damage to melee attacks.
+   *
+   * @param {Actor} actor - Actor document
+   * @returns {number} +2 if actor has Crushing Blow, 0 otherwise
+   * @example
+   * const bonus = CombatHelper.getCrushingBlowBonus(actor);
+   * // Returns: 2 if actor has Crushing Blow talent
    */
   static getCrushingBlowBonus(actor) {
     return this.hasTalent(actor, 'Crushing Blow') ? 2 : 0;
@@ -391,19 +433,34 @@ export class CombatHelper {
 
   /**
    * Get the Mighty Shot bonus (+2 ranged damage) if the actor has the talent.
-   * @param {Object} actor - Actor document
-   * @returns {number}
+   *
+   * Mighty Shot (Deathwatch Core p. 211) grants +2 damage to ranged attacks.
+   *
+   * @param {Actor} actor - Actor document
+   * @returns {number} +2 if actor has Mighty Shot, 0 otherwise
+   * @example
+   * const bonus = CombatHelper.getMightyShotBonus(actor);
+   * // Returns: 2 if actor has Mighty Shot talent
    */
   static getMightyShotBonus(actor) {
     return this.hasTalent(actor, 'Mighty Shot') ? 2 : 0;
   }
 
   /**
-   * Get the critical damage bonus from talents (Crack Shot, Crippling Strike, Street Fighting).
-   * @param {Object} actor - Actor document
+   * Get the critical damage bonus from talents.
+   *
+   * Calculates total critical damage bonus from:
+   * - Crack Shot (+2 ranged critical damage)
+   * - Crippling Strike (+4 melee critical damage)
+   * - Street Fighting (+2 melee critical damage with knives/unarmed)
+   *
+   * @param {Actor} actor - Actor document
    * @param {boolean} isMelee - Whether the attack is melee
-   * @param {string} weaponName - Weapon name (for Street Fighting check)
-   * @returns {number}
+   * @param {string} [weaponName=''] - Weapon name (for Street Fighting check)
+   * @returns {number} Total critical damage bonus (0-6)
+   * @example
+   * const bonus = CombatHelper.getCriticalDamageBonus(actor, true, 'Combat Knife');
+   * // Returns: 6 if actor has both Crippling Strike and Street Fighting
    */
   static getCriticalDamageBonus(actor, isMelee, weaponName = '') {
     if (!actor?.items) return 0;

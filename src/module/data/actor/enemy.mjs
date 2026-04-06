@@ -5,9 +5,28 @@ import { SkillLoader } from '../../helpers/character/skill-loader.mjs';
 const { fields } = foundry.data;
 
 /**
- * Enemy DataModel. Same as character but without chapters, specialties,
- * rank, XP, fate points, renown, special abilities, demeanours, past events.
+ * Enemy DataModel for individual hostile NPCs (xenos, daemons, heretics).
+ *
+ * Simplified character model without Space Marine-specific features:
+ * - **Has**: Characteristics, skills, wounds, fatigue, armor, weapons, traits
+ * - **No**: Chapters, Specialties, Rank, XP progression, Fate Points, Renown
+ *
+ * Use this for named enemies, bosses, and important adversaries with full
+ * stats. For groups of weaker enemies, use Horde instead.
+ *
+ * Computed properties (updated in prepareDerivedData):
+ * - `characteristics.*.value`: Final characteristic values after modifiers
+ * - `characteristics.*.mod`: Final characteristic bonus
+ * - `skills.*.total`: Final skill test target numbers
+ * - `wounds.max`: Maximum wounds from SB + 2×TB + modifiers
+ * - `movement.half/full/charge/run`: Movement rates from AG Bonus
+ *
  * @extends {DeathwatchActorBase}
+ * @example
+ * // Ork Nob with full stats
+ * const orkNob = game.actors.getName("Warboss Grognak");
+ * const ws = orkNob.system.characteristics.ws.value; // 45
+ * const maxWounds = orkNob.system.wounds.max; // 30
  */
 export default class DeathwatchEnemy extends DeathwatchActorBase {
 

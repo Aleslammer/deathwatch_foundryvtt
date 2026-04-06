@@ -17,9 +17,29 @@ import { CHARACTERISTIC_CONSTANTS } from '../constants.mjs';
 export class ModifierCollector {
   /**
    * Collect all modifiers from an actor: actor-level modifiers, item modifiers, and active effects.
+   *
+   * Aggregates modifiers from three sources:
+   * 1. Actor system.modifiers - Actor-level custom modifiers
+   * 2. Item modifiers - From equipped armor, talents, traits, chapters
+   * 3. Active effects - From status effects and other ActiveEffect documents
+   *
    * @param {Actor} actor - Actor document
-   * @param {Array|Map} itemsArray - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
-   * @returns {Array<Object>} Array of modifier objects with effectType, valueAffected, modifier, source
+   * @param {Item[]|Map<string, Item>} itemsArray - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
+   * @returns {Object[]} Array of modifier objects with effectType, valueAffected, modifier, source
+   * @property {string} return[].name - Display name of the modifier
+   * @property {number|string} return[].modifier - Modifier value (number or "x2" for multipliers)
+   * @property {string} return[].effectType - Effect type (characteristic, skill, armor, wounds, etc.)
+   * @property {string} return[].valueAffected - The characteristic/skill/etc being modified
+   * @property {boolean} return[].enabled - Whether modifier is active
+   * @property {string} return[].source - Item/trait/chapter that provides the modifier
+   * @example
+   * const itemsArray = Array.from(actor.items.values());
+   * const mods = ModifierCollector.collectAllModifiers(actor, itemsArray);
+   * // Returns: [
+   * //   { name: "+10 BS", modifier: 10, effectType: "characteristic", valueAffected: "bs", enabled: true, source: "Marksman Training" },
+   * //   { name: "+20 Awareness", modifier: 20, effectType: "skill", valueAffected: "awareness", enabled: true, source: "Heightened Senses" },
+   * //   ...
+   * // ]
    */
   static collectAllModifiers(actor, itemsArray) {
     const actorModifiers = actor.system.modifiers || [];
@@ -62,9 +82,24 @@ export class ModifierCollector {
 
   /**
    * Collect modifiers from all equipped items, talents, traits, and chapters.
-   * Includes modifiers from attached armor histories.
-   * @param {Array|Map} items - Array of actor's items, or Map for backward compatibility
-   * @returns {Array<Object>} Array of modifier objects from items
+   *
+   * Item activation rules:
+   * - Talents, traits, chapters: Always active (no equipped check)
+   * - Armor, weapons, gear: Only active if equipped
+   *
+   * Includes modifiers from:
+   * - Item system.modifiers arrays
+   * - Attached armor histories (for armor items)
+   *
+   * @param {Item[]|Map<string, Item>} items - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
+   * @returns {Object[]} Array of modifier objects from items
+   * @example
+   * const itemMods = ModifierCollector.collectItemModifiers(itemsArray);
+   * // Returns: [
+   * //   { name: "+10 BS", modifier: 10, effectType: "characteristic", valueAffected: "bs", enabled: true, source: "Marksman Training" },
+   * //   { name: "+4 Armor (All)", modifier: 4, effectType: "armor", valueAffected: "all", enabled: true, source: "Power Armor (Mk7 Aquila)" },
+   * //   ...
+   * // ]
    */
   static collectItemModifiers(items) {
     const modifiers = [];
@@ -172,12 +207,30 @@ export class ModifierCollector {
 
   /**
    * Apply characteristic modifiers to actor characteristics.
-   * Handles characteristic advances, standard modifiers, post-multiplier modifiers,
-   * Unnatural Characteristic multipliers, and characteristic damage.
-   * @param {Object} characteristics - Actor characteristics object (ws, bs, str, etc.)
-   * @param {Array<Object>} modifiers - Array of modifier objects
+   *
+   * Modifiers are applied in this critical order:
+   * 1. Base characteristic value (from creation/datasheet)
+   * 2. Advances (+5 per advance: Simple, Intermediate, Trained, Expert)
+   * 3. Standard characteristic modifiers (added to value)
+   * 4. Post-multiplier characteristic modifiers (added to value, but bonus calculated separately)
+   * 5. Characteristic damage (subtracted from value)
+   * 6. Calculate base bonus (value ÷ 10, rounded down)
+   * 7. Apply Unnatural Characteristic multipliers (e.g., x2 for Unnatural Strength)
+   * 8. Add post-multiplier bonus (NOT multiplied by Unnatural)
+   *
+   * The post-multiplier system is critical for Power Armor: +20 STR affects skill tests
+   * but the +2 SB must NOT be multiplied by Unnatural Strength. See implementation plan
+   * docs for full details.
+   *
+   * @param {Object} characteristics - Actor characteristics object (ws, bs, str, tgh, ag, int, per, wp, fel)
+   * @param {Object[]} modifiers - Array of modifier objects from collectAllModifiers
+   * @modifies {characteristics} Updates characteristic.value, characteristic.mod, characteristic.unnaturalMultiplier, etc.
    * @example
-   * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, modifiers);
+   * const mods = ModifierCollector.collectAllModifiers(actor, itemsArray);
+   * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, mods);
+   * // actor.system.characteristics.str.value = 70 (base 50 + advances 10 + Power Armor 10)
+   * // actor.system.characteristics.str.mod = 9 (base 7 + Unnatural x2 = 14, minus post-multiplier 2 = 7, then add back 2 = 9)
+   * @see {@link applySkillModifiers} for skill-based modifiers
    */
   static applyCharacteristicModifiers(characteristics, modifiers) {
     for (const [key, characteristic] of Object.entries(characteristics)) {
@@ -363,9 +416,28 @@ export class ModifierCollector {
 
   /**
    * Apply fatigue modifiers based on toughness bonus.
-   * Max fatigue = TB. Unconscious if fatigue > TB. Penalty = -10 if fatigued.
+   *
+   * Fatigue system (Deathwatch Core p. 259):
+   * - Max fatigue = Toughness Bonus
+   * - Fatigued (value > 0): −10 to all tests
+   * - Unconscious (value > TB): Character collapses
+   *
+   * Each fatigue point represents accumulated exhaustion from:
+   * - Combat (flame weapons, toxins, psychic backlash)
+   * - Extended activity without rest
+   * - Environmental hazards
+   *
    * @param {Object} fatigue - Actor fatigue object (value, max, unconscious, penalty)
-   * @param {number} toughnessBonus - Actor's toughness bonus
+   * @param {number} toughnessBonus - Actor's toughness bonus (computed from TGH characteristic)
+   * @modifies {fatigue} Updates fatigue.max, fatigue.unconscious, fatigue.penalty
+   * @example
+   * // Character with TGH 40 (TB 4) and 2 fatigue
+   * ModifierCollector.applyFatigueModifiers(fatigue, 4);
+   * // fatigue.max = 4, fatigue.unconscious = false, fatigue.penalty = -10
+   * @example
+   * // Character with TGH 40 (TB 4) and 5 fatigue (over limit)
+   * ModifierCollector.applyFatigueModifiers(fatigue, 4);
+   * // fatigue.max = 4, fatigue.unconscious = true, fatigue.penalty = -10
    */
   static applyFatigueModifiers(fatigue, toughnessBonus) {
     if (!fatigue) return;
@@ -401,10 +473,34 @@ export class ModifierCollector {
 
   /**
    * Apply movement modifiers to actor movement rates.
-   * Handles movement multipliers (e.g., Unnatural Speed) and movement restrictions (e.g., Terminator Armor).
+   *
+   * Calculates movement rates based on:
+   * 1. Base movement = AG Bonus
+   * 2. Movement multipliers (e.g., Unnatural Speed x2)
+   * 3. Flat movement modifiers (e.g., +2 from Sprint talent)
+   * 4. Movement restrictions (e.g., Terminator Armor cannot Run)
+   *
+   * Standard movement rates:
+   * - Half Action: AG Bonus
+   * - Full Action: AG Bonus × 2
+   * - Charge: AG Bonus × 3
+   * - Run: AG Bonus × 6
+   *
+   * Movement restrictions set specific rates to "N/A" (e.g., Terminator Armor
+   * cannot Run, so movement.run = "N/A").
+   *
    * @param {Object} movement - Actor movement object (half, full, charge, run)
    * @param {number} agBonus - Actor's Agility bonus
-   * @param {Array<Object>} modifiers - Array of modifier objects
+   * @param {Object[]} modifiers - Array of modifier objects
+   * @modifies {movement} Updates movement.half, movement.full, movement.charge, movement.run, movement.modifiers
+   * @example
+   * // Character with AG 45 (AG Bonus 4) and Unnatural Speed x2
+   * ModifierCollector.applyMovementModifiers(movement, 4, modifiers);
+   * // movement.half = 8, movement.full = 16, movement.charge = 24, movement.run = 48
+   * @example
+   * // Terminator with AG 40 (AG Bonus 4) in Terminator Armor (no Run)
+   * ModifierCollector.applyMovementModifiers(movement, 4, modifiers);
+   * // movement.half = 4, movement.full = 8, movement.charge = 12, movement.run = "N/A"
    */
   static applyMovementModifiers(movement, agBonus, modifiers) {
     if (!movement) return;
@@ -453,9 +549,25 @@ export class ModifierCollector {
 
   /**
    * Apply armor modifiers to equipped armor items.
-   * Increases armor values for all locations (head, body, arms, legs).
-   * @param {Array|Map} items - Array of actor's items, or Map for backward compatibility
-   * @param {Array<Object>} modifiers - Array of modifier objects
+   *
+   * Increases armor values for all hit locations (head, body, left_arm, right_arm,
+   * left_leg, right_leg). Modifiers are additive and apply to all locations.
+   *
+   * Common armor modifiers:
+   * - Armor history bonuses (e.g., +2 from Blessed History)
+   * - Trait bonuses (e.g., +4 from Machine trait)
+   * - Temporary effects (e.g., +2 from Force Barrier)
+   *
+   * Each armor piece stores its base value and recomputes the total on each
+   * prepareDerivedData call.
+   *
+   * @param {Item[]|Map<string, Item>} items - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
+   * @param {Object[]} modifiers - Array of modifier objects with effectType='armor'
+   * @modifies {items} Updates armor item system.head, system.body, etc.
+   * @example
+   * ModifierCollector.applyArmorModifiers(itemsArray, modifiers);
+   * // Power Armor with base 8 and +4 from Machine trait:
+   * // armor.system.body = 12 (base 8 + modifier 4)
    */
   static applyArmorModifiers(items, modifiers) {
     // Handle both Map (backward compatibility) and Array (from prepareDerivedData optimization)

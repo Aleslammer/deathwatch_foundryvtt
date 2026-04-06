@@ -781,6 +781,367 @@ async _onItemCreate(event) {
 
 ---
 
+## JSDoc Documentation Standards
+
+All public methods in the codebase must have comprehensive JSDoc comments with parameter and return types. This improves IDE autocomplete, makes the codebase easier to understand, and serves as inline documentation.
+
+### Required for All Public Methods
+
+Every public static method and class method must include:
+
+```javascript
+/**
+ * Brief one-line description (imperative form: "Calculate", "Apply", "Get").
+ * 
+ * Optional longer description with details, algorithm explanation, or caveats.
+ * Use multiple paragraphs if needed to explain complex behavior.
+ * 
+ * @param {Type} paramName - Parameter description
+ * @param {Type} [optionalParam] - Optional parameter (note brackets)
+ * @param {Type} [optionalParam=default] - Optional with default value
+ * @returns {Type} Return value description
+ * @throws {ErrorType} When this error is thrown (if applicable)
+ * @example
+ * // Usage example with expected result
+ * const result = MyClass.myMethod(arg1, arg2);
+ * // result = { expected: "value" }
+ * @see {@link RelatedFunction} for related functionality
+ * @since v1.2.0 (if recently added)
+ * @deprecated Use {@link NewFunction} instead (if deprecated)
+ */
+```
+
+### Tag Reference
+
+#### Required Tags
+
+- **`@param`**: Every parameter must be documented with type and description
+  - Use brackets `[paramName]` for optional parameters
+  - Use `[paramName=default]` to document default values
+  - Include the type in curly braces: `{string}`, `{number}`, `{Actor}`, `{Object}`
+  
+- **`@returns`**: Every method that returns a value must document the type and meaning
+  - Use `@returns {void}` if the method has no return value
+  - For objects, document the shape using `@typedef` (see below)
+
+#### Optional Tags
+
+- **`@example`**: Strongly recommended for non-obvious APIs
+  - Show realistic usage with input and expected output
+  - Include comments explaining the result
+  
+- **`@throws`**: Document any errors the method throws
+  - Helps callers understand error handling requirements
+  
+- **`@see`**: Link to related methods or documentation
+  - Use `{@link MethodName}` for cross-references
+  
+- **`@modifies`**: Document if method mutates parameters
+  - Example: `@modifies {characteristics} Updates characteristic.value and characteristic.mod`
+  
+- **`@since`**: Version when method was added (useful for new APIs)
+  
+- **`@deprecated`**: Mark deprecated methods and suggest alternatives
+
+### Complex Return Types
+
+For methods that return complex objects, use `@typedef` to define the shape:
+
+```javascript
+/**
+ * @typedef {Object} AttackResult
+ * @property {boolean} success - Whether attack hit
+ * @property {number} degreesOfSuccess - Degrees of success/failure
+ * @property {number} hitsTotal - Total hits landed
+ * @property {string[]} hitLocations - Hit locations for each hit
+ * @property {boolean} isRighteousFury - Whether Righteous Fury triggered
+ */
+
+/**
+ * Resolve a ranged attack roll.
+ * 
+ * @param {Actor} actor - Attacking actor
+ * @param {Item} weapon - Weapon item being used
+ * @param {Object} options - Attack options (aim, range, modifiers)
+ * @returns {Promise<AttackResult>} Attack resolution result
+ * @example
+ * const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, { aim: 1 });
+ * // result = { success: true, degreesOfSuccess: 3, hitsTotal: 3, ... }
+ */
+static async resolveRangedAttack(actor, weapon, options) {
+  // ...
+}
+```
+
+### Type Annotations
+
+Use these type patterns consistently:
+
+**Primitive types**:
+- `{string}`, `{number}`, `{boolean}`, `{null}`, `{undefined}`
+
+**Arrays**:
+- `{string[]}` — Array of strings
+- `{number[]}` — Array of numbers
+- `{Actor[]}` — Array of Actors
+- `{Array<Object>}` — Generic array of objects
+
+**Unions**:
+- `{string|number}` — Either string or number
+- `{Actor|null}` — Actor or null
+
+**Objects**:
+- `{Object}` — Generic object
+- `{Object<string, number>}` — Object with string keys and number values
+- Define complex objects with `@typedef`
+
+**Functions**:
+- `{Function}` — Generic function
+- `{(arg: string) => number}` — Function signature
+
+**Foundry types**:
+- `{Actor}`, `{Item}`, `{Token}`, `{Roll}`, `{ChatMessage}`
+
+**Promises**:
+- `{Promise<Actor>}` — Promise that resolves to Actor
+- `{Promise<void>}` — Promise with no return value
+
+### Examples by Helper Class
+
+#### Combat Helper Example
+
+```javascript
+/**
+ * Calculate range modifier and label for an attack.
+ * 
+ * Distance is compared to weapon range to determine the range band:
+ * - Point Blank (≤2m): +30
+ * - Short (≤range÷2): +10
+ * - Standard (≤range): +0
+ * - Long (≤range×2): −10
+ * - Extreme (≤range×3): −30
+ * 
+ * @param {number} distance - Distance to target in meters
+ * @param {number} weaponRange - Weapon's maximum range in meters
+ * @returns {{modifier: number, label: string}} Range modifier and range band label
+ * @example
+ * const result = CombatHelper.calculateRangeModifier(5, 30);
+ * // result = { modifier: +10, label: "Short" }
+ */
+static calculateRangeModifier(distance, weaponRange) {
+  // ...
+}
+
+/**
+ * Determine hit location from reversed d100 roll.
+ * 
+ * Hit locations are determined by reversing the roll digits:
+ * - 01-10: Head
+ * - 11-20: Right Arm
+ * - 21-30: Left Arm
+ * - 31-70: Body
+ * - 71-85: Right Leg
+ * - 86-00: Left Leg
+ * 
+ * @param {number} attackRoll - The d100 attack roll result (1-100)
+ * @returns {string} Hit location name (Head, Body, Right Arm, Left Arm, Right Leg, Left Leg)
+ * @see {@link determineMultipleHitLocations} for multi-hit attacks
+ */
+static determineHitLocation(attackRoll) {
+  // ...
+}
+```
+
+#### Modifier Collector Example
+
+```javascript
+/**
+ * Collect all modifiers from actor, items, and active effects.
+ * 
+ * Modifiers are gathered from multiple sources:
+ * 1. Actor system.modifiers array
+ * 2. Item modifiers (talents, traits, equipment)
+ * 3. Active effect modifiers
+ * 4. Chapter and specialty modifiers
+ * 
+ * @param {Actor} actor - The actor document
+ * @param {Item[]|Map<string, Item>} items - Actor's items (array or Map)
+ * @returns {Object[]} Array of modifier objects
+ * @property {string} return[].name - Modifier display name
+ * @property {number|string} return[].modifier - Modifier value (number or "x2" for multipliers)
+ * @property {string} return[].effectType - Effect type (characteristic, skill, armor, etc.)
+ * @property {string} return[].valueAffected - The characteristic/skill being modified
+ * @property {boolean} return[].enabled - Whether modifier is currently active
+ * @property {string} return[].source - Item/trait/chapter that provides the modifier
+ * @example
+ * const modifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
+ * // modifiers = [
+ * //   { name: "+10 BS", modifier: 10, effectType: "characteristic", valueAffected: "bs", enabled: true, source: "Marksman Training" },
+ * //   ...
+ * // ]
+ */
+static collectAllModifiers(actor, items) {
+  // ...
+}
+
+/**
+ * Apply characteristic modifiers to calculate final values and bonuses.
+ * 
+ * Modifiers are applied in this order:
+ * 1. Base characteristic value
+ * 2. Advances (+5 each)
+ * 3. Standard modifiers (added to value)
+ * 4. Post-multiplier modifiers (added after Unnatural)
+ * 5. Characteristic damage (subtracted)
+ * 6. Calculate base bonus (value / 10)
+ * 7. Apply Unnatural multipliers to base bonus
+ * 8. Add post-multiplier bonus adjustments
+ * 
+ * @param {Object} characteristics - Characteristics object from actor.system.characteristics
+ * @param {Object[]} modifiers - Array of modifier objects from collectAllModifiers
+ * @modifies {characteristics} Updates characteristic.value, characteristic.mod, etc.
+ * @see {@link CHARACTERISTIC_CONSTANTS} for bonus divisor (default 10)
+ */
+static applyCharacteristicModifiers(characteristics, modifiers) {
+  // ...
+}
+```
+
+#### Data Model Example
+
+```javascript
+/**
+ * Character DataModel for player characters and NPCs.
+ * 
+ * Manages full character data including:
+ * - Characteristics with derived bonuses
+ * - Skills with computed totals
+ * - Wounds, fatigue, corruption, insanity
+ * - Movement rates
+ * - XP and rank progression
+ * - Chapter and specialty benefits
+ * 
+ * Computed properties (updated in prepareDerivedData):
+ * - `characteristics.*.value`: Final characteristic values after modifiers
+ * - `characteristics.*.mod`: Final characteristic bonus
+ * - `skills.*.total`: Final skill test target numbers
+ * - `wounds.max`: Maximum wounds from SB + 2×TB + advances + modifiers
+ * - `movement.half/full/charge/run`: Movement rates from AG Bonus
+ * 
+ * @extends {DeathwatchActorBase}
+ */
+export default class DeathwatchCharacter extends DeathwatchActorBase {
+  /**
+   * Compute all character derived data.
+   * 
+   * Called automatically by Foundry when actor data changes.
+   * 
+   * Order of operations:
+   * 1. Load skills from JSON
+   * 2. Calculate rank and XP totals
+   * 3. Collect modifiers from items/effects/chapter/specialty
+   * 4. Apply modifiers to characteristics
+   * 5. Apply modifiers to skills
+   * 6. Calculate wounds, fatigue, initiative
+   * 7. Calculate movement rates
+   * 8. Apply force weapon modifiers (psykers only)
+   * 
+   * @override
+   * @returns {void}
+   */
+  prepareDerivedData() {
+    // ...
+  }
+}
+```
+
+### When JSDoc is Required
+
+**✅ ALWAYS document**:
+- All public static methods in helper classes
+- All public instance methods in DataModel classes
+- All sheet class methods (getData, activateListeners, etc.)
+- All methods in initialization modules (register, initialize, etc.)
+- Methods with complex parameters or return values
+- Methods that modify parameters (use `@modifies`)
+
+**❌ NOT required**:
+- Private methods (prefixed with `_`)
+- Trivial getters/setters with obvious behavior
+- Methods already documented by Foundry base classes (unless overriding behavior)
+- Test helper methods (tests themselves should be self-documenting)
+
+### Description Writing Guidelines
+
+**Brief description (first line)**:
+- Use imperative form: "Calculate", "Apply", "Get", "Create", "Validate"
+- Be specific about what the method does
+- Keep under 80 characters
+- No period at the end
+
+**Longer description (subsequent paragraphs)**:
+- Explain the algorithm or approach
+- Document edge cases and special behavior
+- Mention performance considerations if relevant
+- Link to related methods with `@see`
+- Explain the "why" not just the "what"
+
+**Parameter descriptions**:
+- Be specific about expected format
+- Document units (meters, milliseconds, etc.)
+- Note if parameter is mutated
+- Explain relationship to other parameters
+
+**Return descriptions**:
+- Describe what the value represents
+- Document null/undefined returns
+- Explain object structure for complex returns
+- Note if return value is used for control flow
+
+### Common Patterns
+
+**Array parameters**:
+```javascript
+/**
+ * @param {Item[]|Map<string, Item>} items - Actor's items (accepts array or Map for backward compatibility)
+ */
+```
+
+**Optional parameters with defaults**:
+```javascript
+/**
+ * @param {number} [modifier=0] - Optional modifier to apply (default: 0)
+ * @param {string} [damageType="Impact"] - Damage type (default: "Impact")
+ */
+```
+
+**Modifying parameters**:
+```javascript
+/**
+ * @param {Object} characteristics - Characteristics object
+ * @modifies {characteristics} Updates characteristic.value and characteristic.mod in place
+ */
+```
+
+**Multiple return types**:
+```javascript
+/**
+ * @returns {Actor|null} The actor if found, null otherwise
+ */
+```
+
+**Async methods**:
+```javascript
+/**
+ * @returns {Promise<void>} Resolves when damage is applied
+ */
+async applyDamage(actor, damageData) {
+  // ...
+}
+```
+
+---
+
 ## Testing Approach
 
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.

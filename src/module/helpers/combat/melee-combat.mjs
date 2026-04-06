@@ -4,19 +4,58 @@ import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 
+/**
+ * Melee combat helper for Weapon Skill tests and close combat attacks.
+ * Handles Standard Attack, All Out Attack, Charge, and Called Shot melee options.
+ *
+ * @example
+ * // Resolve a melee attack with Charge
+ * const result = await MeleeCombatHelper.resolveMeleeAttack(actor, chainsword, {
+ *   hitValue: 35,
+ *   aim: 0,
+ *   allOut: 0,
+ *   charge: 10,
+ *   calledShot: 0,
+ *   miscModifier: 0
+ * });
+ */
 export class MeleeCombatHelper {
   /**
    * Calculate melee attack modifiers and target number.
-   * @param {Object} options
-   * @param {number} options.ws - Weapon Skill value
-   * @param {number} options.aim - Aim modifier
-   * @param {number} options.allOut - All Out Attack modifier
-   * @param {number} options.charge - Charge modifier
-   * @param {number} options.calledShot - Called Shot penalty
-   * @param {number} options.runningTarget - Running Target penalty
-   * @param {number} options.miscModifier - Misc modifier
-   * @param {boolean} options.isDefensive - Whether weapon has Defensive quality
-   * @returns {{ modifiers: number, clampedModifiers: number, targetNumber: number, defensivePenalty: number }}
+   *
+   * Melee combat modifiers (Deathwatch Core p. 243):
+   * - Aim: +0 (None), +10 (Half), +20 (Full)
+   * - All Out Attack: +20 (but cannot Parry/Dodge)
+   * - Charge: +10 (must move at least 4m)
+   * - Called Shot: −20
+   * - Running Target: −20
+   * - Defensive quality: −10
+   * - Size modifiers: +30 (Enormous) to −30 (Minuscule)
+   *
+   * All modifiers are clamped to [−60, +60] per core rules.
+   *
+   * @param {Object} [options={}] - Attack modifier options
+   * @param {number} [options.ws=0] - Weapon Skill characteristic value
+   * @param {number} [options.aim=0] - Aim modifier (+0, +10, or +20)
+   * @param {number} [options.allOut=0] - All Out Attack modifier (+20)
+   * @param {number} [options.charge=0] - Charge modifier (+10)
+   * @param {number} [options.calledShot=0] - Called Shot penalty (−20)
+   * @param {number} [options.runningTarget=0] - Running Target penalty (−20)
+   * @param {number} [options.miscModifier=0] - Miscellaneous modifier
+   * @param {number} [options.sizeModifier=0] - Target size modifier (+30 to −30)
+   * @param {boolean} [options.isDefensive=false] - Whether weapon has Defensive quality (−10)
+   * @returns {{modifiers: number, clampedModifiers: number, targetNumber: number, defensivePenalty: number}} Modifier calculation result
+   * @property {number} return.modifiers - Raw total modifiers (before clamping)
+   * @property {number} return.clampedModifiers - Clamped modifiers (−60 to +60)
+   * @property {number} return.targetNumber - Final target number (WS + clamped modifiers)
+   * @property {number} return.defensivePenalty - Defensive quality penalty (−10 or 0)
+   * @example
+   * const result = MeleeCombatHelper.buildMeleeModifiers({
+   *   ws: 50,
+   *   charge: 10,
+   *   miscModifier: 10
+   * });
+   * // Returns: { modifiers: 20, clampedModifiers: 20, targetNumber: 70, defensivePenalty: 0 }
    */
   static buildMeleeModifiers({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, sizeModifier = 0, isDefensive = false } = {}) {
     const defensivePenalty = isDefensive ? -10 : 0;
@@ -27,9 +66,30 @@ export class MeleeCombatHelper {
   }
 
   /**
-   * Build modifier breakdown parts for chat display.
-   * @param {Object} options
-   * @returns {string[]}
+   * Build modifier breakdown parts array for chat message display.
+   *
+   * Creates a human-readable array of modifier strings to show players
+   * how the target number was calculated.
+   *
+   * @param {Object} [options={}] - Modifier breakdown options
+   * @param {number} [options.ws=0] - Weapon Skill value
+   * @param {number} [options.aim=0] - Aim modifier
+   * @param {number} [options.allOut=0] - All Out Attack modifier
+   * @param {number} [options.charge=0] - Charge modifier
+   * @param {number} [options.calledShot=0] - Called Shot penalty
+   * @param {number} [options.runningTarget=0] - Running Target penalty
+   * @param {number} [options.miscModifier=0] - Miscellaneous modifier
+   * @param {number} [options.defensivePenalty=0] - Defensive quality penalty
+   * @param {number} [options.sizeModifier=0] - Target size modifier
+   * @param {string} [options.sizeLabel=''] - Target size label (e.g., "Enormous", "Minuscule")
+   * @returns {string[]} Array of modifier strings for chat display
+   * @example
+   * const parts = MeleeCombatHelper.buildMeleeModifierParts({
+   *   ws: 50,
+   *   charge: 10,
+   *   miscModifier: 10
+   * });
+   * // Returns: ["50 WS", "+10 Charge", "+10 Misc"]
    */
   static buildMeleeModifierParts({ ws = 0, aim = 0, allOut = 0, charge = 0, calledShot = 0, runningTarget = 0, miscModifier = 0, defensivePenalty = 0, sizeModifier = 0, sizeLabel = "" } = {}) {
     const parts = [`${ws} WS`];
@@ -45,21 +105,48 @@ export class MeleeCombatHelper {
   }
   /**
    * Resolve a melee attack given parsed dialog inputs and a d100 roll.
-   * Pure logic — no UI, no rolls, no document updates.
-   * @param {Object} actor - Actor document
-   * @param {Object} weapon - Weapon item
-   * @param {Object} options - Parsed attack options
-   * @param {number} options.hitValue - The d100 attack roll result
-   * @param {number} options.aim - Aim modifier
-   * @param {number} options.allOut - All Out Attack modifier
-   * @param {number} options.charge - Charge modifier
-   * @param {number} options.calledShot - Called shot penalty
-   * @param {number} options.runningTarget - Running target penalty
-   * @param {number} options.miscModifier - Misc modifier
-   * @param {number} [options.sizeModifier=0] - Target size modifier
-   * @param {string} [options.sizeLabel=''] - Target size label
-   * @param {Object} [options.targetActor=null] - Target actor for horde hit recalculation
+   *
+   * This is the core melee attack resolution function. It computes:
+   * - Target number (WS + modifiers, clamped to [−60, +60])
+   * - Success/failure (roll ≤ target number)
+   * - Degrees of success (for damage calculation)
+   * - Hits landed (usually 1, but hordes may receive multiple hits)
+   *
+   * This is a pure logic function: no UI, no rolls, no document updates.
+   * All randomness (d100 roll) is passed in via options.hitValue.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Melee weapon item
+   * @param {Object} options - Parsed attack options from dialog or preset
+   * @param {number} options.hitValue - The d100 attack roll result (1-100)
+   * @param {number} options.aim - Aim modifier (+0, +10, or +20)
+   * @param {number} options.allOut - All Out Attack modifier (+20)
+   * @param {number} options.charge - Charge modifier (+10)
+   * @param {number} options.calledShot - Called Shot penalty (−20)
+   * @param {number} options.runningTarget - Running Target penalty (−20)
+   * @param {number} options.miscModifier - Miscellaneous modifier
+   * @param {number} [options.sizeModifier=0] - Target size modifier (+30 to −30)
+   * @param {string} [options.sizeLabel=''] - Target size label ("Enormous", "Minuscule", etc.)
+   * @param {Actor} [options.targetActor=null] - Target actor (for horde hit recalculation)
    * @returns {Promise<Object>} Attack resolution result
+   * @property {number} return.hitValue - The attack roll
+   * @property {number} return.targetNumber - Target number (WS + modifiers)
+   * @property {boolean} return.success - Whether the attack hit
+   * @property {number} return.degreesOfSuccess - Degrees of success (0 if missed)
+   * @property {number} return.hitsTotal - Total hits landed (usually 1, more for hordes)
+   * @property {string[]} return.modifierParts - Breakdown of all modifiers
+   * @property {number} return.defensivePenalty - Defensive quality penalty (−10 or 0)
+   * @example
+   * const result = await MeleeCombatHelper.resolveMeleeAttack(actor, chainsword, {
+   *   hitValue: 35,
+   *   aim: 0,
+   *   allOut: 20,
+   *   charge: 0,
+   *   calledShot: 0,
+   *   runningTarget: 0,
+   *   miscModifier: 0
+   * });
+   * // Returns: { hitValue: 35, targetNumber: 70, success: true, degreesOfSuccess: 3, hitsTotal: 1, ... }
    */
   static async resolveMeleeAttack(actor, weapon, options) {
     const {
@@ -97,6 +184,45 @@ export class MeleeCombatHelper {
     };
   }
 
+  /**
+   * Open the melee attack dialog and resolve the attack.
+   *
+   * This is the main entry point for melee attacks. Opens a dialog with:
+   * - Aim options (None, Half, Full)
+   * - All Out Attack checkbox (+20 bonus, cannot Parry/Dodge)
+   * - Charge checkbox (+10 bonus)
+   * - Called Shot checkbox (−20 penalty, select hit location)
+   * - Running Target checkbox (−20 penalty)
+   * - Miscellaneous modifier input
+   *
+   * If `options` are provided with `skipDialog: true`, skips the dialog and
+   * uses preset values (useful for hotbar macros).
+   *
+   * After the attack resolves, stores attack data in CombatHelper state for
+   * the subsequent damage roll dialog.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Melee weapon item
+   * @param {Object} [options={}] - Optional preset attack parameters
+   * @param {number} [options.aim] - Preset aim modifier (0, 1, or 2 for None/Half/Full)
+   * @param {boolean} [options.allOut] - Preset All Out Attack (true/false)
+   * @param {boolean} [options.charge] - Preset Charge (true/false)
+   * @param {string} [options.calledShot] - Preset called shot location
+   * @param {boolean} [options.runningTarget] - Preset Running Target (true/false)
+   * @param {number} [options.miscModifier] - Preset misc modifier
+   * @param {boolean} [options.skipDialog] - If true, skip dialog and roll immediately
+   * @returns {Promise<void>} Resolves when attack is complete
+   * @example
+   * // Standard attack with dialog
+   * await MeleeCombatHelper.attackDialog(actor, chainsword);
+   *
+   * @example
+   * // Preset Charge attack (for hotbar macro)
+   * await MeleeCombatHelper.attackDialog(actor, chainsword, {
+   *   charge: true,
+   *   skipDialog: true
+   * });
+   */
   /* istanbul ignore next */
   static async attackDialog(actor, weapon, options = {}) {
     const hasOptions = Object.keys(options).length > 0 && options.action !== 'damage';

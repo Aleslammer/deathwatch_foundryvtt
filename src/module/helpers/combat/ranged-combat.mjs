@@ -5,13 +5,37 @@ import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { WeaponUpgradeHelper } from "./weapon-upgrade-helper.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 
+/**
+ * Ranged combat helper for Ballistic Skill tests, rate of fire, jamming, and ranged attacks.
+ * Handles Full Auto, Semi-Auto, Single Shot attacks with all weapon qualities and modifiers.
+ *
+ * @example
+ * // Resolve a ranged attack
+ * const result = await RangedCombatHelper.resolveRangedAttack(actor, boltgun, {
+ *   hitValue: 42,
+ *   aim: 10,
+ *   autoFire: -10,
+ *   rangeMod: 10,
+ *   rangeLabel: 'Short'
+ * });
+ */
 export class RangedCombatHelper {
   /**
    * Calculate ammo expenditure based on rounds fired and weapon qualities.
-   * @param {number} roundsFired - Base rounds fired
-   * @param {boolean} isStorm - Whether weapon has Storm quality
-   * @param {boolean} isTwinLinked - Whether weapon has Twin-Linked quality
-   * @returns {number}
+   *
+   * Ammo consumption is modified by:
+   * - Storm quality: Doubles ammo expenditure (hail of fire)
+   * - Twin-Linked quality: Doubles ammo expenditure (two barrels fire)
+   *
+   * These effects stack: Storm + Twin-Linked = 4× ammo consumption.
+   *
+   * @param {number} roundsFired - Base rounds fired (from rate of fire)
+   * @param {boolean} [isStorm=false] - Whether weapon has Storm quality
+   * @param {boolean} [isTwinLinked=false] - Whether weapon has Twin-Linked quality
+   * @returns {number} Total ammo consumed
+   * @example
+   * const ammo = RangedCombatHelper.calculateAmmoExpenditure(10, true, true);
+   * // Returns: 40 (10 rounds × 2 Storm × 2 Twin-Linked)
    */
   static calculateAmmoExpenditure(roundsFired, isStorm = false, isTwinLinked = false) {
     let ammo = roundsFired;
@@ -22,10 +46,20 @@ export class RangedCombatHelper {
 
   /**
    * Check if ammunition has a premature detonation modifier and if the roll triggers it.
-   * @param {Object} weapon - Weapon item
-   * @param {Object} actor - Actor document
-   * @param {number} hitValue - The attack roll result
-   * @returns {{ detonates: boolean, threshold: number }}
+   *
+   * Some volatile ammo types (e.g., Plasma, Melta) can detonate prematurely on
+   * high attack rolls (typically 95+), dealing damage to the wielder instead of
+   * the target.
+   *
+   * @param {Item} weapon - Weapon item
+   * @param {Actor} actor - Actor document (to access loaded ammo)
+   * @param {number} hitValue - The d100 attack roll result
+   * @returns {{detonates: boolean, threshold: number}} Detonation data
+   * @property {boolean} return.detonates - Whether the ammo detonated
+   * @property {number} return.threshold - The roll threshold for detonation (default: 101 = never)
+   * @example
+   * const result = RangedCombatHelper.checkPrematureDetonation(plasmaGun, actor, 97);
+   * // Returns: { detonates: true, threshold: 95 } if using volatile plasma ammo
    */
   static checkPrematureDetonation(weapon, actor, hitValue) {
     let threshold = 101;
@@ -45,13 +79,35 @@ export class RangedCombatHelper {
 
   /**
    * Calculate maximum hits accounting for Twin-Linked bonus.
-   * @param {number} roundsFired - Base rounds fired
-   * @param {boolean} isTwinLinked - Whether weapon has Twin-Linked quality
-   * @returns {number}
+   *
+   * Twin-Linked weapons (Deathwatch Core p. 158) gain +1 maximum hit on Full Auto
+   * attacks due to firing two barrels simultaneously.
+   *
+   * @param {number} roundsFired - Base rounds fired (from rate of fire)
+   * @param {boolean} [isTwinLinked=false] - Whether weapon has Twin-Linked quality
+   * @returns {number} Maximum hits possible (roundsFired or roundsFired + 1)
+   * @example
+   * const maxHits = RangedCombatHelper.calculateMaxHits(10, true);
+   * // Returns: 11 (10 rounds + 1 Twin-Linked bonus)
    */
   static calculateMaxHits(roundsFired, isTwinLinked = false) {
     return isTwinLinked ? roundsFired + 1 : roundsFired;
   }
+
+  /**
+   * Calculate effective range for thrown weapons based on Strength Bonus.
+   *
+   * Thrown weapons (grenades, knives, etc.) have range = SB × multiplier.
+   * For example, "SB x 3" means a character with SB 4 can throw 12 meters.
+   *
+   * @param {Item} weapon - Weapon item
+   * @param {Actor} actor - Actor document (to access STR characteristic)
+   * @returns {number|null} Effective range in meters, or null if not a thrown weapon or invalid format
+   * @example
+   * // Frag Grenade with range "SB x 3" thrown by character with SB 5
+   * const range = RangedCombatHelper.calculateThrownWeaponRange(grenade, actor);
+   * // Returns: 15 (5 SB × 3)
+   */
   static calculateThrownWeaponRange(weapon, actor) {
     if (weapon.system.class?.toLowerCase() !== 'thrown') {
       return null;
@@ -67,23 +123,56 @@ export class RangedCombatHelper {
 
   /**
    * Resolve a ranged attack given parsed dialog inputs and a d100 roll.
-   * Pure logic — no UI, no rolls, no document updates.
-   * @param {Object} actor - Actor document
-   * @param {Object} weapon - Weapon item
-   * @param {Object} options - Parsed attack options
-   * @param {number} options.hitValue - The d100 attack roll result
-   * @param {number} options.aim - Aim modifier
-   * @param {number} options.autoFire - Rate of fire modifier
-   * @param {number} options.calledShot - Called shot penalty
-   * @param {number} options.runningTarget - Running target penalty
-   * @param {number} options.miscModifier - Misc modifier
-   * @param {number} options.rangeMod - Range modifier
-   * @param {string} options.rangeLabel - Range band label
-   * @param {string[]} options.rofParts - Rate of fire parts array
-   * @param {number} [options.sizeModifier=0] - Target size modifier
-   * @param {string} [options.sizeLabel=''] - Target size label
-   * @param {Object} [options.targetActor=null] - Target actor for horde hit recalculation
+   *
+   * This is the core ranged attack resolution function. It computes:
+   * - Target number (BS + modifiers)
+   * - Hits landed (based on degrees of success and rate of fire)
+   * - Jam/overheat/premature detonation checks
+   * - Ammo expenditure
+   *
+   * This is a pure logic function: no UI, no rolls, no document updates.
+   * All randomness (d100 roll) is passed in via options.hitValue.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Weapon item being fired
+   * @param {Object} options - Parsed attack options from dialog or preset
+   * @param {number} options.hitValue - The d100 attack roll result (1-100)
+   * @param {number} options.aim - Aim modifier (+0, +10, or +20)
+   * @param {number} options.autoFire - Rate of fire modifier (+0, +10, or +20)
+   * @param {number} options.calledShot - Called shot penalty (−20)
+   * @param {number} options.runningTarget - Running target penalty (−20)
+   * @param {number} options.miscModifier - Miscellaneous modifier
+   * @param {number} options.rangeMod - Range modifier (+30 to −30)
+   * @param {string} options.rangeLabel - Range band label ("Point Blank", "Short", etc.)
+   * @param {string[]} options.rofParts - Rate of fire parts array (e.g., ["S", "3", "10"])
+   * @param {number} [options.sizeModifier=0] - Target size modifier (+30 to −30)
+   * @param {string} [options.sizeLabel=''] - Target size label ("Enormous", "Minuscule", etc.)
+   * @param {Actor} [options.targetActor=null] - Target actor (for horde hit recalculation)
    * @returns {Promise<Object>} Attack resolution result
+   * @property {number} return.hitValue - The attack roll
+   * @property {number} return.targetNumber - Target number (BS + modifiers)
+   * @property {number} return.hitsTotal - Total hits landed
+   * @property {number} return.maxHits - Maximum possible hits
+   * @property {number} return.roundsFired - Rounds of ammo fired
+   * @property {boolean} return.isJammed - Whether weapon jammed
+   * @property {boolean} return.hasPrematureDetonation - Whether ammo detonated prematurely
+   * @property {boolean} return.isOverheated - Whether weapon overheated
+   * @property {boolean} return.hasReliable - Whether weapon has Reliable quality
+   * @property {number} return.ammoExpended - Total ammo consumed
+   * @property {Object[]} return.modifierParts - Breakdown of all modifiers
+   * @example
+   * const result = await RangedCombatHelper.resolveRangedAttack(actor, boltgun, {
+   *   hitValue: 42,
+   *   aim: 10,
+   *   autoFire: 10,
+   *   calledShot: -20,
+   *   runningTarget: 0,
+   *   miscModifier: 0,
+   *   rangeMod: 10,
+   *   rangeLabel: 'Short',
+   *   rofParts: ['S', '3', '10']
+   * });
+   * // Returns: { hitValue: 42, targetNumber: 60, hitsTotal: 2, isJammed: false, ... }
    */
   static async resolveRangedAttack(actor, weapon, options) {
     const {
@@ -168,6 +257,43 @@ export class RangedCombatHelper {
     };
   }
 
+  /**
+   * Open the ranged attack dialog and resolve the attack.
+   *
+   * This is the main entry point for ranged attacks. Opens a dialog with:
+   * - Rate of fire selection (Single, Semi-Auto, Full Auto)
+   * - Aim options (None, Half, Full)
+   * - Called shot selection
+   * - Range calculation (auto-calculated from tokens if available)
+   * - Modifiers (running target, misc)
+   *
+   * If `options` are provided with `skipDialog: true`, skips the dialog and
+   * uses preset values (useful for hotbar macros).
+   *
+   * After the attack resolves, stores attack data in CombatHelper state for
+   * the subsequent damage roll dialog.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Weapon item being fired
+   * @param {Object} [options={}] - Optional preset attack parameters
+   * @param {string} [options.rateOfFire] - Preset rate of fire ("single", "semi", "full")
+   * @param {number} [options.aim] - Preset aim modifier (0, 1, or 2 for None/Half/Full)
+   * @param {string} [options.calledShot] - Preset called shot location
+   * @param {number} [options.miscModifier] - Preset misc modifier
+   * @param {boolean} [options.skipDialog] - If true, skip dialog and roll immediately
+   * @returns {Promise<void>} Resolves when attack is complete
+   * @example
+   * // Standard attack with dialog
+   * await RangedCombatHelper.attackDialog(actor, boltgun);
+   *
+   * @example
+   * // Preset Full Auto attack with Full Aim (for hotbar macro)
+   * await RangedCombatHelper.attackDialog(actor, boltgun, {
+   *   rateOfFire: 'full',
+   *   aim: 2,
+   *   skipDialog: true
+   * });
+   */
   /* istanbul ignore next */
   static async attackDialog(actor, weapon, options = {}) {
     const hasOptions = Object.keys(options).length > 0 && options.action !== 'damage';
