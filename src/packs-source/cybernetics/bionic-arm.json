@@ -1,7 +1,7 @@
 {
   "name": "Bionic Arm",
   "type": "cybernetic",
-  "img": "icons/svg/book.svg",
+  "img": "systems/deathwatch/icons/cybernetics/bionic-arm.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "177",

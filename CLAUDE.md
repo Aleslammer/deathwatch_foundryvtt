@@ -21,7 +21,7 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 
 ### Testing
 ```bash
-npm test                    # Run all tests (1664 tests across 99 suites)
+npm test                    # Run all tests (1752 tests across 105 suites)
 npm run test:watch          # Watch mode
 npm run test:coverage       # Generate coverage report at coverage/lcov-report/index.html
 
@@ -155,6 +155,50 @@ Items, talents, chapters, and traits can modify character attributes via the `mo
 Modifiers are collected by `modifier-collector.mjs` and applied by `modifiers.mjs` when computing derived data.
 
 **Performance optimization**: Actor data models convert `actor.items` Map to Array once at the start of `prepareDerivedData()` and pass the array to all modifier methods. This eliminates redundant Map→Array conversions (previously 3+ per update, now only 1), providing ~3x performance improvement. The modifier collector methods accept both Map and Array for backward compatibility.
+
+### Cybernetics System
+
+**Location**: `src/module/helpers/cybernetic-helper.mjs`, `src/module/data/item/cybernetic.mjs`
+
+Cybernetics can provide characteristic replacements (e.g., servo-arm replaces natural Strength). This is different from characteristic modifiers — the cybernetic provides a fixed value that completely replaces the natural characteristic.
+
+**Cybernetic item fields**:
+- `replacesCharacteristic` — "str", "ag", etc. (which characteristic is replaced)
+- `replacementValue` — Fixed characteristic value (e.g., 75 for standard servo-arm)
+- `unnaturalMultiplier` — Unnatural characteristic multiplier (e.g., 2 for Unnatural Strength x2)
+- `replacementLabel` — Display name for UI (e.g., "Servo-Arm")
+- `canBeModified` — Whether the replacement value can be affected by other modifiers (usually false)
+
+**Weapon-cybernetic linking**:
+Weapons can reference a cybernetic item via `weapon.system.cyberneticSource` (item ID). When set:
+- Weapon damage rolls automatically use the cybernetic's strength bonus instead of character's natural strength
+- Example: Servo-arm weapon has `dmg: "2d10+SBx2"` and `cyberneticSource: "cyb000000001"`
+- When attacking with the weapon, system uses servo-arm's Str 75 (SB 14) instead of character's natural strength
+
+**Characteristic test flow**:
+1. Player clicks characteristic to roll a test (e.g., Strength test)
+2. System checks for equipped cybernetics with `replacesCharacteristic: "str"`
+3. If found, dialog shows source selector:
+   - "Natural Strength (40) - Bonus: 4"
+   - "Servo-Arm (75, Unnatural x2) - Bonus: 14"
+4. Player selects source, roll proceeds with chosen value
+
+**Example: Astartes Servo-Arm**
+```json
+{
+  "type": "cybernetic",
+  "system": {
+    "equipped": true,
+    "replacesCharacteristic": "str",
+    "replacementValue": 75,
+    "unnaturalMultiplier": 2,
+    "replacementLabel": "Servo-Arm",
+    "canBeModified": false
+  }
+}
+```
+
+Exceptional craftsmanship is handled by creating a separate compendium entry with different values (e.g., Str 85 instead of 75).
 
 ### Cohesion & Kill-Team System
 
@@ -348,6 +392,43 @@ const actor = FoundryAdapter.getActor(actorId);
 
 ---
 
+### Item Identification Pattern
+
+**Rule**: Never match items by ID or name. IDs change when Foundry copies items, and names can be changed by users.
+
+**Pattern**: Use a `key` field for stable identification across item copies.
+
+**Implementation**:
+- Add `...DeathwatchItemBase.keyTemplate()` to item schema (provides `key` field)
+- Assign unique, stable keys in compendium source files (e.g., `"key": "servo-arm"`, `"key": "motion-predictor"`)
+- Match items by comparing `item.system.key` values
+
+**Examples**:
+```javascript
+// ✅ Good: Match by key
+static async hasUpgrade(weapon, upgradeKey) {
+  const upgrades = await this.getUpgrades(weapon);
+  return upgrades.some(u => u.system.key === upgradeKey);
+}
+
+// ❌ Bad: Match by ID (changes when copied)
+const upgrade = actor.items.get(upgradeId);
+
+// ❌ Bad: Match by name (user can rename)
+const upgrade = actor.items.find(i => i.name === "Motion Predictor");
+```
+
+**When to use**:
+- ✅ Linking items (e.g., weapon → upgrade, weapon → cybernetic)
+- ✅ Checking for specific items in code (e.g., "does actor have X talent?")
+- ✅ Any cross-reference between items
+- ❌ UI display (use name for display)
+- ❌ User selection (user sees names, code converts to keys)
+
+**Reference examples**: `src/module/helpers/combat/weapon-upgrade-helper.mjs`, `src/module/data/item/weapon-upgrade.mjs`
+
+---
+
 ### HTML Sanitization (XSS Prevention)
 
 **Location**: `src/module/helpers/sanitizer.mjs`
@@ -387,6 +468,7 @@ const actor = FoundryAdapter.getActor(actorId);
 - `Logger.compatibility(message, { since, until })` — Deprecation warnings
 
 **Log levels** (configurable in Foundry settings):
+- `CONSOLE` — Always output to browser console (for debugging, bypasses Foundry logger)
 - `DEBUG` — Shows all messages (verbose)
 - `INFO` — Shows info, warn, and error (default)
 - `WARN` — Shows warnings and errors only

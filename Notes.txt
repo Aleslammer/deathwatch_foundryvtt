@@ -32,12 +32,11 @@ Talents
         We need to figure out how these might be listed
 
 Gear:
-    Cybernetics
     Relics
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
-    Servitors
+    Servitors - Need to add as NPC\enemies?  PG 178 and 376
 Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
@@ -67,34 +66,6 @@ Orks:
 
 Gameplay:
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
-
-
-
-WE need to add some support for cybernetics.   Here is an exmaple record.   What would you suggest?
-
-astaRtes seRvo-aRm 
-Techmarine servo-arms are powerful manipulators tipped with 
-crushing pincers, useful for field repairs and punishing enemies. 
-Ports for these detachable appendages are installed at the shoulder, 
-and the Battle-Brother’s armour must also be upgraded with more 
-powerful gyro-stabilisers to use one effectively. So supported, a 
-servo-arm can lift one side of a Rhino APC to repair a broken 
-tread link. 
-A servo-arm can extend up to 1.5 metres. A Techmarine uses 
-the arm’s Strength value of 75 with Unnatural Strength (X2) 
-rather than his own (this value cannot be increased or decreased 
-through devices or abilities that affect the Techmarine’s strength). 
-The limb’s gripping mandibles allow the Techmarine to lift heavy 
-objects or anchor himself to a suitable point as a Free Action. 
-Astartes servo-arms are more than just repair tools, and make 
-deadly weapons. The Techmarine may strike with the arm as his 
-Reaction for the round, or as a Standard Attack during his turn 
-(so long as the servo-arm only makes one attack per round). This 
-attack uses the Techmarine’s Weapon Skill, and deals 2d10+14 
-Impact Damage with Pen 10. Exceptional craftsmanship servo
-arms increase their Strength value to 
-85 (increasing damage to 2d10+16) 
-and add a +10 to Grapple Tests.
 
 
 
