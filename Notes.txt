@@ -9,8 +9,16 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
-    TODO: Talents edit page is wonky.   Needs an attribute tab
     TODO: Corruption & Insanity — tracking, thresholds, disorders, mutations
+
+        Just needs to be tracked as a count.
+
+    TODO: Insanity it a much larger effects
+        Can result in Battle Trauma
+        Along the track will bring along Primarch's Curse effects
+        Also must allow for purchasing back insanity points to threshold levels
+        
+
     TODO: Remove the V1 sheets.   They are anot needed anymore.  Also the option to trigger both sheet types
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
@@ -24,12 +32,8 @@ System:
         cohesion        
 
 Traits
-    TODO: review traits if they need modifiers
 
 Talents
-    TODO: Most auto handled.   Now need to do specific vlaues
-        Damage bonuses (Crushing Blow, Mighty Shot, Crack Shot, etc.) — Applied during combat rolls, not static character modifiers
-        We need to figure out how these might be listed
 
 Gear:
     Relics
@@ -67,32 +71,34 @@ Orks:
 Gameplay:
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
 
-Battle Servitor (Erioch-Pattern)
-Book: Deathwatch Core 20Rulebook
-Page 376
-Description: Many Techmarines upgrade their servitors to assist in battle 
-as well as mechanical rites. Such models are easy to recognise, 
-not just by their bonded weaponry, but also by the muscle 
-grafts and hardened tissues used to make them capable of 
-dealing and withstanding the sort of punishment faced in 
-the duties of the Adeptus Astartes. Servitors that frequently 
-accompany their Masters into combat are often a patchwork 
-of replaced flesh, metal plating, and scars.
-If a Techmarine requisitions a battle servitor for a Mission, 
-he may also requisition weaponry to install in place of one 
-or both of its servo-fists. This process requires no Tests if 
-performed at a Watch Station with the proper facilities, and 
-takes one hour per weapon.
+Book: Rogue Trader Core Rulebook
+Page 374
+Faction: Human
+Name: gRaPPlehaWk (falaX-PatteRN)
+One of the more unusual servitor types, the grapplehawk is a 
+large cyber-converted avian creature used to hunt and capture 
+or kill human and animal prey. They are armoured, fitted with 
+enhanced sensory equipment and grav-assisted flight systems. 
+The Thulian Magos are known to favour this kind of construct 
+both as scouts in the field and aggressive sample “gatherers,” 
+and also have been known to sell examples to various Rogue 
+Traders and Outlander nobles in return for their cooperation 
+and support. 
 
-Ws Bs s T ag int Per WP fel
-35 35 50 48 30 20 30 35 ––
+WS BS S T Ag Int Per WP Fel
+40 — 35 35 48 18 40 30 –
 
-Skills: Awareness (Per), Trade (any one) +10, Trade (Technomat) +10.
-Talents: Ambidextrous, Two-Weapon Wielder, Weapon Training appropriate to its armament.
-Traits: Armour-Plated, Auto-stabilised, Darksight, Machine (4), Natural Weapon (servo-fist(s)), Sturdy, Unnatural Strength (x2), Unnatural Toughness (x2).
-Armour (Machine): All 6 
-Weapons: Servo-fist (1d10+10, Pen 6), plus any weapons installed by the servitor’s Master.
-Gear: Internal vox
+Movement: 2/4/6/12   
+Skills: Awareness (Per) +10, Dodge (Ag).
+Talents: Fearless, Swift Attack.
+Traits: Armour Plating, Dark Sight, Flier 20, Machine (4), 
+Size (Scrawny).
+Armour (Machine): All 4.
+Weapons: Shock-pulse claws (1d10+3 E, Shocking). 
+Gear: Inbuilt vox and cogitator, Auspex. Inbuilt grappling 
+units allow it to lift stunned prey as if it had Unnatural 
+Strength (x2), although its speed will significantly decrease 
+based on its load.
 
 What Q thinks is missing
 

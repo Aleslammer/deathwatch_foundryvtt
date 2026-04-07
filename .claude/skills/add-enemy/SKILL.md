@@ -23,7 +23,7 @@ You will:
 2. Create the enemy JSON file with embedded items
 3. Create horde variant if requested
 4. Update the migration script
-5. Run validation and build
+5. Run migration and build
 6. Report results
 
 ---
@@ -148,7 +148,7 @@ If the user specified `type: both`, create a horde version:
 
 ## Step 5: Run Migration and Build
 
-Execute these commands:
+Execute these commands in sequence:
 ```bash
 node builds/scripts/migrateEnemyIds.mjs
 npm run build:packs
@@ -156,7 +156,7 @@ npm run build:packs
 
 **Validate**:
 - Check the migration script output for ID assignment
-- Check build output for validation errors
+- Check build output for validation errors (build:packs runs compactJson automatically)
 - Confirm no duplicate IDs
 
 ---
