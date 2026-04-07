@@ -9,6 +9,7 @@ import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
 import { Logger } from "../logger.mjs";
 import { HordeCombatHelper } from "./horde-combat.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
+import { CyberneticHelper } from "../cybernetic-helper.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -511,7 +512,9 @@ export class CombatHelper {
     const defaultHits = this.lastAttackHits || 1;
     const aimUsed = this.lastAttackAim || 0;
     const isMelee = weapon.system.class?.toLowerCase().includes('melee');
-    const strBonus = actor.system.characteristics.str?.mod || 0;
+    // Check if weapon uses cybernetic strength (e.g., servo-arm)
+    const cyberneticStrBonus = CyberneticHelper.getWeaponStrengthBonus(actor, weapon);
+    const strBonus = cyberneticStrBonus !== null ? cyberneticStrBonus : (actor.system.characteristics.str?.mod || 0);
     const targetToken = game.user.targets.first();
     const tokenInfo = targetToken?.document ? { sceneId: targetToken.document.parent.id, tokenId: targetToken.document.id } : null;
 

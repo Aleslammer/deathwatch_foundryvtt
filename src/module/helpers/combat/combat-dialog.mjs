@@ -228,7 +228,7 @@ export class CombatDialogHelper {
       const extraDice = Math.min(Math.floor(degreesOfSuccess / 2), 2);
       formula += ` + ${extraDice}d10`;
     }
-    
+
     if (isMelee && strBonus !== 0) {
       const effectiveStrBonus = isPowerFist ? strBonus * 2 : strBonus;
       formula += ` + ${effectiveStrBonus}`;

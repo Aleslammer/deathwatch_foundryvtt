@@ -1,7 +1,31 @@
 import { DWConfig } from "../config.mjs";
-import { ROLL_CONSTANTS } from "../constants/index.mjs";
+import { ROLL_CONSTANTS, CHARACTERISTIC_CONSTANTS } from "../constants/index.mjs";
 
 export class RollDialogBuilder {
+  /**
+   * Build characteristic source selector for cybernetic replacements.
+   * @param {number} naturalValue - Natural characteristic value
+   * @param {string} label - Characteristic label (e.g., "Strength")
+   * @param {Array} replacements - Array of cybernetic replacement objects
+   * @returns {string} HTML for source selector
+   */
+  static buildCharacteristicSourceSelector(naturalValue, label, replacements) {
+    const naturalBonus = Math.floor(naturalValue / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
+
+    let content = '<div class="form-group"><label>Source:</label><select id="characteristic-source" name="source">';
+    content += `<option value="natural">Natural ${label} (${naturalValue}, Bonus: ${naturalBonus})</option>`;
+
+    for (const replacement of replacements) {
+      const bonusText = replacement.item.system.unnaturalMultiplier > 1
+        ? `Bonus: ${replacement.bonus} [Unnatural x${replacement.item.system.unnaturalMultiplier}]`
+        : `Bonus: ${replacement.bonus}`;
+      content += `<option value="${replacement.item.id}">${replacement.label} (${replacement.value}, ${bonusText})</option>`;
+    }
+
+    content += '</select></div>';
+    return content;
+  }
+
   static buildModifierDialog() {
     let content = `<div class="modifier-dialog"><div class="form-group"><label for="difficulty-select">Difficulty:</label><select id="difficulty-select" name="difficulty">`;
     

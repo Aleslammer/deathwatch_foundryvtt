@@ -61,11 +61,12 @@ export class SettingsRegistrar {
     // Log level setting
     game.settings.register('deathwatch', 'logLevel', {
       name: 'Log Level',
-      hint: 'Control console verbosity: DEBUG (verbose), INFO (normal), WARN (warnings only), ERROR (errors only)',
+      hint: 'Control console verbosity: CONSOLE (always to browser console), DEBUG (verbose), INFO (normal), WARN (warnings only), ERROR (errors only)',
       scope: 'client',
       config: true,
       type: String,
       choices: {
+        'CONSOLE': 'Console (Always output)',
         'DEBUG': 'Debug (Verbose)',
         'INFO': 'Info (Normal)',
         'WARN': 'Warnings Only',

@@ -76,6 +76,18 @@ const FACTIONS = [
       "squig-horde.json":   { num: "02", type: "hord" },
       "snotling-horde.json": { num: "03", type: "hord" },
     }
+  },
+  {
+    dir: "src/packs-source/enemies/human",
+    faction: "human",
+    files: {
+      "battle-servitor-erioch-pattern.json": { num: "01", type: "enmy" },
+      "monotask-servitor-erioch-pattern.json": { num: "02", type: "enmy" },
+      "combat-servitor.json": { num: "03", type: "enmy" },
+      "gun-servitor.json": { num: "04", type: "enmy" },
+      "battle-servitor-charron-pattern.json": { num: "05", type: "enmy" },
+      "grapplehawk-falax-pattern.json": { num: "06", type: "enmy" },
+    }
   }
 ];
 

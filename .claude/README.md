@@ -14,6 +14,8 @@ This directory contains Claude Code configuration for the Deathwatch Foundry VTT
 │   ├── architecture.md       # Core architectural patterns
 │   ├── testing_standards.md # Testing requirements
 │   └── reference_*.md        # Reference information
+├── skills/                    # Custom Claude Code skills (version controlled)
+│   └── add-enemy.md          # Guide for adding enemies to compendium
 └── README.md                 # This file
 ```
 
@@ -84,17 +86,22 @@ This replaces Amazon Q's `.amazonq/rules/memory-bank/` (28K lines) with focused 
 
 ## Usage
 
-Claude Code automatically reads memory files from `.claude/memory/` when working in this repository.
+Claude Code automatically reads memory files from `.claude/memory/` and skills from `.claude/skills/` when working in this repository.
 
 **For developers:**
 - Update memory files when architecture changes
 - Keep memories focused and actionable
 - Add new memories as project evolves
+- Use skills via slash commands (e.g., `/add-enemy`)
 
 **For Claude:**
 - Memories provide project context
 - CLAUDE.md (root) provides architecture overview
+- Skills provide guided workflows for common tasks
 - Code exploration fills in details
+
+**Available Skills:**
+- `/add-enemy` - Interactive guide for adding new enemies to compendium packs
 
 ---
 
@@ -138,12 +145,57 @@ Then add to `MEMORY.md`:
 
 ---
 
+## Skills
+
+**Skills** (`.claude/skills/`) are guided workflows for common development tasks.
+
+**Current Skills:**
+- **add-enemy** (`/add-enemy`) - Interactive guide for adding new enemies to compendium packs
+  - Collects enemy data from user
+  - Creates JSON files with proper structure
+  - Handles embedded items (talents, traits, weapons)
+  - Updates migration script
+  - Runs validation and build
+
+**Creating New Skills:**
+
+1. Create a markdown file in `.claude/skills/` with this frontmatter:
+```markdown
+---
+name: skill-name
+description: Brief description of what the skill does
+trigger: /skill-name
+---
+
+# Skill Content
+
+Your instructions for Claude here...
+```
+
+2. The skill file should:
+   - Guide Claude through the process step-by-step
+   - Be interactive (ask user for input, don't invent data)
+   - Include key reference information (IDs, patterns, file locations)
+   - Validate and report results
+
+3. Update this README to list the new skill
+
+**When to Create Skills:**
+- ✅ Multi-step workflows that require consistency
+- ✅ Tasks that need reference data (IDs, patterns)
+- ✅ Processes that developers do frequently
+- ❌ Simple one-off tasks
+- ❌ Tasks already well-documented in CLAUDE.md
+
+---
+
 ## Relationship to Other Documentation
 
 | File/Directory | Purpose | Audience |
 |----------------|---------|----------|
 | **CLAUDE.md** (root) | Architecture guide for Claude | Claude Code |
 | **.claude/memory/** | Project context and standards | Claude Code |
+| **.claude/skills/** | Guided workflows for common tasks | Claude Code |
 | **README.md** (root) | User-facing documentation | End users, developers |
 | **docs/** | Detailed implementation docs | Developers |
 | **.amazonq/** | Historical (Amazon Q config) | Reference only |
@@ -153,8 +205,9 @@ Then add to `MEMORY.md`:
 ## Summary
 
 - `.claude/memory/` contains **version-controlled project memories**
+- `.claude/skills/` contains **guided workflows for common tasks**
 - Focused on what Claude can't easily discover via code reading
-- ~1K lines vs Amazon Q's 28K lines
+- ~1K lines memory vs Amazon Q's 28K lines
 - Backed up, shared, and survives computer wipes
 
 **Result:** Better AI assistance with less documentation burden.

@@ -2,6 +2,13 @@
  * Centralized logging system using Foundry's logger infrastructure.
  * Provides structured logging with configurable log levels.
  *
+ * Log Levels:
+ * - CONSOLE: Always output to browser console (for debugging)
+ * - DEBUG: Verbose logging (for development)
+ * - INFO: Important events (default)
+ * - WARN: Warnings and recoverable errors
+ * - ERROR: Unrecoverable errors only
+ *
  * @example
  * Logger.debug('COMBAT', 'Applying damage', damageData);
  * Logger.info('INIT', 'System initialized');
@@ -28,16 +35,23 @@ export class Logger {
 
     // Map string level to Foundry's numeric levels
     const levelMap = {
+      'CONSOLE': -1, // Special: always output to console
       'DEBUG': 0,
       'INFO': 1,
       'WARN': 2,
       'ERROR': 3
     };
 
+    const useConsole = logLevel === 'CONSOLE';
+
     this._logger = {
       level: levelMap.hasOwnProperty(logLevel) ? levelMap[logLevel] : 1,
+      useConsole,
       _log(level, context, ...args) {
-        if (level >= this.level) {
+        // CONSOLE mode: always output to browser console using console.log
+        if (this.useConsole) {
+          console.log(`[Deathwatch:${context}]`, ...args);
+        } else if (level >= this.level) {
           const method = ['log', 'info', 'warn', 'error'][level] || 'log';
           console[method](`[Deathwatch:${context}]`, ...args);
         }
@@ -47,7 +61,7 @@ export class Logger {
 
   /**
    * Log debug message (verbose, for developers).
-   * Only shown when log level is DEBUG.
+   * Only shown when log level is DEBUG or CONSOLE.
    *
    * @param {string} context - Component name (COMBAT, MODIFIERS, INIT, etc.)
    * @param {...any} args - Arguments to log
@@ -62,7 +76,7 @@ export class Logger {
 
   /**
    * Log info message (important events).
-   * Shown at INFO level and above.
+   * Shown at INFO level and above, or when CONSOLE mode is enabled.
    *
    * @param {string} context - Component name
    * @param {...any} args - Arguments to log
@@ -77,7 +91,7 @@ export class Logger {
 
   /**
    * Log warning (recoverable errors, deprecated usage).
-   * Shown at WARN level and above.
+   * Shown at WARN level and above, or when CONSOLE mode is enabled.
    *
    * @param {string} context - Component name
    * @param {...any} args - Arguments to log
@@ -92,7 +106,7 @@ export class Logger {
 
   /**
    * Log error (unrecoverable errors).
-   * Always shown regardless of log level.
+   * Always shown at any log level.
    *
    * @param {string} context - Component name
    * @param {...any} args - Arguments to log
