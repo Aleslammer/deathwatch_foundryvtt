@@ -1,13 +1,28 @@
-import { POWER_LEVELS, POWER_LEVEL_LABELS } from "../constants.mjs";
+import { POWER_LEVELS, POWER_LEVEL_LABELS, ROLL_CONSTANTS } from "../constants/index.mjs";
 import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { ModifierCollector } from "../character/modifier-collector.mjs";
 import { FoundryAdapter } from "../foundry-adapter.mjs";
 import { ChatMessageBuilder } from "../ui/chat-message-builder.mjs";
 import { RighteousFuryHelper } from "./righteous-fury-helper.mjs";
+import { Sanitizer } from "../sanitizer.mjs";
 
 /**
- * Helper class for psychic power Focus Power Tests.
- * Follows the same dialog → roll → chat pattern as RangedCombatHelper and MeleeCombatHelper.
+ * Psychic combat helper for Focus Power Tests, Psy Rating, and Phenomena/Perils.
+ *
+ * Implements the psychic power system from Deathwatch Core p. 188:
+ * 1. Select power level (Fettered/Unfettered/Push)
+ * 2. Roll Focus Power Test (WP + modifiers, capped at 90)
+ * 3. Check for Psychic Phenomena (Push always, Unfettered on doubles)
+ * 4. Compute effective Psy Rating for damage/effects
+ * 5. Roll Phenomena table → may cascade to Perils of the Warp
+ * 6. Apply power effects (damage, opposed test, etc.)
+ *
+ * Tyranid psykers bypass Phenomena/Perils and take 1d10 Energy damage instead
+ * (Hive Mind backlash).
+ *
+ * @example
+ * // Open Focus Power dialog
+ * await PsychicCombatHelper.focusPowerDialog(librarian, smitePower);
  */
 export class PsychicCombatHelper {
   /** Stored target number for Righteous Fury confirmation (Phase 4) */
@@ -15,9 +30,18 @@ export class PsychicCombatHelper {
 
   /**
    * Calculate effective Psy Rating based on power level.
-   * @param {number} basePR - Actor's computed Psy Rating
-   * @param {string} powerLevel - POWER_LEVELS value
-   * @returns {number}
+   *
+   * Power levels (Deathwatch Core p. 188):
+   * - Fettered: ePR = basePR ÷ 2 (rounded up), no Phenomena
+   * - Unfettered: ePR = basePR, Phenomena on doubles
+   * - Push: ePR = basePR + 3, always Phenomena, Fatigue on doubles
+   *
+   * @param {number} basePR - Actor's base Psy Rating
+   * @param {string} powerLevel - POWER_LEVELS constant ("fettered", "unfettered", "push")
+   * @returns {number} Effective Psy Rating for this manifestation
+   * @example
+   * const ePR = PsychicCombatHelper.calculateEffectivePsyRating(4, 'push');
+   * // Returns: 7 (4 + 3)
    */
   static calculateEffectivePsyRating(basePR, powerLevel) {
     if (powerLevel === POWER_LEVELS.FETTERED) return Math.ceil(basePR / 2);
@@ -57,8 +81,21 @@ export class PsychicCombatHelper {
 
   /**
    * Filter collected modifiers for psychic-test and no-perils effect types.
-   * @param {Array} allModifiers - From ModifierCollector.collectAllModifiers()
-   * @returns {{ testBonus: number, noPerils: boolean, noPerilsSource: string, parts: Array }}
+   *
+   * Extracts psychic-specific modifiers from the full modifier list:
+   * - psychic-test: Bonus to Focus Power Test target number
+   * - no-perils: Suppresses Perils of the Warp (e.g., Psychic Hood)
+   *
+   * @param {Object[]} allModifiers - From ModifierCollector.collectAllModifiers()
+   * @returns {{testBonus: number, noPerils: boolean, noPerilsSource: string, parts: Object[]}} Psychic modifiers
+   * @property {number} return.testBonus - Total Focus Power Test bonus
+   * @property {boolean} return.noPerils - Whether Perils of the Warp is suppressed
+   * @property {string} return.noPerilsSource - Source of no-perils effect (e.g., "Psychic Hood")
+   * @property {Object[]} return.parts - Breakdown of individual modifiers
+   * @example
+   * const allMods = ModifierCollector.collectAllModifiers(actor, itemsArray);
+   * const psychicMods = PsychicCombatHelper.collectPsychicModifiers(allMods);
+   * // Returns: { testBonus: 10, noPerils: true, noPerilsSource: "Psychic Hood", parts: [...] }
    */
   static collectPsychicModifiers(allModifiers) {
     let testBonus = 0;
@@ -126,7 +163,7 @@ export class PsychicCombatHelper {
     } else if (success) {
       resultText = `<strong style="color: green;">SUCCESS</strong> (${dos} Degree${dos !== 1 ? "s" : ""} of Success)`;
     } else {
-      const dof = Math.floor((roll - targetNumber) / 10);
+      const dof = Math.floor((roll - targetNumber) / ROLL_CONSTANTS.DEGREES_DIVISOR);
       resultText = `<strong style="color: red;">FAILED</strong> (${dof} Degree${dof !== 1 ? "s" : ""} of Failure)`;
     }
     return `[Focus Power] ${powerName} — Target: ${targetNumber}<br>Effective Psy Rating: ${effectivePR} (${levelLabel})<br>${resultText}`;
@@ -201,7 +238,7 @@ export class PsychicCombatHelper {
   static resolveOpposedTest(psykerDoS, targetWP, targetRoll, targetMiscMod = 0) {
     const targetNumber = targetWP + targetMiscMod;
     const targetSuccess = targetRoll <= targetNumber;
-    const targetDoS = targetSuccess ? Math.floor((targetNumber - targetRoll) / 10) : 0;
+    const targetDoS = targetSuccess ? Math.floor((targetNumber - targetRoll) / ROLL_CONSTANTS.DEGREES_DIVISOR) : 0;
     const psykerWins = psykerDoS > targetDoS;
     const netDoS = psykerDoS - targetDoS;
     return { targetSuccess, targetDoS, psykerWins, netDoS, targetNumber };
@@ -300,8 +337,9 @@ export class PsychicCombatHelper {
           'system.wounds.value': currentWounds + backlashDamage
         });
         const speaker = FoundryAdapter.getChatSpeaker(actor);
+        const safeActorName = Sanitizer.escape(actor.name);
         await FoundryAdapter.sendRollToChat(backlashRoll, speaker,
-          `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${actor.name}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
+          `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${safeActorName}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
         );
       } else {
         const draw = await this.rollPhenomena();
@@ -334,9 +372,33 @@ export class PsychicCombatHelper {
   }
 
   /**
-   * Open the Focus Power dialog for a psychic power.
-   * @param {Object} actor - Actor document
-   * @param {Object} power - Psychic power item
+   * Open the Focus Power dialog and resolve the psychic power manifestation.
+   *
+   * This is the main entry point for psychic powers. Opens a dialog with:
+   * - Power level selection (Fettered/Unfettered/Push)
+   * - WP bonus slider (0 to 5×ePR)
+   * - Miscellaneous modifier input
+   * - Opposed test target selection (for powers like Compel, Dominate)
+   *
+   * After the Focus Power Test resolves:
+   * 1. Checks for Psychic Phenomena/Fatigue
+   * 2. Rolls Phenomena table (may cascade to Perils)
+   * 3. Rolls damage if power has a damage formula
+   * 4. Posts opposed test button if applicable
+   *
+   * Tyranid psykers skip Phenomena/Perils and take 1d10 Energy damage instead.
+   *
+   * @param {Actor} actor - Psyker actor
+   * @param {Item} power - Psychic power item
+   * @returns {Promise<void>} Resolves when power manifestation is complete
+   * @example
+   * // Standard power usage
+   * await PsychicCombatHelper.focusPowerDialog(librarian, smitePower);
+   *
+   * @example
+   * // Opposed test power (Compel, Dominate, Mind Probe)
+   * await PsychicCombatHelper.focusPowerDialog(librarian, compelPower);
+   * // Dialog includes target selection for opposed WP test
    */
   /* istanbul ignore next */
   static async focusPowerDialog(actor, power) {
@@ -348,12 +410,17 @@ export class PsychicCombatHelper {
       return;
     }
 
-    const allModifiers = ModifierCollector.collectAllModifiers(actor);
+    // If items has .get() method (Map or test mock), keep it as-is; otherwise convert to array
+    const itemsArray = typeof actor.items.get === 'function'
+      ? (actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items)
+      : Array.from(actor.items);
+    const allModifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
     const psychicMods = this.collectPsychicModifiers(allModifiers);
 
+    const safePowerName = Sanitizer.escape(power.name);
     const content = `
       <div style="text-align: center; margin-bottom: 10px;">
-        <img src="${power.img}" alt="${power.name}" style="max-width: 100px; max-height: 100px; border: none;" />
+        <img src="${power.img}" alt="${safePowerName}" style="max-width: 100px; max-height: 100px; border: none;" />
       </div>
       <div style="display: flex; gap: 20px; margin-bottom: 8px; font-size: 0.9em;">
         <span><strong>Action:</strong> ${power.system.action || "—"}</span>
@@ -383,7 +450,7 @@ export class PsychicCombatHelper {
     `;
 
     foundry.applications.api.DialogV2.wait({
-      window: { title: `Focus Power: ${power.name}` },
+      window: { title: `Focus Power: ${safePowerName}` },
       content,
       render: (event, dialog) => {
         const el = dialog.element;
@@ -439,7 +506,10 @@ export class PsychicCombatHelper {
               const targetWP = targetToken?.actor?.system?.characteristics?.wil?.value || 0;
               const sceneId = targetToken?.document?.parent?.id || "";
               const tokenId = targetToken?.document?.id || "";
-              const opposeContent = `<button class="psychic-oppose-btn" data-power-name="${power.name}" data-psyker-dos="${dos}" data-target-name="${targetName}" data-target-id="${targetId}" data-target-wp="${targetWP}" data-scene-id="${sceneId}" data-token-id="${tokenId}">⚔ Opposed Willpower Test: ${targetName} (WP ${targetWP})</button>`;
+              const safePowerNameData = Sanitizer.escape(power.name);
+              const safeTargetNameData = Sanitizer.escape(targetName);
+              const safeTargetNameDisplay = Sanitizer.escape(targetName);
+              const opposeContent = `<button class="psychic-oppose-btn" data-power-name="${safePowerNameData}" data-psyker-dos="${dos}" data-target-name="${safeTargetNameData}" data-target-id="${targetId}" data-target-wp="${targetWP}" data-scene-id="${sceneId}" data-token-id="${tokenId}">⚔ Opposed Willpower Test: ${safeTargetNameDisplay} (WP ${targetWP})</button>`;
               await FoundryAdapter.createChatMessage(opposeContent, speaker);
             }
 
@@ -508,7 +578,8 @@ export class PsychicCombatHelper {
         }) : "";
 
         const hitInfo = numHits > 1 ? ` (${i + 1}/${numHits})` : "";
-        const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${power.name}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
+        const safePowerName = Sanitizer.escape(power.name);
+        const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${safePowerName}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
         const speaker = FoundryAdapter.getChatSpeaker(actor);
         await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
       }

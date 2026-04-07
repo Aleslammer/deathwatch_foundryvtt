@@ -1,19 +1,28 @@
 import { jest } from '@jest/globals';
 import { DEBUG_FLAGS, debug } from '../../src/module/helpers/debug.mjs';
+import { Logger } from '../../src/module/helpers/logger.mjs';
 
 describe('Debug', () => {
-  let consoleLogSpy;
+  let loggerDebugSpy;
 
   beforeEach(() => {
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    // Reset Logger to ensure clean state
+    Logger._logger = null;
+    Logger.init();
+
+    // Spy on Logger.debug instead of console.log
+    loggerDebugSpy = jest.spyOn(Logger, 'debug').mockImplementation();
+
+    // Reset warning flag
+    debug._warningShown = false;
   });
 
   afterEach(() => {
-    consoleLogSpy.mockRestore();
+    loggerDebugSpy.mockRestore();
   });
 
   describe('DEBUG_FLAGS', () => {
-    it('defines debug flags', () => {
+    it('defines debug flags (deprecated)', () => {
       expect(DEBUG_FLAGS).toHaveProperty('COMBAT');
       expect(DEBUG_FLAGS).toHaveProperty('MODIFIERS');
       expect(DEBUG_FLAGS).toHaveProperty('SHEETS');
@@ -21,28 +30,39 @@ describe('Debug', () => {
   });
 
   describe('debug', () => {
-    it('logs when flag is enabled', () => {
-      DEBUG_FLAGS.COMBAT = true;
+    it('delegates to Logger.debug (new behavior)', () => {
       debug('COMBAT', 'test message', { data: 123 });
-      expect(consoleLogSpy).toHaveBeenCalledWith('[Deathwatch:COMBAT]', 'test message', { data: 123 });
+      expect(loggerDebugSpy).toHaveBeenCalledWith('COMBAT', 'test message', { data: 123 });
     });
 
-    it('does not log when flag is disabled', () => {
+    it('ignores DEBUG_FLAGS (deprecated behavior)', () => {
       DEBUG_FLAGS.MODIFIERS = false;
       debug('MODIFIERS', 'test message');
-      expect(consoleLogSpy).not.toHaveBeenCalled();
+      // Should still call Logger.debug regardless of flag
+      expect(loggerDebugSpy).toHaveBeenCalledWith('MODIFIERS', 'test message');
     });
 
     it('handles multiple arguments', () => {
-      DEBUG_FLAGS.SHEETS = true;
       debug('SHEETS', 'arg1', 'arg2', 'arg3');
-      expect(consoleLogSpy).toHaveBeenCalledWith('[Deathwatch:SHEETS]', 'arg1', 'arg2', 'arg3');
+      expect(loggerDebugSpy).toHaveBeenCalledWith('SHEETS', 'arg1', 'arg2', 'arg3');
     });
 
-    it('formats context in log prefix', () => {
-      DEBUG_FLAGS.COMBAT = true;
+    it('passes context to Logger', () => {
       debug('COMBAT', 'message');
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('[Deathwatch:COMBAT]'), 'message');
+      expect(loggerDebugSpy).toHaveBeenCalledWith('COMBAT', 'message');
+    });
+
+    it('shows deprecation warning on first use', () => {
+      const compatSpy = jest.spyOn(Logger, 'compatibility').mockImplementation();
+
+      debug('COMBAT', 'message');
+
+      expect(compatSpy).toHaveBeenCalledWith(
+        'debug() is deprecated, use Logger.debug() instead',
+        { since: '2.1.0', until: '3.0.0' }
+      );
+
+      compatSpy.mockRestore();
     });
   });
 });

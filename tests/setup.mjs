@@ -138,7 +138,16 @@ global.foundry = {
   utils: {
     randomID: () => 'test-id-' + Math.random().toString(36).substr(2, 9),
     deepClone: (obj) => JSON.parse(JSON.stringify(obj)),
-    mergeObject: (original, other) => Object.assign(original, other)
+    mergeObject: (original, other) => Object.assign(original, other),
+    escapeHTML: (text) => {
+      if (typeof text !== 'string') return text;
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
   },
   appv1: {
     sheets: {

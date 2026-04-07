@@ -1,3 +1,5 @@
+import { Sanitizer } from "../sanitizer.mjs";
+
 export class CriticalEffectsHelper {
   static LOCATION_MAP = {
     "Head": "head",
@@ -35,7 +37,8 @@ export class CriticalEffectsHelper {
     });
 
     if (alreadyHas) {
-      ui.notifications.warn(`${actor.name} already has this critical effect!`);
+      const safeActorName = Sanitizer.escape(actor.name);
+      ui.notifications.warn(`${safeActorName} already has this critical effect!`);
       return;
     }
 
@@ -70,11 +73,12 @@ export class CriticalEffectsHelper {
     }
 
     await Item.createDocuments(itemsToAdd, { parent: actor });
-    ui.notifications.info(`Critical effect Level ${effectLevel} added to ${actor.name}`);
+    const safeActorName = Sanitizer.escape(actor.name);
+    ui.notifications.info(`Critical effect Level ${effectLevel} added to ${safeActorName}`);
 
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker(),
-      content: `<strong>${actor.name}</strong> suffers <strong style="color: darkred;">Level ${effectLevel} Critical Damage</strong> to ${location}<br><strong>${critLocation} (${damageType})</strong><br><div style="margin-top: 8px;">${description}</div>`
+      content: `<strong>${safeActorName}</strong> suffers <strong style="color: darkred;">Level ${effectLevel} Critical Damage</strong> to ${location}<br><strong>${critLocation} (${damageType})</strong><br><div style="margin-top: 8px;">${description}</div>`
     });
   }
 }

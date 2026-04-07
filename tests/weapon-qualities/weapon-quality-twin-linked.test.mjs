@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { CombatDialogHelper } from '../../src/module/helpers/combat/combat-dialog.mjs';
-import { RATE_OF_FIRE_MODIFIERS } from '../../src/module/helpers/constants.mjs';
+import { RATE_OF_FIRE_MODIFIERS } from "../../src/module/helpers/constants/index.mjs";
 
 describe('Twin-Linked Weapon Quality', () => {
   describe('buildAttackModifiers', () => {

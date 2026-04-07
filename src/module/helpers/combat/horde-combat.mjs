@@ -1,3 +1,5 @@
+import { HORDE_CONSTANTS } from "../constants/index.mjs";
+
 /**
  * Helper for horde-specific combat mechanics.
  * Hordes lose 1 Magnitude per hit that deals any damage after armor and TB.
@@ -75,12 +77,12 @@ export class HordeCombatHelper {
 
   /**
    * Calculate bonus damage dice for a horde's attack based on its Magnitude.
-   * Bonus = floor(magnitude / 10) d10s, max +2d10.
+   * Bonus = floor(magnitude / 10) d10s, max +2d10 (Deathwatch Core p. 358).
    * @param {number} magnitude - Current horde magnitude (max - value)
    * @returns {number} Number of bonus d10s (0-2)
    */
   static calculateHordeDamageBonusDice(magnitude) {
-    return Math.min(2, Math.floor(magnitude / 10));
+    return Math.min(HORDE_CONSTANTS.MAX_MAGNITUDE_BONUS_DICE, Math.floor(magnitude / HORDE_CONSTANTS.MAGNITUDE_DAMAGE_DIVISOR));
   }
 
   /**

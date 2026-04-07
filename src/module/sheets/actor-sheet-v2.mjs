@@ -6,10 +6,12 @@ import { ModifierHelper } from "../helpers/character/modifiers.mjs";
 import { RollDialogBuilder } from "../helpers/ui/roll-dialog-builder.mjs";
 import { ChatMessageBuilder } from "../helpers/ui/chat-message-builder.mjs";
 import { ItemHandlers } from "../helpers/ui/item-handlers.mjs";
-import { getRankImage } from "../helpers/character/rank-helper.mjs";
-import { WoundHelper } from "../helpers/character/wound-helper.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
 import { CohesionPanel } from "../ui/cohesion-panel.mjs";
+import { CharacterDataPreparer } from "./shared/data-preparers/character-data-preparer.mjs";
+import { NPCDataPreparer } from "./shared/data-preparers/npc-data-preparer.mjs";
+import { EnemyDataPreparer } from "./shared/data-preparers/enemy-data-preparer.mjs";
+import { ItemListPreparer } from "./shared/data-preparers/item-list-preparer.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -130,17 +132,16 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     context.editable = this.isEditable;
     context.owner = this.actor.isOwner;
 
+    // Prepare type-specific data using data preparers
     if (this.actor.type === 'character') {
-      this._prepareCharacterData(context);
-      this._prepareItems(context);
-    }
-    if (this.actor.type === 'npc') {
-      this._prepareNPCData(context);
-      this._prepareItems(context);
-    }
-    if (this.actor.type === 'enemy' || this.actor.type === 'horde') {
-      this._prepareEnemyData(context);
-      this._prepareItems(context);
+      CharacterDataPreparer.prepare(context, this.actor);
+      ItemListPreparer.prepare(context, this.actor);
+    } else if (this.actor.type === 'npc') {
+      NPCDataPreparer.prepare(context, this.actor);
+      ItemListPreparer.prepare(context, this.actor);
+    } else if (this.actor.type === 'enemy' || this.actor.type === 'horde') {
+      EnemyDataPreparer.prepare(context, this.actor);
+      ItemListPreparer.prepare(context, this.actor);
     }
 
     context.rollData = this.actor.getRollData();
@@ -152,252 +153,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     }));
 
     return context;
-  }
-
-  /* -------------------------------------------- */
-  /*  Character Data Preparation                  */
-  /* -------------------------------------------- */
-
-  /**
-   * Calculate skill total
-   * @param {Object} skill The skill object
-   * @param {Object} characteristics The actor's characteristics
-   * @returns {number} The calculated skill total
-   */
-  static calculateSkillTotal(skill, characteristics) {
-    const characteristic = characteristics[skill.characteristic];
-    const baseCharValue = characteristic ? characteristic.value : 0;
-    const effectiveChar = skill.trained ? baseCharValue : Math.floor(baseCharValue / 2);
-    const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
-    return effectiveChar + skillBonus + skill.modifier;
-  }
-
-  _prepareCharacterData(context) {
-    for (let [k, v] of Object.entries(context.system.characteristics)) {
-      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
-    }
-
-    if (context.system.chapterId) {
-      context.chapterItem = this.actor.items.get(context.system.chapterId);
-    }
-    if (context.system.specialtyId) {
-      context.specialtyItem = this.actor.items.get(context.system.specialtyId);
-    }
-
-    const chapterSkillCosts = {};
-    if (context.chapterItem && context.chapterItem.system.skillCosts) {
-      Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
-    }
-
-    const specialtyBaseSkillCosts = {};
-    if (context.specialtyItem && context.specialtyItem.system.skillCosts) {
-      Object.assign(specialtyBaseSkillCosts, context.specialtyItem.system.skillCosts);
-    }
-
-    const specialtySkillCosts = {};
-    const specialtyTalentCosts = {};
-    if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
-      const currentRank = context.system.rank || 1;
-      for (let rank = 1; rank <= currentRank; rank++) {
-        const rankData = context.specialtyItem.system.rankCosts[rank.toString()];
-        if (rankData) {
-          if (rankData.skills) {
-            for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
-              if (!specialtySkillCosts[skillKey]) specialtySkillCosts[skillKey] = {};
-              Object.assign(specialtySkillCosts[skillKey], skillCost);
-            }
-          }
-          if (rankData.talents) {
-            for (const [talentId, cost] of Object.entries(rankData.talents)) {
-              if (!specialtyTalentCosts[talentId]) specialtyTalentCosts[talentId] = [];
-              specialtyTalentCosts[talentId].push(cost);
-            }
-          }
-        }
-      }
-    }
-
-    context.specialtyTalentCosts = specialtyTalentCosts;
-    context.chapterTalentCosts = context.chapterItem?.system.talentCosts || {};
-    context.specialtyBaseTalentCosts = context.specialtyItem?.system.talentCosts || {};
-
-    if (context.system.skills) {
-      const sortedSkills = Object.entries(context.system.skills)
-        .sort(([keyA], [keyB]) => {
-          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
-          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
-          return labelA.localeCompare(labelB);
-        });
-
-      for (const [k, v] of sortedSkills) {
-        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
-        const liveSkill = this.actor.system.skills[k];
-        const baseSkillTotal = DeathwatchActorSheetV2.calculateSkillTotal(v, context.system.characteristics);
-        const skillModTotal = liveSkill?.modifierTotal || 0;
-        v.total = baseSkillTotal + skillModTotal;
-
-        if (chapterSkillCosts[k]) {
-          if (chapterSkillCosts[k].costTrain !== undefined) v.costTrain = chapterSkillCosts[k].costTrain;
-          if (chapterSkillCosts[k].costMaster !== undefined) v.costMaster = chapterSkillCosts[k].costMaster;
-          if (chapterSkillCosts[k].costExpert !== undefined) v.costExpert = chapterSkillCosts[k].costExpert;
-        }
-
-        if (specialtyBaseSkillCosts[k]) {
-          if (specialtyBaseSkillCosts[k].costTrain !== undefined) v.costTrain = specialtyBaseSkillCosts[k].costTrain;
-          if (specialtyBaseSkillCosts[k].costMaster !== undefined) v.costMaster = specialtyBaseSkillCosts[k].costMaster;
-          if (specialtyBaseSkillCosts[k].costExpert !== undefined) v.costExpert = specialtyBaseSkillCosts[k].costExpert;
-        }
-
-        if (specialtySkillCosts[k] !== undefined) {
-          if (typeof specialtySkillCosts[k] === 'number') {
-            v.costTrain = specialtySkillCosts[k];
-          } else if (typeof specialtySkillCosts[k] === 'object') {
-            if (specialtySkillCosts[k].costTrain !== undefined) v.costTrain = specialtySkillCosts[k].costTrain;
-            if (specialtySkillCosts[k].costMaster !== undefined) v.costMaster = specialtySkillCosts[k].costMaster;
-            if (specialtySkillCosts[k].costExpert !== undefined) v.costExpert = specialtySkillCosts[k].costExpert;
-          }
-        }
-      }
-    }
-
-    context.config = game.deathwatch.config;
-    context.rankImage = getRankImage(context.system.rank);
-
-    const wounds = context.system.wounds;
-    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
-    context.renownRank = this._getRenownRank(context.system.renown || 0);
-    context.showPsyRating = context.specialtyItem?.system?.hasPsyRating || false;
-  }
-
-  /* -------------------------------------------- */
-  /*  NPC Data Preparation                        */
-  /* -------------------------------------------- */
-
-  _prepareNPCData(context) {
-    for (let [k, v] of Object.entries(context.system.characteristics)) {
-      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
-    }
-
-    if (context.system.skills) {
-      const sortedSkills = Object.entries(context.system.skills)
-        .sort(([keyA], [keyB]) => {
-          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
-          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
-          return labelA.localeCompare(labelB);
-        });
-
-      for (const [k, v] of sortedSkills) {
-        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
-        const liveSkill = this.actor.system.skills[k];
-        const baseSkillTotal = DeathwatchActorSheetV2.calculateSkillTotal(v, context.system.characteristics);
-        const skillModTotal = liveSkill?.modifierTotal || 0;
-        v.total = baseSkillTotal + skillModTotal;
-      }
-    }
-
-    context.config = game.deathwatch.config;
-    const wounds = context.system.wounds;
-    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
-  }
-
-  /* -------------------------------------------- */
-  /*  Enemy Data Preparation                      */
-  /* -------------------------------------------- */
-
-  _prepareEnemyData(context) {
-    for (let [k, v] of Object.entries(context.system.characteristics)) {
-      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
-    }
-
-    if (context.system.skills) {
-      const sortedSkills = Object.entries(context.system.skills)
-        .sort(([keyA], [keyB]) => {
-          const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
-          const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
-          return labelA.localeCompare(labelB);
-        });
-
-      for (const [k, v] of sortedSkills) {
-        v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
-        const liveSkill = this.actor.system.skills[k];
-        const baseSkillTotal = DeathwatchActorSheetV2.calculateSkillTotal(v, context.system.characteristics);
-        const skillModTotal = liveSkill?.modifierTotal || 0;
-        v.total = baseSkillTotal + skillModTotal;
-      }
-    }
-
-    context.config = game.deathwatch.config;
-    const wounds = context.system.wounds;
-    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
-    context.showPsyRating = (context.system.psyRating?.base > 0) || (context.system.psyRating?.value > 0);
-  }
-
-  /* -------------------------------------------- */
-  /*  Item Preparation                            */
-  /* -------------------------------------------- */
-
-  _prepareItems(context) {
-    if (this.actor?.items?.map) {
-      context.items = this.actor.items.map(i => ({
-        ...i.toObject(false),
-        system: { ...i.system }
-      }));
-    }
-    const categories = ItemHandlers.processItems(context.items);
-    Object.assign(context, categories);
-
-    if (context.talents && context.talents.length > 0) {
-      const chapterTalentCosts = context.chapterTalentCosts || {};
-      const specialtyBaseTalentCosts = context.specialtyBaseTalentCosts || {};
-      const specialtyTalentCosts = context.specialtyTalentCosts || {};
-
-      const talentCounts = {};
-
-      for (const talent of context.talents) {
-        let effectiveCost = talent.system.cost;
-        const talentId = talent.system.compendiumId || talent._id;
-
-        if (!talentCounts[talentId]) {
-          talentCounts[talentId] = { count: 0, stackable: talent.system.stackable };
-        }
-        talentCounts[talentId].count++;
-        const instanceCount = talentCounts[talentId].count;
-
-        if (chapterTalentCosts[talentId] !== undefined) {
-          effectiveCost = chapterTalentCosts[talentId];
-        }
-        if (specialtyBaseTalentCosts[talentId] !== undefined) {
-          effectiveCost = specialtyBaseTalentCosts[talentId];
-        }
-
-        const specialtyOverrides = specialtyTalentCosts[talentId];
-        if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
-          if (talentCounts[talentId].stackable) {
-            if (specialtyOverrides.length >= instanceCount) {
-              effectiveCost = specialtyOverrides[instanceCount - 1];
-            } else if (instanceCount > 1 && talent.system.subsequentCost) {
-              effectiveCost = talent.system.subsequentCost;
-            }
-          } else {
-            effectiveCost = specialtyOverrides[specialtyOverrides.length - 1];
-          }
-        }
-
-        talent.system.effectiveCost = effectiveCost;
-      }
-    }
-  }
-
-  /* -------------------------------------------- */
-  /*  Utility                                     */
-  /* -------------------------------------------- */
-
-  _getRenownRank(renown) {
-    if (renown >= 80) return 'Hero';
-    if (renown >= 60) return 'Famed';
-    if (renown >= 40) return 'Distinguished';
-    if (renown >= 20) return 'Respected';
-    return 'Initiated';
   }
 
   /* -------------------------------------------- */

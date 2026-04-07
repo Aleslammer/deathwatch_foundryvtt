@@ -1,5 +1,7 @@
 import { jest } from '@jest/globals';
 import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
+import { ItemListPreparer } from '../../src/module/sheets/shared/data-preparers/item-list-preparer.mjs';
+import { CharacterDataPreparer } from '../../src/module/sheets/shared/data-preparers/character-data-preparer.mjs';
 
 describe('DeathwatchActorSheet - Talents and Traits', () => {
   let mockActor;
@@ -72,7 +74,7 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents).toBeDefined();
       expect(context.talents.length).toBe(2);
@@ -110,7 +112,7 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.traits).toBeDefined();
       expect(context.traits.length).toBe(2);
@@ -129,7 +131,7 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.weapons.length).toBe(1);
       expect(context.talents.length).toBe(1);
@@ -145,7 +147,7 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents).toBeDefined();
       expect(context.talents.length).toBe(0);
@@ -173,7 +175,7 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       const talent = context.talents[0];
       expect(talent.system.prerequisite).toBe('BS 40');
@@ -202,7 +204,7 @@ describe('DeathwatchActorSheet - Talents and Traits', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       const trait = context.traits[0];
       expect(trait.system.description).toBe('<p>Doubles strength bonus</p>');

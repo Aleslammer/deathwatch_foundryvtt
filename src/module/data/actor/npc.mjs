@@ -5,9 +5,25 @@ import { SkillLoader } from '../../helpers/character/skill-loader.mjs';
 const { fields } = foundry.data;
 
 /**
- * NPC DataModel. Has characteristics, skills, wounds, and modifiers.
- * Simplified version of DeathwatchCharacter without biography, XP, psy rating, etc.
+ * NPC DataModel for neutral or allied non-player characters (Imperial Guard, civilians, etc.).
+ *
+ * Simplified character model for NPCs that don't need full PC features:
+ * - **Has**: Characteristics, skills, wounds, fatigue, armor, weapons
+ * - **No**: Biography, XP, rank, Psy Rating, fate points, renown
+ *
+ * Use this for:
+ * - Imperial Guard officers and soldiers
+ * - Civilian contacts and quest givers
+ * - Neutral characters that may become enemies or allies
+ * - NPCs with stats but no advancement system
+ *
+ * For hostile enemies, use Enemy or Horde instead.
+ *
  * @extends {DeathwatchActorBase}
+ * @example
+ * // Imperial Guard Captain
+ * const captain = game.actors.getName("Captain Vayne");
+ * const bs = captain.system.characteristics.bs.value; // 40
  */
 export default class DeathwatchNPC extends DeathwatchActorBase {
 
@@ -55,8 +71,14 @@ export default class DeathwatchNPC extends DeathwatchActorBase {
     // Load skills
     this.skills = SkillLoader.loadSkills(this.skills);
 
+    // Convert items Map to Array once (performance optimization)
+    // If items has .get() method (Map or test mock), keep it as-is; otherwise convert to array
+    const itemsArray = typeof actor.items.get === 'function'
+      ? (actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items)
+      : Array.from(actor.items);
+
     // Collect and apply modifiers
-    const allModifiers = ModifierCollector.collectAllModifiers(actor);
+    const allModifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
     ModifierCollector.applyCharacteristicModifiers(this.characteristics, allModifiers);
 
     if (this.skills) {
@@ -66,11 +88,11 @@ export default class DeathwatchNPC extends DeathwatchActorBase {
     this.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(this.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(this.fatigue, this.characteristics?.tg?.mod || 0);
-    ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
-    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, actor.items);
+    ModifierCollector.applyArmorModifiers(itemsArray, allModifiers);
+    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, itemsArray);
 
     // Apply weapon own modifiers after characteristics are computed
-    for (const item of actor.items) {
+    for (const item of itemsArray) {
       if (item.type === 'weapon') {
         item.system._applyOwnModifiers();
       }

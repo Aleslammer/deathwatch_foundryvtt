@@ -1,3 +1,5 @@
+import { Logger } from '../logger.mjs';
+
 let skillDefinitions = null;
 
 // Load skills synchronously for Node.js (Jest)
@@ -20,7 +22,7 @@ export class SkillLoader {
 
   static loadSkills(actorSkills = {}) {
     if (!skillDefinitions) {
-      console.error('[Deathwatch] Skills not loaded. Call SkillLoader.init() first.');
+      Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
       return {};
     }
     

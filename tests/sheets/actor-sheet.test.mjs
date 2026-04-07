@@ -1,5 +1,7 @@
 import { jest } from '@jest/globals';
 import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
+import { ItemListPreparer } from '../../src/module/sheets/shared/data-preparers/item-list-preparer.mjs';
+import { CharacterDataPreparer } from '../../src/module/sheets/shared/data-preparers/character-data-preparer.mjs';
 
 global.$ = jest.fn((selector) => ({
   find: jest.fn(() => ({
@@ -45,7 +47,8 @@ describe('DeathwatchActorSheet', () => {
       },
       items: {
         get: jest.fn(),
-        filter: jest.fn(() => [])
+        filter: jest.fn(() => []),
+        map: jest.fn((fn) => [])
       },
       effects: [],
       toObject: jest.fn(() => ({
@@ -55,7 +58,8 @@ describe('DeathwatchActorSheet', () => {
       })),
       getRollData: jest.fn(() => ({})),
       isOwner: true,
-      hasCondition: jest.fn(() => false)
+      hasCondition: jest.fn(() => false),
+      getFlag: jest.fn(() => ({}))
     };
 
     sheet = new DeathwatchActorSheet(mockActor, {});
@@ -103,7 +107,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.weapons).toHaveLength(1);
       expect(context.weapons[0].name).toBe('Bolter');
@@ -116,7 +120,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.armor).toHaveLength(1);
       expect(context.armor[0].name).toBe('Power Armor');
@@ -129,7 +133,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.gear).toHaveLength(1);
       expect(context.gear[0].name).toBe('Auspex');
@@ -142,7 +146,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.ammunition).toHaveLength(1);
       expect(context.ammunition[0].name).toBe('Bolter Rounds');
@@ -155,7 +159,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.chapters).toHaveLength(1);
       expect(context.chapters[0].name).toBe('Ultramarines');
@@ -168,7 +172,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.specialties).toHaveLength(1);
       expect(context.specialties[0].name).toBe('Tactical Marine');
@@ -181,7 +185,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.implants).toHaveLength(1);
       expect(context.implants[0].name).toBe('Secondary Heart');
@@ -194,7 +198,7 @@ describe('DeathwatchActorSheet', () => {
         ]
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.cybernetics).toHaveLength(1);
       expect(context.cybernetics[0].name).toBe('Bionic Arm');
@@ -203,7 +207,7 @@ describe('DeathwatchActorSheet', () => {
     it('initializes empty arrays for all categories', () => {
       const context = { items: [] };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.weapons).toEqual([]);
       expect(context.armor).toEqual([]);
@@ -224,7 +228,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: {}
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(500);
     });
@@ -238,7 +242,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: { 'tal00000000001': [300] } // Array format for non-stackable
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(300);
     });
@@ -252,7 +256,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: { 'tal00000000001': [500] } // Array format
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(500);
     });
@@ -266,7 +270,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: { 'tal00000000001': [500] } // Array format
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(500);
     });
@@ -280,7 +284,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: { 'tal00000000003': 300 }
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(1000);
     });
@@ -295,7 +299,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: {}
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(0);
     });
@@ -310,7 +314,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: {}
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(0);
     });
@@ -325,7 +329,7 @@ describe('DeathwatchActorSheet', () => {
         specialtyTalentCosts: { 'tal00000000001': [300] }
       };
 
-      sheet._prepareItems(context);
+      ItemListPreparer.prepare(context, mockActor);
 
       expect(context.talents[0].system.effectiveCost).toBe(300);
     });
@@ -355,7 +359,7 @@ describe('DeathwatchActorSheet', () => {
         return null;
       });
 
-      sheet._prepareCharacterData(context);
+      CharacterDataPreparer.prepare(context, mockActor);
 
       expect(context.showPsyRating).toBe(true);
     });
@@ -379,7 +383,7 @@ describe('DeathwatchActorSheet', () => {
         return null;
       });
 
-      sheet._prepareCharacterData(context);
+      CharacterDataPreparer.prepare(context, mockActor);
 
       expect(context.showPsyRating).toBe(false);
     });
@@ -399,7 +403,7 @@ describe('DeathwatchActorSheet', () => {
         items: []
       };
 
-      sheet._prepareCharacterData(context);
+      CharacterDataPreparer.prepare(context, mockActor);
 
       expect(context.showPsyRating).toBe(false);
     });

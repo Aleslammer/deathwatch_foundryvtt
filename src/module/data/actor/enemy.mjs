@@ -5,9 +5,28 @@ import { SkillLoader } from '../../helpers/character/skill-loader.mjs';
 const { fields } = foundry.data;
 
 /**
- * Enemy DataModel. Same as character but without chapters, specialties,
- * rank, XP, fate points, renown, special abilities, demeanours, past events.
+ * Enemy DataModel for individual hostile NPCs (xenos, daemons, heretics).
+ *
+ * Simplified character model without Space Marine-specific features:
+ * - **Has**: Characteristics, skills, wounds, fatigue, armor, weapons, traits
+ * - **No**: Chapters, Specialties, Rank, XP progression, Fate Points, Renown
+ *
+ * Use this for named enemies, bosses, and important adversaries with full
+ * stats. For groups of weaker enemies, use Horde instead.
+ *
+ * Computed properties (updated in prepareDerivedData):
+ * - `characteristics.*.value`: Final characteristic values after modifiers
+ * - `characteristics.*.mod`: Final characteristic bonus
+ * - `skills.*.total`: Final skill test target numbers
+ * - `wounds.max`: Maximum wounds from SB + 2×TB + modifiers
+ * - `movement.half/full/charge/run`: Movement rates from AG Bonus
+ *
  * @extends {DeathwatchActorBase}
+ * @example
+ * // Ork Nob with full stats
+ * const orkNob = game.actors.getName("Warboss Grognak");
+ * const ws = orkNob.system.characteristics.ws.value; // 45
+ * const maxWounds = orkNob.system.wounds.max; // 30
  */
 export default class DeathwatchEnemy extends DeathwatchActorBase {
 
@@ -68,8 +87,14 @@ export default class DeathwatchEnemy extends DeathwatchActorBase {
     // Load skills
     this.skills = SkillLoader.loadSkills(this.skills);
 
+    // Convert items Map to Array once (performance optimization)
+    // If items has .get() method (Map or test mock), keep it as-is; otherwise convert to array
+    const itemsArray = typeof actor.items.get === 'function'
+      ? (actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items)
+      : Array.from(actor.items);
+
     // Collect and apply modifiers
-    const allModifiers = ModifierCollector.collectAllModifiers(actor);
+    const allModifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
     ModifierCollector.applyCharacteristicModifiers(this.characteristics, allModifiers);
 
     if (this.skills) {
@@ -79,12 +104,12 @@ export default class DeathwatchEnemy extends DeathwatchActorBase {
     this.initiativeBonus = ModifierCollector.applyInitiativeModifiers(allModifiers);
     ModifierCollector.applyWoundModifiers(this.wounds, allModifiers);
     ModifierCollector.applyFatigueModifiers(this.fatigue, this.characteristics?.tg?.mod || 0);
-    ModifierCollector.applyArmorModifiers(actor.items, allModifiers);
-    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, actor.items);
+    ModifierCollector.applyArmorModifiers(itemsArray, allModifiers);
+    this.naturalArmorValue = ModifierCollector.calculateNaturalArmor(allModifiers, itemsArray);
     ModifierCollector.applyPsyRatingModifiers(this.psyRating, allModifiers);
 
     // Apply force weapon modifiers after psy rating is computed
-    for (const item of actor.items) {
+    for (const item of itemsArray) {
       if (item.type === 'weapon') {
         item.system._applyOwnModifiers();
         item.system.applyForceWeaponModifiers();

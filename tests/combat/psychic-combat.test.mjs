@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { PsychicCombatHelper } from '../../src/module/helpers/combat/psychic-combat.mjs';
-import { POWER_LEVELS } from '../../src/module/helpers/constants.mjs';
+import { POWER_LEVELS } from "../../src/module/helpers/constants/index.mjs";
 
 describe('PsychicCombatHelper', () => {
   beforeEach(() => {

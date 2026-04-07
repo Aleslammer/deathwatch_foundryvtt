@@ -1,6 +1,7 @@
 import { CohesionHelper } from "../helpers/cohesion.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
-import { MODES } from "../helpers/constants.mjs";
+import { MODES, CHARACTERISTIC_CONSTANTS } from "../helpers/constants/index.mjs";
+import { Sanitizer } from "../helpers/sanitizer.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -183,7 +184,8 @@ export class CohesionPanel extends HandlebarsApplicationMixin(
 
     const active = game.settings.get('deathwatch', 'activeSquadAbilities') || [];
     if (ModeHelper.isSustainingAbility(active, actor.id)) {
-      ui.notifications.warn(`${actor.name} is already sustaining a Squad Mode ability. Deactivate it first.`);
+      const safeActorName = Sanitizer.escape(actor.name);
+      ui.notifications.warn(`${safeActorName} is already sustaining a Squad Mode ability. Deactivate it first.`);
       return;
     }
 
@@ -246,14 +248,14 @@ export class CohesionPanel extends HandlebarsApplicationMixin(
     if (!leader) return ui.notifications.warn('No squad leader assigned.');
 
     const currentGmMod = game.settings.get('deathwatch', 'cohesionModifier');
-    const fsBonus = Math.floor((leader.system.characteristics?.fs?.value || 0) / 10);
+    const fsBonus = Math.floor((leader.system.characteristics?.fs?.value || 0) / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
     const rankMod = CohesionHelper.getRankModifier(leader.system.rank || 1);
     const commandMod = CohesionHelper.getCommandModifier(leader.system.skills?.command || {});
 
     const result = await DialogV2.prompt({
       window: { title: 'Recalculate Cohesion' },
       content: `
-        <div class="form-group">Leader: <strong>${leader.name}</strong></div>
+        <div class="form-group">Leader: <strong>${Sanitizer.escape(leader.name)}</strong></div>
         <div class="form-group">Fellowship Bonus: <strong>${fsBonus}</strong></div>
         <div class="form-group">Rank Modifier: <strong>+${rankMod}</strong></div>
         <div class="form-group">Command Modifier: <strong>+${commandMod}</strong></div>
@@ -312,7 +314,10 @@ export class CohesionPanel extends HandlebarsApplicationMixin(
     if (!characters.length) return ui.notifications.warn('No character actors found.');
 
     const currentLeader = game.settings.get('deathwatch', 'squadLeader');
-    const options = characters.map(a => `<option value="${a.id}" ${a.id === currentLeader ? 'selected' : ''}>${a.name}</option>`).join('');
+    const options = characters.map(a => {
+      const safeName = Sanitizer.escape(a.name);
+      return `<option value="${a.id}" ${a.id === currentLeader ? 'selected' : ''}>${safeName}</option>`;
+    }).join('');
 
     const result = await DialogV2.prompt({
       window: { title: 'Set Squad Leader' },
@@ -346,7 +351,10 @@ export class CohesionPanel extends HandlebarsApplicationMixin(
       return CohesionHelper.rollCohesionChallenge(owned[0]);
     }
 
-    const options = owned.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+    const options = owned.map(a => {
+      const safeName = Sanitizer.escape(a.name);
+      return `<option value="${a.id}">${safeName}</option>`;
+    }).join('');
 
     const result = await DialogV2.prompt({
       window: { title: 'Cohesion Challenge' },

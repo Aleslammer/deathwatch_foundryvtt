@@ -8,7 +8,7 @@ import {
   COMBAT_PENALTIES,
   RANGE_MODIFIERS,
   MELEE_MODIFIERS
-} from '../../src/module/helpers/constants.mjs';
+} from "../../src/module/helpers/constants/index.mjs";
 
 describe('Constants', () => {
   describe('CHARACTERISTICS', () => {

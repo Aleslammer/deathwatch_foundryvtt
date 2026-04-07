@@ -1,4 +1,7 @@
 import { ModifierHelper } from "../helpers/character/modifiers.mjs";
+import { ErrorHandler } from "../helpers/error-handler.mjs";
+import { Validation } from "../helpers/validation.mjs";
+import { Logger } from "../helpers/logger.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -201,175 +204,235 @@ export class DeathwatchItemSheet extends foundry.appv1.sheets.ItemSheet {
     }
 
     async _onModifierCreate(event) {
-        event.preventDefault();
-        const modifiers = Array.isArray(this.item.system.modifiers) ? [...this.item.system.modifiers] : [];
-        modifiers.push({
-            _id: foundry.utils.randomID(),
-            name: "New Modifier",
-            modifier: "0",
-            type: "untyped",
-            effectType: "characteristic",
-            valueAffected: "",
-            enabled: true
-        });
-        await this.item.update({ "system.modifiers": modifiers });
+        try {
+            event.preventDefault();
+            const modifiers = Array.isArray(this.item.system.modifiers) ? [...this.item.system.modifiers] : [];
+            modifiers.push({
+                _id: foundry.utils.randomID(),
+                name: "New Modifier",
+                modifier: "0",
+                type: "untyped",
+                effectType: "characteristic",
+                valueAffected: "",
+                enabled: true
+            });
+            await this.item.update({ "system.modifiers": modifiers });
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Create Modifier failed:', error);
+            ui.notifications.error(`Create Modifier failed: ${error.message}`);
+        }
     }
 
     async _onModifierDelete(event) {
-        event.preventDefault();
-        const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-        const modifiers = Array.isArray(this.item.system.modifiers) ? this.item.system.modifiers.filter(m => m._id !== modifierId) : [];
-        await this.item.update({ "system.modifiers": modifiers });
+        try {
+            event.preventDefault();
+            const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
+            if (modifierId === undefined) throw new Error('Modifier ID not found');
+            const modifiers = Array.isArray(this.item.system.modifiers) ? this.item.system.modifiers.filter(m => m._id !== modifierId) : [];
+            await this.item.update({ "system.modifiers": modifiers });
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Delete Modifier failed:', error);
+            ui.notifications.error(`Delete Modifier failed: ${error.message}`);
+        }
     }
 
     async _onModifierEdit(event) {
-        event.preventDefault();
-        const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-        const modifier = this.item.system.modifiers?.find(m => m._id === modifierId);
-        if (!modifier) return;
+        try {
+            event.preventDefault();
+            const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
+            if (modifierId === undefined) throw new Error('Modifier ID not found');
+            const modifier = this.item.system.modifiers?.find(m => m._id === modifierId);
+            if (!modifier) throw new Error('Modifier not found');
 
-        ModifierHelper._showEditDialog(modifier, async (updated) => {
-            const modifiers = [...this.item.system.modifiers];
-            const index = modifiers.findIndex(m => m._id === modifierId);
-            if (index >= 0) {
-                modifiers[index] = { ...modifiers[index], ...updated };
-                await this.item.update({ "system.modifiers": modifiers });
-            }
-        });
+            ModifierHelper._showEditDialog(modifier, async (updated) => {
+                try {
+                    const modifiers = [...this.item.system.modifiers];
+                    const index = modifiers.findIndex(m => m._id === modifierId);
+                    if (index >= 0) {
+                        modifiers[index] = { ...modifiers[index], ...updated };
+                        await this.item.update({ "system.modifiers": modifiers });
+                    }
+                } catch (error) {
+                    Logger.error('ITEM_SHEET', 'Edit Modifier update failed:', error);
+                    ui.notifications.error(`Edit Modifier failed: ${error.message}`);
+                }
+            });
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Edit Modifier failed:', error);
+            ui.notifications.error(`Edit Modifier failed: ${error.message}`);
+        }
     }
 
     async _onToggleModifierEnabled(event) {
-        event.preventDefault();
-        const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
-        const modifiers = [...this.item.system.modifiers];
-        const index = modifiers.findIndex(m => m._id === modifierId);
-        if (index >= 0) {
-            modifiers[index].enabled = !modifiers[index].enabled;
-            await this.item.update({ "system.modifiers": modifiers });
+        try {
+            event.preventDefault();
+            const modifierId = $(event.currentTarget).closest('.modifier').data('modifierId');
+            if (modifierId === undefined) throw new Error('Modifier ID not found');
+            const modifiers = [...this.item.system.modifiers];
+            const index = modifiers.findIndex(m => m._id === modifierId);
+            if (index >= 0) {
+                modifiers[index].enabled = !modifiers[index].enabled;
+                await this.item.update({ "system.modifiers": modifiers });
+            }
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Toggle Modifier failed:', error);
+            ui.notifications.error(`Toggle Modifier failed: ${error.message}`);
         }
     }
 
     async _onWeaponAttack(event) {
-        event.preventDefault();
-        const actor = this.item.actor;
-        if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll attacks.");
+        try {
+            event.preventDefault();
+            const actor = Validation.requireDocument(this.item.actor, 'Actor', 'Weapon Attack');
 
-        const bs = actor.system.characteristics.bs.value;
-        const roll = await new Roll("1d100").evaluate();
-        const total = roll.total;
-        const target = bs;
-        const isHit = total <= target;
+            const bs = actor.system.characteristics?.bs?.value || 0;
+            const roll = await new Roll("1d100").evaluate();
+            const total = roll.total;
+            const target = bs;
+            const isHit = total <= target;
 
-        const flavor = `<h2>${this.item.name} - Attack Roll</h2><p>Target: ${target}</p>`;
-        roll.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: flavor + `<p><strong>${isHit ? 'HIT!' : 'MISS!'}</strong></p>`
-        });
+            const flavor = `<h2>${this.item.name} - Attack Roll</h2><p>Target: ${target}</p>`;
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: flavor + `<p><strong>${isHit ? 'HIT!' : 'MISS!'}</strong></p>`
+            });
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Weapon Attack failed:', error);
+            ui.notifications.error(`Weapon Attack failed: ${error.message}`);
+        }
     }
 
     async _onWeaponDamage(event) {
-        event.preventDefault();
-        const actor = this.item.actor;
-        if (!actor) return ui.notifications.warn("This weapon must be owned by an actor to roll damage.");
+        try {
+            event.preventDefault();
+            const actor = Validation.requireDocument(this.item.actor, 'Actor', 'Weapon Damage');
 
-        const dmg = this.item.system.dmg;
-        if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
+            const dmg = this.item.system.dmg;
+            if (!dmg) throw new Error('This weapon has no damage value');
 
-        const roll = await new Roll(dmg).evaluate();
-        const flavor = `<h2>${this.item.name} - Damage Roll</h2><p>Penetration: ${this.item.system.penetration}</p>`;
-        roll.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: flavor
-        });
+            const roll = await new Roll(dmg).evaluate();
+            const flavor = `<h2>${this.item.name} - Damage Roll</h2><p>Penetration: ${this.item.system.penetration}</p>`;
+            await roll.toMessage({
+                speaker: ChatMessage.getSpeaker({ actor }),
+                flavor: flavor
+            });
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Weapon Damage failed:', error);
+            ui.notifications.error(`Weapon Damage failed: ${error.message}`);
+        }
     }
 
     async _onDrop(event) {
-        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
-        if (data.type !== 'Item') return super._onDrop?.(event);
-        
-        const droppedItem = await Item.implementation.fromDropData(data);
-        if (!droppedItem) return super._onDrop?.(event);
+        try {
+            const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+            if (data.type !== 'Item') return super._onDrop?.(event);
 
-        // Handle armor history drop on armor
-        if (this.item.type === 'armor' && droppedItem.type === 'armor-history') {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const currentHistories = this.item.system.attachedHistories || [];
-            
-            if (!currentHistories.includes(droppedItem.id)) {
-                const newHistories = [...currentHistories, droppedItem.id];
-                
-                await this.item.update({ 
-                    "system.attachedHistories": newHistories
-                });
-                ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
-            } else {
-                ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
+            const droppedItem = await Item.implementation.fromDropData(data);
+            if (!droppedItem) return super._onDrop?.(event);
+
+            // Handle armor history drop on armor
+            if (this.item.type === 'armor' && droppedItem.type === 'armor-history') {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const currentHistories = this.item.system.attachedHistories || [];
+
+                if (!currentHistories.includes(droppedItem.id)) {
+                    const newHistories = [...currentHistories, droppedItem.id];
+
+                    await this.item.update({
+                        "system.attachedHistories": newHistories
+                    });
+                    ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
+                } else {
+                    ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
+                }
+                return false;
             }
+
+            // Handle weapon quality drop on weapon
+            if (this.item.type === 'weapon' && droppedItem.type === 'weapon-quality') {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const currentQualities = this.item.system.attachedQualities || [];
+                const qualityExists = currentQualities.some(q => {
+                    const id = typeof q === 'string' ? q : q.id;
+                    return id === droppedItem.id;
+                });
+
+                if (!qualityExists) {
+                    const newQuality = droppedItem.system.value
+                        ? { id: droppedItem.id, value: droppedItem.system.value }
+                        : droppedItem.id;
+                    const newQualities = [...currentQualities, newQuality];
+
+                    await this.item.update({
+                        "system.attachedQualities": newQualities
+                    });
+                    ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
+                } else {
+                    ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
+                }
+                return false;
+            }
+
+            return super._onDrop?.(event);
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Item Drop failed:', error);
+            ui.notifications.error(`Item Drop failed: ${error.message}`);
             return false;
         }
-
-        // Handle weapon quality drop on weapon
-        if (this.item.type === 'weapon' && droppedItem.type === 'weapon-quality') {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const currentQualities = this.item.system.attachedQualities || [];
-            const qualityExists = currentQualities.some(q => {
-                const id = typeof q === 'string' ? q : q.id;
-                return id === droppedItem.id;
-            });
-            
-            if (!qualityExists) {
-                const newQuality = droppedItem.system.value 
-                    ? { id: droppedItem.id, value: droppedItem.system.value }
-                    : droppedItem.id;
-                const newQualities = [...currentQualities, newQuality];
-                
-                await this.item.update({ 
-                    "system.attachedQualities": newQualities
-                });
-                ui.notifications.info(`${droppedItem.name} attached to ${this.item.name}.`);
-            } else {
-                ui.notifications.warn(`${droppedItem.name} is already attached to ${this.item.name}.`);
-            }
-            return false;
-        }
-
-        return super._onDrop?.(event);
     }
 
     async _onHistoryRemove(event) {
-        event.preventDefault();
-        const historyId = $(event.currentTarget).data('historyId');
-        const attachedHistories = (this.item.system.attachedHistories || []).filter(id => id !== historyId);
-        await this.item.update({ "system.attachedHistories": attachedHistories });
-        this.render(false);
+        try {
+            event.preventDefault();
+            const historyId = $(event.currentTarget).data('historyId');
+            if (!historyId) throw new Error('History ID not provided');
+            const attachedHistories = (this.item.system.attachedHistories || []).filter(id => id !== historyId);
+            await this.item.update({ "system.attachedHistories": attachedHistories });
+            this.render(false);
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Remove History failed:', error);
+            ui.notifications.error(`Remove History failed: ${error.message}`);
+        }
     }
 
     async _onQualityRemove(event) {
-        event.preventDefault();
-        const qualityId = $(event.currentTarget).data('qualityId');
-        const attachedQualities = (this.item.system.attachedQualities || []).filter(q => {
-            const id = typeof q === 'string' ? q : q.id;
-            return id !== qualityId;
-        });
-        await this.item.update({ "system.attachedQualities": attachedQualities });
-        this.render(false);
+        try {
+            event.preventDefault();
+            const qualityId = $(event.currentTarget).data('qualityId');
+            if (!qualityId) throw new Error('Quality ID not provided');
+            const attachedQualities = (this.item.system.attachedQualities || []).filter(q => {
+                const id = typeof q === 'string' ? q : q.id;
+                return id !== qualityId;
+            });
+            await this.item.update({ "system.attachedQualities": attachedQualities });
+            this.render(false);
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Remove Quality failed:', error);
+            ui.notifications.error(`Remove Quality failed: ${error.message}`);
+        }
     }
 
     async _onQualityValueChange(event) {
-        event.preventDefault();
-        const qualityId = $(event.currentTarget).data('qualityId');
-        const newValue = $(event.currentTarget).val();
-        const attachedQualities = (this.item.system.attachedQualities || []).map(q => {
-            const id = typeof q === 'string' ? q : q.id;
-            if (id === qualityId) {
-                return { id: qualityId, value: newValue };
-            }
-            return q;
-        });
-        await this.item.update({ "system.attachedQualities": attachedQualities });
+        try {
+            event.preventDefault();
+            const qualityId = $(event.currentTarget).data('qualityId');
+            if (!qualityId) throw new Error('Quality ID not provided');
+            const newValue = $(event.currentTarget).val();
+            const attachedQualities = (this.item.system.attachedQualities || []).map(q => {
+                const id = typeof q === 'string' ? q : q.id;
+                if (id === qualityId) {
+                    return { id: qualityId, value: newValue };
+                }
+                return q;
+            });
+            await this.item.update({ "system.attachedQualities": attachedQualities });
+        } catch (error) {
+            Logger.error('ITEM_SHEET', 'Change Quality Value failed:', error);
+            ui.notifications.error(`Change Quality Value failed: ${error.message}`);
+        }
     }
 }

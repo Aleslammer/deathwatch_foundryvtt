@@ -1,14 +1,59 @@
-import { debug } from "../debug.mjs";
-import { CHARACTERISTIC_CONSTANTS } from '../constants.mjs';
+import { Logger } from "../logger.mjs";
+import { CHARACTERISTIC_CONSTANTS } from "../constants/index.mjs";
 
+/**
+ * Collects and applies modifiers from various sources to actor characteristics, skills, and attributes.
+ * Central hub for the modifier system that aggregates modifiers from items, talents, traits, chapters,
+ * active effects, and armor histories, then applies them to derived data during actor preparation.
+ *
+ * @example
+ * // Collect all modifiers from an actor
+ * const itemsArray = Array.from(actor.items.values());
+ * const mods = ModifierCollector.collectAllModifiers(actor, itemsArray);
+ *
+ * // Apply them to characteristics
+ * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, mods);
+ */
 export class ModifierCollector {
-  static collectAllModifiers(actor) {
+  /**
+   * Collect all modifiers from an actor: actor-level modifiers, item modifiers, and active effects.
+   *
+   * Aggregates modifiers from three sources:
+   * 1. Actor system.modifiers - Actor-level custom modifiers
+   * 2. Item modifiers - From equipped armor, talents, traits, chapters
+   * 3. Active effects - From status effects and other ActiveEffect documents
+   *
+   * @param {Actor} actor - Actor document
+   * @param {Item[]|Map<string, Item>} itemsArray - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
+   * @returns {Object[]} Array of modifier objects with effectType, valueAffected, modifier, source
+   * @property {string} return[].name - Display name of the modifier
+   * @property {number|string} return[].modifier - Modifier value (number or "x2" for multipliers)
+   * @property {string} return[].effectType - Effect type (characteristic, skill, armor, wounds, etc.)
+   * @property {string} return[].valueAffected - The characteristic/skill/etc being modified
+   * @property {boolean} return[].enabled - Whether modifier is active
+   * @property {string} return[].source - Item/trait/chapter that provides the modifier
+   * @example
+   * const itemsArray = Array.from(actor.items.values());
+   * const mods = ModifierCollector.collectAllModifiers(actor, itemsArray);
+   * // Returns: [
+   * //   { name: "+10 BS", modifier: 10, effectType: "characteristic", valueAffected: "bs", enabled: true, source: "Marksman Training" },
+   * //   { name: "+20 Awareness", modifier: 20, effectType: "skill", valueAffected: "awareness", enabled: true, source: "Heightened Senses" },
+   * //   ...
+   * // ]
+   */
+  static collectAllModifiers(actor, itemsArray) {
     const actorModifiers = actor.system.modifiers || [];
-    const itemModifiers = this.collectItemModifiers(actor.items);
+    const itemModifiers = this.collectItemModifiers(itemsArray);
     const effectModifiers = this.collectActiveEffectModifiers(actor);
     return [...actorModifiers, ...itemModifiers, ...effectModifiers];
   }
 
+  /**
+   * Collect modifiers from active status effects.
+   * Converts Foundry ActiveEffect changes to modifier format.
+   * @param {Actor} actor - Actor document
+   * @returns {Array<Object>} Array of modifier objects from active effects
+   */
   static collectActiveEffectModifiers(actor) {
     const modifiers = [];
     
@@ -35,92 +80,158 @@ export class ModifierCollector {
     return modifiers;
   }
 
+  /**
+   * Collect modifiers from all equipped items, talents, traits, and chapters.
+   *
+   * Item activation rules:
+   * - Talents, traits, chapters: Always active (no equipped check)
+   * - Armor, weapons, gear: Only active if equipped
+   *
+   * Includes modifiers from:
+   * - Item system.modifiers arrays
+   * - Attached armor histories (for armor items)
+   *
+   * @param {Item[]|Map<string, Item>} items - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
+   * @returns {Object[]} Array of modifier objects from items
+   * @example
+   * const itemMods = ModifierCollector.collectItemModifiers(itemsArray);
+   * // Returns: [
+   * //   { name: "+10 BS", modifier: 10, effectType: "characteristic", valueAffected: "bs", enabled: true, source: "Marksman Training" },
+   * //   { name: "+4 Armor (All)", modifier: 4, effectType: "armor", valueAffected: "all", enabled: true, source: "Power Armor (Mk7 Aquila)" },
+   * //   ...
+   * // ]
+   */
   static collectItemModifiers(items) {
     const modifiers = [];
-    
-    // Handle both Map (from actor.items) and Array (from tests)
+
+    // Handle both Map (from actor.items) and Array (from prepareDerivedData optimization)
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
-    
+
     for (const item of itemsArray) {
       if (!item?.system) continue;
-      
+
       // Chapter, trait, and talent items are always active (no equipped check)
       const isActive = item.type === 'chapter' || item.type === 'trait' || item.type === 'talent' || item.system.equipped;
       if (!isActive) continue;
-      
-      debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
-      
+
+      Logger.debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
+
       if (item.system.modifiers) {
-        debug('MODIFIERS', `  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
+        Logger.debug('MODIFIERS', `  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
         for (const mod of item.system.modifiers) {
           if (mod.enabled !== false) {
             modifiers.push({ ...mod, source: item.name });
           }
         }
       }
-      
+
       if (item.type === 'armor' && Array.isArray(item.system.attachedHistories)) {
-        modifiers.push(...this.collectArmorHistoryModifiers(item, items));
+        modifiers.push(...this.collectArmorHistoryModifiers(item, itemsArray));
       }
     }
-    
-    debug('MODIFIERS', `Total item modifiers collected: ${modifiers.length}`);
+
+    Logger.debug('MODIFIERS', `Total item modifiers collected: ${modifiers.length}`);
     return modifiers;
   }
 
+  /**
+   * Collect modifiers from armor history items attached to armor.
+   * @param {Item} armor - Armor item with attachedHistories
+   * @param {Array|Map} allItems - All items to look up history IDs
+   * @returns {Array<Object>} Array of modifier objects from armor histories
+   */
   static collectArmorHistoryModifiers(armor, allItems) {
     const modifiers = [];
-    
-    debug('MODIFIERS', `  Armor ${armor.name} has ${armor.system.attachedHistories.length} attached histories`);
-    
+
+    Logger.debug('MODIFIERS', `  Armor ${armor.name} has ${armor.system.attachedHistories.length} attached histories`);
+
     for (const historyId of armor.system.attachedHistories) {
-      const history = allItems.get(historyId);
-      debug('MODIFIERS', `    History ID: ${historyId}, found: ${!!history}`);
-      
+      // Use .get() if available (Map or test mock), otherwise use .find() (Array)
+      const history = typeof allItems.get === 'function'
+        ? allItems.get(historyId)
+        : allItems.find(item => item._id === historyId || item.id === historyId);
+      Logger.debug('MODIFIERS', `    History ID: ${historyId}, found: ${!!history}`);
+
       if (history) {
-        debug('MODIFIERS', `    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
+        Logger.debug('MODIFIERS', `    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
       }
-      
+
       if (history && Array.isArray(history.system.modifiers)) {
         for (const mod of history.system.modifiers) {
-          debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
+          Logger.debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
           if (mod.enabled !== false) {
             modifiers.push({ ...mod, source: `${history.name} (${armor.name})` });
           }
         }
       }
     }
-    
+
     return modifiers;
   }
 
+  /**
+   * Collect modifiers from weapon upgrades attached to a weapon.
+   * @param {Item} weapon - Weapon item with attachedUpgrades
+   * @param {Array|Map} allItems - All items to look up upgrade IDs
+   * @returns {Array<Object>} Array of modifier objects from weapon upgrades
+   */
   static collectWeaponUpgradeModifiers(weapon, allItems) {
     const modifiers = [];
-    
-    debug('MODIFIERS', `  Weapon ${weapon.name} has ${weapon.system.attachedUpgrades.length} attached upgrades`);
-    
+
+    Logger.debug('MODIFIERS', `  Weapon ${weapon.name} has ${weapon.system.attachedUpgrades.length} attached upgrades`);
+
     for (const upgradeRef of weapon.system.attachedUpgrades) {
       const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
-      const upgrade = allItems.get(upgradeId);
-      debug('MODIFIERS', `    Upgrade ID: ${upgradeId}, found: ${!!upgrade}`);
-      
+      // Use .get() if available (Map or test mock), otherwise use .find() (Array)
+      const upgrade = typeof allItems.get === 'function'
+        ? allItems.get(upgradeId)
+        : allItems.find(item => item._id === upgradeId || item.id === upgradeId);
+      Logger.debug('MODIFIERS', `    Upgrade ID: ${upgradeId}, found: ${!!upgrade}`);
+
       if (upgrade) {
-        debug('MODIFIERS', `    Upgrade: ${upgrade.name}, modifiers: ${upgrade.system.modifiers?.length || 0}`);
+        Logger.debug('MODIFIERS', `    Upgrade: ${upgrade.name}, modifiers: ${upgrade.system.modifiers?.length || 0}`);
       }
-      
+
       if (upgrade && Array.isArray(upgrade.system.modifiers)) {
         for (const mod of upgrade.system.modifiers) {
-          debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
+          Logger.debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
           if (mod.enabled !== false) {
             modifiers.push({ ...mod, source: `${upgrade.name} (${weapon.name})` });
           }
         }
       }
     }
-    
+
     return modifiers;
   }
 
+  /**
+   * Apply characteristic modifiers to actor characteristics.
+   *
+   * Modifiers are applied in this critical order:
+   * 1. Base characteristic value (from creation/datasheet)
+   * 2. Advances (+5 per advance: Simple, Intermediate, Trained, Expert)
+   * 3. Standard characteristic modifiers (added to value)
+   * 4. Post-multiplier characteristic modifiers (added to value, but bonus calculated separately)
+   * 5. Characteristic damage (subtracted from value)
+   * 6. Calculate base bonus (value ÷ 10, rounded down)
+   * 7. Apply Unnatural Characteristic multipliers (e.g., x2 for Unnatural Strength)
+   * 8. Add post-multiplier bonus (NOT multiplied by Unnatural)
+   *
+   * The post-multiplier system is critical for Power Armor: +20 STR affects skill tests
+   * but the +2 SB must NOT be multiplied by Unnatural Strength. See implementation plan
+   * docs for full details.
+   *
+   * @param {Object} characteristics - Actor characteristics object (ws, bs, str, tgh, ag, int, per, wp, fel)
+   * @param {Object[]} modifiers - Array of modifier objects from collectAllModifiers
+   * @modifies {characteristics} Updates characteristic.value, characteristic.mod, characteristic.unnaturalMultiplier, etc.
+   * @example
+   * const mods = ModifierCollector.collectAllModifiers(actor, itemsArray);
+   * ModifierCollector.applyCharacteristicModifiers(actor.system.characteristics, mods);
+   * // actor.system.characteristics.str.value = 70 (base 50 + advances 10 + Power Armor 10)
+   * // actor.system.characteristics.str.mod = 9 (base 7 + Unnatural x2 = 14, minus post-multiplier 2 = 7, then add back 2 = 9)
+   * @see {@link applySkillModifiers} for skill-based modifiers
+   */
   static applyCharacteristicModifiers(characteristics, modifiers) {
     for (const [key, characteristic] of Object.entries(characteristics)) {
       if (characteristic.base === undefined) {
@@ -238,6 +349,12 @@ export class ModifierCollector {
     }
   }
 
+  /**
+   * Apply skill modifiers to actor skills.
+   * Computes modifierTotal for each skill from all skill-type modifiers.
+   * @param {Object} skills - Actor skills object
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applySkillModifiers(skills, modifiers) {
     for (const [key, skill] of Object.entries(skills)) {
       let total = 0;
@@ -252,6 +369,11 @@ export class ModifierCollector {
     }
   }
 
+  /**
+   * Calculate total initiative bonus from modifiers.
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   * @returns {number} Total initiative bonus
+   */
   static applyInitiativeModifiers(modifiers) {
     let total = 0;
     
@@ -264,6 +386,12 @@ export class ModifierCollector {
     return total;
   }
 
+  /**
+   * Apply wound modifiers to actor wounds.
+   * Computes max wounds from base + modifiers.
+   * @param {Object} wounds - Actor wounds object (value, max, base)
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applyWoundModifiers(wounds, modifiers) {
     if (!wounds) return;
     
@@ -286,6 +414,31 @@ export class ModifierCollector {
     wounds.modifiers = appliedMods;
   }
 
+  /**
+   * Apply fatigue modifiers based on toughness bonus.
+   *
+   * Fatigue system (Deathwatch Core p. 259):
+   * - Max fatigue = Toughness Bonus
+   * - Fatigued (value > 0): −10 to all tests
+   * - Unconscious (value > TB): Character collapses
+   *
+   * Each fatigue point represents accumulated exhaustion from:
+   * - Combat (flame weapons, toxins, psychic backlash)
+   * - Extended activity without rest
+   * - Environmental hazards
+   *
+   * @param {Object} fatigue - Actor fatigue object (value, max, unconscious, penalty)
+   * @param {number} toughnessBonus - Actor's toughness bonus (computed from TGH characteristic)
+   * @modifies {fatigue} Updates fatigue.max, fatigue.unconscious, fatigue.penalty
+   * @example
+   * // Character with TGH 40 (TB 4) and 2 fatigue
+   * ModifierCollector.applyFatigueModifiers(fatigue, 4);
+   * // fatigue.max = 4, fatigue.unconscious = false, fatigue.penalty = -10
+   * @example
+   * // Character with TGH 40 (TB 4) and 5 fatigue (over limit)
+   * ModifierCollector.applyFatigueModifiers(fatigue, 4);
+   * // fatigue.max = 4, fatigue.unconscious = true, fatigue.penalty = -10
+   */
   static applyFatigueModifiers(fatigue, toughnessBonus) {
     if (!fatigue) return;
     
@@ -294,6 +447,12 @@ export class ModifierCollector {
     fatigue.penalty = fatigue.value > 0 ? -10 : 0;
   }
 
+  /**
+   * Apply Psy Rating modifiers to actor psychic power.
+   * Computes effective Psy Rating from base + modifiers.
+   * @param {Object} psyRating - Actor psyRating object (value, base, modifiers)
+   * @param {Array<Object>} modifiers - Array of modifier objects
+   */
   static applyPsyRatingModifiers(psyRating, modifiers) {
     if (!psyRating) return;
 
@@ -312,6 +471,37 @@ export class ModifierCollector {
     psyRating.modifiers = appliedMods;
   }
 
+  /**
+   * Apply movement modifiers to actor movement rates.
+   *
+   * Calculates movement rates based on:
+   * 1. Base movement = AG Bonus
+   * 2. Movement multipliers (e.g., Unnatural Speed x2)
+   * 3. Flat movement modifiers (e.g., +2 from Sprint talent)
+   * 4. Movement restrictions (e.g., Terminator Armor cannot Run)
+   *
+   * Standard movement rates:
+   * - Half Action: AG Bonus
+   * - Full Action: AG Bonus × 2
+   * - Charge: AG Bonus × 3
+   * - Run: AG Bonus × 6
+   *
+   * Movement restrictions set specific rates to "N/A" (e.g., Terminator Armor
+   * cannot Run, so movement.run = "N/A").
+   *
+   * @param {Object} movement - Actor movement object (half, full, charge, run)
+   * @param {number} agBonus - Actor's Agility bonus
+   * @param {Object[]} modifiers - Array of modifier objects
+   * @modifies {movement} Updates movement.half, movement.full, movement.charge, movement.run, movement.modifiers
+   * @example
+   * // Character with AG 45 (AG Bonus 4) and Unnatural Speed x2
+   * ModifierCollector.applyMovementModifiers(movement, 4, modifiers);
+   * // movement.half = 8, movement.full = 16, movement.charge = 24, movement.run = 48
+   * @example
+   * // Terminator with AG 40 (AG Bonus 4) in Terminator Armor (no Run)
+   * ModifierCollector.applyMovementModifiers(movement, 4, modifiers);
+   * // movement.half = 4, movement.full = 8, movement.charge = 12, movement.run = "N/A"
+   */
   static applyMovementModifiers(movement, agBonus, modifiers) {
     if (!movement) return;
 
@@ -357,13 +547,36 @@ export class ModifierCollector {
     }
   }
 
+  /**
+   * Apply armor modifiers to equipped armor items.
+   *
+   * Increases armor values for all hit locations (head, body, left_arm, right_arm,
+   * left_leg, right_leg). Modifiers are additive and apply to all locations.
+   *
+   * Common armor modifiers:
+   * - Armor history bonuses (e.g., +2 from Blessed History)
+   * - Trait bonuses (e.g., +4 from Machine trait)
+   * - Temporary effects (e.g., +2 from Force Barrier)
+   *
+   * Each armor piece stores its base value and recomputes the total on each
+   * prepareDerivedData call.
+   *
+   * @param {Item[]|Map<string, Item>} items - Array of actor's items (pre-converted from Map for performance), or Map for backward compatibility
+   * @param {Object[]} modifiers - Array of modifier objects with effectType='armor'
+   * @modifies {items} Updates armor item system.head, system.body, etc.
+   * @example
+   * ModifierCollector.applyArmorModifiers(itemsArray, modifiers);
+   * // Power Armor with base 8 and +4 from Machine trait:
+   * // armor.system.body = 12 (base 8 + modifier 4)
+   */
   static applyArmorModifiers(items, modifiers) {
+    // Handle both Map (backward compatibility) and Array (from prepareDerivedData optimization)
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
-    
+
     for (const item of itemsArray) {
       if (item?.type === 'armor' && item.system.equipped) {
         const locations = ['head', 'body', 'left_arm', 'right_arm', 'left_leg', 'right_leg'];
-        
+
         for (const location of locations) {
           if (item.system[location] !== undefined) {
             if (item.system[`${location}_base`] === undefined) {
@@ -371,13 +584,13 @@ export class ModifierCollector {
             }
             const base = item.system[`${location}_base`];
             let total = base;
-            
+
             for (const mod of modifiers) {
               if (mod.enabled !== false && mod.effectType === 'armor') {
                 total += parseInt(mod.modifier) || 0;
               }
             }
-            
+
             item.system[location] = total;
           }
         }
@@ -388,11 +601,13 @@ export class ModifierCollector {
   /**
    * Calculate total natural armor value from trait-sourced armor modifiers.
    * @param {Array} modifiers - All collected modifiers
-   * @param {Map|Array} items - Actor items collection
+   * @param {Array|Map} items - Array of actor's items, or Map for backward compatibility
    * @returns {number} Total natural armor bonus from traits
    */
   static calculateNaturalArmor(modifiers, items) {
+    // Handle both Map (backward compatibility) and Array (from prepareDerivedData optimization)
     const itemsArray = items instanceof Map ? Array.from(items.values()) : items;
+
     let total = 0;
     for (const mod of modifiers) {
       if (mod.enabled !== false && mod.effectType === 'armor') {

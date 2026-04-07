@@ -1,0 +1,255 @@
+import { getRankImage } from '../../../helpers/character/rank-helper.mjs';
+import { WoundHelper } from '../../../helpers/character/wound-helper.mjs';
+import { DeathwatchActorSheet } from '../../actor-sheet.mjs';
+
+/**
+ * Prepares character-specific data for character sheets.
+ * Handles characteristics, skills, chapter/specialty integration,
+ * XP calculations, and character progression.
+ */
+export class CharacterDataPreparer {
+  /**
+   * Prepare all character data for sheet display.
+   * @param {Object} context - Sheet context
+   * @param {Actor} actor - Actor document
+   */
+  static prepare(context, actor) {
+    this.prepareCharacteristics(context);
+    this.prepareChapterAndSpecialty(context, actor);
+    this.prepareSkills(context, actor);
+    this.prepareConfig(context);
+    this.prepareRankAndWounds(context);
+    this.prepareRenown(context);
+    this.preparePsyRating(context);
+  }
+
+  /**
+   * Prepare characteristic labels.
+   * @param {Object} context - Sheet context
+   */
+  static prepareCharacteristics(context) {
+    for (let [k, v] of Object.entries(context.system.characteristics)) {
+      v.label = game.i18n.localize(game.deathwatch.config.CharacteristicWords[k]) ?? k;
+    }
+  }
+
+  /**
+   * Prepare chapter and specialty items.
+   * @param {Object} context - Sheet context
+   * @param {Actor} actor - Actor document
+   */
+  static prepareChapterAndSpecialty(context, actor) {
+    // Get chapter item if set
+    if (context.system.chapterId) {
+      context.chapterItem = actor.items.get(context.system.chapterId);
+    }
+
+    // Get specialty item if set
+    if (context.system.specialtyId) {
+      context.specialtyItem = actor.items.get(context.system.specialtyId);
+    }
+  }
+
+  /**
+   * Prepare skills with costs, totals, and sorting.
+   * @param {Object} context - Sheet context
+   * @param {Actor} actor - Actor document
+   */
+  static prepareSkills(context, actor) {
+    if (!context.system.skills) return;
+
+    // Get skill cost overrides
+    const costs = this._getSkillCosts(context);
+
+    // Sort skills alphabetically
+    const sortedSkills = this._sortSkills(context.system.skills);
+
+    // Process each skill
+    for (const [k, v] of sortedSkills) {
+      v.label = game.i18n.localize(game.deathwatch.config.Skills[k]) ?? k;
+
+      // Calculate skill total from live data (includes modifierTotal)
+      v.total = this._calculateSkillTotal(v, k, context, actor);
+
+      // Apply cost overrides
+      this._applySkillCosts(v, k, costs);
+    }
+  }
+
+  /**
+   * Get skill cost overrides from chapter and specialty.
+   * @param {Object} context - Sheet context
+   * @returns {Object} Cost overrides
+   * @private
+   */
+  static _getSkillCosts(context) {
+    // Get chapter skill cost overrides
+    const chapterSkillCosts = {};
+    if (context.chapterItem && context.chapterItem.system.skillCosts) {
+      Object.assign(chapterSkillCosts, context.chapterItem.system.skillCosts);
+    }
+
+    // Get specialty base skill cost overrides
+    const specialtyBaseSkillCosts = {};
+    if (context.specialtyItem && context.specialtyItem.system.skillCosts) {
+      Object.assign(specialtyBaseSkillCosts, context.specialtyItem.system.skillCosts);
+    }
+
+    // Get specialty rank-based skill cost overrides (cumulative from rank 1 to current rank)
+    const specialtySkillCosts = {};
+    const specialtyTalentCosts = {}; // Maps talent ID to array of costs
+
+    if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
+      const currentRank = context.system.rank || 1;
+      // Accumulate costs from rank 1 up to current rank
+      for (let rank = 1; rank <= currentRank; rank++) {
+        const rankData = context.specialtyItem.system.rankCosts[rank.toString()];
+        if (rankData) {
+          // Merge skills (later ranks override earlier ranks for same skill level)
+          if (rankData.skills) {
+            for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
+              if (!specialtySkillCosts[skillKey]) specialtySkillCosts[skillKey] = {};
+              Object.assign(specialtySkillCosts[skillKey], skillCost);
+            }
+          }
+          // Accumulate talents as arrays (for stackable talents)
+          if (rankData.talents) {
+            for (const [talentId, cost] of Object.entries(rankData.talents)) {
+              if (!specialtyTalentCosts[talentId]) specialtyTalentCosts[talentId] = [];
+              specialtyTalentCosts[talentId].push(cost);
+            }
+          }
+        }
+      }
+    }
+
+    // Store talent cost overrides for later use in _prepareItems
+    context.specialtyTalentCosts = specialtyTalentCosts;
+    context.chapterTalentCosts = context.chapterItem?.system.talentCosts || {};
+    context.specialtyBaseTalentCosts = context.specialtyItem?.system.talentCosts || {};
+
+    return {
+      chapter: chapterSkillCosts,
+      specialtyBase: specialtyBaseSkillCosts,
+      specialtyRank: specialtySkillCosts
+    };
+  }
+
+  /**
+   * Sort skills alphabetically by localized label.
+   * @param {Object} skills - Skills object
+   * @returns {Array} Sorted [key, skill] pairs
+   * @private
+   */
+  static _sortSkills(skills) {
+    return Object.entries(skills)
+      .sort(([keyA, a], [keyB, b]) => {
+        const labelA = game.i18n.localize(game.deathwatch.config.Skills[keyA] || keyA);
+        const labelB = game.i18n.localize(game.deathwatch.config.Skills[keyB] || keyB);
+        return labelA.localeCompare(labelB);
+      });
+  }
+
+  /**
+   * Calculate total skill value including modifiers.
+   * @param {Object} skill - Skill data
+   * @param {string} skillKey - Skill key
+   * @param {Object} context - Sheet context
+   * @param {Actor} actor - Actor document
+   * @returns {number} Total skill value
+   * @private
+   */
+  static _calculateSkillTotal(skill, skillKey, context, actor) {
+    const liveSkill = actor.system.skills[skillKey];
+    const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, context.system.characteristics);
+    const skillModTotal = liveSkill?.modifierTotal || 0;
+    return baseSkillTotal + skillModTotal;
+  }
+
+  /**
+   * Apply chapter/specialty cost overrides to skill.
+   * @param {Object} skill - Skill object
+   * @param {string} skillKey - Skill key
+   * @param {Object} costs - Cost overrides
+   * @private
+   */
+  static _applySkillCosts(skill, skillKey, costs) {
+    // Apply chapter skill cost overrides
+    if (costs.chapter[skillKey]) {
+      if (costs.chapter[skillKey].costTrain !== undefined) skill.costTrain = costs.chapter[skillKey].costTrain;
+      if (costs.chapter[skillKey].costMaster !== undefined) skill.costMaster = costs.chapter[skillKey].costMaster;
+      if (costs.chapter[skillKey].costExpert !== undefined) skill.costExpert = costs.chapter[skillKey].costExpert;
+    }
+
+    // Apply specialty base skill cost overrides (takes precedence over chapter)
+    if (costs.specialtyBase[skillKey]) {
+      if (costs.specialtyBase[skillKey].costTrain !== undefined) skill.costTrain = costs.specialtyBase[skillKey].costTrain;
+      if (costs.specialtyBase[skillKey].costMaster !== undefined) skill.costMaster = costs.specialtyBase[skillKey].costMaster;
+      if (costs.specialtyBase[skillKey].costExpert !== undefined) skill.costExpert = costs.specialtyBase[skillKey].costExpert;
+    }
+
+    // Apply specialty rank-based skill cost overrides (takes precedence over base specialty)
+    if (costs.specialtyRank[skillKey] !== undefined) {
+      // Support both simple number format and full object format
+      if (typeof costs.specialtyRank[skillKey] === 'number') {
+        skill.costTrain = costs.specialtyRank[skillKey];
+      } else if (typeof costs.specialtyRank[skillKey] === 'object') {
+        if (costs.specialtyRank[skillKey].costTrain !== undefined) skill.costTrain = costs.specialtyRank[skillKey].costTrain;
+        if (costs.specialtyRank[skillKey].costMaster !== undefined) skill.costMaster = costs.specialtyRank[skillKey].costMaster;
+        if (costs.specialtyRank[skillKey].costExpert !== undefined) skill.costExpert = costs.specialtyRank[skillKey].costExpert;
+      }
+    }
+  }
+
+  /**
+   * Add config to context for template access.
+   * @param {Object} context - Sheet context
+   */
+  static prepareConfig(context) {
+    context.config = game.deathwatch.config;
+  }
+
+  /**
+   * Prepare rank image and wound color class.
+   * @param {Object} context - Sheet context
+   */
+  static prepareRankAndWounds(context) {
+    // Add rank image
+    context.rankImage = getRankImage(context.system.rank);
+
+    // Calculate wound color class
+    const wounds = context.system.wounds;
+    context.woundColorClass = WoundHelper.getWoundColorClass(wounds?.value, wounds?.max);
+  }
+
+  /**
+   * Calculate and prepare renown rank.
+   * @param {Object} context - Sheet context
+   */
+  static prepareRenown(context) {
+    context.renownRank = this._getRenownRank(context.system.renown || 0);
+  }
+
+  /**
+   * Get renown rank based on renown value.
+   * @param {number} renown - The renown value
+   * @returns {string} The renown rank
+   * @private
+   */
+  static _getRenownRank(renown) {
+    if (renown >= 80) return 'Hero';
+    if (renown >= 60) return 'Famed';
+    if (renown >= 40) return 'Distinguished';
+    if (renown >= 20) return 'Respected';
+    return 'Initiated';
+  }
+
+  /**
+   * Determine if Psy Rating box should be shown.
+   * @param {Object} context - Sheet context
+   */
+  static preparePsyRating(context) {
+    // Show Psy Rating box if specialty has hasPsyRating
+    context.showPsyRating = context.specialtyItem?.system?.hasPsyRating || false;
+  }
+}

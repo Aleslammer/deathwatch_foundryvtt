@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { MeleeCombatHelper } from '../../src/module/helpers/combat/melee-combat.mjs';
-import { MELEE_MODIFIERS, COMBAT_PENALTIES } from '../../src/module/helpers/constants.mjs';
+import { MELEE_MODIFIERS, COMBAT_PENALTIES } from "../../src/module/helpers/constants/index.mjs";
 
 describe('MeleeCombatHelper', () => {
   beforeEach(() => {

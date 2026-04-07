@@ -2,6 +2,7 @@ import DeathwatchDataModel from '../base-document.mjs';
 import { CombatDialogHelper } from '../../helpers/combat/combat-dialog.mjs';
 import { FoundryAdapter } from '../../helpers/foundry-adapter.mjs';
 import { ChatMessageBuilder } from '../../helpers/ui/chat-message-builder.mjs';
+import { Sanitizer } from '../../helpers/sanitizer.mjs';
 
 const { fields } = foundry.data;
 
@@ -129,13 +130,15 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
         damageType, isShocking, isToxic, drainLifeMessage, charDamageEffect, forceWeaponData, tokenInfo, criticalDamageBonus
       );
 
+      const safeActorName = Sanitizer.escape(actor.name);
       FoundryAdapter.showNotification(
         isCritical ? 'warn' : 'info',
-        isCritical ? `${actor.name} is taking CRITICAL DAMAGE!` : `${actor.name} takes ${damageResult.woundsTaken} wounds!`
+        isCritical ? `${safeActorName} is taking CRITICAL DAMAGE!` : `${safeActorName} takes ${damageResult.woundsTaken} wounds!`
       );
       await FoundryAdapter.createChatMessage(message);
     } else {
-      FoundryAdapter.showNotification('info', `${actor.name}'s armor absorbs all damage!`);
+      const safeActorName = Sanitizer.escape(actor.name);
+      FoundryAdapter.showNotification('info', `${safeActorName}'s armor absorbs all damage!`);
       const message = CombatDialogHelper.buildArmorAbsorbMessage(
         actor.name, location, damage, defenses.armorValue, penetration, damageResult.effectiveTB
       );
