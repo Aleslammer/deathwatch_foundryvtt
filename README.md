@@ -4,7 +4,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 
 ![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
 ![Version](https://img.shields.io/badge/Version-0.0.2-blue)
-![Tests](https://img.shields.io/badge/Tests-1567%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-1752%20passing-brightgreen)
 
 ---
 
@@ -19,6 +19,10 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 - XP tracking with automatic rank calculation and spent XP computation
 - Modifier system supporting temporary and permanent adjustments from multiple sources
 - Movement calculation with modifier and restriction support
+- **Cybernetics**: Characteristic replacement system (e.g., servo-arms replace natural Strength with cybernetic Strength)
+  - Weapon-cybernetic linking for automatic strength bonus calculation
+  - Characteristic source selection dialog for tests (natural vs. cybernetic)
+  - Exceptional craftsmanship variants with enhanced capabilities
 
 ### Combat System
 - **Ranged Combat**: BS-based attacks with aim, rate of fire (Single/Semi-Auto/Full-Auto), range modifiers, jamming, and ammunition tracking
@@ -84,7 +88,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 | Chapters | 9 | Space Marine chapters with XP cost overrides |
 | Specialties | 53 | 6 specialties + 47 Solo/Squad Mode special abilities |
 | Implants | 19 | Standard Space Marine biological implants |
-| Cybernetics | 1 | Mechanical augmentations |
+| Cybernetics | 17 | Servo-arms, servo-harness, auger array, bionic organs, MIU |
 | Weapon Qualities | 38 | Accurate, Tearing, Melta, Force, etc. |
 | Weapon Upgrades | 14 | Sights, stabilisers, attachments |
 | Psychic Powers | 68 | Codex, Divination, Telepathy, Chapter, Tyranid |
@@ -124,7 +128,7 @@ npm install
 
 | Command | Description |
 |---------|-------------|
-| `npm test` | Run all tests (1567 tests across 95 suites) |
+| `npm test` | Run all tests (1752 tests across 105 suites) |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
 | `npm run format:json` | Compact + Prettier JSON formatting |

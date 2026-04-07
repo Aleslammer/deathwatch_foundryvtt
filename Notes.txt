@@ -67,9 +67,32 @@ Orks:
 Gameplay:
     TODO: test Psychic Power Righteous Furty and Deathwatch Training
 
+Battle Servitor (Erioch-Pattern)
+Book: Deathwatch Core 20Rulebook
+Page 376
+Description: Many Techmarines upgrade their servitors to assist in battle 
+as well as mechanical rites. Such models are easy to recognise, 
+not just by their bonded weaponry, but also by the muscle 
+grafts and hardened tissues used to make them capable of 
+dealing and withstanding the sort of punishment faced in 
+the duties of the Adeptus Astartes. Servitors that frequently 
+accompany their Masters into combat are often a patchwork 
+of replaced flesh, metal plating, and scars.
+If a Techmarine requisitions a battle servitor for a Mission, 
+he may also requisition weaponry to install in place of one 
+or both of its servo-fists. This process requires no Tests if 
+performed at a Watch Station with the proper facilities, and 
+takes one hour per weapon.
 
+Ws Bs s T ag int Per WP fel
+35 35 50 48 30 20 30 35 ––
 
-
+Skills: Awareness (Per), Trade (any one) +10, Trade (Technomat) +10.
+Talents: Ambidextrous, Two-Weapon Wielder, Weapon Training appropriate to its armament.
+Traits: Armour-Plated, Auto-stabilised, Darksight, Machine (4), Natural Weapon (servo-fist(s)), Sturdy, Unnatural Strength (x2), Unnatural Toughness (x2).
+Armour (Machine): All 6 
+Weapons: Servo-fist (1d10+10, Pen 6), plus any weapons installed by the servitor’s Master.
+Gear: Internal vox
 
 What Q thinks is missing
 
