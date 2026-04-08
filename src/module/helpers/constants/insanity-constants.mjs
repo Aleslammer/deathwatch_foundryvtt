@@ -64,3 +64,24 @@ export const BATTLE_TRAUMA = {
   /** RollTable name in compendium */
   TABLE_NAME: "Battle Trauma Table"
 };
+
+/**
+ * Insanity Point reduction via XP expenditure.
+ *
+ * A character may spend XP to remove Insanity Points, but may never
+ * cross down a track level boundary (cannot lose degree of madness).
+ *
+ * Core p. 216
+ */
+export const INSANITY_REDUCTION = {
+  /** XP cost to remove 1 Insanity Point (Core p. 216) */
+  XP_COST_PER_POINT: 100,
+
+  /** Minimum insanity per track level (cannot reduce below these thresholds) */
+  TRACK_FLOORS: {
+    0: 0,   // Level 0: Can reduce to 0
+    1: 31,  // Level 1: Can only reduce to 31 minimum
+    2: 61,  // Level 2: Can only reduce to 61 minimum
+    3: 91   // Level 3: Can only reduce to 91 minimum
+  }
+};

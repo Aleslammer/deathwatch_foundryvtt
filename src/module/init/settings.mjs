@@ -47,17 +47,6 @@ export class SettingsRegistrar {
       default: []
     });
 
-    // Feature flag: V2 sheets
-    game.settings.register('deathwatch', 'useV2Sheets', {
-      name: 'Use ApplicationV2 Sheets (Experimental)',
-      hint: 'Enable the new sheet architecture. Requires reload.',
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: false,
-      onChange: () => window.location.reload()
-    });
-
     // Log level setting
     game.settings.register('deathwatch', 'logLevel', {
       name: 'Log Level',

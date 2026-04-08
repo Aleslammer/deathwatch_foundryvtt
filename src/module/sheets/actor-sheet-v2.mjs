@@ -73,6 +73,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       adjustCorruption: DeathwatchActorSheetV2._onAdjustCorruption,
       adjustInsanity: DeathwatchActorSheetV2._onAdjustInsanity,
       manualInsanityTest: DeathwatchActorSheetV2._onManualInsanityTest,
+      purchaseInsanityReduction: DeathwatchActorSheetV2._onPurchaseInsanityReduction,
       showTrauma: DeathwatchActorSheetV2._onShowItem,
       viewCurse: DeathwatchActorSheetV2._onViewCurse,
       // Step 9: drag-and-drop (handled via _onDrop override)
@@ -142,7 +143,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     context.editable = this.isEditable;
     context.owner = this.actor.isOwner;
     context.isGM = game.user.isGM;
-    console.log("V2 ActorSheet._prepareContext - isGM:", context.isGM);
 
     // Prepare type-specific data using data preparers
     if (this.actor.type === 'character') {
@@ -717,7 +717,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   /* -------------------------------------------- */
 
   static async _onViewCorruptionHistory(event, target) {
-    console.log("V2: View Corruption History clicked");
     const actor = this.actor;
     const history = actor.system.corruptionHistory || [];
 
@@ -794,12 +793,12 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   }
 
   static async _onViewInsanityHistory(event, target) {
-    console.log("V2: View Insanity History clicked");
     const actor = this.actor;
     const history = actor.system.insanityHistory || [];
 
     let tableRows = '';
     let runningTotal = 0;
+    let totalXPSpent = 0;
 
     for (let i = 0; i < history.length; i++) {
       const entry = history[i];
@@ -808,15 +807,22 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       const source = entry.source;
       const testRolled = entry.testRolled ? 'Yes' : 'No';
       const testResult = entry.testResult || 'N/A';
+      const xpSpent = entry.xpSpent || 0;
+      if (xpSpent > 0) totalXPSpent += xpSpent;
+
+      // Format points display with + or - prefix
+      const pointsDisplay = entry.points >= 0 ? `+${entry.points}` : `${entry.points}`;
+      const pointsClass = entry.points < 0 ? 'points-cell points-negative' : 'points-cell';
 
       tableRows += `
         <tr>
           <td>${date}</td>
-          <td class="points-cell">+${entry.points} IP</td>
+          <td class="${pointsClass}">${pointsDisplay} IP</td>
           <td>${source}</td>
           <td>${runningTotal} IP</td>
           <td>${testRolled}</td>
           <td class="${entry.testResult?.includes('Success') ? 'test-success' : 'test-failure'}">${testResult}</td>
+          <td>${xpSpent > 0 ? xpSpent + ' XP' : '-'}</td>
           <td class="delete-cell">
             <button class="delete-history-btn" data-index="${i}" title="Delete Entry">
               <i class="fas fa-trash"></i>
@@ -837,15 +843,17 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
               <th>Total</th>
               <th>Test?</th>
               <th>Result</th>
+              <th>XP Cost</th>
               <th style="width: 60px;">Delete</th>
             </tr>
           </thead>
           <tbody>
-            ${tableRows || '<tr><td colspan="7" style="text-align: center;">No insanity history</td></tr>'}
+            ${tableRows || '<tr><td colspan="8" style="text-align: center;">No insanity history</td></tr>'}
           </tbody>
         </table>
         <div class="history-summary">
           Total Insanity: <strong>${actor.system.insanity || 0} IP</strong>
+          ${totalXPSpent > 0 ? ` | Total XP Spent: <strong>${totalXPSpent} XP</strong>` : ''}
         </div>
       </div>
     `;
@@ -878,7 +886,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   }
 
   static async _onAdjustCorruption(event, target) {
-    console.log("V2: Adjust Corruption clicked");
     if (!game.user.isGM) {
       ui.notifications.warn('Only the GM can adjust corruption.');
       return;
@@ -952,7 +959,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   }
 
   static async _onAdjustInsanity(event, target) {
-    console.log("V2: Adjust Insanity clicked");
     if (!game.user.isGM) {
       ui.notifications.warn('Only the GM can adjust insanity.');
       return;
@@ -1026,7 +1032,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   }
 
   static async _onManualInsanityTest(event, target) {
-    console.log("V2: Manual Insanity Test clicked");
     if (!game.user.isGM) {
       ui.notifications.warn('Only the GM can trigger insanity tests.');
       return;
@@ -1037,8 +1042,12 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     await InsanityHelper.promptInsanityTest(actor, threshold);
   }
 
+  static async _onPurchaseInsanityReduction(event, target) {
+    const actor = this.actor;
+    await InsanityHelper.purchaseInsanityReduction(actor);
+  }
+
   static async _onViewCurse(event, target) {
-    console.log("V2: View Curse clicked");
     const actor = this.actor;
     const chapterItem = actor.items.find(i => i.type === 'chapter' && i.system.hasCurse?.());
     if (chapterItem) {

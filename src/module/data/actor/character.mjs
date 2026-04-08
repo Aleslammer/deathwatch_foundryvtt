@@ -107,7 +107,8 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
         missionId: new fields.StringField({ initial: "", blank: true }),
         testRolled: new fields.BooleanField({ initial: false }),
         testResult: new fields.StringField({ initial: "", blank: true }),
-        testModifiers: new fields.NumberField({ initial: 0, integer: true })
+        testModifiers: new fields.NumberField({ initial: 0, integer: true }),
+        xpSpent: new fields.NumberField({ initial: 0, min: 0, integer: true })
       }),
       { initial: [] }
     );
@@ -196,11 +197,25 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
     // Find chapter item (just having it assigned means it's active, no "equipped" field)
     const chapterItem = itemsArray.find(i => i.type === 'chapter');
 
-    if (!chapterItem || !chapterItem.system.hasCurse()) {
+    if (!chapterItem) {
       return null;
     }
 
-    return chapterItem.system.getActiveCurseLevel(this.insanity || 0);
+    // Check if chapter has curse (defensive - works with both DataModel and test mocks)
+    const hasCurse = typeof chapterItem.system.hasCurse === 'function'
+      ? chapterItem.system.hasCurse()
+      : chapterItem.system.curse?.enabled;
+
+    if (!hasCurse) {
+      return null;
+    }
+
+    // Get active curse level (defensive - works with both DataModel and test mocks)
+    if (typeof chapterItem.system.getActiveCurseLevel === 'function') {
+      return chapterItem.system.getActiveCurseLevel(this.insanity || 0);
+    }
+
+    return null;
   }
 
   /**

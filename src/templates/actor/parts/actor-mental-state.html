@@ -36,7 +36,7 @@
 
       <div class="panel-actions">
         <button class="panel-btn view-history-btn" data-action="viewCorruptionHistory" title="View Corruption History">
-          <i class="fas fa-history"></i> View History
+          <i class="fas fa-history"></i> History
         </button>
         {{#if isGM}}
         <button class="panel-btn gm-adjust-btn" data-action="adjustCorruption" title="Adjust Corruption">
@@ -97,14 +97,19 @@
 
       <div class="panel-actions">
         <button class="panel-btn view-history-btn" data-action="viewInsanityHistory" title="View Insanity History">
-          <i class="fas fa-history"></i> View History
+          <i class="fas fa-history"></i> History
         </button>
+        {{#if (gt system.insanity 0)}}
+        <button class="panel-btn purchase-btn" data-action="purchaseInsanityReduction" title="Spend XP to reduce Insanity (100 XP per point)">
+          <i class="fas fa-coins"></i> Purchase
+        </button>
+        {{/if}}
         {{#if isGM}}
         <button class="panel-btn gm-adjust-btn" data-action="adjustInsanity" title="Adjust Insanity">
           <i class="fas fa-edit"></i> Adjust
         </button>
         <button class="panel-btn manual-test-btn" data-action="manualInsanityTest" title="Trigger Insanity Test">
-          <i class="fas fa-dice-d20"></i> Insanity Test
+          <i class="fas fa-dice-d20"></i> Test
         </button>
         {{/if}}
       </div>
@@ -132,14 +137,11 @@
             </h4>
           </div>
           <div class="trauma-actions">
-            <button class="trauma-btn" data-action="showTrauma" data-item-id="{{trauma._id}}" title="View in Chat">
-              <i class="fas fa-comment-alt"></i> View
+            <button class="trauma-btn" data-action="editItem" data-item-id="{{trauma._id}}" title="View Details">
+              <i class="fas fa-eye"></i> View
             </button>
             {{#if ../isGM}}
-            <button class="trauma-btn edit-btn" data-action="editItem" title="Edit">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="trauma-btn delete-btn" data-action="deleteItem" title="Remove">
+            <button class="trauma-btn delete-btn" data-action="deleteItem" data-item-id="{{trauma._id}}" title="Remove">
               <i class="fas fa-trash"></i>
             </button>
             {{/if}}

@@ -190,7 +190,16 @@
 
 .manual-test-btn {
   background: rgba(150, 100, 100, 0.3);
-  flex-grow: 2;
+}
+
+.purchase-btn {
+  background: rgba(100, 150, 100, 0.3);
+  border-color: #4ecca3;
+}
+
+.purchase-btn:hover {
+  background: rgba(100, 150, 100, 0.5);
+  border-color: #4ecca3;
 }
 
 /* Section Cards */
@@ -530,6 +539,10 @@
 .history-table .points-cell {
   color: #ff6b6b;
   font-weight: bold;
+}
+
+.history-table .points-negative {
+  color: #4ecca3;
 }
 
 .history-table .test-success {

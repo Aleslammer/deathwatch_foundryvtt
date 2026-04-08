@@ -2,9 +2,7 @@
 import { DeathwatchActor } from "./documents/actor.mjs";
 import { DeathwatchItem } from "./documents/item.mjs";
 // Import sheet classes.
-import { DeathwatchActorSheet } from "./sheets/actor-sheet.mjs";
 import { DeathwatchActorSheetV2 } from "./sheets/actor-sheet-v2.mjs";
-import { DeathwatchItemSheet } from "./sheets/item-sheet.mjs";
 import { DeathwatchItemSheetV2 } from "./sheets/item-sheet-v2.mjs";
 // Import initialization modules.
 import { SettingsRegistrar } from "./init/settings.mjs";
@@ -66,14 +64,11 @@ Hooks.once('init', async function () {
   // Register runtime hooks
   InitHooks.register();
 
-  // Register sheet application classes
-  const useV2 = game.settings.get('deathwatch', 'useV2Sheets');
-  const ActorSheetClass = useV2 ? DeathwatchActorSheetV2 : DeathwatchActorSheet;
-  const ItemSheetClass = useV2 ? DeathwatchItemSheetV2 : DeathwatchItemSheet;
+  // Register sheet application classes (V2 only)
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
-  foundry.documents.collections.Actors.registerSheet("deathwatch", ActorSheetClass, { makeDefault: true });
+  foundry.documents.collections.Actors.registerSheet("deathwatch", DeathwatchActorSheetV2, { makeDefault: true });
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
-  foundry.documents.collections.Items.registerSheet("deathwatch", ItemSheetClass, { makeDefault: true });
+  foundry.documents.collections.Items.registerSheet("deathwatch", DeathwatchItemSheetV2, { makeDefault: true });
 
   // Initialize Handlebars
   initializeHandlebars();

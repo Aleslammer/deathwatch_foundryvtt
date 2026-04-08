@@ -169,7 +169,7 @@ describe('Deathwatch Training', () => {
 
       expect(result.furyCount).toBe(1);
       const callArg = FoundryAdapter.createChatMessage.mock.calls[0][0];
-      expect(callArg).toContain('Volatile');
+      expect(callArg.content).toContain('Volatile');
     });
 
     it('chains auto-confirm on subsequent natural 10s against xenos', async () => {

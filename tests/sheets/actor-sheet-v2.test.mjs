@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import { DeathwatchActorSheetV2 } from '../../src/module/sheets/actor-sheet-v2.mjs';
-import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
 import { ItemListPreparer } from '../../src/module/sheets/shared/data-preparers/item-list-preparer.mjs';
 import { CharacterDataPreparer } from '../../src/module/sheets/shared/data-preparers/character-data-preparer.mjs';
+import { SkillHelper } from '../../src/module/helpers/character/skill-helper.mjs';
 
 global.duplicate = jest.fn((obj) => JSON.parse(JSON.stringify(obj)));
 
@@ -64,25 +64,25 @@ describe('DeathwatchActorSheetV2', () => {
     it('calculates skill total for trained skill', () => {
       const skill = { characteristic: 'ws', trained: true, expert: false, mastered: false, modifier: 5 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(45);
+      expect(SkillHelper.calculateSkillTotal(skill, characteristics)).toBe(45);
     });
 
     it('calculates skill total for untrained skill', () => {
       const skill = { characteristic: 'ws', trained: false, expert: false, mastered: false, modifier: 0 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(20);
+      expect(SkillHelper.calculateSkillTotal(skill, characteristics)).toBe(20);
     });
 
     it('calculates skill total for mastered skill', () => {
       const skill = { characteristic: 'ws', trained: true, expert: false, mastered: true, modifier: 0 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(50);
+      expect(SkillHelper.calculateSkillTotal(skill, characteristics)).toBe(50);
     });
 
     it('calculates skill total for expert skill', () => {
       const skill = { characteristic: 'ws', trained: true, expert: true, mastered: false, modifier: 0 };
       const characteristics = { ws: { value: 40 } };
-      expect(DeathwatchActorSheet.calculateSkillTotal(skill, characteristics)).toBe(60);
+      expect(SkillHelper.calculateSkillTotal(skill, characteristics)).toBe(60);
     });
   });
 

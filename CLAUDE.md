@@ -224,39 +224,31 @@ game.settings.get('deathwatch', 'activeSquadAbilities') // Array of active Squad
 
 ### Sheet Architecture
 
-The system has **two sheet implementations** (toggled via user setting):
+The system uses **Foundry ApplicationV2** sheets exclusively (as of 2026-04-08):
 
-1. **v1 sheets** (default): `src/module/sheets/actor-sheet.mjs`, `src/module/sheets/item-sheet.mjs`
-   - Uses Foundry Application v1 pattern
-   - Handlebars templates in `src/templates/`
+- **Actor sheet**: `src/module/sheets/actor-sheet-v2.mjs`
+- **Item sheet**: `src/module/sheets/item-sheet-v2.mjs`
+- Handlebars templates in `src/templates/`
 
-2. **v2 sheets** (experimental): `src/module/sheets/actor-sheet-v2.mjs`, `src/module/sheets/item-sheet-v2.mjs`
-   - Uses ApplicationV2 pattern (Foundry v13+)
-   - Gradually migrating to this architecture
-
-Toggle in Foundry: **Game Settings → System Settings → Use ApplicationV2 Sheets**
-
-#### Sheet Handler Modules
-
-Sheet event listeners are organized into modular handler classes in `src/module/sheets/shared/handlers/`:
-
-- **`sheet-handlers.mjs`** — Input focus, status effects, collapsible sections
-- **`skill-handlers.mjs`** — Skill roll dialogs, checkbox cascade logic
-- **`characteristic-handlers.mjs`** — Characteristic test dialogs
-- **`item-display-handlers.mjs`** — Show items in chat, use powers, activate abilities
-- **`item-management-handlers.mjs`** — Item CRUD, equip, attachments, modifiers, effects
-- **`weapon-handlers.mjs`** — Weapon attacks, damage rolls, jam clearing
-- **`drop-handlers.mjs`** — Drag-and-drop item handling
-
-**Pattern**: Each handler class exports a static `attach(html, actor, sheet)` method that registers all relevant event listeners. This keeps `activateListeners()` concise (37 lines) and makes handlers independently testable and reusable across sheet versions.
+**Action handler pattern**: Sheet event handlers are defined as static methods in the sheet class and registered in the `DEFAULT_OPTIONS.actions` object. Each action is referenced by name in the template using `data-action` attributes.
 
 **Example**:
 ```javascript
-// In actor-sheet.mjs activateListeners()
-ItemDisplayHandlers.attach(html, this.actor);
-ItemManagementHandlers.attach(html, this.actor, this);
-WeaponHandlers.attach(html, this.actor, this);
+// In actor-sheet-v2.mjs
+static DEFAULT_OPTIONS = {
+  actions: {
+    rollSkill: DeathwatchActorSheetV2._onRollSkill,
+    weaponAttack: DeathwatchActorSheetV2._onWeaponAttack,
+    purchaseInsanityReduction: DeathwatchActorSheetV2._onPurchaseInsanityReduction,
+    // ...
+  }
+};
+
+// In template
+<button data-action="rollSkill" data-skill="awareness">Roll Awareness</button>
 ```
+
+**Shared handler modules**: Some handler classes in `src/module/sheets/shared/handlers/` are retained for backward compatibility and potential custom sheet implementations, but the v2 sheets use inline action handlers.
 
 ---
 
@@ -388,7 +380,7 @@ const actor = FoundryAdapter.getActor(actorId);
 - ❌ Synchronous getters/setters
 - ❌ FoundryAdapter methods (they handle their own errors)
 
-**Example pattern**: See `src/module/sheets/actor-sheet.mjs` for comprehensive usage examples.
+**Example pattern**: See `src/module/sheets/actor-sheet-v2.mjs` for comprehensive usage examples.
 
 ---
 

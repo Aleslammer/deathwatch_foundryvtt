@@ -1,6 +1,6 @@
 import { getRankImage } from '../../../helpers/character/rank-helper.mjs';
 import { WoundHelper } from '../../../helpers/character/wound-helper.mjs';
-import { DeathwatchActorSheet } from '../../actor-sheet.mjs';
+import { SkillHelper } from '../../../helpers/character/skill-helper.mjs';
 import { InsanityHelper } from '../../../helpers/insanity/insanity-helper.mjs';
 
 /**
@@ -163,7 +163,7 @@ export class CharacterDataPreparer {
    */
   static _calculateSkillTotal(skill, skillKey, context, actor) {
     const liveSkill = actor.system.skills[skillKey];
-    const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(skill, context.system.characteristics);
+    const baseSkillTotal = SkillHelper.calculateSkillTotal(skill, context.system.characteristics);
     const skillModTotal = liveSkill?.modifierTotal || 0;
     return baseSkillTotal + skillModTotal;
   }

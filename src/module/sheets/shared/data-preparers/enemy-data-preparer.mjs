@@ -1,5 +1,5 @@
 import { WoundHelper } from '../../../helpers/character/wound-helper.mjs';
-import { DeathwatchActorSheet } from '../../actor-sheet.mjs';
+import { SkillHelper } from '../../../helpers/character/skill-helper.mjs';
 
 /**
  * Prepares Enemy/Horde-specific data for enemy sheets.
@@ -51,7 +51,7 @@ export class EnemyDataPreparer {
 
       // Calculate skill total from live data (includes modifierTotal)
       const liveSkill = actor.system.skills[k];
-      const baseSkillTotal = DeathwatchActorSheet.calculateSkillTotal(v, context.system.characteristics);
+      const baseSkillTotal = SkillHelper.calculateSkillTotal(v, context.system.characteristics);
       const skillModTotal = liveSkill?.modifierTotal || 0;
       v.total = baseSkillTotal + skillModTotal;
     }

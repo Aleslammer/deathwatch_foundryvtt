@@ -9,16 +9,6 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
-    TODO: Corruption & Insanity — tracking, thresholds, disorders, mutations
-
-        Just needs to be tracked as a count.
-
-    TODO: Insanity it a much larger effects
-        Can result in Battle Trauma
-        Along the track will bring along Primarch's Curse effects
-        Also must allow for purchasing back insanity points to threshold levels
-        
-
     TODO: Remove the V1 sheets.   They are anot needed anymore.  Also the option to trigger both sheet types
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
@@ -30,6 +20,14 @@ System:
         Mechanics (ammo depletion etc)
         system events
         cohesion        
+
+Mental State:
+    TODO: still need to test the form out in combat.
+    TODO: need to work out how it interacts as a player
+    TODO: still need to support "buying" correction
+    TODO: view button should show as edit
+    TODO: Battle Trauma table is wierd.   Dont know why this is not working.
+    TODO: images on the battle trauma do not show right
 
 Traits
 

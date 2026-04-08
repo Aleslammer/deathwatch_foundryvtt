@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { EnemyDataPreparer } from '../../src/module/sheets/shared/data-preparers/enemy-data-preparer.mjs';
 import { WoundHelper } from '../../src/module/helpers/character/wound-helper.mjs';
-import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
+import { SkillHelper } from '../../src/module/helpers/character/skill-helper.mjs';
 
 describe('EnemyDataPreparer', () => {
   let mockContext;
@@ -125,7 +125,7 @@ describe('EnemyDataPreparer', () => {
     });
 
     it('calculates skill totals including modifiers', () => {
-      jest.spyOn(DeathwatchActorSheet, 'calculateSkillTotal').mockImplementation((skill, chars) => {
+      jest.spyOn(SkillHelper, 'calculateSkillTotal').mockImplementation((skill, chars) => {
         // Mock calculation: just return a fixed value for simplicity
         if (skill.advances === 10) return 50; // awareness
         if (skill.advances === 0) return 30;  // dodge
@@ -157,7 +157,7 @@ describe('EnemyDataPreparer', () => {
         dodge: { advances: 5, trained: true, modifierTotal: 0 }
       };
 
-      jest.spyOn(DeathwatchActorSheet, 'calculateSkillTotal').mockReturnValue(0);
+      jest.spyOn(SkillHelper, 'calculateSkillTotal').mockReturnValue(0);
 
       EnemyDataPreparer.prepareSkills(mockContext, mockActor);
 
@@ -177,7 +177,7 @@ describe('EnemyDataPreparer', () => {
 
     it('handles skills with missing modifierTotal', () => {
       mockActor.system.skills.awareness.modifierTotal = undefined;
-      jest.spyOn(DeathwatchActorSheet, 'calculateSkillTotal').mockReturnValue(50);
+      jest.spyOn(SkillHelper, 'calculateSkillTotal').mockReturnValue(50);
 
       EnemyDataPreparer.prepareSkills(mockContext, mockActor);
 

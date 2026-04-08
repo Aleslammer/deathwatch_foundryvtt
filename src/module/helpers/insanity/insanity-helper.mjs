@@ -1,4 +1,4 @@
-import { INSANITY_TRACK, ROLL_CONSTANTS, BATTLE_TRAUMA } from '../constants/index.mjs';
+import { INSANITY_TRACK, ROLL_CONSTANTS, BATTLE_TRAUMA, INSANITY_REDUCTION } from '../constants/index.mjs';
 import { FoundryAdapter } from '../foundry-adapter.mjs';
 import { Sanitizer } from '../sanitizer.mjs';
 
@@ -480,6 +480,161 @@ export class InsanityHelper {
     await FoundryAdapter.createChatMessage({
       speaker: FoundryAdapter.getChatSpeaker({ actor }),
       content: label + details
+    });
+  }
+
+  /**
+   * Purchase insanity point reduction with XP.
+   *
+   * Characters may spend 100 XP per Insanity Point removed, but cannot
+   * cross down a track level (cannot reduce degree of madness).
+   *
+   * Non-pure - uses Foundry API via FoundryAdapter.
+   *
+   * Core p. 216
+   *
+   * @param {DeathwatchActor} actor - The character purchasing reduction
+   * @returns {Promise<void>}
+   */
+  static async purchaseInsanityReduction(actor) {
+    const currentInsanity = actor.system.insanity || 0;
+    const currentXP = actor.system.xp?.available || 0;
+
+    // Determine track level for floor calculation
+    // Special case: 100+ insanity is "removed" but for purchase purposes,
+    // treat as level 3 (cannot reduce below 91)
+    let trackLevel = this.getTrackLevel(currentInsanity);
+    if (currentInsanity >= INSANITY_TRACK.REMOVAL) {
+      trackLevel = 3;
+    }
+
+    // Determine floor (minimum insanity for current track level)
+    const floor = INSANITY_REDUCTION.TRACK_FLOORS[trackLevel] || 0;
+
+    // Maximum points that can be purchased
+    const maxPointsAvailable = currentInsanity - floor;
+    const maxPointsAffordable = Math.floor(currentXP / INSANITY_REDUCTION.XP_COST_PER_POINT);
+    const maxPoints = Math.min(maxPointsAvailable, maxPointsAffordable);
+
+    if (maxPoints <= 0) {
+      if (maxPointsAffordable <= 0) {
+        FoundryAdapter.showNotification('warn', `Not enough XP. Need ${INSANITY_REDUCTION.XP_COST_PER_POINT} XP per point.`);
+      } else {
+        FoundryAdapter.showNotification('warn', 'Cannot reduce insanity below current track level.');
+      }
+      return;
+    }
+
+    const actorName = Sanitizer.escape(actor.name);
+
+    const content = `
+      <form class="insanity-purchase-dialog deathwatch-dialog">
+        <div class="form-group">
+          <p><strong>${actorName}</strong> seeks redemption through prayer and reflection.</p>
+          <p>Current Insanity: <strong>${currentInsanity} IP</strong> (Track Level ${trackLevel})</p>
+          <p>Available XP: <strong>${currentXP}</strong></p>
+        </div>
+
+        <div class="form-group">
+          <p class="info-box">
+            You may spend XP to reduce Insanity Points through long hours of prayer
+            and counsel with Deathwatch Chaplains. However, you cannot reduce your
+            degree of madness (track level) once gained.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>Points to Remove:</label>
+          <input type="number" name="points" value="1" min="1" max="${maxPoints}" autofocus />
+          <p class="hint">Cost: ${INSANITY_REDUCTION.XP_COST_PER_POINT} XP per point | Max: ${maxPoints} points (${floor} IP minimum)</p>
+        </div>
+
+        <div class="form-group preview">
+          <label>XP Cost:</label>
+          <input type="number" name="cost-preview" value="${INSANITY_REDUCTION.XP_COST_PER_POINT}" readonly class="cost-display" />
+        </div>
+
+        <div class="form-group preview">
+          <label>New Insanity:</label>
+          <input type="number" name="insanity-preview" value="${currentInsanity - 1}" readonly class="insanity-display" />
+        </div>
+
+        <div class="form-group preview">
+          <label>Remaining XP:</label>
+          <input type="number" name="xp-preview" value="${currentXP - INSANITY_REDUCTION.XP_COST_PER_POINT}" readonly class="xp-display" />
+        </div>
+      </form>
+    `;
+
+    await FoundryAdapter.showDialog({
+      title: 'Purchase Insanity Reduction',
+      content,
+      buttons: {
+        purchase: {
+          icon: '<i class="fas fa-coins"></i>',
+          label: 'Purchase',
+          callback: async (html) => {
+            const points = Math.min(
+              Math.max(1, parseInt(html.find('[name="points"]').val()) || 1),
+              maxPoints
+            );
+            const cost = points * INSANITY_REDUCTION.XP_COST_PER_POINT;
+            const newInsanity = currentInsanity - points;
+
+            // Add history entry with negative points and XP cost
+            const entry = {
+              points: -points,
+              source: 'XP Purchase - Prayer and Chaplain Counsel',
+              timestamp: Date.now(),
+              missionId: '',
+              testRolled: false,
+              testResult: '',
+              testModifiers: 0,
+              xpSpent: cost
+            };
+
+            const history = [...(actor.system.insanityHistory || []), entry];
+
+            // Update insanity and history (XP.spent will be recalculated automatically in prepareDerivedData)
+            await FoundryAdapter.updateDocument(actor, {
+              'system.insanity': newInsanity,
+              'system.insanityHistory': history
+            });
+
+            // Post to chat
+            const label = `[Insanity Reduced] ${actorName} -${points} IP<br>Total: <strong>${newInsanity} IP</strong> (Track Level ${this.getTrackLevel(newInsanity)})`;
+            const details = `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Details</summary><div style="font-size:0.85em;margin-top:4px;">Spent ${cost} XP through prayer and reflection with Deathwatch Chaplains.</div></details>`;
+
+            await FoundryAdapter.createChatMessage({
+              speaker: FoundryAdapter.getChatSpeaker({ actor }),
+              content: label + details
+            });
+
+            FoundryAdapter.showNotification('info', `Reduced insanity by ${points} points for ${cost} XP.`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Cancel'
+        }
+      },
+      default: 'purchase',
+      render: (html) => {
+        // Update previews dynamically
+        html.find('[name="points"]').on('input', (event) => {
+          const points = Math.min(
+            Math.max(1, parseInt(event.target.value) || 1),
+            maxPoints
+          );
+          const cost = points * INSANITY_REDUCTION.XP_COST_PER_POINT;
+          const newInsanity = currentInsanity - points;
+          const remainingXP = currentXP - cost;
+
+          html.find('.cost-display').val(cost);
+          html.find('.insanity-display').val(newInsanity);
+          html.find('.xp-display').val(remainingXP);
+        });
+      }
     });
   }
 }
