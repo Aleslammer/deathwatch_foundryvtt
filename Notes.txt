@@ -101,7 +101,6 @@ Strength (x2), although its speed will significantly decrease
 based on its load.
 
 
-
 What Q thinks is missing
 
 Core Combat Mechanics
