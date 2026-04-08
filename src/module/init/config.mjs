@@ -54,7 +54,8 @@ export class ConfigRegistrar {
       armor: models.DeathwatchArmor,
       chapter: models.DeathwatchChapter,
       specialty: models.DeathwatchSpecialty,
-      weapon: models.DeathwatchWeapon
+      weapon: models.DeathwatchWeapon,
+      "battle-trauma": models.DeathwatchBattleTrauma
     };
 
     // Register status effects

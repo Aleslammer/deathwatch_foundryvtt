@@ -1,6 +1,7 @@
 import { getRankImage } from '../../../helpers/character/rank-helper.mjs';
 import { WoundHelper } from '../../../helpers/character/wound-helper.mjs';
 import { DeathwatchActorSheet } from '../../actor-sheet.mjs';
+import { InsanityHelper } from '../../../helpers/insanity/insanity-helper.mjs';
 
 /**
  * Prepares character-specific data for character sheets.
@@ -21,6 +22,7 @@ export class CharacterDataPreparer {
     this.prepareRankAndWounds(context);
     this.prepareRenown(context);
     this.preparePsyRating(context);
+    this.prepareMentalState(context, actor);
   }
 
   /**
@@ -251,5 +253,77 @@ export class CharacterDataPreparer {
   static preparePsyRating(context) {
     // Show Psy Rating box if specialty has hasPsyRating
     context.showPsyRating = context.specialtyItem?.system?.hasPsyRating || false;
+  }
+
+  /**
+   * Prepare mental state data (corruption, insanity, battle traumas).
+   * @param {Object} context - Sheet context
+   * @param {Actor} actor - Actor document
+   */
+  static prepareMentalState(context, actor) {
+    const system = context.system;
+
+    // Corruption percentage
+    context.corruptionPercent = Math.min(100, (system.corruption || 0));
+
+    // Insanity percentage
+    context.insanityPercent = Math.min(100, (system.insanity || 0));
+
+    // Trauma modifier from track level
+    context.traumaModifier = InsanityHelper.getTraumaModifier(system.insanity || 0);
+
+    // Battle traumas list - convert items to array if needed
+    const itemsArray = actor.items instanceof Map
+      ? Array.from(actor.items.values())
+      : Array.isArray(actor.items)
+        ? actor.items
+        : Array.from(actor.items);
+    context.battleTraumas = itemsArray.filter(i => i.type === 'battle-trauma');
+
+    // Format insanity history
+    context.insanityHistory = this._formatInsanityHistory(system.insanityHistory || []);
+
+    // Format corruption history
+    context.corruptionHistory = this._formatCorruptionHistory(system.corruptionHistory || []);
+  }
+
+  /**
+   * Format insanity history entries with cumulative totals.
+   * @param {Array} history - Raw history entries
+   * @returns {Array} Formatted entries
+   * @private
+   */
+  static _formatInsanityHistory(history) {
+    let runningTotal = 0;
+    return history.map(entry => {
+      runningTotal += entry.points;
+      return {
+        date: new Date(entry.timestamp).toLocaleDateString(),
+        source: entry.source,
+        points: entry.points,
+        total: runningTotal,
+        testRolled: entry.testRolled,
+        testResult: entry.testResult || '—'
+      };
+    }).reverse(); // Most recent first
+  }
+
+  /**
+   * Format corruption history entries with cumulative totals.
+   * @param {Array} history - Raw history entries
+   * @returns {Array} Formatted entries
+   * @private
+   */
+  static _formatCorruptionHistory(history) {
+    let runningTotal = 0;
+    return history.map(entry => {
+      runningTotal += entry.points;
+      return {
+        date: new Date(entry.timestamp).toLocaleDateString(),
+        source: entry.source,
+        points: entry.points,
+        total: runningTotal
+      };
+    }).reverse(); // Most recent first
   }
 }

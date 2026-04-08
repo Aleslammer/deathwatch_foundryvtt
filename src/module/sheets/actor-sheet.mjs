@@ -15,6 +15,7 @@ import { DropHandlers } from "./shared/handlers/drop-handlers.mjs";
 import { ItemDisplayHandlers } from "./shared/handlers/item-display-handlers.mjs";
 import { ItemManagementHandlers } from "./shared/handlers/item-management-handlers.mjs";
 import { WeaponHandlers } from "./shared/handlers/weapon-handlers.mjs";
+import { MentalStateHandlers } from "./shared/handlers/mental-state-handlers.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -68,6 +69,10 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
     // (toObject() strips prepareDerivedData() values like characteristic.mod, movement, etc.)
     context.system = { ...this.actor.system };
     context.flags = actorData.flags;
+
+    // Add user context for template conditionals
+    context.isGM = game.user.isGM;
+    console.log("ActorSheet.getData - isGM:", context.isGM);
 
     // Prepare type-specific data using data preparers
     if (actorData.type === 'character') {
@@ -127,6 +132,7 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
   /** @override */
   /* istanbul ignore next */
   activateListeners(html) {
+    console.log("ActorSheet.activateListeners called", this.actor.name);
     super.activateListeners(html);
 
     // Attach sheet-specific handlers (input focus, status effects, collapsible sections)
@@ -137,6 +143,9 @@ export class DeathwatchActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     // Attach item display handlers (show in chat, use power, activate ability)
     ItemDisplayHandlers.attach(html, this.actor);
+
+    // Attach mental state handlers (corruption, insanity, battle traumas)
+    MentalStateHandlers.attach(html, this.actor);
 
     // -------------------------------------------------------------
     // Everything below here is only needed if the sheet is editable

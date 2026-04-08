@@ -55,7 +55,7 @@ export class RighteousFuryHelper {
       const flavor = isVolatile
         ? ChatMessageBuilder.createVolatileAutoConfirmFlavor()
         : ChatMessageBuilder.createDeathwatchTrainingAutoConfirmFlavor();
-      await FoundryAdapter.createChatMessage(flavor, speaker);
+      await FoundryAdapter.createChatMessage({ content: flavor, speaker });
     } else {
       keepChecking = await this.rollConfirmation(actor, targetNumber, hitLocation);
     }
@@ -78,7 +78,7 @@ export class RighteousFuryHelper {
           const flavor = isVolatile
             ? ChatMessageBuilder.createVolatileAutoConfirmFlavor()
             : ChatMessageBuilder.createDeathwatchTrainingAutoConfirmFlavor();
-          await FoundryAdapter.createChatMessage(flavor, speaker);
+          await FoundryAdapter.createChatMessage({ content: flavor, speaker });
           keepChecking = true;
         } else {
           keepChecking = await this.rollConfirmation(actor, targetNumber, hitLocation);

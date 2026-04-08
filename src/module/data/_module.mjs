@@ -22,3 +22,4 @@ export { default as DeathwatchArmor } from './item/armor.mjs';
 export { default as DeathwatchChapter } from './item/chapter.mjs';
 export { default as DeathwatchSpecialty } from './item/specialty.mjs';
 export { default as DeathwatchWeapon } from './item/weapon.mjs';
+export { default as DeathwatchBattleTrauma } from './item/battle-trauma.mjs';

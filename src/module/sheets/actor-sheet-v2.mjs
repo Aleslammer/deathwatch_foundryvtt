@@ -12,6 +12,8 @@ import { CharacterDataPreparer } from "./shared/data-preparers/character-data-pr
 import { NPCDataPreparer } from "./shared/data-preparers/npc-data-preparer.mjs";
 import { EnemyDataPreparer } from "./shared/data-preparers/enemy-data-preparer.mjs";
 import { ItemListPreparer } from "./shared/data-preparers/item-list-preparer.mjs";
+import { InsanityHelper } from "../helpers/insanity/insanity-helper.mjs";
+import { CorruptionHelper } from "../helpers/corruption/corruption-helper.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -65,7 +67,15 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       removeSpecialty: DeathwatchActorSheetV2._onRemoveSpecialty,
       removeHistory: DeathwatchActorSheetV2._onRemoveHistory,
       toggleSection: DeathwatchActorSheetV2._onToggleSection,
-      // Step 7: drag-and-drop (handled via _onDrop override)
+      // Step 8: mental state handlers
+      viewCorruptionHistory: DeathwatchActorSheetV2._onViewCorruptionHistory,
+      viewInsanityHistory: DeathwatchActorSheetV2._onViewInsanityHistory,
+      adjustCorruption: DeathwatchActorSheetV2._onAdjustCorruption,
+      adjustInsanity: DeathwatchActorSheetV2._onAdjustInsanity,
+      manualInsanityTest: DeathwatchActorSheetV2._onManualInsanityTest,
+      showTrauma: DeathwatchActorSheetV2._onShowItem,
+      viewCurse: DeathwatchActorSheetV2._onViewCurse,
+      // Step 9: drag-and-drop (handled via _onDrop override)
     }
   };
 
@@ -131,6 +141,8 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     context.cssClass = this.isEditable ? "editable" : "locked";
     context.editable = this.isEditable;
     context.owner = this.actor.isOwner;
+    context.isGM = game.user.isGM;
+    console.log("V2 ActorSheet._prepareContext - isGM:", context.isGM);
 
     // Prepare type-specific data using data preparers
     if (this.actor.type === 'character') {
@@ -698,5 +710,339 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     const specialtyItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
     await this.actor.update({ "system.specialtyId": specialtyItem.id });
     ui.notifications.info(`Specialty set to ${specialtyItem.name}.`);
+  }
+
+  /* -------------------------------------------- */
+  /*  Mental State Action Handlers                */
+  /* -------------------------------------------- */
+
+  static async _onViewCorruptionHistory(event, target) {
+    console.log("V2: View Corruption History clicked");
+    const actor = this.actor;
+    const history = actor.system.corruptionHistory || [];
+
+    let tableRows = '';
+    let runningTotal = 0;
+
+    for (let i = 0; i < history.length; i++) {
+      const entry = history[i];
+      runningTotal += entry.points;
+      const date = new Date(entry.timestamp).toLocaleString();
+      const source = entry.source;
+      tableRows += `
+        <tr>
+          <td>${date}</td>
+          <td class="points-cell">+${entry.points} CP</td>
+          <td>${source}</td>
+          <td>${runningTotal} CP</td>
+          <td class="delete-cell">
+            <button class="delete-history-btn" data-index="${i}" title="Delete Entry">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
+    const content = `
+      <div class="history-dialog">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date/Time</th>
+              <th>Points</th>
+              <th>Source</th>
+              <th>Total</th>
+              <th style="width: 60px;">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows || '<tr><td colspan="5" style="text-align: center;">No corruption history</td></tr>'}
+          </tbody>
+        </table>
+        <div class="history-summary">
+          Total Corruption: <strong>${actor.system.corruption || 0} CP</strong>
+        </div>
+      </div>
+    `;
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: `Corruption History - ${actor.name}` },
+      content,
+      buttons: [{
+        action: 'close',
+        icon: 'fas fa-times',
+        label: 'Close',
+        callback: () => {}
+      }],
+      default: 'close',
+      render: (event, dialog) => {
+        dialog.element.querySelectorAll('.delete-history-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const index = parseInt(btn.dataset.index);
+            const history = [...actor.system.corruptionHistory];
+            const deletedEntry = history.splice(index, 1)[0];
+            await actor.update({ 'system.corruptionHistory': history });
+            ui.notifications.info(`Deleted corruption history entry from ${new Date(deletedEntry.timestamp).toLocaleString()}`);
+            dialog.close();
+            // Reopen the dialog
+            DeathwatchActorSheetV2._onViewCorruptionHistory.call({ actor }, event, dialog.element);
+          });
+        });
+      }
+    });
+  }
+
+  static async _onViewInsanityHistory(event, target) {
+    console.log("V2: View Insanity History clicked");
+    const actor = this.actor;
+    const history = actor.system.insanityHistory || [];
+
+    let tableRows = '';
+    let runningTotal = 0;
+
+    for (let i = 0; i < history.length; i++) {
+      const entry = history[i];
+      runningTotal += entry.points;
+      const date = new Date(entry.timestamp).toLocaleString();
+      const source = entry.source;
+      const testRolled = entry.testRolled ? 'Yes' : 'No';
+      const testResult = entry.testResult || 'N/A';
+
+      tableRows += `
+        <tr>
+          <td>${date}</td>
+          <td class="points-cell">+${entry.points} IP</td>
+          <td>${source}</td>
+          <td>${runningTotal} IP</td>
+          <td>${testRolled}</td>
+          <td class="${entry.testResult?.includes('Success') ? 'test-success' : 'test-failure'}">${testResult}</td>
+          <td class="delete-cell">
+            <button class="delete-history-btn" data-index="${i}" title="Delete Entry">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
+    const content = `
+      <div class="history-dialog">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date/Time</th>
+              <th>Points</th>
+              <th>Source</th>
+              <th>Total</th>
+              <th>Test?</th>
+              <th>Result</th>
+              <th style="width: 60px;">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows || '<tr><td colspan="7" style="text-align: center;">No insanity history</td></tr>'}
+          </tbody>
+        </table>
+        <div class="history-summary">
+          Total Insanity: <strong>${actor.system.insanity || 0} IP</strong>
+        </div>
+      </div>
+    `;
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: `Insanity History - ${actor.name}` },
+      content,
+      buttons: [{
+        action: 'close',
+        icon: 'fas fa-times',
+        label: 'Close',
+        callback: () => {}
+      }],
+      default: 'close',
+      render: (event, dialog) => {
+        dialog.element.querySelectorAll('.delete-history-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const index = parseInt(btn.dataset.index);
+            const history = [...actor.system.insanityHistory];
+            const deletedEntry = history.splice(index, 1)[0];
+            await actor.update({ 'system.insanityHistory': history });
+            ui.notifications.info(`Deleted insanity history entry from ${new Date(deletedEntry.timestamp).toLocaleString()}`);
+            dialog.close();
+            // Reopen the dialog
+            DeathwatchActorSheetV2._onViewInsanityHistory.call({ actor }, event, dialog.element);
+          });
+        });
+      }
+    });
+  }
+
+  static async _onAdjustCorruption(event, target) {
+    console.log("V2: Adjust Corruption clicked");
+    if (!game.user.isGM) {
+      ui.notifications.warn('Only the GM can adjust corruption.');
+      return;
+    }
+
+    const actor = this.actor;
+    const currentValue = actor.system.corruption || 0;
+
+    const content = `
+      <form class="gm-adjustment-dialog deathwatch-dialog">
+        <div class="form-group">
+          <p>Adjust <strong>${actor.name}</strong>'s Corruption</p>
+          <p>Current Corruption: <strong>${currentValue}</strong></p>
+        </div>
+
+        <div class="form-group">
+          <label>Points to Add/Remove:</label>
+          <input type="number" name="points" value="0" autofocus />
+          <p class="hint">Positive to add, negative to remove</p>
+        </div>
+
+        <div class="form-group">
+          <label>Reason:</label>
+          <input type="text" name="reason" value="GM adjustment" />
+        </div>
+
+        <div class="form-group preview">
+          <label>New Total:</label>
+          <input type="number" name="preview" value="${currentValue}" readonly class="preview-field" />
+        </div>
+      </form>
+    `;
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: 'Adjust Corruption' },
+      content,
+      buttons: [
+        {
+          action: 'apply',
+          icon: 'fas fa-check',
+          label: 'Apply',
+          callback: async (event, button, dialog) => {
+            const el = dialog.element;
+            const points = parseInt(el.querySelector('[name="points"]').value) || 0;
+            const reason = el.querySelector('[name="reason"]').value || 'GM adjustment';
+
+            if (points === 0) {
+              ui.notifications.info('No points to adjust.');
+              return;
+            }
+
+            await CorruptionHelper.addCorruption(actor, points, reason);
+          }
+        },
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'Cancel'
+        }
+      ],
+      default: 'apply',
+      render: (event, dialog) => {
+        const el = dialog.element;
+        el.querySelector('[name="points"]').addEventListener('input', (e) => {
+          const points = parseInt(e.target.value) || 0;
+          const newTotal = Math.max(0, currentValue + points);
+          el.querySelector('.preview-field').value = newTotal;
+        });
+      }
+    });
+  }
+
+  static async _onAdjustInsanity(event, target) {
+    console.log("V2: Adjust Insanity clicked");
+    if (!game.user.isGM) {
+      ui.notifications.warn('Only the GM can adjust insanity.');
+      return;
+    }
+
+    const actor = this.actor;
+    const currentValue = actor.system.insanity || 0;
+
+    const content = `
+      <form class="gm-adjustment-dialog deathwatch-dialog">
+        <div class="form-group">
+          <p>Adjust <strong>${actor.name}</strong>'s Insanity</p>
+          <p>Current Insanity: <strong>${currentValue}</strong></p>
+        </div>
+
+        <div class="form-group">
+          <label>Points to Add/Remove:</label>
+          <input type="number" name="points" value="0" autofocus />
+          <p class="hint">Positive to add, negative to remove</p>
+        </div>
+
+        <div class="form-group">
+          <label>Reason:</label>
+          <input type="text" name="reason" value="GM adjustment" />
+        </div>
+
+        <div class="form-group preview">
+          <label>New Total:</label>
+          <input type="number" name="preview" value="${currentValue}" readonly class="preview-field" />
+        </div>
+      </form>
+    `;
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: 'Adjust Insanity' },
+      content,
+      buttons: [
+        {
+          action: 'apply',
+          icon: 'fas fa-check',
+          label: 'Apply',
+          callback: async (event, button, dialog) => {
+            const el = dialog.element;
+            const points = parseInt(el.querySelector('[name="points"]').value) || 0;
+            const reason = el.querySelector('[name="reason"]').value || 'GM adjustment';
+
+            if (points === 0) {
+              ui.notifications.info('No points to adjust.');
+              return;
+            }
+
+            await InsanityHelper.addInsanity(actor, points, reason);
+          }
+        },
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'Cancel'
+        }
+      ],
+      default: 'apply',
+      render: (event, dialog) => {
+        const el = dialog.element;
+        el.querySelector('[name="points"]').addEventListener('input', (e) => {
+          const points = parseInt(e.target.value) || 0;
+          const newTotal = Math.max(0, currentValue + points);
+          el.querySelector('.preview-field').value = newTotal;
+        });
+      }
+    });
+  }
+
+  static async _onManualInsanityTest(event, target) {
+    console.log("V2: Manual Insanity Test clicked");
+    if (!game.user.isGM) {
+      ui.notifications.warn('Only the GM can trigger insanity tests.');
+      return;
+    }
+
+    const actor = this.actor;
+    const threshold = Math.floor((actor.system.insanity || 0) / 10);
+    await InsanityHelper.promptInsanityTest(actor, threshold);
+  }
+
+  static async _onViewCurse(event, target) {
+    console.log("V2: View Curse clicked");
+    const actor = this.actor;
+    const chapterItem = actor.items.find(i => i.type === 'chapter' && i.system.hasCurse?.());
+    if (chapterItem) {
+      chapterItem.sheet.render(true);
+    }
   }
 }

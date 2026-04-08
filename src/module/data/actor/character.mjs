@@ -2,6 +2,7 @@ import DeathwatchActorBase from './base-actor.mjs';
 import { ModifierCollector } from '../../helpers/character/modifier-collector.mjs';
 import { XPCalculator } from '../../helpers/character/xp-calculator.mjs';
 import { SkillLoader } from '../../helpers/character/skill-loader.mjs';
+import { INSANITY_TRACK } from '../../helpers/constants/index.mjs';
 
 const { fields } = foundry.data;
 
@@ -17,6 +18,7 @@ const { fields } = foundry.data;
  * - **Psy Rating**: For Librarians (psyker characters)
  * - **Movement**: Half/Full/Charge/Run movement rates from AG Bonus
  * - **Combat Mode**: Solo/Squad Mode tracking
+ * - **Insanity & Corruption**: Insanity Points, Corruption Points, Battle Traumas, Primarch's Curse
  *
  * Computed properties (updated in prepareDerivedData):
  * - `characteristics.*.value`: Final characteristic values after modifiers
@@ -26,6 +28,8 @@ const { fields } = foundry.data;
  * - `movement.half/full/charge/run`: Movement rates from AG Bonus
  * - `xp.spent/available`: XP spent on advances, XP available for spending
  * - `rank`: Character rank (1-8) based on total XP
+ * - `insanityTrackLevel`: Insanity track level (0-3) based on insanity points
+ * - `activeCurse`: Active Primarch's Curse level data (if chapter has curse and IP threshold met)
  *
  * @extends {DeathwatchActorBase}
  * @example
@@ -34,6 +38,8 @@ const { fields } = foundry.data;
  * const bs = actor.system.characteristics.bs.value; // 50
  * const bsBonus = actor.system.characteristics.bs.mod; // 5
  * const maxWounds = actor.system.wounds.max; // 22
+ * const insanityLevel = actor.system.insanityTrackLevel; // 1 (31-60 IP)
+ * const curse = actor.system.activeCurse; // { level: 1, name: "The Red Thirst", ... }
  */
 export default class DeathwatchCharacter extends DeathwatchActorBase {
 
@@ -80,6 +86,32 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
       max: new fields.NumberField({ initial: 0, min: 0, integer: true })
     });
     schema.renown = new fields.NumberField({ initial: 0, min: 0, integer: true });
+
+    // Mental State (Insanity & Corruption)
+    schema.corruption = new fields.NumberField({ initial: 0, min: 0, integer: true });
+    schema.corruptionHistory = new fields.ArrayField(
+      new fields.SchemaField({
+        timestamp: new fields.NumberField({ initial: 0, integer: true }),
+        source: new fields.StringField({ initial: "", blank: true }),
+        points: new fields.NumberField({ initial: 0, integer: true }),
+        missionId: new fields.StringField({ initial: "", blank: true })
+      }),
+      { initial: [] }
+    );
+    schema.insanity = new fields.NumberField({ initial: 0, min: 0, integer: true });
+    schema.insanityHistory = new fields.ArrayField(
+      new fields.SchemaField({
+        timestamp: new fields.NumberField({ initial: 0, integer: true }),
+        source: new fields.StringField({ initial: "", blank: true }),
+        points: new fields.NumberField({ initial: 0, integer: true }),
+        missionId: new fields.StringField({ initial: "", blank: true }),
+        testRolled: new fields.BooleanField({ initial: false }),
+        testResult: new fields.StringField({ initial: "", blank: true }),
+        testModifiers: new fields.NumberField({ initial: 0, integer: true })
+      }),
+      { initial: [] }
+    );
+    schema.lastInsanityTestAt = new fields.NumberField({ initial: 0, integer: true });
 
     // Modifiers
     schema.modifiers = new fields.ArrayField(new fields.ObjectField(), { initial: [] });
@@ -139,6 +171,39 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
   }
 
   /**
+   * Get current insanity track level based on insanity points.
+   *
+   * @returns {number} Insanity track level (0-3)
+   * @private
+   */
+  _getInsanityTrackLevel() {
+    const ip = this.insanity || 0;
+    if (ip <= INSANITY_TRACK.THRESHOLD_1) return 0;
+    if (ip <= INSANITY_TRACK.THRESHOLD_2) return 1;
+    if (ip <= INSANITY_TRACK.THRESHOLD_3) return 2;
+    if (ip < INSANITY_TRACK.REMOVAL) return 3;
+    return 0; // Character removed from play at 100 IP
+  }
+
+  /**
+   * Get active Primarch's Curse data from equipped chapter item.
+   *
+   * @param {Array} itemsArray - Character's items
+   * @returns {Object|null} Active curse level data or null if no curse active
+   * @private
+   */
+  _getActiveCurse(itemsArray) {
+    // Find chapter item (just having it assigned means it's active, no "equipped" field)
+    const chapterItem = itemsArray.find(i => i.type === 'chapter');
+
+    if (!chapterItem || !chapterItem.system.hasCurse()) {
+      return null;
+    }
+
+    return chapterItem.system.getActiveCurseLevel(this.insanity || 0);
+  }
+
+  /**
    * Compute all character derived data.
    * Moved from actor.mjs _prepareCharacterData().
    */
@@ -154,12 +219,13 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
    * 2. Calculate rank from total XP
    * 3. Calculate spent XP from item costs
    * 4. Convert items Map to Array (performance optimization)
-   * 5. Collect modifiers from items/effects/chapter/specialty
-   * 6. Apply modifiers to characteristics → compute final values and bonuses
-   * 7. Apply modifiers to skills → compute final target numbers
-   * 8. Apply modifiers to initiative, wounds, fatigue, armor, Psy Rating
-   * 9. Apply force weapon modifiers (for Librarians)
-   * 10. Calculate movement rates from AG Bonus
+   * 5. Compute insanity track level and active Primarch's Curse
+   * 6. Collect modifiers from items/effects/chapter/specialty/battle traumas
+   * 7. Apply modifiers to characteristics → compute final values and bonuses
+   * 8. Apply modifiers to skills → compute final target numbers
+   * 9. Apply modifiers to initiative, wounds, fatigue, armor, Psy Rating
+   * 10. Apply force weapon modifiers (for Librarians)
+   * 11. Calculate movement rates from AG Bonus
    *
    * **Performance note:** Items are converted from Map to Array once at the
    * start and passed to all modifier methods, eliminating redundant conversions.
@@ -189,10 +255,15 @@ export default class DeathwatchCharacter extends DeathwatchActorBase {
     }
 
     // Convert items Map to Array once (performance optimization)
-    // If items has .get() method (Map or test mock), keep it as-is; otherwise convert to array
-    const itemsArray = typeof actor.items.get === 'function'
-      ? (actor.items instanceof Map ? Array.from(actor.items.values()) : actor.items)
-      : Array.from(actor.items);
+    const itemsArray = actor.items instanceof Map
+      ? Array.from(actor.items.values())
+      : Array.isArray(actor.items)
+        ? actor.items
+        : Array.from(actor.items);
+
+    // Compute insanity/corruption derived data
+    this.insanityTrackLevel = this._getInsanityTrackLevel();
+    this.activeCurse = this._getActiveCurse(itemsArray);
 
     // Collect and apply modifiers
     const allModifiers = ModifierCollector.collectAllModifiers(actor, itemsArray);
