@@ -226,6 +226,37 @@ describe('resolveRangedAttack', () => {
     });
   });
 
+  describe('Thrown Weapons', () => {
+    const thrownWeapon = () => makeWeapon({ class: 'Thrown' });
+
+    it('cannot jam even on rolls that would normally jam', async () => {
+      const result = await RangedCombatHelper.resolveRangedAttack(makeActor(40), thrownWeapon(), baseOptions({ hitValue: 96 }));
+      expect(result.isJammed).toBe(false);
+    });
+
+    it('cannot jam on full auto jam threshold', async () => {
+      const result = await RangedCombatHelper.resolveRangedAttack(makeActor(40), thrownWeapon(), baseOptions({
+        hitValue: 94,
+        autoFire: RATE_OF_FIRE_MODIFIERS.FULL_AUTO,
+        rofParts: ['-', '-', '10']
+      }));
+      expect(result.isJammed).toBe(false);
+    });
+
+    it('cannot jam even with unreliable quality', async () => {
+      setupQualityPack(['unreliable']);
+      const weapon = makeWeapon({ class: 'Thrown', attachedQualities: [{ id: 'unreliable' }] });
+      const result = await RangedCombatHelper.resolveRangedAttack(makeActor(40), weapon, baseOptions({ hitValue: 91 }));
+      expect(result.isJammed).toBe(false);
+    });
+
+    it('handles case insensitive class check', async () => {
+      const weapon = makeWeapon({ class: 'THROWN' });
+      const result = await RangedCombatHelper.resolveRangedAttack(makeActor(40), weapon, baseOptions({ hitValue: 96 }));
+      expect(result.isJammed).toBe(false);
+    });
+  });
+
   describe('Overheats', () => {
     const overheatsWeapon = () => makeWeapon({ attachedQualities: [{ id: 'overheats' }] });
 

@@ -30,14 +30,12 @@ Traits
 Talents
 
 Weapon Upgrade:
-    Fire selector!
 
 Gear:
     Relics
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
-    Servitors - Need to add as NPC\enemies?  PG 178 and 376
     Grenades - Can we wite up something that a miss on a grenade throw auto rolls scatter?
     Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
 
@@ -60,7 +58,6 @@ Armor:
 Orks:
 
 Gameplay:
-    Fear-based Cohesion damage — Fear creatures causing Cohesion loss
 
 Campaign Systems
     Mission structure — primary/secondary/tertiary objectives

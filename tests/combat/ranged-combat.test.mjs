@@ -161,4 +161,103 @@ describe('RangedCombatHelper', () => {
       expect(RangedCombatHelper.calculateMaxHits(1, true)).toBe(2);
     });
   });
+
+  describe('rollScatter', () => {
+    let mockActor, mockWeapon, mockTable, mockTablePack;
+
+    beforeEach(() => {
+      mockActor = {
+        name: 'Test Marine',
+        getActiveTokens: jest.fn(() => [])
+      };
+      mockWeapon = {
+        name: 'Frag Grenade',
+        system: { class: 'Thrown' }
+      };
+
+      // Mock the scatter table
+      mockTable = {
+        draw: jest.fn().mockResolvedValue({
+          results: [{
+            name: '',
+            description: 'Upper Right'
+          }]
+        })
+      };
+
+      // Mock compendium pack
+      mockTablePack = {
+        index: [{ _id: 'scatter-table-id', name: 'Scatter' }],
+        getDocument: jest.fn().mockResolvedValue(mockTable)
+      };
+
+      global.game.packs = {
+        get: jest.fn((packId) => {
+          if (packId === 'deathwatch.tables') return mockTablePack;
+          return null;
+        })
+      };
+
+      global.game.tables = {
+        getName: jest.fn(() => null)
+      };
+
+      // Mock Roll
+      global.Roll = jest.fn().mockImplementation(() => ({
+        evaluate: jest.fn().mockResolvedValue({ total: 3 })
+      }));
+
+      // Mock ChatMessage
+      global.ChatMessage = {
+        create: jest.fn().mockResolvedValue({}),
+        getSpeaker: jest.fn(() => ({}))
+      };
+
+      global.game.settings = {
+        get: jest.fn(() => 'roll')
+      };
+    });
+
+    it('rolls scatter direction and distance when weapon misses', async () => {
+      const result = await RangedCombatHelper.rollScatter(mockActor, mockWeapon);
+
+      expect(result).toEqual({
+        direction: 'Upper Right',
+        distance: 3
+      });
+      expect(mockTable.draw).toHaveBeenCalledWith({ displayChat: false });
+      expect(ChatMessage.create).toHaveBeenCalled();
+    });
+
+    it('creates chat message with scatter results', async () => {
+      await RangedCombatHelper.rollScatter(mockActor, mockWeapon);
+
+      const chatCall = ChatMessage.create.mock.calls[0][0];
+      expect(chatCall.content).toContain('Test Marine');
+      expect(chatCall.content).toContain('Frag Grenade');
+      expect(chatCall.content).toContain('Upper Right');
+      expect(chatCall.content).toContain('3 meters');
+    });
+
+    it('returns null and warns if scatter table not found', async () => {
+      global.game.packs.get = jest.fn(() => null);
+      global.game.tables.getName = jest.fn(() => null);
+      global.ui = { notifications: { warn: jest.fn() } };
+
+      const result = await RangedCombatHelper.rollScatter(mockActor, mockWeapon);
+
+      expect(result).toBeNull();
+      expect(ui.notifications.warn).toHaveBeenCalledWith('Scatter table not found! Import it from the Tables compendium.');
+    });
+
+    it('falls back to world tables if compendium not found', async () => {
+      global.game.packs.get = jest.fn(() => null);
+      global.game.tables.getName = jest.fn(() => mockTable);
+
+      const result = await RangedCombatHelper.rollScatter(mockActor, mockWeapon);
+
+      expect(result).not.toBeNull();
+      expect(game.tables.getName).toHaveBeenCalledWith('Scatter');
+    });
+  });
 });
