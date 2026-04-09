@@ -29,12 +29,13 @@ export class XPCalculator {
     let spent = this.STARTING_XP;
     const chapterCosts = this._getChapterCosts(actor);
     const specialtyCosts = this._getSpecialtyCosts(actor);
-    
+
     spent += this._calculateCharacteristicAdvanceCosts(actor);
     spent += this._calculateTalentCosts(actor, chapterCosts.talents, specialtyCosts.talents);
     spent += this._calculateSkillCosts(actor, chapterCosts.skills, specialtyCosts);
     spent += this._calculatePsychicPowerCosts(actor);
-    
+    spent += this._calculateInsanityReductionCosts(actor);
+
     return spent;
   }
 
@@ -202,12 +203,12 @@ export class XPCalculator {
    */
   static _calculateSkillCosts(actor, chapterSkillCosts, specialtyCosts) {
     let total = 0;
-    
+
     for (const [key, skill] of Object.entries(actor.system.skills || {})) {
       let trainCost = skill.costTrain ?? 0;
       let masterCost = skill.costMaster ?? 0;
       let expertCost = skill.costExpert ?? 0;
-      
+
       // Apply chapter overrides
       const chapterCosts = chapterSkillCosts[key];
       if (chapterCosts) {
@@ -215,7 +216,7 @@ export class XPCalculator {
         if (chapterCosts.costMaster !== undefined) masterCost = chapterCosts.costMaster;
         if (chapterCosts.costExpert !== undefined) expertCost = chapterCosts.costExpert;
       }
-      
+
       // Apply specialty base overrides (takes precedence over chapter)
       const specialtyBaseCosts = specialtyCosts.baseSkills[key];
       if (specialtyBaseCosts) {
@@ -223,7 +224,7 @@ export class XPCalculator {
         if (specialtyBaseCosts.costMaster !== undefined) masterCost = specialtyBaseCosts.costMaster;
         if (specialtyBaseCosts.costExpert !== undefined) expertCost = specialtyBaseCosts.costExpert;
       }
-      
+
       // Apply specialty rank overrides (takes precedence over base specialty)
       const specialtyRankCosts = specialtyCosts.skills[key];
       if (specialtyRankCosts !== undefined) {
@@ -235,12 +236,30 @@ export class XPCalculator {
           if (specialtyRankCosts.costExpert !== undefined) expertCost = specialtyRankCosts.costExpert;
         }
       }
-      
+
       if (skill.trained) total += Math.max(0, trainCost);
       if (skill.mastered) total += Math.max(0, masterCost);
       if (skill.expert) total += Math.max(0, expertCost);
     }
-    
+
+    return total;
+  }
+
+  /**
+   * Calculate XP spent on insanity reduction from history.
+   * Sums up all xpSpent values in insanityHistory entries.
+   * @private
+   */
+  static _calculateInsanityReductionCosts(actor) {
+    let total = 0;
+    const history = actor.system.insanityHistory || [];
+
+    for (const entry of history) {
+      if (entry.xpSpent) {
+        total += Math.max(0, entry.xpSpent);
+      }
+    }
+
     return total;
   }
 }

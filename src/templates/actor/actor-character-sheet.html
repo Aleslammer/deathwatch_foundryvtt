@@ -88,6 +88,7 @@
     {{#if showPsyRating}}
     <a class="item" data-tab="spells">Psychic Powers</a>
     {{/if}}
+    <a class="item" data-tab="mental-state">Mental State</a>
     <a class="item" data-tab="effects">Effects</a>
   </nav>
 
@@ -210,6 +211,11 @@
     {{!-- Psychic Powers Tab --}}
     <div class="tab spells" data-group="primary" data-tab="spells">
       {{> "systems/deathwatch/templates/actor/parts/actor-psychic-powers.html"}}
+    </div>
+
+    {{!-- Mental State Tab --}}
+    <div class="tab mental-state" data-group="primary" data-tab="mental-state">
+      {{> "systems/deathwatch/templates/actor/parts/actor-mental-state.html"}}
     </div>
 
     {{!-- Effects Tab --}}

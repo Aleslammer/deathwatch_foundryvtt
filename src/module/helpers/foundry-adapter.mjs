@@ -33,26 +33,30 @@ export class FoundryAdapter {
   /**
    * Send a roll result to chat.
    * @param {Roll} roll - Evaluated Roll object
-   * @param {Object} speaker - Chat speaker data
-   * @param {string} flavor - Flavor text for the roll
+   * @param {Object} options - Message options
+   * @param {Object} options.speaker - Chat speaker data
+   * @param {string} [options.flavor] - Flavor text for the roll
    * @returns {Promise<ChatMessage>}
    */
   /* istanbul ignore next */
-  static async sendRollToChat(roll, speaker, flavor) {
-    return await roll.toMessage({ speaker, flavor });
+  static async sendRollToChat(roll, options) {
+    return await roll.toMessage(options);
   }
 
   // ===== Chat Messages =====
 
   /**
    * Create a chat message.
-   * @param {string} content - HTML content for the message
-   * @param {Object} speaker - Chat speaker data
+   * @param {Object} messageData - Message data object
+   * @param {string} messageData.content - HTML content for the message
+   * @param {Object} [messageData.speaker] - Chat speaker data
+   * @param {string} [messageData.flavor] - Flavor text for the message
+   * @param {string} [messageData.type] - Message type (e.g., CHAT_MESSAGE_TYPES.OTHER)
    * @returns {Promise<ChatMessage>}
    */
   /* istanbul ignore next */
-  static async createChatMessage(content, speaker) {
-    return await ChatMessage.create({ content, speaker });
+  static async createChatMessage(messageData) {
+    return await ChatMessage.create(messageData);
   }
 
   /**
@@ -165,16 +169,68 @@ export class FoundryAdapter {
 
   /**
    * Show a dialog and wait for user response.
+   *
+   * Supports both old Dialog API (buttons as object) and new DialogV2 API (buttons as array).
+   * Automatically converts old format to new format.
+   *
    * @param {Object} config - Dialog configuration
-   * @param {Object} config.window - Window options (title, etc.)
+   * @param {string|Object} config.title - Dialog title (or config.window.title for DialogV2)
    * @param {string} config.content - HTML content
-   * @param {Array<Object>} config.buttons - Button definitions
-   * @param {Function} [config.render] - Render callback
+   * @param {Object|Array<Object>} config.buttons - Button definitions (object for old API, array for new)
+   * @param {string} [config.default] - Default button action
+   * @param {Function} [config.render] - Render callback (old API signature: (html) => {})
    * @returns {Promise<*>} Button action result
    */
   /* istanbul ignore next */
   static async showDialog(config) {
-    return await foundry.applications.api.DialogV2.wait(config);
+    // Convert old Dialog API format to DialogV2 format
+    const dialogConfig = { ...config };
+
+    // Handle title (old API uses "title", new uses "window.title")
+    if (dialogConfig.title && !dialogConfig.window) {
+      dialogConfig.window = { title: dialogConfig.title };
+      delete dialogConfig.title;
+    }
+
+    // Convert buttons from object format to array format if needed
+    if (dialogConfig.buttons && !Array.isArray(dialogConfig.buttons)) {
+      dialogConfig.buttons = Object.entries(dialogConfig.buttons).map(([action, button]) => {
+        // Convert button callback to DialogV2 signature
+        // Old API: callback(html) where html is jQuery object
+        // New API: callback(event, button, dialog) where dialog.element is HTMLElement
+        let callback = button.callback;
+        if (callback && typeof callback === 'function') {
+          const oldCallback = callback;
+          callback = async (event, btn, dialog) => {
+            const $html = $(dialog.element);
+            return await oldCallback($html);
+          };
+        }
+
+        return {
+          action,
+          icon: button.icon,
+          label: button.label,
+          callback,
+          default: action === dialogConfig.default
+        };
+      });
+      delete dialogConfig.default;
+    }
+
+    // Convert render callback to DialogV2 signature
+    // Old API: render(html) where html is jQuery object
+    // New API: render(event, dialog) where dialog.element is the HTMLElement
+    if (dialogConfig.render && typeof dialogConfig.render === 'function') {
+      const oldRender = dialogConfig.render;
+      dialogConfig.render = (event, dialog) => {
+        // Wrap dialog.element in jQuery for compatibility
+        const $html = $(dialog.element);
+        oldRender($html);
+      };
+    }
+
+    return await foundry.applications.api.DialogV2.wait(dialogConfig);
   }
 
   /**

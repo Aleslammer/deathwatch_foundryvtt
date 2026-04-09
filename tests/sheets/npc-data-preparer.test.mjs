@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { NPCDataPreparer } from '../../src/module/sheets/shared/data-preparers/npc-data-preparer.mjs';
 import { WoundHelper } from '../../src/module/helpers/character/wound-helper.mjs';
-import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
+import { SkillHelper } from '../../src/module/helpers/character/skill-helper.mjs';
 
 describe('NPCDataPreparer', () => {
   let mockContext;
@@ -127,7 +127,7 @@ describe('NPCDataPreparer', () => {
     });
 
     it('calculates skill totals including modifiers', () => {
-      jest.spyOn(DeathwatchActorSheet, 'calculateSkillTotal').mockImplementation((skill, chars) => {
+      jest.spyOn(SkillHelper, 'calculateSkillTotal').mockImplementation((skill, chars) => {
         // Mock calculation: just return a fixed value based on advances
         if (skill.advances === 15) return 30; // awareness
         if (skill.advances === 20) return 30; // command
@@ -159,7 +159,7 @@ describe('NPCDataPreparer', () => {
         command: { advances: 20, trained: true, modifierTotal: 0 }
       };
 
-      jest.spyOn(DeathwatchActorSheet, 'calculateSkillTotal').mockReturnValue(0);
+      jest.spyOn(SkillHelper, 'calculateSkillTotal').mockReturnValue(0);
 
       NPCDataPreparer.prepareSkills(mockContext, mockActor);
 
@@ -187,7 +187,7 @@ describe('NPCDataPreparer', () => {
 
     it('handles skills with missing modifierTotal', () => {
       mockActor.system.skills.awareness.modifierTotal = undefined;
-      jest.spyOn(DeathwatchActorSheet, 'calculateSkillTotal').mockReturnValue(60);
+      jest.spyOn(SkillHelper, 'calculateSkillTotal').mockReturnValue(60);
 
       NPCDataPreparer.prepareSkills(mockContext, mockActor);
 

@@ -146,7 +146,7 @@ export class CohesionHelper {
       </button>
     </div>`;
     const speaker = FoundryAdapter.getChatSpeaker();
-    await FoundryAdapter.createChatMessage(content, speaker);
+    await FoundryAdapter.createChatMessage({ content, speaker });
   }
 
   /**
@@ -192,10 +192,10 @@ export class CohesionHelper {
     await FoundryAdapter.setSetting('deathwatch', 'cohesion', { ...cohesion, value: newValue });
     const reasonText = reason ? ` ${reason}` : '';
     const speaker = FoundryAdapter.getChatSpeaker();
-    await FoundryAdapter.createChatMessage(
-      `<div class="cohesion-chat"><strong>\u2694 Cohesion Recovered</strong> \u2014 now ${newValue} / ${cohesion.max}${reasonText}</div>`,
+    await FoundryAdapter.createChatMessage({
+      content: `<div class="cohesion-chat"><strong>\u2694 Cohesion Recovered</strong> \u2014 now ${newValue} / ${cohesion.max}${reasonText}</div>`,
       speaker
-    );
+    });
     return true;
   }
 

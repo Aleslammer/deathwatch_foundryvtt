@@ -24,3 +24,9 @@ export * from './modifier-constants.mjs';
 
 // Squad/team constants
 export * from './squad-constants.mjs';
+
+// Insanity constants
+export * from './insanity-constants.mjs';
+
+// Corruption constants
+export * from './corruption-constants.mjs';

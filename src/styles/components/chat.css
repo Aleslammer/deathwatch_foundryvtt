@@ -1,0 +1,83 @@
+/* Chat Message Styling */
+
+.deathwatch-chat-card {
+  padding: 8px;
+  border-left: 3px solid #d4a574;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.deathwatch-chat-card h3 {
+  margin: 0 0 8px 0;
+  color: #f0e6d2;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-bottom: 1px solid #555;
+  padding-bottom: 4px;
+}
+
+.deathwatch-chat-card p {
+  margin: 4px 0;
+}
+
+/* Insanity Test Result Styling */
+.insanity-test-result .test-breakdown {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.insanity-test-result .test-breakdown .test-total {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #555;
+}
+
+.insanity-test-result .roll-result {
+  font-size: 1.05em;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  margin: 8px 0;
+}
+
+.insanity-test-result .success {
+  color: #6effd4;
+  font-weight: bold;
+  font-size: 1.05em;
+  padding: 6px 8px;
+  background: rgba(78, 204, 163, 0.3);
+  border-left: 3px solid #4ecca3;
+  border-radius: 3px;
+}
+
+.insanity-test-result .failure {
+  color: #ffb3b3;
+  font-weight: bold;
+  font-size: 1.05em;
+  padding: 6px 8px;
+  background: rgba(255, 107, 107, 0.3);
+  border-left: 3px solid #ff6b6b;
+  border-radius: 3px;
+}
+
+/* Battle Trauma Roll Styling */
+.battle-trauma-roll h3 {
+  color: #f0e6d2;
+  font-weight: bold;
+}
+
+.battle-trauma-roll .roll-result {
+  font-size: 1.05em;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  margin: 8px 0;
+}
+
+/* Cohesion Chat Messages */
+.cohesion-chat {
+  font-size: 1em;
+  padding: 6px 8px;
+}

@@ -25,7 +25,8 @@
             "weapon-quality",
             "weapon-upgrade",
             "psychic-power",
-            "special-ability"
+            "special-ability",
+            "battle-trauma"
         ]
     }
 }

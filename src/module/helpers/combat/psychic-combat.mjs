@@ -351,10 +351,10 @@ export class PsychicCombatHelper {
           if (range && range[0] >= 75) {
             if (noPerils) {
               const speaker = FoundryAdapter.getChatSpeaker(actor);
-              await FoundryAdapter.createChatMessage(
-                `\uD83D\uDEE1 <strong>Perils of the Warp suppressed</strong> by ${noPerilsSource}`,
+              await FoundryAdapter.createChatMessage({
+                content: `\uD83D\uDEE1 <strong>Perils of the Warp suppressed</strong> by ${noPerilsSource}`,
                 speaker
-              );
+              });
             } else {
               await this.rollPerils();
             }
@@ -510,7 +510,7 @@ export class PsychicCombatHelper {
               const safeTargetNameData = Sanitizer.escape(targetName);
               const safeTargetNameDisplay = Sanitizer.escape(targetName);
               const opposeContent = `<button class="psychic-oppose-btn" data-power-name="${safePowerNameData}" data-psyker-dos="${dos}" data-target-name="${safeTargetNameData}" data-target-id="${targetId}" data-target-wp="${targetWP}" data-scene-id="${sceneId}" data-token-id="${tokenId}">⚔ Opposed Willpower Test: ${safeTargetNameDisplay} (WP ${targetWP})</button>`;
-              await FoundryAdapter.createChatMessage(opposeContent, speaker);
+              await FoundryAdapter.createChatMessage({ content: opposeContent, speaker });
             }
 
             await PsychicCombatHelper.handlePhenomenaAndFatigue(effects, psychicMods.noPerils, psychicMods.noPerilsSource, actor);

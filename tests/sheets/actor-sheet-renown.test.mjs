@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
-import { DeathwatchActorSheet } from '../../src/module/sheets/actor-sheet.mjs';
+import { DeathwatchActorSheetV2 } from '../../src/module/sheets/actor-sheet-v2.mjs';
 import { CharacterDataPreparer } from '../../src/module/sheets/shared/data-preparers/character-data-preparer.mjs';
 
-describe('DeathwatchActorSheet - Renown Rank', () => {
+describe('DeathwatchActorSheetV2 - Renown Rank', () => {
   let sheet;
   let mockActor;
 
@@ -44,7 +44,7 @@ describe('DeathwatchActorSheet - Renown Rank', () => {
       getRollData: jest.fn(() => ({}))
     };
 
-    sheet = new DeathwatchActorSheet(mockActor, {});
+    sheet = new DeathwatchActorSheetV2(mockActor, {});
   });
 
   describe('renown rank (via CharacterDataPreparer)', () => {

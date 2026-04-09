@@ -133,6 +133,13 @@
             "system": "deathwatch"
         },
         {
+            "name": "battle-traumas",
+            "label": "Battle Traumas",
+            "path": "packs/battle-traumas",
+            "type": "Item",
+            "system": "deathwatch"
+        },
+        {
             "name": "enemies",
             "label": "Enemies",
             "path": "packs/enemies",

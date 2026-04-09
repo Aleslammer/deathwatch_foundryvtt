@@ -9,17 +9,6 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
-    TODO: Corruption & Insanity — tracking, thresholds, disorders, mutations
-
-        Just needs to be tracked as a count.
-
-    TODO: Insanity it a much larger effects
-        Can result in Battle Trauma
-        Along the track will bring along Primarch's Curse effects
-        Also must allow for purchasing back insanity points to threshold levels
-        
-
-    TODO: Remove the V1 sheets.   They are anot needed anymore.  Also the option to trigger both sheet types
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
         Melee attack
@@ -31,6 +20,13 @@ System:
         system events
         cohesion        
 
+Mental State:
+    TODO: still need to test the form out in combat.
+
+Skills:
+    TODO: Add macro ability to roll skill by name.
+
+
 Traits
 
 Talents
@@ -41,6 +37,9 @@ Gear:
     Chapter Relics
     Chapter Trappings
     Servitors - Need to add as NPC\enemies?  PG 178 and 376
+    Grenades - Can we wite up something that a miss on a grenade throw auto rolls scatter?
+    Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
+
 Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
@@ -66,103 +65,16 @@ Armor:
           164 - Terminator Armour has forcefield like effects    
 
 Orks:
-    TODO: Images do not have proeprty token backgrounds
 
 Gameplay:
-    TODO: test Psychic Power Righteous Furty and Deathwatch Training
-
-Book: Rogue Trader Core Rulebook
-Page 374
-Faction: Human
-Name: gRaPPlehaWk (falaX-PatteRN)
-One of the more unusual servitor types, the grapplehawk is a 
-large cyber-converted avian creature used to hunt and capture 
-or kill human and animal prey. They are armoured, fitted with 
-enhanced sensory equipment and grav-assisted flight systems. 
-The Thulian Magos are known to favour this kind of construct 
-both as scouts in the field and aggressive sample “gatherers,” 
-and also have been known to sell examples to various Rogue 
-Traders and Outlander nobles in return for their cooperation 
-and support. 
-
-WS BS S T Ag Int Per WP Fel
-40 — 35 35 48 18 40 30 –
-
-Movement: 2/4/6/12   
-Skills: Awareness (Per) +10, Dodge (Ag).
-Talents: Fearless, Swift Attack.
-Traits: Armour Plating, Dark Sight, Flier 20, Machine (4), 
-Size (Scrawny).
-Armour (Machine): All 4.
-Weapons: Shock-pulse claws (1d10+3 E, Shocking). 
-Gear: Inbuilt vox and cogitator, Auspex. Inbuilt grappling 
-units allow it to lift stunned prey as if it had Unnatural 
-Strength (x2), although its speed will significantly decrease 
-based on its load.
-
-What Q thinks is missing
-
-Core Combat Mechanics
-Not Yet Implemented:
-    Swift Attack / Lightning Attack — multiple melee hits (like Semi/Full Auto for melee)
-    Parry & Dodge reactions — opposed WS/AG tests to negate hits
-    Defensive Stance — sacrifice attacks for defensive bonuses
-    Overwatch — readied ranged attacks triggered by enemy movement
-    Suppressive Fire — pin targets in an area, forcing Pinning tests
-    Blast/Scatter mechanics — area damage with scatter direction (roll table exists but not wired)
-    Grappling — opposed STR tests, actions while grappled
-    Two-Weapon Fighting — attack with both weapons (talents exist, mechanics don't)
-    Dual Strike / Whirlwind of Death — advanced multi-attack actions
-
-Defensive Systems
-    Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
-    Cover system — AP bonuses from terrain
-    Pinning — WP test or lose actions when under fire
-
-Character Mechanics
-    Fate Points — spending (re-roll, +10, count as not dead) and burning (survive death)
-    Characteristic advance XP costs — data exists in specialties but not wired to XP calculation
-    Experience spending UI — buying advances, skills, talents from the sheet
-    Renown & Requisition — mission requisition rolls, renown thresholds for gear access
-    Demeanour mechanics — Chapter and Personal demeanour interaction (currently just text)
-
-Cohesion (Partially Done)
-    Cohesion Damage (Phase 3 planned) — 10+ damage from Accurate/Blast/Devastating triggers Cohesion loss; rally tests
-    Cohesion Recovery (Phase 4 planned) — +1 from objectives, Fate Points, GM awards
+    Cover system — AP bonuses from terrain 
+        Can we use regions and macros to affect a token armor in certain sections?
     Fear-based Cohesion damage — Fear creatures causing Cohesion loss
-
-Conditions & Status Effects
-    Stunned — lose actions for rounds (Shocking button exists but no condition tracking)
-    Prone / Knocked Down — movement and combat penalties
-    On Fire — partially implemented (FireHelper exists), but no persistent condition auto-processing outside combat tracker
-    Blinded / Deafened — sensory impairment penalties
-    Fatigue effects — penalties at thresholds (fatigue ≥ TB = penalties, ≥ 2×TB = unconscious)
-    Blood Loss — TG test each round or die when critically wounded
-    Pinned — suppressive fire result
-
-Horde Mechanics (Partially Done)
-    Horde damage bonus — magnitude-based bonus dice to horde attacks (formula exists, not wired to attack rolls)
-    Horde special actions — Overwhelm, Swarm
-    Breaking hordes — morale/flee at low magnitude
-
-Equipment & Gear
-    Cybernetics — MIU, bionic limbs, augmetic senses (item type exists, no mechanical effects)
-    Consumables / Drugs — combat drugs, stimm packs with temporary effects
-    Grenades — thrown weapons with Blast, scatter
-    Vehicles — no vehicle rules at all
-    Requisition system — mission gear selection with renown gates
 
 Campaign Systems
     Mission structure — primary/secondary/tertiary objectives
     Oath system — Kill-team oaths granting bonuses
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
-
-Miscellaneous
-    Skill tests — no general d100 skill test dialog (only combat rolls exist)
-    Extended tests — multi-roll challenges
-    Opposed tests — general opposed test framework (only psychic opposed exists)
-    Interaction skills — Charm, Deceive, Intimidate, Command with DoS effects
-    Jumping / Climbing / Swimming — AG/STR tests with movement rules
 
 
