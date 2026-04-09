@@ -88,6 +88,15 @@ Special Abilities: (optional)
      - Unnatural traits: need `characteristic-bonus` modifiers (x2 or x3)
      - **Unnatural x3**: Add trait TWICE (each is x2, stacks to x3)
    - **Weapons**: Match stats from source, use `attachedQualities` array with `{id: "quality-key"}`
+     - **IMPORTANT - Weapon Damage Calculation**:
+       - Source book weapon damage INCLUDES the creature's Strength Bonus
+       - Foundry automatically adds SB to melee weapon damage during attacks
+       - **Therefore**: Subtract SB from melee weapon damage when creating JSON
+       - **Ranged weapons**: Use damage as written (no SB is added)
+       - **Example**: Trygon has Str 60 (SB 6) × 3 (Unnatural) = SB 18
+         - Book says: "Scything Talons (1d10+20)"
+         - JSON should be: `"dmg": "1d10+2"` (because 20 - 18 = 2)
+         - In-game result: 1d10+2+18 = 1d10+20 ✓
    - **Armor items**: If equipped armor (not Natural Armour trait), create armor item with locations and `equipped: true`
    - **Psychic Powers**: If present, embed with `_sourceId` from `src/packs-source/psychic-powers/`
 
@@ -180,6 +189,7 @@ Show the user:
 - **Enemy actors use `psyRating` directly** - Not via Psy Rating talent
 - **All enemies MUST have `classification`** - Controls Deathwatch Training auto-confirm Righteous Fury
 - **Faction→classification mapping**: tyranid/ork/tau → xenos, chaos → chaos, explicit for humans
+- **CRITICAL: Melee weapon damage** - Always subtract Strength Bonus from book damage (Foundry adds it automatically)
 
 ---
 
