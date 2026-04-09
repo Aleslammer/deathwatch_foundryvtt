@@ -70,15 +70,17 @@ async function compilePackFile(packName) {
     
     const isRollTable = packName === 'tables';
     const isActorPack = packName === 'enemies';
-    
+    const isMacroPack = packName === 'macros';
+
     const tablesDb = isRollTable ? db.sublevel('tables', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
     const resultsDb = isRollTable ? db.sublevel('tables.results', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
     const foldersDb = db.sublevel('folders', { keyEncoding: 'utf8', valueEncoding: 'json' });
     const actorsDb = isActorPack ? db.sublevel('actors', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
-    const itemsDb = (!isRollTable && !isActorPack) ? db.sublevel('items', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    const macrosDb = isMacroPack ? db.sublevel('macros', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
+    const itemsDb = (!isRollTable && !isActorPack && !isMacroPack) ? db.sublevel('items', { keyEncoding: 'utf8', valueEncoding: 'json' }) : null;
     
     for (const folder of folders) {
-        folder.type = isActorPack ? 'Actor' : (isRollTable ? 'RollTable' : 'Item');
+        folder.type = isActorPack ? 'Actor' : (isRollTable ? 'RollTable' : (isMacroPack ? 'Macro' : 'Item'));
         await foldersDb.put(folder._id, folder);
     }
     
@@ -208,6 +210,31 @@ async function compilePackFile(packName) {
                 }
             };
             await actorsDb.put(id, entry);
+        } else if (isMacroPack) {
+            const entry = {
+                _id: id,
+                name: doc.name,
+                type: doc.type || 'script',
+                author: doc.author || '',
+                img: doc.img || 'icons/svg/dice-target.svg',
+                scope: doc.scope || 'global',
+                command: doc.command || '',
+                folder: folderId,
+                sort: doc.sort || 0,
+                ownership: doc.ownership || { default: 0 },
+                flags: doc.flags || {},
+                _stats: {
+                    systemId: 'deathwatch',
+                    systemVersion: '0.0.2',
+                    coreVersion: '13.351',
+                    createdTime: null,
+                    modifiedTime: null,
+                    lastModifiedBy: null,
+                    compendiumSource: null,
+                    duplicateSource: null
+                }
+            };
+            await macrosDb.put(id, entry);
         } else {
             const entry = {
                 _id: id,

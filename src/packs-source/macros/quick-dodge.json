@@ -1,0 +1,20 @@
+{
+  "_id": "macro-quick-dodge",
+  "name": "Quick Dodge",
+  "type": "script",
+  "img": "icons/svg/combat.svg",
+  "flags": {},
+  "folder": null,
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "author": "",
+  "scope": "global",
+  "command": "/**\n * Quick Dodge Roll\n *\n * Rolls a Dodge SKILL test for the selected token.\n * Dodge is a Challenging (+0) skill test.\n * Click on a token, then run this macro to roll immediately.\n */\n\nconst token = canvas.tokens.controlled[0];\nif (!token) {\n  ui.notifications.warn('Please select a token first');\n  return;\n}\n\n// Dodge is a SKILL test, so we use rollSkill\nawait game.deathwatch.rollSkill(token.actor.id, 'dodge', {\n  difficulty: 'Challenging',\n  skipDialog: true\n});\n",
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.0.0",
+    "systemId": "deathwatch",
+    "systemVersion": "0.0.2"
+  }
+}

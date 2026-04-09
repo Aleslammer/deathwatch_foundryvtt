@@ -23,6 +23,9 @@ import { Logger } from "./helpers/logger.mjs";
 import { applyOnFireEffects } from "./macros/on-fire-effects.mjs";
 import { flameAttack } from "./macros/flame-attack.mjs";
 import { rollItemMacro } from "./macros/hotbar.mjs";
+// Import API modules.
+import { SkillRoller } from "./api/skill-roller.mjs";
+import { CharacteristicRoller } from "./api/characteristic-roller.mjs";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -46,7 +49,12 @@ Hooks.once('init', async function () {
     applyOnFireEffects,   // From macros/on-fire-effects.mjs
     CohesionHelper,
     CohesionPanel,
-    Logger
+    Logger,
+    // Public API for macros
+    rollSkill: SkillRoller.rollSkill.bind(SkillRoller),
+    rollCharacteristic: CharacteristicRoller.rollCharacteristic.bind(CharacteristicRoller),
+    getDifficulties: SkillRoller.getDifficulties.bind(SkillRoller),
+    getCharacteristics: CharacteristicRoller.getCharacteristics.bind(CharacteristicRoller)
   };
 
   // Add custom constants for configuration.

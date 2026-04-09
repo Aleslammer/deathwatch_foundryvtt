@@ -648,7 +648,7 @@ Each pack has a prefix pattern for IDs:
 - Power Armor: Auto-passes WP test
 - Extinguish test: AG − 20 (Hard), removes On Fire status on success
 
-**Fire macros**: Auto-created for GM on world load:
+**Fire macros**: Available in the Macros compendium (Compendium Packs > Deathwatch: Macros):
 - 🔥 Flame Attack — GM targets token, enters damage/pen, applies flame mechanics
 - 🔥 On Fire Round — GM targets token, applies On Fire effects for this round
 

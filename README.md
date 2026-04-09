@@ -68,14 +68,29 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 - Enemy classification (human/xenos/chaos) for Deathwatch Training integration
 - Pre-built Tyranid and Ork enemies with horde variants
 
-### Hotbar Macros
-- Drag weapons from Gear tab to hotbar → click for Attack/Damage choice dialog
-- Drag psychic powers from Psychic Powers tab to hotbar → click opens Focus Power Test directly
-- Other items fall through to generic item roll (posts description to chat)
-- **Macro Presets**: Right-click a weapon macro and edit the command to pre-load combat options (rate of fire, aim, called shot, etc.) — see [Hotbar Macros Guide](docs/hotbar-macros.md)
+### Macros
+The system includes three types of macros for streamlined gameplay:
+
+- **Drag-and-Drop Item Macros**: Drag weapons, psychic powers, or other items from character sheets to the hotbar
+  - Weapons → Attack/Damage choice dialog with full combat options
+  - Psychic powers → Focus Power Test dialog
+  - Other items → Post description to chat
+  - **Weapon Presets**: Edit macro commands to pre-load rate of fire, aim, called shot, etc.
+  
+- **Compendium Macros**: Pre-built macros in the **Macros** compendium pack (drag to hotbar)
+  - Quick Dodge, Quick Parry, Dodge or Parry, Defensive Stance
+  - Combat Reactions (advanced with auto-modifiers)
+  - Flame Attack, On Fire Round (GM macros)
+  
+- **Custom Scripting API**: Write your own macros using the Deathwatch API
+  - `game.deathwatch.rollSkill(actorId, skillName, options)`
+  - `game.deathwatch.rollCharacteristic(actorId, charKey, options)`
+  - Full difficulty presets, modifier support, and dialog control
+
+📖 **Complete guide**: [Macro System Guide](docs/macro-guide.md)
 
 ### Compendium Packs
-17 pre-built compendium packs with book references and page numbers:
+18 pre-built compendium packs with book references and page numbers:
 
 | Pack | Entries | Description |
 |------|---------|-------------|
@@ -95,6 +110,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 | Demeanours | 19 | Personality traits |
 | Critical Effects | 160 | By damage type (Energy, Explosive, Impact, Rending) |
 | Enemies | 35 | Tyranid and Ork enemies with horde variants |
+| Macros | 7 | Pre-built macros (combat reactions, flame attacks, fire effects) |
 | Roll Tables | 4 | Scatter, Haywire, Psychic Phenomena, Perils of the Warp |
 
 ---
