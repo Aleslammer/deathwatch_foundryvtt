@@ -483,27 +483,50 @@ describe('CombatHelper', () => {
   });
 
   describe('_getMagnitudeBonusDamage', () => {
-    it('returns 0 when no ammo loaded', () => {
-      const weapon = { system: { loadedAmmo: null } };
-      expect(CombatHelper._getMagnitudeBonusDamage(weapon, {})).toBe(0);
+    it('returns 0 when no ammo loaded and no devastating quality', async () => {
+      const weapon = { system: { loadedAmmo: null, attachedQualities: [] } };
+      expect(await CombatHelper._getMagnitudeBonusDamage(weapon, {})).toBe(0);
     });
 
-    it('returns 0 when ammo has no magnitude-bonus-damage modifier', () => {
-      const weapon = { system: { loadedAmmo: 'ammo1' } };
+    it('returns 0 when ammo has no magnitude-bonus-damage modifier and no devastating', async () => {
+      const weapon = { system: { loadedAmmo: 'ammo1', attachedQualities: [] } };
       const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'weapon-damage', modifier: '-2', enabled: true }] } })) } };
-      expect(CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(0);
+      expect(await CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(0);
     });
 
-    it('returns bonus from magnitude-bonus-damage modifier', () => {
-      const weapon = { system: { loadedAmmo: 'ammo1' } };
+    it('returns bonus from magnitude-bonus-damage modifier', async () => {
+      const weapon = { system: { loadedAmmo: 'ammo1', attachedQualities: [] } };
       const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'magnitude-bonus-damage', modifier: '1', enabled: true }] } })) } };
-      expect(CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(1);
+      expect(await CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(1);
     });
 
-    it('ignores disabled magnitude-bonus-damage modifier', () => {
-      const weapon = { system: { loadedAmmo: 'ammo1' } };
+    it('ignores disabled magnitude-bonus-damage modifier', async () => {
+      const weapon = { system: { loadedAmmo: 'ammo1', attachedQualities: [] } };
       const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'magnitude-bonus-damage', modifier: '1', enabled: false }] } })) } };
-      expect(CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(0);
+      expect(await CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(0);
+    });
+
+    it('returns devastating value from weapon quality', async () => {
+      const weapon = { system: { loadedAmmo: null, attachedQualities: [{ id: 'devastating', value: '2' }] } };
+      const actor = {};
+      // Mock the pack lookup
+      const mockPack = { getDocument: jest.fn().mockResolvedValue({ system: { key: 'devastating' } }) };
+      global.game.packs.get = jest.fn().mockReturnValue(mockPack);
+      expect(await CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(2);
+    });
+
+    it('combines ammo bonus and devastating value', async () => {
+      const weapon = {
+        system: {
+          loadedAmmo: 'ammo1',
+          attachedQualities: [{ id: 'devastating', value: '2' }]
+        }
+      };
+      const actor = { items: { get: jest.fn(() => ({ system: { modifiers: [{ effectType: 'magnitude-bonus-damage', modifier: '1', enabled: true }] } })) } };
+      // Mock the pack lookup
+      const mockPack = { getDocument: jest.fn().mockResolvedValue({ system: { key: 'devastating' } }) };
+      global.game.packs.get = jest.fn().mockReturnValue(mockPack);
+      expect(await CombatHelper._getMagnitudeBonusDamage(weapon, actor)).toBe(3);
     });
   });
 
