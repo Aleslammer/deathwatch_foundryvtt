@@ -23,17 +23,28 @@ export class WeaponQualityHelper {
     return false;
   }
 
-  static async getProvenRating(weapon) {
+  /**
+   * Extract a numeric value from a weapon quality.
+   * @param {Object} weapon - The weapon item
+   * @param {string} qualityKey - The quality key to search for (e.g., 'blast', 'devastating', 'proven')
+   * @returns {Promise<number>} The quality's numeric value, or 0 if not found
+   * @private
+   */
+  static async _getNumericQualityValue(weapon, qualityKey) {
     const qualityIds = weapon.system.attachedQualities || [];
     for (const q of qualityIds) {
       const id = typeof q === 'string' ? q : q.id;
       const key = await this.getQualityKey(id);
-      if (key === 'proven') {
-        const value = await this.getQualityValue(id, 'value');
+      if (key === qualityKey) {
+        const value = typeof q === 'object' ? q.value : await this.getQualityValue(id, 'value');
         return parseInt(value) || 0;
       }
     }
     return 0;
+  }
+
+  static async getProvenRating(weapon) {
+    return this._getNumericQualityValue(weapon, 'proven');
   }
 
   static async isLightningClaw(weapon) {
@@ -58,17 +69,24 @@ export class WeaponQualityHelper {
     return await this.hasQuality(weapon, 'stalker-pattern');
   }
 
+  /**
+   * Get the Blast value for a weapon.
+   * Blast(X) affects hit calculation and area of effect.
+   * @param {Object} weapon - The weapon item
+   * @returns {Promise<number>} Blast value (e.g., 5 for Blast(5))
+   */
   static async getBlastValue(weapon) {
     if (weapon.system.effectiveBlast) return weapon.system.effectiveBlast;
-    const qualityIds = weapon.system.attachedQualities || [];
-    for (const q of qualityIds) {
-      const id = typeof q === 'string' ? q : q.id;
-      const key = await this.getQualityKey(id);
-      if (key === 'blast') {
-        const value = typeof q === 'object' ? q.value : await this.getQualityValue(id, 'value');
-        return parseInt(value) || 0;
-      }
-    }
-    return 0;
+    return this._getNumericQualityValue(weapon, 'blast');
+  }
+
+  /**
+   * Get the Devastating value for a weapon.
+   * Devastating(X) reduces horde magnitude by X per penetrating hit.
+   * @param {Object} weapon - The weapon item
+   * @returns {Promise<number>} Devastating value (e.g., 2 for Devastating(2))
+   */
+  static async getDevastatingValue(weapon) {
+    return this._getNumericQualityValue(weapon, 'devastating');
   }
 }

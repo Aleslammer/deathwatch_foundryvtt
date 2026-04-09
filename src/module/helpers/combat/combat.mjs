@@ -311,31 +311,46 @@ export class CombatHelper {
   }
 
   /**
-   * Get bonus damage against hordes from loaded ammo modifiers.
+   * Get bonus magnitude damage against hordes from loaded ammo modifiers and weapon qualities.
    *
-   * Some ammo types (e.g., Frag Missiles, Metal Storm rounds) deal extra
-   * damage to magnitude-based targets (hordes). This bonus is added to each
-   * hit against a horde.
+   * Sources of magnitude bonus damage:
+   * 1. Ammo modifiers (e.g., Frag Missiles, Metal Storm rounds)
+   * 2. Devastating weapon quality (Deathwatch Core p. 142)
+   *
+   * This bonus is added to magnitude reduction for each penetrating hit against a horde.
    *
    * @param {Item} weapon - Weapon item
    * @param {Actor} actor - Actor with the weapon (to access loaded ammo)
-   * @returns {number} Bonus damage per hit against hordes (default: 0)
+   * @returns {Promise<number>} Total bonus magnitude damage per penetrating hit (default: 0)
    * @example
-   * const bonus = CombatHelper._getMagnitudeBonusDamage(bolter, actor);
-   * // Returns: 1d10 if Metal Storm rounds loaded, 0 otherwise
+   * const bonus = await CombatHelper._getMagnitudeBonusDamage(bolter, actor);
+   * // Returns: 1 if Metal Storm rounds loaded, 0 otherwise
+   * @example
+   * const bonus = await CombatHelper._getMagnitudeBonusDamage(strangler, actor);
+   * // Returns: 2 if weapon has Devastating(2), 0 otherwise
    * @private
    */
-  static _getMagnitudeBonusDamage(weapon, actor) {
-    if (!weapon.system.loadedAmmo || !actor) return 0;
-    const ammo = actor.items.get(weapon.system.loadedAmmo);
-    if (!ammo || !Array.isArray(ammo.system.modifiers)) return 0;
+  static async _getMagnitudeBonusDamage(weapon, actor) {
+    let total = 0;
 
-    for (const mod of ammo.system.modifiers) {
-      if (mod.enabled !== false && mod.effectType === 'magnitude-bonus-damage') {
-        return parseInt(mod.modifier) || 0;
+    // Check ammo modifiers
+    if (weapon.system.loadedAmmo && actor) {
+      const ammo = actor.items.get(weapon.system.loadedAmmo);
+      if (ammo && Array.isArray(ammo.system.modifiers)) {
+        for (const mod of ammo.system.modifiers) {
+          if (mod.enabled !== false && mod.effectType === 'magnitude-bonus-damage') {
+            total += parseInt(mod.modifier) || 0;
+          }
+        }
       }
     }
-    return 0;
+
+    // Check Devastating weapon quality
+    const { WeaponQualityHelper } = await import('./weapon-quality-helper.mjs');
+    const devastatingValue = await WeaponQualityHelper.getDevastatingValue(weapon);
+    total += devastatingValue;
+
+    return total;
   }
 
   /**
@@ -591,7 +606,7 @@ export class CombatHelper {
             const isMeltaRange = isMelta && distance !== null && weaponRange > 0 && distance < (weaponRange * 0.5);
             const furyThreshold = this._getFuryThreshold(weapon, actor);
             const charDamageEffect = this._getCharacteristicDamageEffect(weapon, actor);
-            const magnitudeBonusDamage = this._getMagnitudeBonusDamage(weapon, actor);
+            const magnitudeBonusDamage = await this._getMagnitudeBonusDamage(weapon, actor);
             const ignoresNaturalArmour = this._getIgnoresNaturalArmour(weapon, actor);
             const isForce = weapon.system.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === 'force') || false;
             const psyRating = actor.system?.psyRating?.value || 0;

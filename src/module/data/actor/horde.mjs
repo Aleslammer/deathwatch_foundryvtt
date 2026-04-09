@@ -117,7 +117,7 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
       let message = `<strong>${actor.name}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''}, loses <strong style="color: red;">${totalMagnitudeLost} Magnitude</strong> (${newMagnitude}/${maxMagnitude})`;
       message += `<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;
       if (magnitudeBonusDamage > 0) {
-        message += `<br><em>+${magnitudeBonusDamage} bonus Magnitude per penetrating hit from ammunition</em>`;
+        message += `<br><em>+${magnitudeBonusDamage} bonus Magnitude per penetrating hit (ammunition/weapon quality)</em>`;
       }
 
       if (hits.length > 1) {

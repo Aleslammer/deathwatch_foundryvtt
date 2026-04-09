@@ -24,44 +24,31 @@ Mental State:
     TODO: still need to test the form out in combat.
 
 Skills:
-    TODO: Add macro ability to roll skill by name.
-
 
 Traits
 
 Talents
 
 Weapon Upgrade:
-    Fire selector!
 
 Gear:
     Relics
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
-    Servitors - Need to add as NPC\enemies?  PG 178 and 376
-    Grenades - Can we wite up something that a miss on a grenade throw auto rolls scatter?
     Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
 
 Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 
-Ammmunition 158
-    
-    TODO: We need to revisit the Brain Leech Worms upgrade for cohesion damage
-    TODO: We need to revisit the Devastation upgrade for cohesion damage
-
+Ammmunition 
 
 TODO: Automated Animations - Can we use this for things?
 
 Enemies:
     TODO: Still Need to add Tyranids
             Trygon, Warrior Prime, Tyrant Guard, Venonthrope, Zoanthrope
-    TODO: Add more orks
-        Add images
-        Additional Ork profiles, rules, and equipment can be found in creatures anatheMa, a supplement for Dark heresy, and Into the storM, a rogue traDer supplement. 
-        These additional sources for information can be very valuable for a GM who wants to involve Orks more heavily in his Deathwatch campaign.
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
@@ -70,9 +57,6 @@ Armor:
 Orks:
 
 Gameplay:
-    Cover system — AP bonuses from terrain 
-        Can we use regions and macros to affect a token armor in certain sections?
-    Fear-based Cohesion damage — Fear creatures causing Cohesion loss
 
 Campaign Systems
     Mission structure — primary/secondary/tertiary objectives

@@ -95,6 +95,77 @@ export class RangedCombatHelper {
   }
 
   /**
+   * Roll for scatter when a thrown weapon misses.
+   *
+   * When a thrown weapon fails its Ballistic Skill test, the GM needs to know
+   * where the weapon lands. This method:
+   * - Rolls 1d10 on the Scatter table for direction
+   * - Rolls 1d5 for distance in meters
+   * - Posts the result to chat
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {Item} weapon - Thrown weapon item
+   * @returns {Promise<{direction: string, distance: number} | null>} Scatter result or null if table not found
+   * @example
+   * const scatter = await RangedCombatHelper.rollScatter(actor, grenade);
+   * // Returns: { direction: "Upper Right", distance: 3 }
+   */
+  static async rollScatter(actor, weapon) {
+    // Get Scatter table from compendium
+    const tablePack = game.packs.get("deathwatch.tables");
+    let scatterTable;
+
+    if (tablePack) {
+      const tableIndex = tablePack.index.find(t => t.name === "Scatter");
+      if (tableIndex) {
+        scatterTable = await tablePack.getDocument(tableIndex._id);
+      }
+    }
+
+    if (!scatterTable) {
+      scatterTable = game.tables.getName("Scatter");
+    }
+
+    if (!scatterTable) {
+      ui.notifications.warn("Scatter table not found! Import it from the Tables compendium.");
+      return null;
+    }
+
+    // Roll for direction (1d10)
+    const directionDraw = await scatterTable.draw({ displayChat: false });
+    const directionResult = directionDraw.results[0];
+    const direction = directionResult.description || directionResult.name || "Unknown";
+
+    // Roll for distance (1d5)
+    const distanceRoll = await new Roll('1d5').evaluate();
+    const distance = distanceRoll.total;
+
+    // Post scatter result to chat
+    const safeWeaponName = Sanitizer.escape(weapon.name);
+    const safeActorName = Sanitizer.escape(actor.name);
+
+    let scatterMessage = `<div class="deathwatch-chat-card">
+      <h3>🎯 Thrown Weapon Scatter</h3>
+      <p><strong>${safeActorName}</strong> missed with <strong>${safeWeaponName}</strong>!</p>
+      <div style="margin: 8px 0;">
+        <p><strong>Direction:</strong> ${direction}</p>
+        <p><strong>Distance:</strong> ${distance} meter${distance !== 1 ? 's' : ''}</p>
+      </div>
+      <p style="font-size: 0.9em; color: #666; margin-top: 8px;">
+        <em>The weapon lands ${distance}m ${direction.toLowerCase()} from the intended target.</em>
+      </p>
+    </div>`;
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: scatterMessage,
+      rollMode: game.settings.get('core', 'rollMode')
+    });
+
+    return { direction, distance };
+  }
+
+  /**
    * Calculate effective range for thrown weapons based on Strength Bonus.
    *
    * Thrown weapons (grenades, knives, etc.) have range = SB × multiplier.
@@ -238,8 +309,9 @@ export class RangedCombatHelper {
     }
 
     const isHorde = actor.type === 'horde';
+    const isThrown = weapon.system.class?.toLowerCase() === 'thrown';
     const jamThreshold = CombatDialogHelper.determineJamThreshold(autoFire, isUnreliable);
-    const isJammed = !isHorde && !hasLivingAmmo && hitValue >= jamThreshold;
+    const isJammed = !isHorde && !isThrown && !hasLivingAmmo && hitValue >= jamThreshold;
     const isOverheated = hasOverheats && hitValue >= 91;
     const ammoExpended = RangedCombatHelper.calculateAmmoExpenditure(roundsFired, isStorm, isTwinLinked);
 
@@ -542,6 +614,12 @@ export class RangedCombatHelper {
               rollMode: game.settings.get('core', 'rollMode')
             });
 
+            // Thrown weapon scatter on miss
+            const isThrown = weapon.system.class?.toLowerCase() === 'thrown';
+            if (isThrown && hitsTotal === 0 && !isJammed && !hasPrematureDetonation) {
+              await RangedCombatHelper.rollScatter(actor, weapon);
+            }
+
             // Deduct ammo
             const isHorde = actor.type === 'horde';
             if (!isHorde && hasAmmoManagement && weapon.system.loadedAmmo) {
@@ -692,6 +770,12 @@ export class RangedCombatHelper {
       flavor: flavor,
       rollMode: game.settings.get('core', 'rollMode')
     });
+
+    // Thrown weapon scatter on miss
+    const isThrown = weapon.system.class?.toLowerCase() === 'thrown';
+    if (isThrown && hitsTotal === 0 && !isJammed && !hasPrematureDetonation) {
+      await RangedCombatHelper.rollScatter(actor, weapon);
+    }
 
     const isHorde = actor.type === 'horde';
     if (!isHorde && hasAmmoManagement && weapon.system.loadedAmmo) {
