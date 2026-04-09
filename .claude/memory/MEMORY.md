@@ -12,8 +12,13 @@ This directory contains project-specific memory for Claude Code. These memories 
 
 ## System Memories
 
-- [Testing Standards](testing_standards.md) — Jest with ES modules, 1567 tests, 68% coverage
+- [Testing Standards](testing_standards.md) — Jest with ES modules, 1813 tests across 110 suites
 - [Compendium System](compendium_system.md) — Source JSON, validation, ID conventions
+- [Macro System](macro_system.md) — Three-tier macro architecture (compendium, API, drag-drop)
+
+## Feedback
+
+- [Code Quality Standards](feedback_code_quality.md) — Logger usage, missing imports, test-first development
 
 ## Reference
 

@@ -58,9 +58,20 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `modifiers.mjs` - Applies modifiers to characteristics/skills/armor
 - `xp-calculator.mjs` - XP computation, rank determination
 
+**Insanity & Corruption** (`src/module/helpers/insanity/`, `src/module/helpers/corruption/`):
+- `insanity-helper.mjs` - Insanity point tracking, tests, battle trauma acquisition
+- `corruption-helper.mjs` - Corruption point tracking, malignancy tests
+
 **UI** (`src/module/helpers/ui/`):
 - `chat-message-builder.mjs` - Builds combat chat messages
 - `templates.mjs` - Preloads Handlebars templates
+- `roll-dialog-builder.mjs` - Builds modifier dialogs for rolls
+
+**Core** (`src/module/helpers/`):
+- `roll-executor.mjs` - Centralized roll execution (skill & characteristic tests)
+- `logger.mjs` - System-wide logging with configurable levels
+- `error-handler.mjs` - Standardized error handling for async operations
+- `validation.mjs` - Input validation utilities
 
 ## FoundryAdapter Pattern
 

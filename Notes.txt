@@ -24,8 +24,6 @@ Mental State:
     TODO: still need to test the form out in combat.
 
 Skills:
-    TODO: Add macro ability to roll skill by name.
-
 
 Traits
 
