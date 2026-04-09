@@ -47,6 +47,11 @@ Ammmunition
 TODO: Automated Animations - Can we use this for things?  Need to look at tutorial and look into it some more....
 
 Enemies:
+    TODO: add chaos
+    TODO: Add tauT
+    TODO: add dark eldar
+    todo: add eldar
+    
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
