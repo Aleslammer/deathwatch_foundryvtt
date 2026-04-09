@@ -36,7 +36,6 @@ Gear:
     Deathwatch Relics
     Chapter Relics
     Chapter Trappings
-    Grenades - Can we wite up something that a miss on a grenade throw auto rolls scatter?
     Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
 
 Rites of Battle
