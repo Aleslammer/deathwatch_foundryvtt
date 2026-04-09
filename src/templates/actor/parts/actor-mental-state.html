@@ -38,11 +38,9 @@
         <button class="panel-btn view-history-btn" data-action="viewCorruptionHistory" title="View Corruption History">
           <i class="fas fa-history"></i> History
         </button>
-        {{#if isGM}}
         <button class="panel-btn gm-adjust-btn" data-action="adjustCorruption" title="Adjust Corruption">
           <i class="fas fa-edit"></i> Adjust
         </button>
-        {{/if}}
       </div>
     </div>
 
@@ -104,10 +102,10 @@
           <i class="fas fa-coins"></i> Purchase
         </button>
         {{/if}}
-        {{#if isGM}}
         <button class="panel-btn gm-adjust-btn" data-action="adjustInsanity" title="Adjust Insanity">
           <i class="fas fa-edit"></i> Adjust
         </button>
+        {{#if isGM}}
         <button class="panel-btn manual-test-btn" data-action="manualInsanityTest" title="Trigger Insanity Test">
           <i class="fas fa-dice-d20"></i> Test
         </button>

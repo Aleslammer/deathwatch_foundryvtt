@@ -886,11 +886,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   }
 
   static async _onAdjustCorruption(event, target) {
-    if (!game.user.isGM) {
-      ui.notifications.warn('Only the GM can adjust corruption.');
-      return;
-    }
-
     const actor = this.actor;
     const currentValue = actor.system.corruption || 0;
 
@@ -909,7 +904,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
         <div class="form-group">
           <label>Reason:</label>
-          <input type="text" name="reason" value="GM adjustment" />
+          <input type="text" name="reason" value="Manual adjustment" />
         </div>
 
         <div class="form-group preview">
@@ -930,7 +925,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
           callback: async (event, button, dialog) => {
             const el = dialog.element;
             const points = parseInt(el.querySelector('[name="points"]').value) || 0;
-            const reason = el.querySelector('[name="reason"]').value || 'GM adjustment';
+            const reason = el.querySelector('[name="reason"]').value || 'Manual adjustment';
 
             if (points === 0) {
               ui.notifications.info('No points to adjust.');
@@ -959,11 +954,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   }
 
   static async _onAdjustInsanity(event, target) {
-    if (!game.user.isGM) {
-      ui.notifications.warn('Only the GM can adjust insanity.');
-      return;
-    }
-
     const actor = this.actor;
     const currentValue = actor.system.insanity || 0;
 
@@ -982,7 +972,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
         <div class="form-group">
           <label>Reason:</label>
-          <input type="text" name="reason" value="GM adjustment" />
+          <input type="text" name="reason" value="Manual adjustment" />
         </div>
 
         <div class="form-group preview">
@@ -1003,7 +993,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
           callback: async (event, button, dialog) => {
             const el = dialog.element;
             const points = parseInt(el.querySelector('[name="points"]').value) || 0;
-            const reason = el.querySelector('[name="reason"]').value || 'GM adjustment';
+            const reason = el.querySelector('[name="reason"]').value || 'Manual adjustment';
 
             if (points === 0) {
               ui.notifications.info('No points to adjust.');
