@@ -145,6 +145,13 @@
             "path": "packs/enemies",
             "type": "Actor",
             "system": "deathwatch"
+        },
+        {
+            "name": "macros",
+            "label": "Macros",
+            "path": "packs/macros",
+            "type": "Macro",
+            "system": "deathwatch"
         }
     ],
     "initiative": "1d10 + @agBonus + @initiativeBonus",

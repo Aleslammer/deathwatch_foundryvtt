@@ -1,0 +1,20 @@
+{
+  "_id": "macro-quick-parry",
+  "name": "Quick Parry",
+  "type": "script",
+  "img": "icons/svg/sword.svg",
+  "flags": {},
+  "folder": null,
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "author": "",
+  "scope": "global",
+  "command": "/**\n * Quick Parry Roll\n *\n * Rolls a Weapon Skill CHARACTERISTIC test (Parry) for the selected token.\n * Parry is a Challenging (+0) characteristic test against Weapon Skill.\n * Unlike Dodge (which is a skill), Parry is a raw WS test.\n * Click on a token, then run this macro to roll immediately.\n */\n\nconst token = canvas.tokens.controlled[0];\nif (!token) {\n  ui.notifications.warn('Please select a token first');\n  return;\n}\n\n// Parry is a CHARACTERISTIC test, so we use rollCharacteristic\nawait game.deathwatch.rollCharacteristic(token.actor.id, 'ws', {\n  difficulty: 'Challenging',\n  skipDialog: true\n});\n",
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.0.0",
+    "systemId": "deathwatch",
+    "systemVersion": "0.0.2"
+  }
+}

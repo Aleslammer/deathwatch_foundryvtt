@@ -3,9 +3,9 @@ import { DWConfig } from "../helpers/config.mjs";
 import { CombatHelper } from "../helpers/combat/combat.mjs";
 import { PsychicCombatHelper } from "../helpers/combat/psychic-combat.mjs";
 import { ModifierHelper } from "../helpers/character/modifiers.mjs";
-import { RollDialogBuilder } from "../helpers/ui/roll-dialog-builder.mjs";
-import { ChatMessageBuilder } from "../helpers/ui/chat-message-builder.mjs";
+import { RollExecutor } from "../helpers/roll-executor.mjs";
 import { ItemHandlers } from "../helpers/ui/item-handlers.mjs";
+import { ChatMessageBuilder } from "../helpers/ui/chat-message-builder.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
 import { CohesionPanel } from "../ui/cohesion-panel.mjs";
 import { CharacterDataPreparer } from "./shared/data-preparers/character-data-preparer.mjs";
@@ -313,29 +313,8 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     const charKey = target.dataset.characteristic;
     const label = target.dataset.label || charKey;
     const characteristic = this.actor.system.characteristics[charKey];
-    const flavorLabel = `[Characteristic] ${label}`;
 
-    return DialogV2.wait({
-      window: { title: `Roll ${label}` },
-      content: RollDialogBuilder.buildModifierDialog(),
-      render: (event, dialog) => RollDialogBuilder.attachModifierInputHandlerV2(dialog.element),
-      buttons: [
-        {
-          label: "Roll", action: "roll",
-          class: "dialog-button roll",
-          callback: async (event, button, dialog) => {
-            const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
-            const targetNum = characteristic.value + modifiers.difficultyModifier + modifiers.additionalModifier;
-            const roll = new Roll('1d100', this.actor.getRollData());
-            await roll.evaluate();
-            const modifierParts = RollDialogBuilder.buildModifierParts(characteristic.value, label, modifiers);
-            const flavor = RollDialogBuilder.buildResultFlavor(flavorLabel, targetNum, roll, modifierParts);
-            ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
-          }
-        },
-        { label: "Cancel", action: "cancel", class: "dialog-button cancel" }
-      ]
-    });
+    return RollExecutor.showCharacteristicDialog(this.actor, charKey, label, characteristic);
   }
 
   /* istanbul ignore next */
@@ -343,7 +322,6 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     const skillKey = target.dataset.skill;
     const label = target.dataset.label || skillKey;
     const skill = this.actor.system.skills[skillKey];
-    const flavorLabel = `[Skill] ${label}`;
 
     if (!skill) {
       ui.notifications.warn(`Skill ${skillKey} not found`);
@@ -360,27 +338,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     const skillBonus = skill.expert ? 20 : (skill.mastered ? 10 : 0);
     const skillTotal = effectiveChar + skillBonus + (skill.modifier || 0) + (skill.modifierTotal || 0);
 
-    return DialogV2.wait({
-      window: { title: `Roll ${label}` },
-      content: RollDialogBuilder.buildModifierDialog(),
-      render: (event, dialog) => RollDialogBuilder.attachModifierInputHandlerV2(dialog.element),
-      buttons: [
-        {
-          label: "Roll", action: "roll",
-          class: "dialog-button roll",
-          callback: async (event, button, dialog) => {
-            const modifiers = RollDialogBuilder.parseModifiersV2(dialog.element);
-            const targetNum = skillTotal + modifiers.difficultyModifier + modifiers.additionalModifier;
-            const roll = new Roll('1d100', this.actor.getRollData());
-            await roll.evaluate();
-            const modifierParts = RollDialogBuilder.buildModifierParts(skillTotal, label, modifiers);
-            const flavor = RollDialogBuilder.buildResultFlavor(flavorLabel, targetNum, roll, modifierParts);
-            ChatMessageBuilder.createRollMessage(roll, this.actor, flavor);
-          }
-        },
-        { label: "Cancel", action: "cancel", class: "dialog-button cancel" }
-      ]
-    });
+    return RollExecutor.showSkillDialog(this.actor, skill, label, skillTotal);
   }
 
   /* -------------------------------------------- */

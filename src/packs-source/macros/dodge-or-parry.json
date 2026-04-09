@@ -1,0 +1,20 @@
+{
+  "_id": "macro-dodge-parry",
+  "name": "Dodge or Parry",
+  "type": "script",
+  "img": "icons/svg/shield.svg",
+  "flags": {},
+  "folder": null,
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "author": "",
+  "scope": "global",
+  "command": "/**\n * Dodge or Parry Selector\n *\n * Shows a dialog to choose between Dodge (skill) or Parry (WS characteristic).\n * Includes modifier field for situational bonuses/penalties.\n *\n * IMPORTANT:\n * - Dodge is a SKILL test (uses rollSkill)\n * - Parry is a CHARACTERISTIC test (uses rollCharacteristic with WS)\n *\n * Usage:\n * - Select a token\n * - Run macro\n * - Choose Dodge or Parry\n * - Add any modifiers (defensive stance, Called Shot, etc.)\n * - Roll appears in chat\n */\n\nconst token = canvas.tokens.controlled[0];\nif (!token) {\n  ui.notifications.warn('Please select a token first');\n  return;\n}\n\n// Get actor's WS and Dodge skill values\nconst ws = token.actor.system.characteristics.ws.value;\nconst dodgeSkill = token.actor.system.skills.dodge;\nconst dodgeTotal = dodgeSkill ? dodgeSkill.total : 0;\n\nconst content = `\n  <div class=\"form-group\">\n    <label>Reaction Type:</label>\n    <select id=\"reaction-type\" name=\"reactionType\" style=\"width: 100%;\">\n      <option value=\"dodge\">Dodge (Skill ${dodgeTotal})</option>\n      <option value=\"parry\">Parry (Weapon Skill ${ws})</option>\n    </select>\n  </div>\n  <div class=\"form-group\">\n    <label>Additional Modifier:</label>\n    <input type=\"number\" id=\"modifier\" name=\"modifier\" value=\"0\" style=\"width: 100%;\" />\n  </div>\n  <p style=\"font-size: 0.9em; color: #666; margin-top: 10px;\">\n    <strong>Dodge:</strong> Half Action reaction, <em>Skill</em> test (AG-based)<br>\n    <strong>Parry:</strong> Half Action reaction, <em>Characteristic</em> test (WS)<br>\n    Both are Challenging (+0) tests by default.\n  </p>\n`;\n\nconst result = await foundry.applications.api.DialogV2.wait({\n  window: { title: `Reaction - ${token.actor.name}` },\n  content,\n  buttons: [\n    {\n      label: 'Roll',\n      action: 'roll',\n      callback: (event, button, dialog) => {\n        const form = dialog.element.querySelector('form');\n        const reactionType = form.querySelector('#reaction-type').value;\n        const modifier = parseInt(form.querySelector('#modifier').value) || 0;\n        return { reactionType, modifier };\n      }\n    },\n    { label: 'Cancel', action: 'cancel' }\n  ]\n});\n\nif (result && result !== 'cancel') {\n  if (result.reactionType === 'dodge') {\n    // Dodge is a SKILL test\n    await game.deathwatch.rollSkill(token.actor.id, 'dodge', {\n      modifier: result.modifier,\n      difficulty: 'Challenging',\n      skipDialog: true\n    });\n  } else {\n    // Parry is a CHARACTERISTIC test\n    await game.deathwatch.rollCharacteristic(token.actor.id, 'ws', {\n      modifier: result.modifier,\n      difficulty: 'Challenging',\n      skipDialog: true\n    });\n  }\n}\n",
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.0.0",
+    "systemId": "deathwatch",
+    "systemVersion": "0.0.2"
+  }
+}

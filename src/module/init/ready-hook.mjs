@@ -41,34 +41,10 @@ export class ReadyHook {
 
   /**
    * Auto-create system macros for GM
+   * NOTE: System macros have been moved to the Macros compendium pack.
+   * GMs can drag macros from Compendium Packs > Deathwatch: Macros to their hotbar.
    */
   static async _createSystemMacros() {
-    if (!game.user.isGM) return;
-
-    // Auto-create Flame Attack macro for GM
-    const flameMacroCommand = 'game.deathwatch.flameAttack();';
-    const existingFlame = game.macros.find(m => m.name === '🔥 Flame Attack' && m.command === flameMacroCommand);
-    if (!existingFlame) {
-      await Macro.create({
-        name: '🔥 Flame Attack',
-        type: 'script',
-        img: 'icons/svg/fire.svg',
-        command: flameMacroCommand,
-        flags: { 'deathwatch.systemMacro': true }
-      });
-    }
-
-    // Auto-create On Fire macro for GM
-    const onFireMacroCommand = 'const t = game.user.targets.first()?.actor; if (t) game.deathwatch.applyOnFireEffects(t); else ui.notifications.warn("Target a token first.");';
-    const existingOnFire = game.macros.find(m => m.name === '🔥 On Fire Round' && m.flags?.deathwatch?.systemMacro);
-    if (!existingOnFire) {
-      await Macro.create({
-        name: '🔥 On Fire Round',
-        type: 'script',
-        img: 'icons/svg/fire.svg',
-        command: onFireMacroCommand,
-        flags: { 'deathwatch.systemMacro': true }
-      });
-    }
+    // No longer auto-creates macros - they are now available in the Macros compendium
   }
 }

@@ -26,15 +26,36 @@ export class RollDialogBuilder {
     return content;
   }
 
-  static buildModifierDialog() {
+  /**
+   * Build modifier dialog HTML with optional pre-filled values.
+   * @param {number} [prefillModifier=null] - Pre-fill misc modifier field (e.g., 10 for +10)
+   * @param {number} [prefillDifficulty=null] - Pre-fill difficulty by modifier value (e.g., 30 for Easy)
+   * @returns {string} Dialog HTML content
+   */
+  static buildModifierDialog(prefillModifier = null, prefillDifficulty = null) {
+    // Find difficulty key by modifier value if provided
+    let selectedDifficultyKey = 'challenging';
+    if (prefillDifficulty !== null) {
+      for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
+        if (difficulty.modifier === prefillDifficulty) {
+          selectedDifficultyKey = key;
+          break;
+        }
+      }
+    }
+
     let content = `<div class="modifier-dialog"><div class="form-group"><label for="difficulty-select">Difficulty:</label><select id="difficulty-select" name="difficulty">`;
-    
+
     for (const [key, difficulty] of Object.entries(DWConfig.TestDifficulties)) {
-      const selected = key === 'challenging' ? 'selected' : '';
+      const selected = key === selectedDifficultyKey ? 'selected' : '';
       content += `<option value="${key}" ${selected}>${difficulty.label} (${difficulty.modifier >= 0 ? '+' : ''}${difficulty.modifier})</option>`;
     }
-    
-    content += `</select></div><div class="form-group modifier-row"><label for="modifier">Misc:</label><input type="text" id="modifier" name="modifier" value="" placeholder="e.g., +5, -10" /></div></div>`;
+
+    const modifierValue = prefillModifier !== null && prefillModifier !== 0
+      ? (prefillModifier > 0 ? `+${prefillModifier}` : `${prefillModifier}`)
+      : '';
+
+    content += `</select></div><div class="form-group modifier-row"><label for="modifier">Misc:</label><input type="text" id="modifier" name="modifier" value="${modifierValue}" placeholder="e.g., +5, -10" /></div></div>`;
     return content;
   }
 

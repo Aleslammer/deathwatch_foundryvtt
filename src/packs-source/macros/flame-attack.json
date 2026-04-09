@@ -1,0 +1,20 @@
+{
+  "_id": "macro-flame-attack",
+  "name": "🔥 Flame Attack",
+  "type": "script",
+  "img": "icons/svg/fire.svg",
+  "flags": {},
+  "folder": null,
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "author": "",
+  "scope": "global",
+  "command": "/**\n * Flame Attack (GM Only)\n *\n * GM macro for flame weapon attacks. Opens a dialog to configure:\n * - Damage formula (e.g., \"1d10+4\")\n * - Penetration value\n * - Damage type (default: Energy)\n * - Weapon range in meters\n *\n * Usage:\n * 1. Target a token on the canvas\n * 2. Run this macro\n * 3. Enter flame weapon stats\n * 4. Click \"Burn\"\n *\n * Behavior:\n * - Against hordes: Automatic hits based on range (range/4 + 1d5)\n * - Against individuals: Target rolls Dodge (Agility test)\n *   - If dodge fails: Apply damage + Catch Fire test (Agility)\n *   - If catch fire fails: Apply \"On Fire\" status\n *\n * The flame attack automatically handles:\n * - Hit location determination\n * - Armor penetration\n * - Catch fire tests\n * - On Fire status application\n */\n\ngame.deathwatch.flameAttack();\n",
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.0.0",
+    "systemId": "deathwatch",
+    "systemVersion": "0.0.2"
+  }
+}

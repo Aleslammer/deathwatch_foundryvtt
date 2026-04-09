@@ -31,6 +31,9 @@ Traits
 
 Talents
 
+Weapon Upgrade:
+    Fire selector!
+
 Gear:
     Relics
     Deathwatch Relics

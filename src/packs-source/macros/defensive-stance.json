@@ -1,0 +1,20 @@
+{
+  "_id": "macro-defensive-stance",
+  "name": "Defensive Stance",
+  "type": "script",
+  "img": "icons/svg/shield.svg",
+  "flags": {},
+  "folder": null,
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "author": "",
+  "scope": "global",
+  "command": "/**\n * Defensive Stance (Dodge/Parry with +20)\n *\n * Rolls Dodge (skill) or Parry (WS characteristic) with the +20 bonus from Defensive Stance.\n * When a character takes a Full Action to assume Defensive Stance,\n * all Dodge and Parry tests gain a +20 bonus until their next turn.\n *\n * IMPORTANT:\n * - Dodge is a SKILL test (uses rollSkill)\n * - Parry is a CHARACTERISTIC test (uses rollCharacteristic with WS)\n *\n * Usage:\n * 1. Select token\n * 2. Run macro\n * 3. Choose Dodge or Parry\n * 4. Automatically applies +20 bonus\n */\n\nconst token = canvas.tokens.controlled[0];\nif (!token) {\n  ui.notifications.warn('Please select a token first');\n  return;\n}\n\n// Get actor's WS and Dodge skill values\nconst ws = token.actor.system.characteristics.ws.value;\nconst dodgeSkill = token.actor.system.skills.dodge;\nconst dodgeTotal = dodgeSkill ? dodgeSkill.total : 0;\n\nconst content = `\n  <div class=\"form-group\">\n    <label>Reaction Type (with Defensive Stance +20):</label>\n    <select id=\"reaction-type\" name=\"reactionType\" style=\"width: 100%;\">\n      <option value=\"dodge\">Dodge (Skill ${dodgeTotal} + 20)</option>\n      <option value=\"parry\">Parry (Weapon Skill ${ws} + 20)</option>\n    </select>\n  </div>\n  <div class=\"form-group\">\n    <label>Additional Modifier:</label>\n    <input type=\"number\" id=\"modifier\" name=\"modifier\" value=\"0\" style=\"width: 100%;\" />\n  </div>\n  <p style=\"font-size: 0.9em; color: #666; margin-top: 10px;\">\n    <strong>Defensive Stance:</strong> Full Action that grants +20 to all Dodge and Parry tests until your next turn.\n  </p>\n`;\n\nconst result = await foundry.applications.api.DialogV2.wait({\n  window: { title: `Defensive Stance - ${token.actor.name}` },\n  content,\n  buttons: [\n    {\n      label: 'Roll',\n      action: 'roll',\n      callback: (event, button, dialog) => {\n        const form = dialog.element.querySelector('form');\n        const reactionType = form.querySelector('#reaction-type').value;\n        const modifier = parseInt(form.querySelector('#modifier').value) || 0;\n        return { reactionType, modifier };\n      }\n    },\n    { label: 'Cancel', action: 'cancel' }\n  ]\n});\n\nif (result && result !== 'cancel') {\n  // Defensive Stance grants +20 bonus\n  const defensiveBonus = 20;\n  const totalModifier = result.modifier + defensiveBonus;\n\n  if (result.reactionType === 'dodge') {\n    // Dodge is a SKILL test\n    await game.deathwatch.rollSkill(token.actor.id, 'dodge', {\n      modifier: totalModifier,\n      difficulty: 'Challenging',\n      skipDialog: true\n    });\n  } else {\n    // Parry is a CHARACTERISTIC test\n    await game.deathwatch.rollCharacteristic(token.actor.id, 'ws', {\n      modifier: totalModifier,\n      difficulty: 'Challenging',\n      skipDialog: true\n    });\n  }\n}\n",
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.0.0",
+    "systemId": "deathwatch",
+    "systemVersion": "0.0.2"
+  }
+}

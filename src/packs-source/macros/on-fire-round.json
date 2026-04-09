@@ -1,0 +1,20 @@
+{
+  "_id": "macro-on-fire-round",
+  "name": "🔥 On Fire Round",
+  "type": "script",
+  "img": "icons/svg/fire.svg",
+  "flags": {},
+  "folder": null,
+  "sort": 0,
+  "ownership": { "default": 0 },
+  "author": "",
+  "scope": "global",
+  "command": "/**\n * On Fire Round (GM Only)\n *\n * Applies the effects of being \"On Fire\" for one combat round.\n *\n * Usage:\n * 1. Target a token with the \"On Fire\" status\n * 2. Run this macro at the start of their turn\n *\n * Effects Applied:\n * - 1d10 Energy damage (ignores armor)\n * - +1 Fatigue\n * - WP test to act normally (automatically passes with Power Armor)\n *\n * The character can attempt an Agility test (-20, Hard) to extinguish the flames.\n * If successful, the \"On Fire\" status is removed.\n *\n * Reference: Deathwatch Core Rulebook, p. 259 (Flame Weapons)\n */\n\nconst targetToken = game.user.targets.first();\nif (!targetToken?.actor) {\n  ui.notifications.warn('Target a token first.');\n} else {\n  game.deathwatch.applyOnFireEffects(targetToken.actor);\n}\n",
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.0.0",
+    "systemId": "deathwatch",
+    "systemVersion": "0.0.2"
+  }
+}
