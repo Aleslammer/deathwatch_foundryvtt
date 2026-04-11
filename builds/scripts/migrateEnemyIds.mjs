@@ -123,6 +123,14 @@ const FACTIONS = [
       "cult-zealot-horde.json": { num: "04", type: "hord" },
       "mutant-devotee-horde.json": { num: "05", type: "hord" },
     }
+  },
+  {
+    dir: "src/packs-source/enemies/tau",
+    faction: "tau",
+    files: {
+      "tau-commander.json": { num: "01", type: "enmy" },
+      "tau-stealth-suit.json": { num: "02", type: "enmy" },
+    }
   }
 ];
 

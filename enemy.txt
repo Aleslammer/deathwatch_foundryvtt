@@ -1,41 +1,39 @@
 
-Book: Black Crusade
-Page 361
+Book: DeathWatch Core Rulebook
+Page 365
 Type:   Individual 
-Faction: Choas
-Name: APOSTATE PARAGON
-A fi ery demagogue might turn the hearts of men from the 
-commands of their masters and a powerful witch might 
-wreak havoc throughout an entire system, but there are few 
-men more able to demoralise an entire people than a hero 
-turned traitor. The Imperium has its fair share of heroes—
-fi ghting men and women whose grit and daring have foiled 
-evil, crushed rebellion, and spread the dominion of man 
-through the stars. Stories of such fi gures are told throughout 
-the Imperium, and local heroes gain the stature of saints 
-among the people of their system. These heroes are often 
-said to be without fl aw, peerless in their devotion to mankind 
-and above reproach. Despite the stories of their heroics, all 
-men have weaknesses; all men have desires and dark dreams. 
-It is just these sorts of men whom the powers of Chaos most 
-enjoy preying upon, twisting their sense of pride and self
-aggrandisement until they are little more than slaves to their 
-own jealous ambitions. Figures such as Horus and Goge 
-Vandire still stand in the minds of the populace, sewing doubt 
-and paranoia to counter the hope and faith in such heroes.  
-Prior to their fall, fi gures of such reputation and standing 
-are afforded every luxury. When they fi nally turn on their 
-one-time allies, they often bring the full might of those 
-resources to bear, wielding mighty weaponry and armour 
-against their new foes. These paragons of war match skill and 
-armament with the gifts granted them by their new masters.  
+Faction: Tau
+Name: Tau Stealth Suit
+
+Stealth suits are a highly specialised form of Tau Battlesuit, 
+designed for reconnaissance, infiltration and ambushing 
+missions. They are significantly smaller than the ‘Crisis’ 
+battlesuits, and carry less weaponry. What the Stealth Suits 
+lack in firepower, however, they make up for in the ability to 
+move almost unseen by the enemy until the very last instant. 
+Stealth Suits operate in two modes. The default, passive mode 
+utilises a range of technologies to dampen the suit’s electro
+magnetic signature, so that enemy scanners are far less likely 
+to detect it. This mode is called ‘passive’ because its use 
+cannot be detected, as rather than attempting to interfere with 
+enemy systems, it simply masks the suit itself. In active mode, 
+however, the suit’s Stealth Field Generator comes online. The 
+suit’s matte black finish ripples and blurs, resolving itself into 
+a nigh-perfect representation of what lies behind, making 
+it all but transparent. In addition, when operating in active 
+mode, the Stealth Suit’s systems actively interfere with and 
+jam enemy sensor devices. In so doing, the jamming itself will 
+give away the fact that the Stealth Suits are present, but will 
+make their detection nearly impossible.
 
 WS bS S T Ag Int Per WP Fel
-48 48 53 42 40 34 38 50 40
-Wounds: 35
-Armour:  Light Power Armour (7 All)
-Skills: Athletics (S), Awareness (Per), Charm (Fel), Command (Fel) +30, Dodge (Ag), Intimidate (S) +20, Parry (WS) +20, Survival (Per).
-Talents: Blademaster, Combat Master, Crippling Strike, Crushing Blow, Swift Attack.
-Traits: Unnatural Strength (2), Unnatural Toughness (1), Unnatural Weapon Skill (2)
-Weapons: Chainglaive (1d10+12 R, Pen 5, Tearing), Bolter (Basic; 100m; S/3/–; 1d10+5 X; Pen 4; Clip 24; Reload Full; Tearing)
-Gear: 5 bolter clips, any items of Extremely Rare scarcity or lower, as appropriate to the character. May possess a voidship.
+30 42 42 47 38 30 40 40 40
+Wounds: 30
+Skills: Acrobatic +10 (Ag), Awareness +20 (Per), Common Lore (Tau Empire) (Int), Concealment +20 (Ag), Dodge (Ag) +10, Speak Language (Tau, Kroot) (Int), Tracking +10 (Int), Shadowing +20 (Ag).
+Talents: Hard Target, Rapid Reaction, Sprint. 
+Traits: Auto-stabilised, Dark-sight, Flier 12, Unnatural Strength (x2).
+Armour: XV15 Stealth Suit armour (Head 8, Body 8, Arms 7, Legs 7).
+Weapons: Burst cannon.
+Gear: Stealth Suit, incorporating stealth field generator, burst cannon, micro-bead, scanner.
+
+Stealth Field Generator: The Stealth Suit’s Stealth Field Generator is always in one of two modes—Active or Passive. The mode may be changed as Free Action from one turn to the next. In Passive Mode, all Tests of any sort to detect the Stealth Suit and any Ballistic Skill Tests to hit the Stealth Suit suffer a –10 penalty (senses other than sight are unaffected). In Active Mode, any sort of Test to detect the Stealth Suit and all Weapon Skill or Ballistic Skill Tests suffer a –30 penalty (this penalty applies to all senses, including those augmented by auto-senses, scopes, and similar devices). Anyone attempting to locate a Stealth Suit may attempt an Awareness Test (keeping in mind the above penalties). Passing this test by one or more degrees of success will alert the character that his sensors are being interfered with by the Stealth Suit’s systems. If the test is passed by one or more Degrees of Success, the searcher will be aware of the Stealth Suit’s interference with his sensors, but otherwise he will not detect its effects. 
