@@ -1,66 +1,41 @@
 
-
-
-
-Book: Mark of the Xenos
-Page 46
-Type:  Individual
-Name: Zoanthrope
-
-Zoanthropes are amongst the strangest and most bizarre of 
-all Tyranid creatures. Their feeble atrophied bodies hang limp 
-and seemingly lifeless beneath their massive craniums, far too 
-large for their weak limbs to support. Only their immense 
-psychic power allows them to move at all, drifting across the 
-battlefield on a cushion of psychic energy. This vast store of 
-energy and their ability to focus it is also what makes them 
-such terrible foes, for a Zoanthrope is capable of conjuring 
-up earth-shattering bolts of warp energy with the strength 
-to smash apart even the most heavily armoured troops or 
-vehicles. In this role, the swarm uses Zoanthropes as psychic 
-cannons, blasting apart strong points and tanks with equal 
-ease or raining warp fire down upon the heads of massed foes, 
-slaying dozens of warriors in a single, blinding flash of power. 
-There is an unknown and alien intelligence which lurks 
-within the chitin cranium of the Zoanthrope, its actions 
-seemingly governed by both the Hive Mind and some inner 
-psychic instincts to seek out particular enemies and use 
-its powers in certain ways. Despite their power, however, 
-Zoanthropes sometimes seem to be victims of their own 
-massive energy reserves and there have been numerous after
-action reports of Zoanthropes “burning out” in battle. After 
-hurling numerous bolts or sustaining their shield for an 
-extended period, their craniums have been observed to burst 
-and bleed out, sending them crashing limply to the ground. 
-Psykers who have witnessed these events liken it to the perils 
-of the warp which normal psykers can suffer when psychic 
-energy overloads their minds.
-In addition to their ability to hurl terrible bolts of warp 
-energy at their foes, Zoanthropes are also very difficult to 
-destroy, especially considering how weak and feeble their 
-bodies appear. This resilience stems from their ability to create 
-a powerful warp bubble around themselves, shielding them 
-from all kind of weapons and even turning aside blows in 
-close combat. Like their ability to drift above the ground, the 
-shield seems a constant part of the Zoanthrope and is always 
-present as long as the creature lives. It has been noted that 
-the shield seems to strengthen or coalesce around particularly 
-powerful attacks, flashing bright for an instant to turn aside 
-the blow before fading back to a uniform shimmer. 
+Book: Black Crusade
+Page 361
+Type:   Individual 
+Faction: Choas
+Name: APOSTATE PARAGON
+A fi ery demagogue might turn the hearts of men from the 
+commands of their masters and a powerful witch might 
+wreak havoc throughout an entire system, but there are few 
+men more able to demoralise an entire people than a hero 
+turned traitor. The Imperium has its fair share of heroes—
+fi ghting men and women whose grit and daring have foiled 
+evil, crushed rebellion, and spread the dominion of man 
+through the stars. Stories of such fi gures are told throughout 
+the Imperium, and local heroes gain the stature of saints 
+among the people of their system. These heroes are often 
+said to be without fl aw, peerless in their devotion to mankind 
+and above reproach. Despite the stories of their heroics, all 
+men have weaknesses; all men have desires and dark dreams. 
+It is just these sorts of men whom the powers of Chaos most 
+enjoy preying upon, twisting their sense of pride and self
+aggrandisement until they are little more than slaves to their 
+own jealous ambitions. Figures such as Horus and Goge 
+Vandire still stand in the minds of the populace, sewing doubt 
+and paranoia to counter the hope and faith in such heroes.  
+Prior to their fall, fi gures of such reputation and standing 
+are afforded every luxury. When they fi nally turn on their 
+one-time allies, they often bring the full might of those 
+resources to bear, wielding mighty weaponry and armour 
+against their new foes. These paragons of war match skill and 
+armament with the gifts granted them by their new masters.  
 
 WS bS S T Ag Int Per WP Fel
-30 45 45 45 10 35 45 60 –
-Wounds: 32
-Skills: Awareness (Per), Psyniscience (Per) +10.
-Talents: Fearless, Improved Natural Weapons, Improved 
-Warp Sense, Psy Rating (6), Warp Sense.
-Traits: Dark Sight, Fear 3 (Horrifying), Hoverer (6), Natural Armour (Reinforced Chitin), Shadow in the Warp, Size (Enormous), Synapse Creature, Tyranid, Unnatural Strength (x2), Unnatural Toughness (x2).
-Armour: Reinforced Chitin (All 6).
-Weapons: Teeth and Claws (1d10+4 R; Pen 3).
-Gear: None.
-
-Warp Field: Zoanthropes are protected from harm by a powerful psychic warp bubble. This functions as a Force Field (see page 166 in the Deathwatch Rulebook) and counts as having a protection 
-rating of 65 and overloads on a roll of 01-05. If a Zoanthrope’s Warp Field overloads, the creature can spend a Full Action to restore it, the effects coming back into effect at the start of its next turn.
-Tyranid Psyker: Zoanthropes are Tyranid Psykers and follow the rules for Tyranid Psychic Powers on page 34. They have access to all the standard Tyranid psychic powers plus Warp Blast and Warp Lance.
-
-
+48 48 53 42 40 34 38 50 40
+Wounds: 35
+Armour:  Light Power Armour (7 All)
+Skills: Athletics (S), Awareness (Per), Charm (Fel), Command (Fel) +30, Dodge (Ag), Intimidate (S) +20, Parry (WS) +20, Survival (Per).
+Talents: Blademaster, Combat Master, Crippling Strike, Crushing Blow, Swift Attack.
+Traits: Unnatural Strength (2), Unnatural Toughness (1), Unnatural Weapon Skill (2)
+Weapons: Chainglaive (1d10+12 R, Pen 5, Tearing), Bolter (Basic; 100m; S/3/–; 1d10+5 X; Pen 4; Clip 24; Reload Full; Tearing)
+Gear: 5 bolter clips, any items of Extremely Rare scarcity or lower, as appropriate to the character. May possess a voidship.

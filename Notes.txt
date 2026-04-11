@@ -55,7 +55,10 @@ Enemies:
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
-          164 - Terminator Armour has forcefield like effects    
+          164 - Terminator Armour has forcefield like effects  
+
+Psychic Powers:
+    TODO: Add powers from Black Crusade
 
 Orks:
 

@@ -85,8 +85,17 @@ Special Abilities: (optional)
      - Natural Armour: needs `armor` modifier
      - Multiple Arms: needs `+10 tg` modifier
      - Size traits: need `movement` and `concealment` modifiers
-     - Unnatural traits: need `characteristic-bonus` modifiers (x2 or x3)
-     - **Unnatural x3**: Add trait TWICE (each is x2, stacks to x3)
+     - Unnatural traits: need `characteristic-bonus` modifiers (x2 each, stack for higher multipliers)
+     - **CRITICAL - Black Crusade Conversion**:
+       - Black Crusade notation: "Unnatural Strength (+12)" means **+12 to the bonus value**
+       - Deathwatch uses **stacking x2 multipliers** instead
+       - **Calculation**: `(base_bonus + modifier) / base_bonus = required_multiplier`
+       - Round to nearest achievable multiplier (x2, x3, x4, etc.)
+       - **Example**: Str 45 with Unnatural Strength (+12)
+         - Base SB: 45 / 10 = 4
+         - Target SB: 4 + 12 = 16
+         - Multiplier: 16 / 4 = 4 (x4)
+         - Implementation: Add trait **2 times** (x2 + x2 = x4)
    - **Weapons**: Match stats from source, use `attachedQualities` array with `{id: "quality-key"}`
      - **IMPORTANT - Weapon Damage Calculation**:
        - Source book weapon damage INCLUDES the creature's Strength Bonus
@@ -190,6 +199,10 @@ Show the user:
 - **All enemies MUST have `classification`** - Controls Deathwatch Training auto-confirm Righteous Fury
 - **Faction→classification mapping**: tyranid/ork/tau → xenos, chaos → chaos, explicit for humans
 - **CRITICAL: Melee weapon damage** - Always subtract Strength Bonus from book damage (Foundry adds it automatically)
+- **CRITICAL: Black Crusade Unnatural Characteristics** - "+X" notation means +X to bonus value, NOT x multiplier
+  - Convert using: `(base_bonus + modifier) / base_bonus = multiplier`
+  - Stack Unnatural trait x2 instances to achieve the multiplier
+  - Example: "Unnatural Strength (+12)" on Str 45 → SB 4 + 12 = 16 → 16/4 = x4 → Add trait 2 times
 
 ---
 
