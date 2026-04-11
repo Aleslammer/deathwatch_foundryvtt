@@ -4,7 +4,7 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 
 ![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
 ![Version](https://img.shields.io/badge/Version-0.0.2-blue)
-![Tests](https://img.shields.io/badge/Tests-1752%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-1823%20passing-brightgreen)
 
 ---
 
@@ -23,6 +23,13 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
   - Weapon-cybernetic linking for automatic strength bonus calculation
   - Characteristic source selection dialog for tests (natural vs. cybernetic)
   - Exceptional craftsmanship variants with enhanced capabilities
+- **Insanity & Corruption**: Mental state tracking with XP-based recovery
+  - Insanity Points (IP) accumulation with threshold-based mechanical penalties
+  - Corruption Points (CP) tracking with primarch's curse activation at 100 CP
+  - Primarch's Curse: Chapter-specific permanent mutations (Blood Angels: Red Thirst & Black Rage, etc.)
+  - Battle Traumas: Triggered at high insanity thresholds with ongoing mechanical effects
+  - XP purchase for insanity reduction (100 XP per point) with 1d5 recovery rolls
+  - Integrated mental state panel on character sheet
 
 ### Combat System
 - **Ranged Combat**: BS-based attacks with aim, rate of fire (Single/Semi-Auto/Full-Auto), range modifiers, jamming, and ammunition tracking
@@ -66,7 +73,10 @@ A complete game system implementation for [Foundry Virtual Tabletop](https://fou
 - Batch damage application with collapsible hit-by-hit summary messages
 - Natural Armour system with ignores-natural-armour ammunition support
 - Enemy classification (human/xenos/chaos) for Deathwatch Training integration
-- Pre-built Tyranid and Ork enemies with horde variants
+- **70 pre-built enemies** across three factions:
+  - **Tyranids**: Termagants, Hormagaunts, Warriors, Carnifex, Hive Tyrant, and more
+  - **Orks**: Boyz, Sluggas, Nobz, Warboss, Meganobz, and horde variants
+  - **Chaos**: 27 enemies including Daemon Princes, Bloodletters, Plaguebearers, Chaos Space Marines, Heretics, Cultists, Horrors, and more
 
 ### Macros
 The system includes three types of macros for streamlined gameplay:
@@ -90,7 +100,7 @@ The system includes three types of macros for streamlined gameplay:
 📖 **Complete guide**: [Macro System Guide](docs/macro-guide.md)
 
 ### Compendium Packs
-18 pre-built compendium packs with book references and page numbers:
+19 pre-built compendium packs with book references and page numbers:
 
 | Pack | Entries | Description |
 |------|---------|-------------|
@@ -100,7 +110,7 @@ The system includes three types of macros for streamlined gameplay:
 | Gear | 56 | Equipment, tools, consumables, drugs |
 | Talents | 281 | Combat, social, and specialist talents |
 | Traits | 65 | Creature and character traits |
-| Chapters | 9 | Space Marine chapters with XP cost overrides |
+| Chapters | 9 | Space Marine chapters with XP cost overrides and primarch's curse |
 | Specialties | 53 | 6 specialties + 47 Solo/Squad Mode special abilities |
 | Implants | 19 | Standard Space Marine biological implants |
 | Cybernetics | 17 | Servo-arms, servo-harness, auger array, bionic organs, MIU |
@@ -108,10 +118,11 @@ The system includes three types of macros for streamlined gameplay:
 | Weapon Upgrades | 14 | Sights, stabilisers, attachments |
 | Psychic Powers | 68 | Codex, Divination, Telepathy, Chapter, Tyranid |
 | Demeanours | 19 | Personality traits |
+| Battle Traumas | 5 | Insanity-triggered mental afflictions with mechanical effects |
 | Critical Effects | 160 | By damage type (Energy, Explosive, Impact, Rending) |
-| Enemies | 35 | Tyranid and Ork enemies with horde variants |
+| Enemies | 70 | Tyranids, Orks, and Chaos enemies with horde variants |
 | Macros | 7 | Pre-built macros (combat reactions, flame attacks, fire effects) |
-| Roll Tables | 4 | Scatter, Haywire, Psychic Phenomena, Perils of the Warp |
+| Roll Tables | 5 | Scatter, Haywire, Psychic Phenomena, Perils of the Warp, Battle Trauma |
 
 ---
 
@@ -144,7 +155,7 @@ npm install
 
 | Command | Description |
 |---------|-------------|
-| `npm test` | Run all tests (1752 tests across 105 suites) |
+| `npm test` | Run all tests (1823 tests across 110 suites) |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
 | `npm run format:json` | Compact + Prettier JSON formatting |
