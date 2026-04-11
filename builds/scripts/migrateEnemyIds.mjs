@@ -94,6 +94,35 @@ const FACTIONS = [
       "battle-servitor-charron-pattern.json": { num: "05", type: "enmy" },
       "grapplehawk-falax-pattern.json": { num: "06", type: "enmy" },
     }
+  },
+  {
+    dir: "src/packs-source/enemies/chaos",
+    faction: "chaos",
+    files: {
+      "daemon-prince.json": { num: "01", type: "enmy" },
+      "chaos-space-marine.json": { num: "02", type: "enmy" },
+      "renegade-militia.json": { num: "03", type: "enmy" },
+      "chaos-heretic.json": { num: "04", type: "enmy" },
+      "bloodletter.json": { num: "05", type: "enmy" },
+      "daemonette.json": { num: "06", type: "enmy" },
+      "pink-horror.json": { num: "07", type: "enmy" },
+      "blue-horror.json": { num: "08", type: "enmy" },
+      "juggernaut.json": { num: "09", type: "enmy" },
+      "plaguebearer.json": { num: "10", type: "enmy" },
+      "screamer.json": { num: "11", type: "enmy" },
+      "great-unclean-one.json": { num: "12", type: "enmy" },
+      "lord-of-change.json": { num: "13", type: "enmy" },
+      "cult-zealot.json": { num: "14", type: "enmy" },
+      "mutant-devotee.json": { num: "15", type: "enmy" },
+      "cursed-oracle.json": { num: "16", type: "enmy" },
+      "fallen-demagogue.json": { num: "17", type: "enmy" },
+      "apostate-paragon.json": { num: "18", type: "enmy" },
+      "renegade-militia-horde.json": { num: "01", type: "hord" },
+      "chaos-heretic-horde.json": { num: "02", type: "hord" },
+      "nether-swarm.json": { num: "03", type: "hord" },
+      "cult-zealot-horde.json": { num: "04", type: "hord" },
+      "mutant-devotee-horde.json": { num: "05", type: "hord" },
+    }
   }
 ];
 
