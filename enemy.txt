@@ -1,39 +1,35 @@
 
-Book: DeathWatch Core Rulebook
-Page 365
+Book: Mark Of the Xenos
+Page 15
 Type:   Individual 
 Faction: Tau
-Name: Tau Stealth Suit
+Name: Kroot Shaper
 
-Stealth suits are a highly specialised form of Tau Battlesuit, 
-designed for reconnaissance, infiltration and ambushing 
-missions. They are significantly smaller than the ‘Crisis’ 
-battlesuits, and carry less weaponry. What the Stealth Suits 
-lack in firepower, however, they make up for in the ability to 
-move almost unseen by the enemy until the very last instant. 
-Stealth Suits operate in two modes. The default, passive mode 
-utilises a range of technologies to dampen the suit’s electro
-magnetic signature, so that enemy scanners are far less likely 
-to detect it. This mode is called ‘passive’ because its use 
-cannot be detected, as rather than attempting to interfere with 
-enemy systems, it simply masks the suit itself. In active mode, 
-however, the suit’s Stealth Field Generator comes online. The 
-suit’s matte black finish ripples and blurs, resolving itself into 
-a nigh-perfect representation of what lies behind, making 
-it all but transparent. In addition, when operating in active 
-mode, the Stealth Suit’s systems actively interfere with and 
-jam enemy sensor devices. In so doing, the jamming itself will 
-give away the fact that the Stealth Suits are present, but will 
-make their detection nearly impossible.
+The Kroot are a species of almost limitless variety, having 
+travelled countless evolutionary paths. While the form most 
+associated with the species is referred to by the Imperium as the 
+Kroot Carnivore, it is postulated that almost every single animal 
+life form on their home world of Pech is related, albeit distantly, 
+to the genus. Evolution in the Kroot has become a matter of 
+rapid adaptation. The Kroot evolve so quickly that they are in 
+danger of overtaking their own development and becoming 
+so specialised that they are led down dead-end evolutionary 
+paths. This has happened to many members of the genus, who 
+have devolved into creatures only able to exist in a very specific 
+environment or to eat only a particular prey. Even the slightest 
+alteration in environmental factors can result in the extinction of 
+these hyper-specialised sub-species.
 
 WS bS S T Ag Int Per WP Fel
-30 42 42 47 38 30 40 40 40
-Wounds: 30
-Skills: Acrobatic +10 (Ag), Awareness +20 (Per), Common Lore (Tau Empire) (Int), Concealment +20 (Ag), Dodge (Ag) +10, Speak Language (Tau, Kroot) (Int), Tracking +10 (Int), Shadowing +20 (Ag).
-Talents: Hard Target, Rapid Reaction, Sprint. 
-Traits: Auto-stabilised, Dark-sight, Flier 12, Unnatural Strength (x2).
-Armour: XV15 Stealth Suit armour (Head 8, Body 8, Arms 7, Legs 7).
-Weapons: Burst cannon.
-Gear: Stealth Suit, incorporating stealth field generator, burst cannon, micro-bead, scanner.
+45 35 45 45 50 30 45 40 25
+Wounds: 35
+Skills: Acrobatics (Ag) +10, Awareness (Per) +10, Barter (Fel), Climb (S) +10, Command (Fel) +10, Concealment (Ag) +20, Dodge (Ag) +10, Silent Move (Ag) +20, Scrutiny (Per), Speak Language (Low Gothic, Kroot, Tau) (Int), Tracking (Int) +10, Survival (Int) +20.
+Talents: Basic Weapon Training (SP, Primitive), Combat Sense, Exotic Weapon Training (Kroot Rifle, Tau Pulse Weapons) Furious Assault, Hyperactive Nymune Organ, Kroot Leap, Leap Up, Lightning Attack, Lightning Reflexes, Melee Weapon Training (Universal), Resistance (Fear), Swift Attack, Touched by the Fates (2 Fate Points).
+Traits: Eater of the Dead, Fieldcraft, Kroot Physiology, Natural Weapon (Beak), Shamanic Power (choose one) Unnatural Perception (x2), Unnatural Strength (x2). 
+Armour: Hide Armour (Body 2; Primitive).
+Weapons: Kroot Beak (1d5+8 R; Pen 0; Primitive), Tau Pulse Rifle (150m; 1d10+12 E; Pen 4; Clip 36; Rld Half; Gryo-Stabiised), xenos-crafted hunting knife (1d10+8 R; Pen 2; Balanced).
+Gear: Fetishes and talismans, 3 clips of Pulse Rifle ammunition.
 
-Stealth Field Generator: The Stealth Suit’s Stealth Field Generator is always in one of two modes—Active or Passive. The mode may be changed as Free Action from one turn to the next. In Passive Mode, all Tests of any sort to detect the Stealth Suit and any Ballistic Skill Tests to hit the Stealth Suit suffer a –10 penalty (senses other than sight are unaffected). In Active Mode, any sort of Test to detect the Stealth Suit and all Weapon Skill or Ballistic Skill Tests suffer a –30 penalty (this penalty applies to all senses, including those augmented by auto-senses, scopes, and similar devices). Anyone attempting to locate a Stealth Suit may attempt an Awareness Test (keeping in mind the above penalties). Passing this test by one or more degrees of success will alert the character that his sensors are being interfered with by the Stealth Suit’s systems. If the test is passed by one or more Degrees of Success, the searcher will be aware of the Stealth Suit’s interference with his sensors, but otherwise he will not detect its effects. 
+node builds/scripts/convertToWebp.mjs  .\src\icons\enemies\chaos\bloodletter.png
+
+C:\Source\deathwatch_foundryvtt\src\icons\

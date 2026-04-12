@@ -5,82 +5,29 @@
   "img": "systems/deathwatch/icons/enemies/tau/tau-stealth-suit.webp",
   "system": {
     "characteristics": {
-      "ws": {
-        "base": 30
-      },
-      "bs": {
-        "base": 42
-      },
-      "str": {
-        "base": 42
-      },
-      "tg": {
-        "base": 47
-      },
-      "ag": {
-        "base": 38
-      },
-      "int": {
-        "base": 30
-      },
-      "per": {
-        "base": 40
-      },
-      "wil": {
-        "base": 40
-      },
-      "fs": {
-        "base": 40
-      }
+      "ws": { "base": 30 },
+      "bs": { "base": 42 },
+      "str": { "base": 42 },
+      "tg": { "base": 47 },
+      "ag": { "base": 38 },
+      "int": { "base": 30 },
+      "per": { "base": 40 },
+      "wil": { "base": 40 },
+      "fs": { "base": 40 }
     },
-    "wounds": {
-      "base": 30,
-      "max": 30,
-      "value": 0
-    },
-    "fatigue": {
-      "value": 0,
-      "max": 0
-    },
+    "wounds": { "base": 30, "max": 30, "value": 0 },
+    "fatigue": { "value": 0, "max": 0 },
     "skills": {
-      "acrobatics": {
-        "trained": true,
-        "mastered": true
-      },
-      "awareness": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      },
-      "concealment": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      },
-      "dodge": {
-        "trained": true,
-        "mastered": true
-      },
-      "speak_language_tau": {
-        "trained": true
-      },
-      "speak_language_kroot": {
-        "trained": true
-      },
-      "tracking": {
-        "trained": true,
-        "mastered": true
-      },
-      "shadowing": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      }
+      "acrobatics": { "trained": true, "mastered": true },
+      "awareness": { "trained": true, "mastered": true, "expert": true },
+      "concealment": { "trained": true, "mastered": true, "expert": true },
+      "dodge": { "trained": true, "mastered": true },
+      "speak_language_tau": { "trained": true },
+      "speak_language_kroot": { "trained": true },
+      "tracking": { "trained": true, "mastered": true },
+      "shadowing": { "trained": true, "mastered": true, "expert": true }
     },
-    "psyRating": {
-      "value": 0,
-      "base": 0
-    },
+    "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
     "description": "<p>Stealth suits are a highly specialised form of Tau Battlesuit, designed for reconnaissance, infiltration and ambushing missions. They are significantly smaller than the 'Crisis' battlesuits, and carry less weaponry. What the Stealth Suits lack in firepower, however, they make up for in the ability to move almost unseen by the enemy until the very last instant. Stealth Suits operate in two modes. The default, passive mode utilises a range of technologies to dampen the suit's electromagnetic signature, so that enemy scanners are far less likely to detect it. This mode is called 'passive' because its use cannot be detected, as rather than attempting to interfere with enemy systems, it simply masks the suit itself. In active mode, however, the suit's Stealth Field Generator comes online. The suit's matte black finish ripples and blurs, resolving itself into a nigh-perfect representation of what lies behind, making it all but transparent. In addition, when operating in active mode, the Stealth Suit's systems actively interfere with and jam enemy sensor devices. In so doing, the jamming itself will give away the fact that the Stealth Suits are present, but will make their detection nearly impossible.</p><p><strong>Skills:</strong> Acrobatics +10 (Ag), Awareness +20 (Per), Common Lore (Tau Empire) (Int), Concealment +20 (Ag), Dodge +10 (Ag), Speak Language (Tau, Kroot) (Int), Tracking +10 (Int), Shadowing +20 (Ag).</p><p><strong>Gear:</strong> Stealth Suit, incorporating stealth field generator, burst cannon, micro-bead, scanner.</p><p><strong>Stealth Field Generator:</strong> The Stealth Suit's Stealth Field Generator is always in one of two modes—Active or Passive. The mode may be changed as Free Action from one turn to the next. In Passive Mode, all Tests of any sort to detect the Stealth Suit and any Ballistic Skill Tests to hit the Stealth Suit suffer a –10 penalty (senses other than sight are unaffected). In Active Mode, any sort of Test to detect the Stealth Suit and all Weapon Skill or Ballistic Skill Tests suffer a –30 penalty (this penalty applies to all senses, including those augmented by auto-senses, scopes, and similar devices). Anyone attempting to locate a Stealth Suit may attempt an Awareness Test (keeping in mind the above penalties). Passing this test by one or more degrees of success will alert the character that his sensors are being interfered with by the Stealth Suit's systems. If the test is passed by one or more Degrees of Success, the searcher will be aware of the Stealth Suit's interference with his sensors, but otherwise he will not detect its effects.</p><p><strong>Traits:</strong> Auto-stabilised, Dark Sight, Flyer (12), Unnatural Strength (x2)</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 365</p>",
@@ -240,8 +187,6 @@
     "disposition": -1,
     "width": 1,
     "height": 1,
-    "bar1": {
-      "attribute": "wounds"
-    }
+    "bar1": { "attribute": "wounds" }
   }
 }
