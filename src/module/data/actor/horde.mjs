@@ -140,11 +140,17 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
         message += `<br><strong style="color: darkred; font-size: 1.1em;">☠ HORDE DESTROYED ☠</strong>`;
       }
 
-      await FoundryAdapter.createChatMessage(message);
+      await FoundryAdapter.createChatMessage({
+        content: message,
+        speaker: FoundryAdapter.getChatSpeaker(actor)
+      });
     } else {
       const safeActorName = Sanitizer.escape(actor.name);
       const message = `<strong>${safeActorName}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''} — armor and toughness absorb all damage<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;
-      await FoundryAdapter.createChatMessage(message);
+      await FoundryAdapter.createChatMessage({
+        content: message,
+        speaker: FoundryAdapter.getChatSpeaker(actor)
+      });
     }
   }
 }

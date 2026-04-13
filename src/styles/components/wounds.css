@@ -9,6 +9,27 @@
   background: rgba(144, 238, 144, 0.2); /* Light green default (0-25%) */
 }
 
+/* Wounds box with Medica icon */
+.deathwatch .wounds-box::before {
+  content: '✚';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  font-weight: bold;
+  color: var(--dw-critical-damage);
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure wounds content above watermark */
+.deathwatch .wounds-box > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Fatigue Box Styles */
 .deathwatch .fatigue-box {
   width: 106px;
@@ -18,6 +39,26 @@
   border-radius: var(--dw-border-radius-sm);
   position: relative;
   background: rgba(173, 216, 230, 0.2); /* Light blue default */
+}
+
+/* Fatigue box with skull icon */
+.deathwatch .fatigue-box::before {
+  content: '☠';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  color: var(--dw-hud-amber);
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure fatigue content above watermark */
+.deathwatch .fatigue-box > * {
+  position: relative;
+  z-index: 1;
 }
 
 .deathwatch .fatigue-box.unconscious {
@@ -264,4 +305,46 @@
   font-size: var(--dw-font-size-sm);
   font-weight: bold;
   padding-top: 6px;
+}
+
+/* Critical wounds pulse (wounds ≤ 25%) */
+.wounds-box.critical {
+  animation: critical-pulse 2s infinite;
+}
+
+@keyframes critical-pulse {
+  0%, 100% {
+    border-color: var(--dw-critical-damage);
+    box-shadow:
+      0 0 8px rgba(220, 20, 60, 0.6),
+      inset 0 0 12px rgba(220, 20, 60, 0.2);
+  }
+  50% {
+    border-color: var(--dw-critical-severe);
+    box-shadow:
+      0 0 20px rgba(220, 20, 60, 0.9),
+      0 0 40px rgba(220, 20, 60, 0.4),
+      inset 0 0 20px rgba(220, 20, 60, 0.4);
+  }
+}
+
+/* Exhausted pulse (fatigue ≥ TB) */
+.fatigue-box.exhausted {
+  animation: exhausted-pulse 2.5s infinite;
+}
+
+@keyframes exhausted-pulse {
+  0%, 100% {
+    border-color: var(--dw-hud-amber);
+    box-shadow:
+      0 0 8px rgba(255, 191, 0, 0.5),
+      inset 0 0 8px rgba(255, 191, 0, 0.15);
+  }
+  50% {
+    border-color: var(--dw-hud-amber-bright);
+    box-shadow:
+      0 0 16px rgba(255, 191, 0, 0.8),
+      0 0 32px rgba(255, 191, 0, 0.3),
+      inset 0 0 16px rgba(255, 191, 0, 0.3);
+  }
 }

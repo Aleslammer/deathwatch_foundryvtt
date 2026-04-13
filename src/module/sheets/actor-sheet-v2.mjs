@@ -434,6 +434,23 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       input.addEventListener('focus', () => input.select());
     });
 
+    // Trigger section header scan animations ONLY on first render
+    if (!this._hasAnimatedHeaders) {
+      this._hasAnimatedHeaders = true;
+      requestAnimationFrame(() => {
+        html.querySelectorAll('.section-header').forEach(header => {
+          header.classList.add('animate-on-load');
+        });
+
+        // Remove animate-on-load class after animations complete (longest delay + animation duration)
+        setTimeout(() => {
+          html.querySelectorAll('.section-header').forEach(header => {
+            header.classList.remove('animate-on-load');
+          });
+        }, 3000); // 1.0s max delay + 1.8s animation + 0.2s buffer
+      });
+    }
+
     // Status effect toggle (checkbox change — can't use data-action)
     html.querySelectorAll('.effect-toggle').forEach(cb => {
       cb.addEventListener('change', async (ev) => {

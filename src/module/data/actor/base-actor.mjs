@@ -135,14 +135,20 @@ export default class DeathwatchActorBase extends DeathwatchDataModel {
         isCritical ? 'warn' : 'info',
         isCritical ? `${safeActorName} is taking CRITICAL DAMAGE!` : `${safeActorName} takes ${damageResult.woundsTaken} wounds!`
       );
-      await FoundryAdapter.createChatMessage(message);
+      await FoundryAdapter.createChatMessage({
+        content: message,
+        speaker: FoundryAdapter.getChatSpeaker(actor)
+      });
     } else {
       const safeActorName = Sanitizer.escape(actor.name);
       FoundryAdapter.showNotification('info', `${safeActorName}'s armor absorbs all damage!`);
       const message = CombatDialogHelper.buildArmorAbsorbMessage(
         actor.name, location, damage, defenses.armorValue, penetration, damageResult.effectiveTB
       );
-      await FoundryAdapter.createChatMessage(message);
+      await FoundryAdapter.createChatMessage({
+        content: message,
+        speaker: FoundryAdapter.getChatSpeaker(actor)
+      });
     }
   }
 }

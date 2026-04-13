@@ -1,4 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+/* Imperial Gothic Typography — Sacred Font Protocols */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 /* Import modular CSS files */
 @import url("variables.css");
@@ -47,9 +50,9 @@
 .deathwatch.sheet .window-content .talents-list h4,
 .deathwatch.sheet .window-content .traits-list h4,
 .deathwatch.sheet .window-content .special-abilities-list h4 {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: var(--dw-font-size-sm);
-  font-weight: normal;
+  font-weight: 500;
   margin: 0;
   overflow: hidden;
 }
@@ -87,7 +90,48 @@
 
 /* V2 ApplicationV2 sheet compatibility — dark theme overrides */
 .deathwatch.sheet .window-content {
-  color: #e0e0e0;
+  /* Multi-layer atmospheric background — War Room */
+  background:
+    /* Top spotlight effect */
+    radial-gradient(
+      ellipse at top center,
+      rgba(44, 74, 107, 0.12),
+      transparent 50%
+    ),
+    /* Bottom shadow depth */
+    radial-gradient(
+      ellipse at bottom center,
+      rgba(139, 0, 0, 0.08),
+      transparent 60%
+    ),
+    /* Subtle scan lines */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(138, 155, 168, 0.02) 2px,
+      rgba(138, 155, 168, 0.02) 4px
+    ),
+    /* Base gradient */
+    linear-gradient(
+      to bottom,
+      #0d0d0d,
+      #1a1a1a
+    );
+
+  background-size:
+    100% 100%,
+    100% 100%,
+    4px 4px,
+    100% 100%;
+
+  /* Atmospheric shadows */
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.7),
+    inset 0 4px 12px rgba(0, 0, 0, 0.5),
+    0 8px 32px rgba(0, 0, 0, 0.9);
+
+  color: var(--dw-deathwatch-silver-light);
   padding: 8px;
 }
 
@@ -112,55 +156,122 @@
   min-height: 0;
 }
 
-/* Text and inputs */
+/* Text and inputs — Data-slate panels */
 .deathwatch.sheet .window-content input[type="text"],
 .deathwatch.sheet .window-content input[type="number"],
 .deathwatch.sheet .window-content select,
 .deathwatch.sheet .window-content textarea {
-  color: #e0e0e0;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  /* Data-slate background */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(44, 74, 107, 0.08),
+      rgba(138, 155, 168, 0.12)
+    );
+
+  /* Ceramite border */
+  border: 1px solid rgba(138, 155, 168, 0.3);
+  border-radius: 2px;
+
+  /* HUD-style text */
+  color: var(--dw-hud-green);
+  text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
+
+  /* Inset depth */
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 0 8px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(212, 165, 116, 0.05);
+
+  transition: all 0.2s ease;
+}
+
+.deathwatch.sheet .window-content input:focus,
+.deathwatch.sheet .window-content select:focus,
+.deathwatch.sheet .window-content textarea:focus {
+  border-color: var(--dw-imperial-gold);
+  color: var(--dw-imperial-gold-light);
+  text-shadow: 0 0 6px rgba(212, 165, 116, 0.5);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 0 8px rgba(0, 0, 0, 0.3),
+    0 0 12px rgba(212, 165, 116, 0.4);
+  outline: none;
 }
 
 .deathwatch.sheet .window-content input[readonly] {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(20, 20, 20, 0.6);
+  color: var(--dw-deathwatch-silver-dark);
+  text-shadow: none;
+  border-color: rgba(138, 155, 168, 0.15);
+}
+
+.deathwatch.sheet .window-content input::placeholder {
+  color: rgba(138, 155, 168, 0.4);
+  text-shadow: none;
 }
 
 .deathwatch.sheet .window-content label {
-  color: #ccc;
+  color: var(--dw-deathwatch-silver);
 }
 
 .deathwatch.sheet .window-content a {
-  color: #8ab4f8;
+  color: var(--dw-imperial-gold);
+}
+
+.deathwatch.sheet .window-content a:hover {
+  color: var(--dw-imperial-gold-light);
+  text-shadow: 0 0 4px rgba(212, 165, 116, 0.5);
 }
 
 .deathwatch.sheet .window-content h1,
 .deathwatch.sheet .window-content h2,
 .deathwatch.sheet .window-content h3,
 .deathwatch.sheet .window-content h4 {
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
 }
 
 /* Section headers */
 .deathwatch.sheet .window-content .section-header {
-  color: #d4a574;
-  border-image: linear-gradient(to right, #8b6914, #d4a574, #8b6914) 1;
+  color: var(--dw-imperial-gold);
+  border-image: linear-gradient(
+    to right,
+    var(--dw-imperial-gold-darkest),
+    var(--dw-imperial-gold),
+    var(--dw-imperial-gold-darkest)
+  ) 1;
 }
 
-/* Skills */
+/* Skills — Tactical Readout */
 .deathwatch.sheet .window-content .skills-header-row {
-  background: #2a2a2a;
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #ccc;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(44, 74, 107, 0.2),
+      rgba(30, 30, 30, 0.8)
+    );
+  border: 1px solid rgba(138, 155, 168, 0.2);
+  border-bottom: 2px solid var(--dw-imperial-gold-dark);
+  color: var(--dw-imperial-gold);
+  text-shadow: 0 0 4px rgba(212, 165, 116, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .deathwatch.sheet .window-content .skills-header {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(44, 74, 107, 0.15);
+  border: 1px solid rgba(138, 155, 168, 0.15);
+  border-left: 3px solid var(--dw-power-armor-blue-light);
+  box-shadow:
+    inset 0 1px 0 rgba(58, 93, 135, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .deathwatch.sheet .window-content .skills-header h3 {
-  color: #bbb;
+  color: var(--dw-deathwatch-silver-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85em;
 }
 
 .deathwatch.sheet .window-content .skills-list {
@@ -172,23 +283,32 @@
 }
 
 .deathwatch.sheet .window-content .skill-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(57, 255, 20, 0.05);
+  border-left: 2px solid var(--dw-hud-green);
+  box-shadow:
+    inset 0 0 8px rgba(57, 255, 20, 0.05),
+    0 0 4px rgba(57, 255, 20, 0.15);
+}
+
+.deathwatch.sheet .window-content .skill-item:hover .skill-name {
+  color: var(--dw-hud-green);
+  text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
 }
 
 .deathwatch.sheet .window-content .skill-name {
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
 }
 
 .deathwatch.sheet .window-content .skill-total {
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
 }
 
 .deathwatch.sheet .window-content .skill-characteristic {
-  color: #999;
+  color: var(--dw-deathwatch-silver-dark);
 }
 
 .deathwatch.sheet .window-content .skill-descriptor {
-  color: #999;
+  color: var(--dw-deathwatch-silver-dark);
 }
 
 .deathwatch.sheet .window-content .skill-modifier input {
@@ -224,7 +344,7 @@
 .deathwatch.sheet .window-content .wounds-box .wounds-modifiers span.wounds-max {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
 }
 
 .deathwatch.sheet .window-content .wounds-box .wounds-modifiers input.wounds-base {
@@ -238,7 +358,7 @@
 .deathwatch.sheet .window-content .fatigue-box .fatigue-modifiers span.fatigue-max {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
 }
 
 .deathwatch.sheet .window-content .movement-box {
@@ -258,19 +378,47 @@
 .deathwatch.sheet .window-content .items-header {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
-  color: #ccc;
+  color: var(--dw-deathwatch-silver);
 }
 
 .deathwatch.sheet .window-content .items-list {
-  color: #ccc;
+  color: var(--dw-deathwatch-silver);
 }
 
 .deathwatch.sheet .window-content .items-list .item {
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(138, 155, 168, 0.1);
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+/* Alternating row subtle distinction */
+.deathwatch.sheet .window-content .items-list .item:nth-child(even) {
+  background: rgba(138, 155, 168, 0.02);
+}
+
+/* Hover — Data highlight */
+.deathwatch.sheet .window-content .items-list .item:hover {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(212, 165, 116, 0.08),
+      rgba(212, 165, 116, 0.12),
+      rgba(212, 165, 116, 0.08),
+      transparent
+    );
+  border-bottom-color: rgba(212, 165, 116, 0.2);
+  border-left: 2px solid var(--dw-imperial-gold);
+  padding-left: calc(5px - 2px);
 }
 
 .deathwatch.sheet .window-content .items-list .item .item-name {
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
+}
+
+.deathwatch.sheet .window-content .items-list .item:hover .item-name {
+  color: var(--dw-imperial-gold-light);
+  text-shadow: 0 0 4px rgba(212, 165, 116, 0.3);
 }
 
 .deathwatch.sheet .window-content .items-list .item-stat {
@@ -306,47 +454,133 @@
 
 /* Resource labels */
 .deathwatch.sheet .window-content .resource-label {
-  color: #ccc;
+  color: var(--dw-deathwatch-silver);
 }
 
-/* Tabs */
+/* Tabs — Battle Report Pages */
 .deathwatch.sheet .window-content .sheet-tabs {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid rgba(138, 155, 168, 0.15);
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(20, 20, 20, 0.6),
+      rgba(10, 10, 10, 0.8)
+    );
+  box-shadow:
+    inset 0 -1px 0 rgba(212, 165, 116, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .deathwatch.sheet .window-content .sheet-tabs .item {
-  color: #aaa;
+  color: var(--dw-deathwatch-silver-dark);
+  border: none;
+  border-top: 2px solid transparent;
+  background: transparent;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
 .deathwatch.sheet .window-content .sheet-tabs .item.active {
-  color: #fff;
-  border-bottom-color: #8ab4f8;
+  color: var(--dw-imperial-gold);
+  border-top-color: var(--dw-imperial-gold);
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(212, 165, 116, 0.2),
+      rgba(212, 165, 116, 0.05)
+    );
+  text-shadow: 0 0 6px rgba(212, 165, 116, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(212, 165, 116, 0.3),
+    0 -2px 8px rgba(212, 165, 116, 0.3);
 }
 
-.deathwatch.sheet .window-content .sheet-tabs .item:hover {
-  color: #fff;
+/* Active tab: loading bar animation */
+.deathwatch.sheet .window-content .sheet-tabs .item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--dw-imperial-gold),
+    transparent
+  );
+  animation: tab-load 0.5s ease-out;
+}
+
+@keyframes tab-load {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Hover preview */
+.deathwatch.sheet .window-content .sheet-tabs .item:hover:not(.active) {
+  color: var(--dw-imperial-gold-light);
+  text-shadow: 0 0 4px rgba(212, 165, 116, 0.3);
+  border-bottom-color: var(--dw-imperial-gold-dark);
 }
 
 /* Squad badges */
 .deathwatch.sheet .window-content .squad-badges .badge {
-  color: #999;
+  color: var(--dw-deathwatch-silver-dark);
 }
 
 .deathwatch.sheet .window-content .squad-badges .cost-badge {
-  color: #64b5f6;
+  color: var(--dw-power-armor-blue-light);
 }
 
 .deathwatch.sheet .window-content .squad-badges .sustained-badge {
-  color: #ffb74d;
+  color: var(--dw-hud-amber);
 }
 
-/* Editor areas */
+/* Editor areas — Parchment Scroll */
 .deathwatch.sheet .window-content .editor {
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border: 2px solid rgba(138, 155, 168, 0.2) !important;
+  border-radius: 3px;
+  background:
+    /* Parchment texture simulation */
+    repeating-linear-gradient(
+      0deg,
+      rgba(244, 231, 215, 0.02),
+      rgba(244, 231, 215, 0.02) 1px,
+      transparent 1px,
+      transparent 2px
+    ),
+    /* Base dark parchment */
+    linear-gradient(
+      to bottom,
+      rgba(30, 28, 25, 0.9),
+      rgba(40, 37, 32, 0.9)
+    );
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 0 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(212, 165, 116, 0.1);
 }
 
 .deathwatch.sheet .window-content .editor-content {
-  color: #e0e0e0;
+  color: var(--dw-parchment-dark);
+  line-height: 1.6;
+}
+
+/* Editor toolbar (TinyMCE) */
+.deathwatch.sheet .window-content .tox .tox-toolbar {
+  background: rgba(20, 20, 20, 0.95) !important;
+  border-bottom: 1px solid rgba(138, 155, 168, 0.2) !important;
+}
+
+.deathwatch.sheet .window-content .tox .tox-toolbar__group button {
+  color: var(--dw-deathwatch-silver) !important;
 }
 
 /* Effective fields in dark theme */
@@ -369,7 +603,7 @@
 
 /* Armor effects table */
 .deathwatch.sheet .window-content .armor-effects-table {
-  color: #e0e0e0;
+  color: var(--dw-deathwatch-silver-light);
 }
 
 .deathwatch.sheet .window-content .armor-effects-table thead tr {
