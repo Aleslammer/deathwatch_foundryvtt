@@ -18,12 +18,26 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 
 ---
 
+## Quick Start
+
+**Prerequisites**: Node.js v24+ (tested on v24.13.0)
+
+```bash
+npm install                 # Install dependencies
+npm test                    # Verify installation (1823 tests should pass)
+npm run build:all           # Build packs and deploy locally (requires .env setup)
+```
+
+**First-time setup**: Copy `.env` and set `LOCAL_DIR` to your Foundry systems directory.
+
+---
+
 ## Development Commands
 
 ### Testing
 
 ```bash
-npm test                    # Run all tests (1752 tests across 105 suites)
+npm test                    # Run all tests (1823 passing tests across 110 suites)
 npm run test:watch          # Watch mode
 npm run test:coverage       # Generate coverage report at coverage/lcov-report/index.html
 
@@ -239,6 +253,35 @@ game.settings.get("deathwatch", "activeSquadAbilities"); // Array of active Squa
 
 **Socket communication**: Non-GM players send `activateSquadAbility` / `deactivateSquadAbility` socket messages; GM processes them and updates world settings.
 
+### Insanity & Corruption System
+
+**Location**: `src/module/helpers/character/insanity-helper.mjs`, `corruption-helper.mjs`
+
+Space Marines can accumulate **Insanity Points (IP)** and **Corruption Points (CP)** through psychic exposure, warp taint, and traumatic experiences.
+
+**Insanity Points**:
+
+- Threshold-based mechanical penalties (10+ IP: -5 WP, 20+ IP: -10 WP)
+- **Battle Traumas** trigger at high thresholds (40+, 60+, 80+) with permanent effects
+- **XP Recovery**: Spend 100 XP to roll 1d5 IP reduction (purchasable via character sheet)
+
+**Corruption Points**:
+
+- Track warp taint accumulation (max 100 CP)
+- **Primarch's Curse** activates at 100 CP (chapter-specific mutations):
+  - Blood Angels: Red Thirst & Black Rage
+  - Space Wolves: Wulfen transformation
+  - Dark Angels: Fallen obsession
+- Permanent, irreversible character changes
+
+**UI**: Integrated mental state panel on character sheet with IP/CP tracking, trauma list, and XP purchase button.
+
+**Key files**:
+
+- `src/module/data/actor/character.mjs` — IP/CP data fields
+- `src/module/helpers/constants/insanity-constants.mjs` — Thresholds, trauma definitions
+- `src/module/helpers/constants/corruption-constants.mjs` — CP thresholds, curse definitions
+
 ### Sheet Architecture
 
 The system uses **Foundry ApplicationV2** sheets exclusively (as of 2026-04-08):
@@ -283,6 +326,8 @@ All system-wide numeric constants are organized into domain-specific files with 
 - `psychic-constants.mjs` — Psychic power levels
 - `modifier-constants.mjs` — Modifier and effect type system
 - `squad-constants.mjs` — Squad mode, cohesion, hordes
+- `insanity-constants.mjs` — Insanity Points thresholds, battle traumas
+- `corruption-constants.mjs` — Corruption Points thresholds, primarch's curses
 - `index.mjs` — Re-exports all constants for convenience
 
 **Key constants**:
@@ -721,7 +766,7 @@ Each pack has a prefix pattern for IDs:
 ## Git Branch Strategy
 
 **Main branch**: `main`  
-**Development branch**: `claude` (current branch)
+**Development branch**: `claude`
 
 When creating PRs, target the `main` branch.
 
