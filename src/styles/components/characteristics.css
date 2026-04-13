@@ -3,7 +3,8 @@
   font-weight: bold;
   min-width: 30px;
   text-align: center;
-  color: var(--dw-color-primary);
+  color: var(--dw-imperial-gold);
+  text-shadow: 0 0 4px rgba(212, 165, 116, 0.3);
 }
 
 .deathwatch .characteristics {
@@ -13,13 +14,136 @@
 }
 
 .deathwatch .characteristics .characteristic {
-  height: 94px;
-  width: 105px;
-  flex: 0 0 105px;
-  margin: 0 var(--dw-spacing-xs) var(--dw-spacing-sm);
+  height: 122px;
+  width: 121px;
+  flex: 0 0 121px;
+  margin: 0 var(--dw-spacing-xs) var(--dw-spacing-xs);
   text-align: center;
-  border: var(--dw-border-width-thick) groove var(--dw-color-border-dark);
-  border-radius: var(--dw-border-radius-sm);
+  position: relative;
+
+  /* Ceramite plate effect */
+  background:
+    /* Rivets in corners */
+    radial-gradient(
+      circle at 8px 8px,
+      rgba(138, 155, 168, 0.4) 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at calc(100% - 8px) 8px,
+      rgba(138, 155, 168, 0.4) 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 8px calc(100% - 8px),
+      rgba(138, 155, 168, 0.4) 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at calc(100% - 8px) calc(100% - 8px),
+      rgba(138, 155, 168, 0.4) 2px,
+      transparent 3px
+    ),
+    /* Subtle metallic gradient */
+    linear-gradient(
+      135deg,
+      rgba(20, 20, 20, 0.95),
+      rgba(30, 30, 30, 0.92)
+    );
+
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+
+  /* Metal plate border */
+  border: 2px solid var(--dw-deathwatch-silver-dark);
+  border-radius: 3px;
+
+  /* Depth and lighting */
+  box-shadow:
+    /* Inner shadow (recessed) */
+    inset 2px 2px 4px rgba(0, 0, 0, 0.8),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.03),
+    /* Outer shadow (depth) */
+    0 4px 8px rgba(0, 0, 0, 0.6),
+    /* Subtle highlight edge */
+    0 -1px 0 rgba(138, 155, 168, 0.1);
+
+  /* Servo-skull scan animation */
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+/* Scan line effect */
+.deathwatch .characteristic::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(57, 255, 20, 0.2),
+    rgba(57, 255, 20, 0.4),
+    rgba(57, 255, 20, 0.2),
+    transparent
+  );
+  transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.deathwatch .characteristic:hover::before {
+  top: 100%;
+}
+
+/* Glow on hover */
+.deathwatch .characteristic:hover {
+  border-color: var(--dw-imperial-gold);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.8),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.05),
+    0 4px 8px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(212, 165, 116, 0.4);
+}
+
+/* Characteristic total glow */
+.deathwatch .characteristic-total {
+  transition: all 0.3s ease;
+}
+
+.deathwatch .characteristic:hover .characteristic-total {
+  color: var(--dw-imperial-gold-light);
+  text-shadow:
+    0 0 6px rgba(212, 165, 116, 0.6),
+    0 0 12px rgba(212, 165, 116, 0.3);
+}
+
+/* Aquila watermark */
+.deathwatch .characteristic::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  background: url('../../icons/aquila.webp') no-repeat center center;
+  background-size: contain;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure characteristic content above watermark */
+.deathwatch .characteristic > * {
+  position: relative;
+  z-index: 1;
 }
 
 .deathwatch .characteristics .characteristic .characteristic-header {
@@ -44,7 +168,7 @@
 
 .deathwatch .characteristics .characteristic h4.box-title {
   line-height: var(--dw-font-size-lg);
-  margin: var(--dw-spacing-sm) var(--dw-spacing-sm) var(--dw-spacing-xxl);
+  margin: 10px var(--dw-spacing-sm) var(--dw-spacing-xxl);
   font-size: var(--dw-font-size-md);
   border-bottom: var(--dw-border-width) solid var(--dw-color-text-beige);
 }
@@ -84,16 +208,61 @@
   justify-content: flex-start;
 }
 
+/* Service Stud Advancement Tracking */
 .deathwatch .characteristic-advances {
-  font-size: 0.7em;
-  margin-top: 2px;
-  justify-content: center;
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
   gap: 4px;
+  z-index: 2;
 }
 
 .deathwatch .characteristic-advances input[type="checkbox"] {
-  width: 10px;
-  height: 10px;
-  margin: 0;
+  /* Remove native checkbox appearance */
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+
+  /* Service stud styling */
+  width: 8px !important;
+  height: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
   cursor: pointer;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), rgba(138, 155, 168, 0.4)) !important;
+  border: 1px solid rgba(90, 101, 112, 0.8) !important;
+  box-shadow:
+    inset 1px 1px 1px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.2s ease;
+  outline: none !important;
+
+  /* Ensure no checkmark appears */
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.deathwatch .characteristic-advances input[type="checkbox"]:checked {
+  background: radial-gradient(circle at 30% 30%, var(--dw-imperial-gold-light), var(--dw-imperial-gold)) !important;
+  box-shadow:
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.5),
+    0 0 4px rgba(212, 165, 116, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.deathwatch .characteristic-advances input[type="checkbox"]:hover {
+  transform: scale(1.2);
+}
+
+/* Remove any pseudo-elements that might show checkmarks */
+.deathwatch .characteristic-advances input[type="checkbox"]::before,
+.deathwatch .characteristic-advances input[type="checkbox"]::after {
+  display: none !important;
+  content: none !important;
 }

@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## System Overview
 
 This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. It implements:
+
 - 4 actor types (Character, NPC, Enemy, Horde) with full combat mechanics
 - 17 item types covering weapons, armor, talents, psychic powers, etc.
 - 17 pre-built compendium packs with 800+ items and actors
@@ -20,6 +21,7 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 ## Development Commands
 
 ### Testing
+
 ```bash
 npm test                    # Run all tests (1752 tests across 105 suites)
 npm run test:watch          # Watch mode
@@ -33,6 +35,7 @@ npm test -- --testPathPattern="weapon-qualities"
 ```
 
 ### Build & Deploy
+
 ```bash
 npm run format:json         # Compact and format all compendium JSON files
 npm run build:packs         # Validate + compile packs to LevelDB
@@ -65,6 +68,7 @@ Combat methods are defined in `DeathwatchActorBase` (`src/module/data/actor/base
 - `receiveBatchDamage(damageArray)` — For hordes (multi-hit from Full Auto/Blast/Flame)
 
 **Horde-specific combat** (`src/module/data/actor/horde.mjs`):
+
 - Health = magnitude × 10 (e.g., magnitude 30 → 300 wounds)
 - Single armor value (no hit locations)
 - Blast/flame hits multiply by 1.5×, explosive weapons add +1d10 per hit
@@ -75,6 +79,7 @@ Combat methods are defined in `DeathwatchActorBase` (`src/module/data/actor/base
 Helpers contain pure business logic (testable without Foundry globals):
 
 **Combat Helpers** (`src/module/helpers/combat/`):
+
 - `combat.mjs` — Main combat logic (hit location, armor, damage application)
 - `ranged-combat.mjs` — BS tests, range modifiers, rate of fire, jamming
 - `melee-combat.mjs` — WS tests, charge, All Out Attack, Called Shot
@@ -87,6 +92,7 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `righteous-fury-helper.mjs` — Righteous Fury auto-confirm for xenos
 
 **Character Helpers** (`src/module/helpers/character/`):
+
 - `modifier-collector.mjs` — Collects all modifiers from items/talents/chapters/traits
 - `modifiers.mjs` — Applies modifiers to characteristics/skills/armor/wounds/etc.
 - `xp-calculator.mjs` — XP computation, rank determination
@@ -95,10 +101,12 @@ Helpers contain pure business logic (testable without Foundry globals):
 - `skill-loader.mjs` — Loads skill definitions from JSON
 
 **UI Helpers** (`src/module/helpers/ui/`):
+
 - `templates.mjs` — Preloads Handlebars templates
 - `handlebars.js` — Custom Handlebars helpers
 
 **Other Helpers**:
+
 - `cohesion.mjs` — Cohesion pool calculation, damage, rally tests (migrated to FoundryAdapter ✅)
 - `mode-helper.mjs` — Solo/Squad Mode activation, Squad Ability tracking
 - `initiative.mjs` — Initiative dialog with modifier input
@@ -110,11 +118,13 @@ Helpers contain pure business logic (testable without Foundry globals):
 The system uses a clean modular initialization pattern (refactored 2026-04-05):
 
 **Main entry point** (`src/module/deathwatch.mjs`): 100 lines
+
 - Imports all modules and delegates initialization
 - Hooks.once('init'): Register settings, configure CONFIG, register hooks, register sheets
 - Hooks.once('ready'): Initialize socket, register chat handlers, create system macros
 
 **Initialization modules** (`src/module/init/`):
+
 - `settings.mjs` — `SettingsRegistrar.register()` — All world/client settings
 - `config.mjs` — `ConfigRegistrar.configure()` — CONFIG.Combat, CONFIG.Actor/Item dataModels
 - `hooks.mjs` — `InitHooks.register()` — Initiative override, actor/effect/combat/scene hooks
@@ -122,6 +132,7 @@ The system uses a clean modular initialization pattern (refactored 2026-04-05):
 - `ready-hook.mjs` — `ReadyHook.initialize()` — Hotbar drop, combat tracker defaults, system macros
 
 **Chat handlers** (`src/module/chat/`):
+
 - `button-handlers.mjs` — `ChatButtonHandlers.register()` — 10 chat button handlers (apply damage, shocking test, etc.)
 
 **Pattern**: Each module exports a single class with a static `register()` or `initialize()` method. The main entry point calls these in order. This keeps the main file under 100 lines and makes initialization logic easy to test and maintain.
@@ -140,6 +151,7 @@ Items, talents, chapters, and traits can modify character attributes via the `mo
 ```
 
 **Effect types**:
+
 - `characteristic` — +5 STR, +10 BS, etc. (applied pre-multiplier)
 - `characteristic-post-multiplier` — Applied after Unnatural Characteristic multiplier
 - `skill` — +10 to Awareness, +20 to Command, etc.
@@ -163,6 +175,7 @@ Modifiers are collected by `modifier-collector.mjs` and applied by `modifiers.mj
 Cybernetics can provide characteristic replacements (e.g., servo-arm replaces natural Strength). This is different from characteristic modifiers — the cybernetic provides a fixed value that completely replaces the natural characteristic.
 
 **Cybernetic item fields**:
+
 - `replacesCharacteristic` — "str", "ag", etc. (which characteristic is replaced)
 - `replacementValue` — Fixed characteristic value (e.g., 75 for standard servo-arm)
 - `unnaturalMultiplier` — Unnatural characteristic multiplier (e.g., 2 for Unnatural Strength x2)
@@ -171,11 +184,13 @@ Cybernetics can provide characteristic replacements (e.g., servo-arm replaces na
 
 **Weapon-cybernetic linking**:
 Weapons can reference a cybernetic item via `weapon.system.cyberneticSource` (item ID). When set:
+
 - Weapon damage rolls automatically use the cybernetic's strength bonus instead of character's natural strength
 - Example: Servo-arm weapon has `dmg: "2d10+SBx2"` and `cyberneticSource: "cyb000000001"`
 - When attacking with the weapon, system uses servo-arm's Str 75 (SB 14) instead of character's natural strength
 
 **Characteristic test flow**:
+
 1. Player clicks characteristic to roll a test (e.g., Strength test)
 2. System checks for equipped cybernetics with `replacesCharacteristic: "str"`
 3. If found, dialog shows source selector:
@@ -184,6 +199,7 @@ Weapons can reference a cybernetic item via `weapon.system.cyberneticSource` (it
 4. Player selects source, roll proceeds with chosen value
 
 **Example: Astartes Servo-Arm**
+
 ```json
 {
   "type": "cybernetic",
@@ -205,13 +221,14 @@ Exceptional craftsmanship is handled by creating a separate compendium entry wit
 Cohesion is a **world-level resource** stored in settings:
 
 ```javascript
-game.settings.get('deathwatch', 'cohesion')        // { value: 7, max: 10 }
-game.settings.get('deathwatch', 'squadLeader')      // Actor ID
-game.settings.get('deathwatch', 'cohesionModifier') // GM modifier
-game.settings.get('deathwatch', 'activeSquadAbilities') // Array of active Squad Mode abilities
+game.settings.get("deathwatch", "cohesion"); // { value: 7, max: 10 }
+game.settings.get("deathwatch", "squadLeader"); // Actor ID
+game.settings.get("deathwatch", "cohesionModifier"); // GM modifier
+game.settings.get("deathwatch", "activeSquadAbilities"); // Array of active Squad Mode abilities
 ```
 
 **Key files**:
+
 - `src/module/helpers/cohesion.mjs` — Cohesion calculation, damage, rally
 - `src/module/ui/cohesion-panel.mjs` — Floating UI panel (toggle with shield icon in Token Controls)
 - `src/module/helpers/mode-helper.mjs` — Solo/Squad Mode logic
@@ -233,6 +250,7 @@ The system uses **Foundry ApplicationV2** sheets exclusively (as of 2026-04-08):
 **Action handler pattern**: Sheet event handlers are defined as static methods in the sheet class and registered in the `DEFAULT_OPTIONS.actions` object. Each action is referenced by name in the template using `data-action` attributes.
 
 **Example**:
+
 ```javascript
 // In actor-sheet-v2.mjs
 static DEFAULT_OPTIONS = {
@@ -259,6 +277,7 @@ static DEFAULT_OPTIONS = {
 All system-wide numeric constants are organized into domain-specific files with JSDoc comments referencing the source rulebook page. Use these constants instead of hardcoded "magic numbers".
 
 **Constant files**:
+
 - `combat-constants.mjs` — Combat modifiers, hit locations, ranges, enemy classifications
 - `characteristic-constants.mjs` — Character stats, rolls, XP, wounds, initiative
 - `psychic-constants.mjs` — Psychic power levels
@@ -267,6 +286,7 @@ All system-wide numeric constants are organized into domain-specific files with 
 - `index.mjs` — Re-exports all constants for convenience
 
 **Key constants**:
+
 - `CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR` — Characteristic bonus = value / 10 (Core p. 31)
 - `ROLL_CONSTANTS.DEGREES_DIVISOR` — Degrees of Success/Failure = difference / 10 (Core p. 27)
 - `HIT_LOCATION_RANGES` — Hit location determination ranges (Core p. 243)
@@ -278,16 +298,25 @@ All system-wide numeric constants are organized into domain-specific files with 
 - `COHESION` — Cohesion rank thresholds, command skill bonuses, damage thresholds
 
 **Usage examples**:
+
 ```javascript
 // Import from index.mjs (re-exports all)
-import { CHARACTERISTIC_CONSTANTS, ROLL_CONSTANTS } from '../helpers/constants/index.mjs';
+import {
+  CHARACTERISTIC_CONSTANTS,
+  ROLL_CONSTANTS
+} from "../helpers/constants/index.mjs";
 
 // Or import from specific domain files
-import { RANGE_MODIFIERS, HIT_LOCATIONS } from '../helpers/constants/combat-constants.mjs';
-import { CHARACTERISTICS } from '../helpers/constants/characteristic-constants.mjs';
+import {
+  RANGE_MODIFIERS,
+  HIT_LOCATIONS
+} from "../helpers/constants/combat-constants.mjs";
+import { CHARACTERISTICS } from "../helpers/constants/characteristic-constants.mjs";
 
 // ✅ Good: Uses constant with documented source
-const bonus = Math.floor(characteristic / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR);
+const bonus = Math.floor(
+  characteristic / CHARACTERISTIC_CONSTANTS.BONUS_DIVISOR
+);
 const dos = Math.floor((target - roll) / ROLL_CONSTANTS.DEGREES_DIVISOR);
 
 // ❌ Bad: Magic number without explanation
@@ -302,6 +331,7 @@ const dos = Math.floor((target - roll) / 10);
 **Location**: `src/module/helpers/foundry-adapter.mjs`
 
 All Foundry VTT API calls should be routed through `FoundryAdapter` to enable:
+
 1. **Testability** - Mock entire Foundry API in one place (see `tests/setup.mjs`)
 2. **Version Migration** - Update Foundry API calls in one place when upgrading
 3. **Error Handling** - Centralized error handling and logging
@@ -322,9 +352,11 @@ All Foundry VTT API calls should be routed through `FoundryAdapter` to enable:
 **Migration Status** (⏳ Gradual):
 
 ✅ **Fully migrated files**:
+
 - `helpers/cohesion.mjs` - All 9 API calls migrated
 
 ⏳ **Partially migrated** (73+ settings calls, 21+ dialog calls across 20+ files):
+
 - Pattern established, migration ongoing
 - Priority: Settings API (most common), Dialog API (UI-heavy)
 
@@ -332,19 +364,20 @@ All Foundry VTT API calls should be routed through `FoundryAdapter` to enable:
 
 ```javascript
 // ❌ Before: Direct Foundry API call
-const cohesion = game.settings.get('deathwatch', 'cohesion');
-await game.settings.set('deathwatch', 'cohesion', newValue);
+const cohesion = game.settings.get("deathwatch", "cohesion");
+await game.settings.set("deathwatch", "cohesion", newValue);
 const actor = game.actors.get(actorId);
 
 // ✅ After: Use FoundryAdapter
-import { FoundryAdapter } from './helpers/foundry-adapter.mjs';
+import { FoundryAdapter } from "./helpers/foundry-adapter.mjs";
 
-const cohesion = FoundryAdapter.getSetting('deathwatch', 'cohesion');
-await FoundryAdapter.setSetting('deathwatch', 'cohesion', newValue);
+const cohesion = FoundryAdapter.getSetting("deathwatch", "cohesion");
+await FoundryAdapter.setSetting("deathwatch", "cohesion", newValue);
 const actor = FoundryAdapter.getActor(actorId);
 ```
 
 **When Migrating**:
+
 1. Import `FoundryAdapter` at the top of the file
 2. Replace direct API calls with adapter methods
 3. Run tests to verify functionality
@@ -363,6 +396,7 @@ const actor = FoundryAdapter.getActor(actorId);
 **Pattern**: Wrap all event listeners with `ErrorHandler.wrap(handler, context)`. Validate all user inputs with `Validation.requireX()` methods before processing.
 
 **Utilities**:
+
 - `ErrorHandler.wrap(handler, context)` — Wraps async handlers, catches errors, shows notifications
 - `ErrorHandler.safe(promise, fallback)` — Returns fallback if promise fails (for non-critical operations)
 - `Validation.requireInt(value, fieldName)` — Parse and validate integer
@@ -372,6 +406,7 @@ const actor = FoundryAdapter.getActor(actorId);
 - `Validation.parseJSON(jsonString, fieldName)` — Parse JSON with error handling
 
 **When to use error handling**:
+
 - ✅ All sheet event listeners (click, change, drop handlers)
 - ✅ All chat message button handlers
 - ✅ All async operations that can fail (document updates, rolls, API calls)
@@ -391,11 +426,13 @@ const actor = FoundryAdapter.getActor(actorId);
 **Pattern**: Use a `key` field for stable identification across item copies.
 
 **Implementation**:
+
 - Add `...DeathwatchItemBase.keyTemplate()` to item schema (provides `key` field)
 - Assign unique, stable keys in compendium source files (e.g., `"key": "servo-arm"`, `"key": "motion-predictor"`)
 - Match items by comparing `item.system.key` values
 
 **Examples**:
+
 ```javascript
 // ✅ Good: Match by key
 static async hasUpgrade(weapon, upgradeKey) {
@@ -411,6 +448,7 @@ const upgrade = actor.items.find(i => i.name === "Motion Predictor");
 ```
 
 **When to use**:
+
 - ✅ Linking items (e.g., weapon → upgrade, weapon → cybernetic)
 - ✅ Checking for specific items in code (e.g., "does actor have X talent?")
 - ✅ Any cross-reference between items
@@ -428,10 +466,12 @@ const upgrade = actor.items.find(i => i.name === "Motion Predictor");
 **Pattern**: Use `Sanitizer.escape(text)` or `Sanitizer.html` tagged template for all user-provided strings in HTML.
 
 **Methods**:
+
 - `Sanitizer.escape(text)` — Escapes HTML special characters
 - `Sanitizer.html`\`template\` — Tagged template that auto-escapes all interpolated values
 
 **When to sanitize**:
+
 - ✅ Actor names, item names, weapon names (any `name` field)
 - ✅ Hit locations from user input
 - ✅ Any string from `dataset` attributes
@@ -453,6 +493,7 @@ const upgrade = actor.items.find(i => i.name === "Motion Predictor");
 **Pattern**: Use `Logger` for all logging instead of direct `console.*` calls. Integrates with Foundry's logging infrastructure and provides user-configurable log levels.
 
 **Methods**:
+
 - `Logger.debug(context, ...args)` — Debug messages (verbose, for developers)
 - `Logger.info(context, ...args)` — Important events (system initialization, etc.)
 - `Logger.warn(context, ...args)` — Warnings (recoverable errors, deprecated usage)
@@ -460,6 +501,7 @@ const upgrade = actor.items.find(i => i.name === "Motion Predictor");
 - `Logger.compatibility(message, { since, until })` — Deprecation warnings
 
 **Log levels** (configurable in Foundry settings):
+
 - `CONSOLE` — Always output to browser console (for debugging, bypasses Foundry logger)
 - `DEBUG` — Shows all messages (verbose)
 - `INFO` — Shows info, warn, and error (default)
@@ -467,6 +509,7 @@ const upgrade = actor.items.find(i => i.name === "Motion Predictor");
 - `ERROR` — Shows errors only
 
 **When to use**:
+
 - ✅ System initialization/shutdown events
 - ✅ Error conditions (use `Logger.error()`)
 - ✅ Deprecation warnings (use `Logger.compatibility()`)
@@ -475,25 +518,26 @@ const upgrade = actor.items.find(i => i.name === "Motion Predictor");
 - ❌ Chat messages (use `ChatMessage.create()`)
 
 **Example usage**:
+
 ```javascript
-import { Logger } from '../helpers/logger.mjs';
+import { Logger } from "../helpers/logger.mjs";
 
 // System events
-Logger.info('INIT', 'System initialized');
+Logger.info("INIT", "System initialized");
 
 // Debug information (only shown at DEBUG level)
-Logger.debug('COMBAT', 'Applying damage', { damage: 15, penetration: 4 });
+Logger.debug("COMBAT", "Applying damage", { damage: 15, penetration: 4 });
 
 // Warnings
-Logger.warn('MODIFIERS', 'Deprecated modifier type used');
+Logger.warn("MODIFIERS", "Deprecated modifier type used");
 
 // Errors
-Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
+Logger.error("SKILLS", "Skills not loaded. Call SkillLoader.init() first.");
 
 // Deprecation warnings
-Logger.compatibility('rollItemMacro() is deprecated', {
-  since: '2.1.0',
-  until: '3.0.0'
+Logger.compatibility("rollItemMacro() is deprecated", {
+  since: "2.1.0",
+  until: "3.0.0"
 });
 ```
 
@@ -504,6 +548,7 @@ Logger.compatibility('rollItemMacro() is deprecated', {
 ### Async/Await Consistency
 
 **Rules**:
+
 - All async functions must use `async`/`await` (no `.then()` or `.catch()` promise chains)
 - Extract dialog callbacks >20 lines to named functions
 - Each helper function should have single, clear responsibility
@@ -518,12 +563,13 @@ Logger.compatibility('rollItemMacro() is deprecated', {
 **Required**: All public methods in helper classes, DataModels, sheets, and init modules must have JSDoc with `@param`, `@returns`, and brief description.
 
 **Format**:
+
 ```javascript
 /**
  * Brief one-line description (imperative: "Calculate", "Apply", "Get").
- * 
+ *
  * Optional longer explanation of algorithm, edge cases, or behavior.
- * 
+ *
  * @param {Type} paramName - Parameter description
  * @param {Type} [optionalParam] - Optional parameter
  * @returns {Type} Return value description
@@ -531,6 +577,7 @@ Logger.compatibility('rollItemMacro() is deprecated', {
 ```
 
 **When required**:
+
 - ✅ All public static methods in helper classes
 - ✅ All public instance methods in DataModel classes
 - ✅ All sheet class methods (getData, activateListeners, etc.)
@@ -548,11 +595,13 @@ Logger.compatibility('rollItemMacro() is deprecated', {
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.
 
 **Test structure**:
+
 - `tests/` mirrors `src/module/` structure
 - Each helper module has a corresponding `.test.mjs` file
 - DataModel classes are tested directly (no Foundry instance needed)
 
 **Key test files**:
+
 - `tests/combat/combat.test.mjs` — Core combat mechanics
 - `tests/combat/ranged-combat.test.mjs` — Ranged attacks, rate of fire, jamming
 - `tests/combat/weapon-qualities.test.mjs` — All 24+ weapon qualities
@@ -580,6 +629,7 @@ Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/set
 ### Pack ID Conventions
 
 Each pack has a prefix pattern for IDs:
+
 - Weapons: `weapon-xxx`
 - Armor: `armor-xxx`
 - Talents: `talent-xxx`
@@ -624,6 +674,7 @@ Each pack has a prefix pattern for IDs:
 ### Psychic Powers
 
 **Focus Power Test** (`psychic-combat.mjs`):
+
 1. Select power level (Fettered/Unfettered/Push)
 2. Roll 1d100 vs WP + modifiers
 3. Compute effective Psy Rating (PR): base PR + power level modifier (−1/0/+1)
@@ -637,11 +688,13 @@ Each pack has a prefix pattern for IDs:
 ### Fire System
 
 **Flame weapons** (weapon quality: `flame`):
+
 - Cone-based targeting (auto-hit within range)
 - Individual targets: Agility dodge test → if failed, apply damage + catch fire test (AG)
 - Hordes: ceil(range/4) + 1d5 hits, 1.5× multiplier
 
 **On Fire status**:
+
 - Applied to token via `actor.setCondition('on-fire', true)`
 - Each round on actor's turn: GM prompted to apply fire effects
 - Fire effects (`applyOnFireEffects`): 1d10 Energy damage (ignores armor), +1 Fatigue, WP test to act normally
@@ -649,12 +702,14 @@ Each pack has a prefix pattern for IDs:
 - Extinguish test: AG − 20 (Hard), removes On Fire status on success
 
 **Fire macros**: Available in the Macros compendium (Compendium Packs > Deathwatch: Macros):
+
 - 🔥 Flame Attack — GM targets token, enters damage/pen, applies flame mechanics
 - 🔥 On Fire Round — GM targets token, applies On Fire effects for this round
 
 ### Hotbar Macros
 
 **Drag & drop from character sheet**:
+
 - **Weapons** → Attack/Damage choice dialog (or pre-load options in macro command)
 - **Psychic powers** → Opens Focus Power Test directly
 - **Other items** → Generic item roll (posts description to chat)
@@ -666,7 +721,7 @@ Each pack has a prefix pattern for IDs:
 ## Git Branch Strategy
 
 **Main branch**: `main`  
-**Development branch**: `claude` (current branch)  
+**Development branch**: `claude` (current branch)
 
 When creating PRs, target the `main` branch.
 

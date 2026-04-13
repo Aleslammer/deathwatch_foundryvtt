@@ -103,12 +103,77 @@
 .deathwatch .skill-mastered { flex: 0 0 20px; text-align: center; }
 .deathwatch .skill-expert { flex: 0 0 20px; text-align: center; }
 
+/* Service stud styling for skill advancement checkboxes */
 .deathwatch .skill-trained input[type="checkbox"],
 .deathwatch .skill-mastered input[type="checkbox"],
 .deathwatch .skill-expert input[type="checkbox"] {
-  margin: 0;
-  width: 12px;
-  height: 12px;
+  /* Remove native checkbox appearance */
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+
+  /* Service stud styling */
+  width: 8px !important;
+  height: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), rgba(138, 155, 168, 0.4)) !important;
+  border: 1px solid rgba(90, 101, 112, 0.8) !important;
+  box-shadow:
+    inset 1px 1px 1px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.2s ease;
+  outline: none !important;
+
+  /* Ensure no checkmark appears */
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.deathwatch .skill-trained input[type="checkbox"]:checked,
+.deathwatch .skill-mastered input[type="checkbox"]:checked,
+.deathwatch .skill-expert input[type="checkbox"]:checked {
+  background: radial-gradient(circle at 30% 30%, var(--dw-imperial-gold-light), var(--dw-imperial-gold)) !important;
+  box-shadow:
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.5),
+    0 0 4px rgba(212, 165, 116, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+.deathwatch .skill-trained input[type="checkbox"]:hover,
+.deathwatch .skill-mastered input[type="checkbox"]:hover,
+.deathwatch .skill-expert input[type="checkbox"]:hover {
+  transform: scale(1.2);
+}
+
+/* Disabled state for service studs */
+.deathwatch .skill-trained input[type="checkbox"]:disabled,
+.deathwatch .skill-mastered input[type="checkbox"]:disabled,
+.deathwatch .skill-expert input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.deathwatch .skill-trained input[type="checkbox"]:disabled:hover,
+.deathwatch .skill-mastered input[type="checkbox"]:disabled:hover,
+.deathwatch .skill-expert input[type="checkbox"]:disabled:hover {
+  transform: none;
+}
+
+/* Remove any pseudo-elements that might show checkmarks */
+.deathwatch .skill-trained input[type="checkbox"]::before,
+.deathwatch .skill-mastered input[type="checkbox"]::before,
+.deathwatch .skill-expert input[type="checkbox"]::before,
+.deathwatch .skill-trained input[type="checkbox"]::after,
+.deathwatch .skill-mastered input[type="checkbox"]::after,
+.deathwatch .skill-expert input[type="checkbox"]::after {
+  display: none !important;
+  content: none !important;
 }
 
 .deathwatch .skill-modifier {

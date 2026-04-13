@@ -181,7 +181,11 @@ describe('CombatHelper.applyDamage with horde', () => {
     });
 
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 7 });
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('bonus Magnitude'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('bonus Magnitude')
+      })
+    );
   });
 
   it('does not apply magnitudeBonusDamage when armor absorbs all damage', async () => {
@@ -237,7 +241,11 @@ describe('CombatHelper.applyDamage with horde', () => {
     });
 
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 30 });
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('HORDE DESTROYED'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('HORDE DESTROYED')
+      })
+    );
   });
 
   it('batch applies multiple hits with single update', async () => {
@@ -258,8 +266,16 @@ describe('CombatHelper.applyDamage with horde', () => {
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledTimes(1);
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 2 });
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledTimes(1);
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('3</strong> hits'));
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('2 Magnitude'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('3</strong> hits')
+      })
+    );
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('2 Magnitude')
+      })
+    );
   });
 
   it('batch shows hit table for multiple hits', async () => {
@@ -275,9 +291,21 @@ describe('CombatHelper.applyDamage with horde', () => {
       { damage: 5, penetration: 0 }  // absorbed
     ]);
 
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('<details'));
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('Absorbed'));
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('1 penetrating, 1 absorbed'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('<details')
+      })
+    );
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('Absorbed')
+      })
+    );
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('1 penetrating, 1 absorbed')
+      })
+    );
   });
 
   it('batch all absorbed posts single message with no update', async () => {
@@ -295,7 +323,11 @@ describe('CombatHelper.applyDamage with horde', () => {
 
     expect(FoundryAdapter.updateDocument).not.toHaveBeenCalled();
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledTimes(1);
-    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(expect.stringContaining('absorb all damage'));
+    expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('absorb all damage')
+      })
+    );
   });
 
   it('batch includes magnitudeBonusDamage per penetrating hit', async () => {

@@ -1,41 +1,36 @@
 
-Book: Black Crusade
-Page 361
+Book: Mark Of the Xenos
+Page 15
 Type:   Individual 
-Faction: Choas
-Name: APOSTATE PARAGON
-A fi ery demagogue might turn the hearts of men from the 
-commands of their masters and a powerful witch might 
-wreak havoc throughout an entire system, but there are few 
-men more able to demoralise an entire people than a hero 
-turned traitor. The Imperium has its fair share of heroes—
-fi ghting men and women whose grit and daring have foiled 
-evil, crushed rebellion, and spread the dominion of man 
-through the stars. Stories of such fi gures are told throughout 
-the Imperium, and local heroes gain the stature of saints 
-among the people of their system. These heroes are often 
-said to be without fl aw, peerless in their devotion to mankind 
-and above reproach. Despite the stories of their heroics, all 
-men have weaknesses; all men have desires and dark dreams. 
-It is just these sorts of men whom the powers of Chaos most 
-enjoy preying upon, twisting their sense of pride and self
-aggrandisement until they are little more than slaves to their 
-own jealous ambitions. Figures such as Horus and Goge 
-Vandire still stand in the minds of the populace, sewing doubt 
-and paranoia to counter the hope and faith in such heroes.  
-Prior to their fall, fi gures of such reputation and standing 
-are afforded every luxury. When they fi nally turn on their 
-one-time allies, they often bring the full might of those 
-resources to bear, wielding mighty weaponry and armour 
-against their new foes. These paragons of war match skill and 
-armament with the gifts granted them by their new masters.  
+Faction: Tau
+Name: Kroot Shaper
+
+The Kroot are a species of almost limitless variety, having 
+travelled countless evolutionary paths. While the form most 
+associated with the species is referred to by the Imperium as the 
+Kroot Carnivore, it is postulated that almost every single animal 
+life form on their home world of Pech is related, albeit distantly, 
+to the genus. Evolution in the Kroot has become a matter of 
+rapid adaptation. The Kroot evolve so quickly that they are in 
+danger of overtaking their own development and becoming 
+so specialised that they are led down dead-end evolutionary 
+paths. This has happened to many members of the genus, who 
+have devolved into creatures only able to exist in a very specific 
+environment or to eat only a particular prey. Even the slightest 
+alteration in environmental factors can result in the extinction of 
+these hyper-specialised sub-species.
 
 WS bS S T Ag Int Per WP Fel
-48 48 53 42 40 34 38 50 40
+45 35 45 45 50 30 45 40 25
 Wounds: 35
-Armour:  Light Power Armour (7 All)
-Skills: Athletics (S), Awareness (Per), Charm (Fel), Command (Fel) +30, Dodge (Ag), Intimidate (S) +20, Parry (WS) +20, Survival (Per).
-Talents: Blademaster, Combat Master, Crippling Strike, Crushing Blow, Swift Attack.
-Traits: Unnatural Strength (2), Unnatural Toughness (1), Unnatural Weapon Skill (2)
-Weapons: Chainglaive (1d10+12 R, Pen 5, Tearing), Bolter (Basic; 100m; S/3/–; 1d10+5 X; Pen 4; Clip 24; Reload Full; Tearing)
-Gear: 5 bolter clips, any items of Extremely Rare scarcity or lower, as appropriate to the character. May possess a voidship.
+Skills: Acrobatics (Ag) +10, Awareness (Per) +10, Barter (Fel), Climb (S) +10, Command (Fel) +10, Concealment (Ag) +20, Dodge (Ag) +10, Silent Move (Ag) +20, Scrutiny (Per), Speak Language (Low Gothic, Kroot, Tau) (Int), Tracking (Int) +10, Survival (Int) +20.
+Talents: Basic Weapon Training (SP, Primitive), Combat Sense, Exotic Weapon Training (Kroot Rifle, Tau Pulse Weapons) Furious Assault, Hyperactive Nymune Organ, Kroot Leap, Leap Up, Lightning Attack, Lightning Reflexes, Melee Weapon Training (Universal), Resistance (Fear), Swift Attack, Touched by the Fates (2 Fate Points).
+Traits: Eater of the Dead, Fieldcraft, Kroot Physiology, Natural Weapon (Beak), Shamanic Power (choose one) Unnatural Perception (x2), Unnatural Strength (x2). 
+Armour: Hide Armour (Body 2; Primitive).
+Weapons: Kroot Beak (1d5+8 R; Pen 0; Primitive), Tau Pulse Rifle (150m; 1d10+12 E; Pen 4; Clip 36; Rld Half; Gryo-Stabiised), xenos-crafted hunting knife (1d10+8 R; Pen 2; Balanced).
+Gear: Fetishes and talismans, 3 clips of Pulse Rifle ammunition.
+
+node builds/scripts/convertToWebp.mjs  .\src\icons\enemies\chaos\bloodletter.png
+
+
+C:\Source\deathwatch_foundryvtt\src\icons\

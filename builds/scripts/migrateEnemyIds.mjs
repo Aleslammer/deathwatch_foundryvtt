@@ -123,6 +123,23 @@ const FACTIONS = [
       "cult-zealot-horde.json": { num: "04", type: "hord" },
       "mutant-devotee-horde.json": { num: "05", type: "hord" },
     }
+  },
+  {
+    dir: "src/packs-source/enemies/tau",
+    faction: "tau",
+    files: {
+      "tau-commander.json": { num: "01", type: "enmy" },
+      "tau-stealth-suit.json": { num: "02", type: "enmy" },
+      "gun-drone.json": { num: "03", type: "enmy" },
+      "fire-warrior.json": { num: "04", type: "enmy" },
+      "broadside-battlesuit.json": { num: "05", type: "enmy" },
+      "utility-drone.json": { num: "06", type: "enmy" },
+      "kroot-carnivore.json": { num: "07", type: "enmy" },
+      "kroot-shaper.json": { num: "08", type: "enmy" },
+      "gun-drone-horde.json": { num: "01", type: "hord" },
+      "fire-warrior-horde.json": { num: "02", type: "hord" },
+      "kroot-carnivore-horde.json": { num: "03", type: "hord" },
+    }
   }
 ];
 

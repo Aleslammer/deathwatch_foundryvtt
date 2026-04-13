@@ -10,7 +10,7 @@
     <div class="characteristic-center">{{characteristic.value}}</div>
     <input class="characteristic-base" name="system.characteristics.{{key}}.base" type="text" value="{{characteristic.base}}" data-dtype="Number" placeholder="10"/>
   </div>
-  <div class="characteristic-advances flexrow" style="font-size: 0.7em; margin-top: 2px; justify-content: center; gap: 4px;">
+  <div class="characteristic-advances">
     <input type="checkbox" name="system.characteristics.{{key}}.advances.simple" {{checked characteristic.advances.simple}} title="Simple (+5)" />
     <input type="checkbox" name="system.characteristics.{{key}}.advances.intermediate" {{checked characteristic.advances.intermediate}} title="Intermediate (+5)" />
     <input type="checkbox" name="system.characteristics.{{key}}.advances.trained" {{checked characteristic.advances.trained}} title="Trained (+5)" />
