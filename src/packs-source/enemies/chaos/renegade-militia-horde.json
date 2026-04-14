@@ -122,7 +122,7 @@
       "_id": "hichaos010000007",
       "name": "Combat Knife",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/combat-knife.webp",
+      "img": "systems/deathwatch/icons/weapons/combat_knife.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d5+3",

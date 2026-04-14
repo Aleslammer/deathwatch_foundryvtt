@@ -502,7 +502,7 @@
       "_id": "eichaos010000030",
       "name": "Chaos-forged Sword",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/power-sword.webp",
+      "img": "systems/deathwatch/icons/weapons/powersword.webp",
       "system": {
         "class": "Melee",
         "dmg": "2d10+7",

@@ -343,7 +343,7 @@
       "_id": "eichaos120000020",
       "name": "Giant Plaguesword",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/power-sword.webp",
+      "img": "systems/deathwatch/icons/weapons/powersword.webp",
       "system": {
         "class": "Melee",
         "dmg": "2d10+2",

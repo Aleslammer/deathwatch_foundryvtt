@@ -122,7 +122,7 @@
       "_id": "hichaos020000007",
       "name": "Monoedged Blade",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/combat-knife.webp",
+      "img": "systems/deathwatch/icons/weapons/combat_knife.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10+0",

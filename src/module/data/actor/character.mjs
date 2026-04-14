@@ -44,14 +44,13 @@ const { fields } = foundry.data;
 export default class DeathwatchCharacter extends DeathwatchActorBase {
 
   /**
-   * Schema for a single characteristic (value, bonus, damage, advances).
+   * Schema for a single characteristic (value, bonus, advances).
    */
   static _characteristicFields() {
     return new fields.SchemaField({
       value: new fields.NumberField({ initial: 0, min: 0, integer: true }),
       base: new fields.NumberField({ initial: 0, min: 0, integer: true }),
       bonus: new fields.NumberField({ initial: 0, min: 0, integer: true }),
-      damage: new fields.NumberField({ initial: 0, min: 0, integer: true }),
       advances: new fields.SchemaField({
         simple: new fields.BooleanField({ initial: false }),
         intermediate: new fields.BooleanField({ initial: false }),

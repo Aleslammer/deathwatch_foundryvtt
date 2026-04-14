@@ -272,14 +272,7 @@ export class ModifierCollector {
           appliedMods.push({ name: mod.name, value: modValue, source: mod.source });
         }
       }
-      
-      // Subtract characteristic damage
-      const damage = parseInt(characteristic.damage) || 0;
-      if (damage > 0) {
-        total -= damage;
-        appliedMods.push({ name: 'Damage', value: -damage, source: 'Characteristic Damage' });
-      }
-      
+
       characteristic.value = total;
       characteristic.modifiers = appliedMods;
       

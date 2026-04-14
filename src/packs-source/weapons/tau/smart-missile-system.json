@@ -2,7 +2,7 @@
   "_id": "tau000000019",
   "name": "Smart Missile System",
   "type": "weapon",
-  "img": "systems/deathwatch/icons/weapons/tau-smart-missile.webp",
+  "img": "systems/deathwatch/icons/weapons/tau-missile.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "367",

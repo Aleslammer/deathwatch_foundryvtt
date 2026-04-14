@@ -405,7 +405,7 @@
       "_id": "eitau08000000022",
       "name": "Xenos-crafted Hunting Knife",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/combat-knife.webp",
+      "img": "systems/deathwatch/icons/weapons/combat_knife.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10",

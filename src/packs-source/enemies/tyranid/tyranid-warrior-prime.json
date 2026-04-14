@@ -410,7 +410,7 @@
       "_id": "eityranid1900021",
       "name": "Spinefists",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/tyranid-spinefists.webp",
+      "img": "systems/deathwatch/icons/weapons/tyranid-spinefist.webp",
       "system": {
         "class": "Pistol",
         "dmg": "1d10+12",

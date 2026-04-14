@@ -7,120 +7,198 @@ description: Use when converting PNG, JPG, or other image formats to WebP format
 
 ## Overview
 
-Convert images to WebP format using the local cwebp.exe tool. **Check for local project binaries before suggesting installations.**
+Convert images to WebP format using the project's Node.js conversion script. **The script automatically deletes original files after successful conversion.**
 
-**Core principle:** Use project-specific tools when available; prefer official WebP encoder over generic image converters.
+**Primary tool:** `builds/scripts/convertToWebp.mjs` (Node.js script)  
+**Fallback:** Direct `cwebp.exe` commands (for manual control)
 
-## Local Tool Location
+## Prerequisites
 
-**This system has cwebp.exe pre-installed at:**
+**Required .env configuration:**
+```env
+CWEBP_PATH=C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe
+MAGICK_PATH=C:\Program Files\ImageMagick\magick.exe
 ```
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe
-```
 
-**CRITICAL: ALWAYS use the full path above in ALL commands.** Never use bare `cwebp` or suggest installing tools.
+The script reads these paths from `.env` in the project root. MAGICK_PATH is only required for `--trim` operations.
 
 ## Quick Reference
 
-**All commands use the full path: `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe`**
+| Task | Command |
+|------|---------|
+| Convert single file | `node builds/scripts/convertToWebp.mjs src/icons/weapons/bolter.png` |
+| Convert directory (recursive) | `node builds/scripts/convertToWebp.mjs src/icons/weapons` |
+| Trim white background | `node builds/scripts/convertToWebp.mjs --trim src/icons/file.webp` |
+| Trim white with fuzz | `node builds/scripts/convertToWebp.mjs --trim src/icons/file.webp 15%` |
+| Trim black background | `node builds/scripts/convertToWebp.mjs --trim-black src/icons/file.webp` |
+| Trim black directory | `node builds/scripts/convertToWebp.mjs --trim-black src/icons/dir 15%` |
 
-| Task | Command Pattern |
-|------|----------------|
-| Basic conversion | `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe input.png -o output.webp` |
-| With quality (lossy) | `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -q 85 input.png -o output.webp` |
-| Lossless | `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -lossless input.png -o output.webp` |
-| Set compression | `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -q 80 -m 6 input.png -o output.webp` |
+## Script Usage
 
-**Note:** Full path works in both PowerShell and Git Bash (use forward slashes `/` as shown).
+### Convert Mode (PNG/JPG → WebP)
 
-## Red Flags - STOP and Use Local Tool
+**⚠️ WARNING: Original files are automatically deleted after conversion.**
 
-**NEVER suggest these (tool already exists locally):**
-- ❌ "Install cwebp via npm" or "npm install -g cwebp-bin"
-- ❌ "choco install webp" or "Download from Google"
-- ❌ "Use ImageMagick" or "magick convert"
-- ❌ "npx @squoosh/cli" or other npm packages
-- ❌ Bare `cwebp` command without full path
+```bash
+# Single file (PNG or JPG)
+node builds/scripts/convertToWebp.mjs src/icons/weapons/whip.jpg
+# Output: src/icons/weapons/whip.webp
+# Original: src/icons/weapons/whip.jpg (DELETED)
 
-**ALWAYS do this instead:**
-- ✅ Use full path: `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe`
-- ✅ Works in PowerShell, Git Bash, and CMD
-- ✅ No installation needed
+# Entire directory (recursive)
+node builds/scripts/convertToWebp.mjs src/icons/weapons
+# Converts all .png, .jpg, .jpeg files
+# Deletes originals after conversion
+```
 
-## Quality Guidelines
+**What it does:**
+1. Converts PNG/JPG to WebP using default cwebp settings (quality ~75)
+2. Saves output with same filename but `.webp` extension
+3. **Automatically deletes the original file**
+4. Processes directories recursively
 
-| Image Type | Recommended Settings | Rationale |
-|------------|---------------------|-----------|
-| UI icons (64x64 - 256x256) | `-q 90` or `-lossless` | Quality critical, files already small |
-| Game assets (512x512+) | `-q 85 -m 6` | Balance quality/size, good compression |
-| Backgrounds (1920x1080+) | `-q 75 -m 6` | Size matters more, artifacts less visible |
-| Pixel art | `-lossless` | Preserve exact pixels, no artifacts |
+### Trim Mode (Remove Background)
+
+**Removes white or black backgrounds and trims excess padding.**
+
+```bash
+# Remove white background
+node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp
+
+# Remove white with fuzz (for anti-aliased edges)
+node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp 15%
+
+# Remove black background
+node builds/scripts/convertToWebp.mjs --trim-black src/icons/weapons/chainsword.webp
+
+# Trim all WebP files in directory
+node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid
+```
+
+**What it does:**
+1. Fills corner pixels with the target color (white/black)
+2. Flood-fills from corners to make matching background transparent
+3. Trims transparent padding (`-trim +repage`)
+4. Overwrites the original file (no backup created)
+
+**Fuzz parameter:**
+- Optional percentage (e.g., `15%`)
+- Allows color matching with tolerance
+- Use for anti-aliased or gradient edges
+- Higher fuzz = more aggressive background removal
+
+## Manual cwebp Commands (Fallback)
+
+**Use when you need fine-grained control over quality settings.**
+
+```bash
+# Basic conversion (no auto-delete)
+C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe "src/icons/weapons/bolter.png" -o "src/icons/weapons/bolter.webp"
+
+# High quality for UI icons
+C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -q 90 "src/icons/ui/character-sheet.png" -o "src/icons/ui/character-sheet.webp"
+
+# Lossless for pixel art
+C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -lossless "src/icons/tokens/marine.png" -o "src/icons/tokens/marine.webp"
+```
+
+**Quality guidelines:**
+- UI icons (64x64 - 256x256): `-q 90` or `-lossless`
+- Game assets (512x512+): `-q 85 -m 6`
+- Backgrounds (1920x1080+): `-q 75 -m 6`
+- Pixel art: `-lossless`
 
 **Parameters:**
 - `-q N` — Quality (0-100, default 75). Higher = better quality, larger file.
 - `-m N` — Compression method (0-6, default 4). Higher = slower but better compression.
 - `-lossless` — No quality loss (like PNG), larger files but identical output.
 
-## Implementation
+## Workflow Examples
 
-### Single File Conversion
+### Converting weapon icons
 
 ```bash
-# Basic conversion (quality 75, default)
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/bolter.png" -o "./src/icons/weapons/bolter.webp"
+# Convert single weapon icon
+node builds/scripts/convertToWebp.mjs src/icons/weapons/whip.jpg
 
-# High quality for UI icons
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe -q 90 "./src/icons/ui/character-sheet.png" -o "./src/icons/ui/character-sheet.webp"
+# Convert all weapons in directory
+node builds/scripts/convertToWebp.mjs src/icons/weapons
 
-# Lossless for pixel art
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe -lossless "./src/icons/tokens/marine.png" -o "./src/icons/tokens/marine.webp"
+# If icons have white borders, trim them
+node builds/scripts/convertToWebp.mjs --trim src/icons/weapons
 ```
 
-### Batch Conversion
+### Converting enemy portraits with backgrounds
 
-**PowerShell (Windows):**
-```powershell
-# Convert all PNGs in a directory
-Get-ChildItem "./src/icons/weapons/*.png" | ForEach-Object {
-    C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe -q 85 $_.FullName -o ($_.DirectoryName + "\" + $_.BaseName + ".webp")
-}
-```
-
-**Bash (Git Bash on Windows):**
 ```bash
-# Convert all PNGs with quality 85
-for file in ./src/icons/weapons/*.png; do
-    C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -q 85 "$file" -o "${file%.png}.webp"
+# Convert PNG to WebP
+node builds/scripts/convertToWebp.mjs src/icons/enemies/tyranid/gargoyle.png
+
+# Remove white background and trim
+node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp
+
+# If edges are anti-aliased, add fuzz tolerance
+node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp 10%
+```
+
+### Batch conversion with manual quality control
+
+```bash
+# Use manual cwebp for specific quality (no auto-delete)
+for file in src/icons/ui/*.png; do
+    C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe -q 95 "$file" -o "${file%.png}.webp"
 done
+
+# Then manually delete originals after verification
+rm src/icons/ui/*.png
 ```
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Suggesting `choco install webp` | Use local tool at `C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe` |
-| Recommending ImageMagick | Prefer official cwebp for WebP conversion |
-| Using same quality for all images | Adjust based on image type (see Quality Guidelines) |
-| Forgetting `-o` flag | cwebp requires explicit output path with `-o` |
-| Using forward slashes in PowerShell paths | Use backslashes `\` in PowerShell, forward `/` in Bash |
+| Forgetting files are auto-deleted | Keep backups or use manual cwebp for non-destructive conversion |
+| Running script without .env setup | Add CWEBP_PATH to `.env` before running |
+| Using --trim on wrong file type | Trim only works on WebP files (convert first, trim second) |
+| Expecting quality flags in script | Script uses cwebp defaults (~75 quality); use manual cwebp for custom quality |
+| Using bare `cwebp` command | Always use full path: `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe` |
 
-## Error Handling
+## Error Messages
 
-**File not found:**
+**"CWEBP_PATH not set"**
 ```bash
-# Verify input file exists first
-if (Test-Path "./src/icons/weapon.png") {
-    cwebp "./src/icons/weapon.png" -o "./src/icons/weapon.webp"
-} else {
-    Write-Error "Input file not found"
-}
+# Add to .env in project root
+echo "CWEBP_PATH=C:\\Source\\libs\\libwebp-1.6.0\\bin\\cwebp.exe" >> .env
 ```
 
-**Check tool availability:**
+**"MAGICK_PATH not set"** (for --trim operations)
 ```bash
-if (Test-Path "C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe") {
-    # Use local tool
-} else {
-    Write-Warning "Local cwebp.exe not found. Install webp tools or use ImageMagick as fallback."
-}
+# Add ImageMagick path to .env
+echo "MAGICK_PATH=C:\\Program Files\\ImageMagick\\magick.exe" >> .env
 ```
+
+**"Unsupported file type"**
+- Script only processes .png, .jpg, .jpeg files in convert mode
+- Trim mode only processes .webp files
+
+## Safety Tips
+
+1. **Test on single file first** before batch converting directories
+2. **Keep backups** of important assets before conversion (originals are deleted)
+3. **Verify output quality** before deleting source files manually
+4. **Use manual cwebp** when you need non-destructive conversion
+5. **Check file sizes** after trim operations (over-aggressive fuzz can degrade quality)
+
+## Red Flags - STOP
+
+**NEVER suggest these:**
+- ❌ "Install cwebp via npm" or "npm install -g cwebp-bin"
+- ❌ "choco install webp" or "Download from Google"
+- ❌ "npx @squoosh/cli" or other npm packages
+- ❌ Bare `cwebp` command without full path
+
+**ALWAYS do this:**
+- ✅ Use project script: `node builds/scripts/convertToWebp.mjs`
+- ✅ Or use full path: `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe`
+- ✅ Ensure .env is configured with CWEBP_PATH
+- ✅ Warn about auto-deletion of original files

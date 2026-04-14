@@ -186,6 +186,7 @@ export class ChatButtonHandlers {
       const button = ev.currentTarget;
       const formula = button.dataset.formula;
       const characteristic = button.dataset.characteristic;
+      const effectName = button.dataset.name || 'Characteristic Damage';
 
       const actor = this._resolveActor(button, 'actorId');
       Validation.requireDocument(actor, 'Actor', 'Characteristic Damage');
@@ -200,13 +201,43 @@ export class ChatButtonHandlers {
       const roll = await new Roll(formula).evaluate();
       const charDamage = roll.total;
 
-      const currentDamage = actor.system.characteristics[characteristic]?.damage || 0;
-      const newDamage = currentDamage + charDamage;
+      // Find existing modifier for this characteristic damage source, or create new
+      const modifiers = Array.isArray(actor.system.modifiers) ? [...actor.system.modifiers] : [];
+      const existingIndex = modifiers.findIndex(m =>
+        m.effectType === 'characteristic' &&
+        m.valueAffected === characteristic &&
+        m.source === 'Characteristic Damage' &&
+        m.name === effectName
+      );
 
-      await actor.update({ [`system.characteristics.${characteristic}.damage`]: newDamage });
+      if (existingIndex >= 0) {
+        // Accumulate damage to existing modifier
+        const currentModifier = modifiers[existingIndex].modifier;
+        const newModifier = currentModifier - charDamage; // Negative for penalty
+        modifiers[existingIndex].modifier = newModifier;
+      } else {
+        // Create new modifier
+        modifiers.push({
+          _id: foundry.utils.randomID(),
+          name: effectName,
+          modifier: -charDamage, // Negative for penalty
+          type: 'untyped',
+          modifierType: 'constant',
+          effectType: 'characteristic',
+          valueAffected: characteristic,
+          enabled: true,
+          source: 'Characteristic Damage'
+        });
+      }
+
+      await actor.update({ 'system.modifiers': modifiers });
 
       const charName = characteristic.toUpperCase();
-      const flavor = `<strong>Characteristic Damage</strong><br><strong style="color: red;">${charName} takes ${charDamage} damage</strong><br>Total ${charName} Damage: ${newDamage}`;
+      const totalPenalty = modifiers
+        .filter(m => m.effectType === 'characteristic' && m.valueAffected === characteristic && m.source === 'Characteristic Damage')
+        .reduce((sum, m) => sum + m.modifier, 0);
+
+      const flavor = `<strong>Characteristic Damage</strong><br><strong style="color: red;">${charName} takes ${charDamage} damage</strong><br>Total ${charName} Penalty: ${totalPenalty}`;
 
       await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
