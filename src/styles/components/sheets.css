@@ -83,8 +83,13 @@
 }
 
 .deathwatch .sheet-body,
-.deathwatch .sheet-body .tab,
-.deathwatch .sheet-body .tab .editor {
+.deathwatch .sheet-body .tab {
+  height: 100%;
+}
+
+/* Only apply height: 100% to editors that are direct children of tabs (item sheets, NPC sheet)
+   Not to nested editors inside biography/demeanours/past-events sections */
+.deathwatch .sheet-body .tab > .editor {
   height: 100%;
 }
 

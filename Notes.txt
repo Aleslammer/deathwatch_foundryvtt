@@ -9,6 +9,10 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
+    Slightly increase the characteristic text box width.   Intellegence scrolls off the right side.
+    Description\Past Event\Item Description edit fields need testing.  The promisemirror is not filling the full form.
+
+    
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
         Melee attack

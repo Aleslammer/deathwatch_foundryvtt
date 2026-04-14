@@ -55,7 +55,17 @@
 
     {{!-- Description Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
-      {{editor system.description target="system.description" rollData=rollData button=true owner=owner editable=editable}}
+      {{#if editable}}
+      <prose-mirror name="system.description"
+                    value="{{source.description}}"
+                    document-uuid="{{actor.uuid}}"
+                    style="min-height: 400px;">
+      </prose-mirror>
+      {{else}}
+      <div class="editor" style="min-height: 400px; border: 1px solid #ccc; border-radius: 3px; padding: 8px;">
+        <div class="editor-content">{{{enriched.description}}}</div>
+      </div>
+      {{/if}}
     </div>
 
     {{!-- Effects Tab --}}

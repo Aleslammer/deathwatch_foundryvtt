@@ -21,8 +21,17 @@
 
         {{!-- Description Tab --}}
         <div class="tab" data-group="primary" data-tab="description">
-            {{editor system.description target="system.description" rollData=rollData button=true owner=owner
-            editable=editable}}
+            {{#if editable}}
+            <prose-mirror name="system.description"
+                          value="{{source.description}}"
+                          document-uuid="{{item.uuid}}"
+                          style="height: 100%;">
+            </prose-mirror>
+            {{else}}
+            <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+              <div class="editor-content">{{{enriched.description}}}</div>
+            </div>
+            {{/if}}
         </div>
 
         {{!-- Attributes Tab --}}

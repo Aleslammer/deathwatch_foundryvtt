@@ -87,6 +87,24 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     context.system = itemData.system;
     context.flags = itemData.flags;
 
+    // Provide source data for prose-mirror value attribute
+    context.source = this.item._source.system;
+
+    // Enrich HTML for non-editable views (compendium items)
+    if (!this.isEditable) {
+      const enrichmentOptions = {
+        secrets: this.item.isOwner,
+        relativeTo: this.item,
+        rollData: context.rollData
+      };
+      context.enriched = {
+        description: await foundry.applications.ux.TextEditor.enrichHTML(
+          this.item.system.description || '',
+          enrichmentOptions
+        )
+      };
+    }
+
     if (itemData.type === 'specialty') {
       this._prepareSpecialtyData(context);
     }

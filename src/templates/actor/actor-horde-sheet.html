@@ -88,9 +88,17 @@
       <div class="biography-section">
         <h3 class="section-header">Description</h3>
         {{> "systems/deathwatch/templates/actor/parts/actor-biography-fields.html"}}
-        <div class="editor" style="height: 300px; border: 1px solid #ccc; border-radius: 3px;">
-          {{editor system.description target="system.description" rollData=rollData button=true owner=owner editable=editable}}
+        {{#if editable}}
+        <prose-mirror name="system.description"
+                      value="{{source.description}}"
+                      document-uuid="{{actor.uuid}}"
+                      style="min-height: 300px;">
+        </prose-mirror>
+        {{else}}
+        <div class="editor" style="min-height: 300px; border: 1px solid #ccc; border-radius: 3px; padding: 8px;">
+          <div class="editor-content">{{{enriched.description}}}</div>
         </div>
+        {{/if}}
       </div>
     </div>
 

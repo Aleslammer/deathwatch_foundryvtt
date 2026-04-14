@@ -144,6 +144,28 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     context.owner = this.actor.isOwner;
     context.isGM = game.user.isGM;
 
+    // Provide source data for prose-mirror value attribute
+    context.source = this.actor._source.system;
+
+    // Enrich HTML for non-editable views
+    if (!this.isEditable) {
+      const enrichmentOptions = {
+        secrets: this.actor.isOwner,
+        relativeTo: this.actor,
+        rollData: context.rollData
+      };
+      context.enriched = {
+        description: await foundry.applications.ux.TextEditor.enrichHTML(
+          this.actor.system.description || '',
+          enrichmentOptions
+        ),
+        pastEvents: await foundry.applications.ux.TextEditor.enrichHTML(
+          this.actor.system.pastEvents || '',
+          enrichmentOptions
+        )
+      };
+    }
+
     // Prepare type-specific data using data preparers
     if (this.actor.type === 'character') {
       CharacterDataPreparer.prepare(context, this.actor);
@@ -524,6 +546,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
         li.addEventListener('dragstart', (ev) => this._onDragStart?.(ev), false);
       });
     }
+
   }
 
   /* -------------------------------------------- */
