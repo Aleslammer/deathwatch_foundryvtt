@@ -6,7 +6,7 @@ type: feedback
 
 **Always run tests after code changes.** When tests fail, investigate the root cause before changing test expectations.
 
-**Why:** Test failures often indicate bugs in new code, not bugs in tests. The project has 1813 tests across 110 test suites - maintaining test quality is critical.
+**Why:** Test failures often indicate bugs in new code, not bugs in tests. The project has 1800+ tests with comprehensive coverage - maintaining test quality is critical.
 
 **How to apply:**
 1. Run `npm test` after any code change

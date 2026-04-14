@@ -133,6 +133,9 @@ npm run format:json         # Compact and format all compendium JSON files
 npm run build:packs         # Validate + compile packs to LevelDB
 npm run build:copy          # Copy src/ to local Foundry installation (see .env)
 npm run build:all           # Run build:packs + build:copy
+node builds/scripts/convertToWebp.mjs <file-or-dir>  # Convert PNG/JPG to WebP (⚠️ auto-deletes originals)
+node builds/scripts/convertToWebp.mjs --trim <file.webp>  # Remove white background + trim
+node builds/scripts/convertToWebp.mjs --trim-black <file.webp>  # Remove black background + trim
 ```
 
 **Local deployment**: Set `LOCAL_DIR` in `.env` to your Foundry systems directory (e.g., `\\thebrewery\Foundry\Data\systems\deathwatch`). Running `npm run build:copy` deploys the `src/` folder contents there.
@@ -230,6 +233,12 @@ The system uses a clean modular initialization pattern (refactored 2026-04-05):
 **Pattern**: Each module exports a single class with a static `register()` or `initialize()` method. The main entry point calls these in order. This keeps the main file under 100 lines and makes initialization logic easy to test and maintain.
 
 ### Modifier System
+
+**Two modifier systems exist:**
+- **System Modifiers** (`actor.system.modifiers` array) — Custom Deathwatch modifier system, displayed in Effects tab > Modifiers section
+- **Active Effects** (`actor.effects` collection) — Foundry core system, NOT currently displayed in UI (prepared but not rendered)
+
+For characteristic damage and manual modifiers, use System Modifiers. They integrate with the modifier-collector and show in the Effects tab.
 
 Items, talents, chapters, and traits can modify character attributes via the `modifier` field:
 
@@ -512,6 +521,17 @@ const actor = FoundryAdapter.getActor(actorId);
 
 ## Coding Standards
 
+### CSS Patterns
+
+**Font size variables** (defined in `src/styles/variables.css`):
+- `--dw-font-size-xs`: 11px | `--dw-font-size-sm`: 12px | `--dw-font-size-md`: 13px
+- `--dw-font-size-lg`: 14px | `--dw-font-size-xl`: 16px | `--dw-font-size-xxl`: 20px
+
+**Characteristic boxes** (`src/styles/components/characteristics.css`):
+- Box dimensions: 135px width × 106px height
+- Title font: `--dw-font-size-sm` (12px)
+- Center value font: `--dw-font-size-xl` (16px)
+
 ### Error Handling
 
 **Location**: `src/module/helpers/error-handler.mjs`, `validation.mjs`
@@ -716,6 +736,8 @@ Logger.compatibility("rollItemMacro() is deprecated", {
 ## Testing Approach
 
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.
+
+**Expected test results:** 110 test suites, 1822 passing tests (as of 2026-04-14)
 
 **Test structure**:
 
