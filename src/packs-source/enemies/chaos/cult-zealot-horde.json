@@ -2,7 +2,7 @@
   "_id": "hordchaos0000004",
   "name": "Cult Zealot Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/chaos/cult-zealot_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/chaos/cult-zealot-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 26 },

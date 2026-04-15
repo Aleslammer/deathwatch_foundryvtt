@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deathwatch Backgrounds & Textures Examples</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --dw-imperial-gold: #d4a574;
+      --dw-imperial-gold-dark: #8b6914;
+      --dw-deathwatch-silver: #8a9ba8;
+      --dw-deathwatch-silver-light: #b8c5d6;
+      --dw-hud-green: #39ff14;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: linear-gradient(to bottom, #0d0d0d, #1a1a1a);
+      color: #b8c5d6;
+      padding: 40px;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 30px;
+      background: rgba(212, 165, 116, 0.1);
+      border: 2px solid rgba(212, 165, 116, 0.3);
+      border-radius: 8px;
+    }
+
+    .header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 48px;
+      color: var(--dw-imperial-gold);
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 12px rgba(212, 165, 116, 0.5);
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      color: var(--dw-imperial-gold);
+      font-size: 32px;
+      margin: 0 0 30px 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 2px solid var(--dw-imperial-gold);
+      padding-bottom: 10px;
+    }
+
+    /* Comparison grid */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .example-box {
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .example-header {
+      padding: 15px;
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      text-align: center;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .example-preview {
+      height: 300px;
+      padding: 30px;
+      position: relative;
+    }
+
+    .example-code {
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-top: 1px solid rgba(138, 155, 168, 0.2);
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #4ecca3;
+      overflow-x: auto;
+    }
+
+    /* Background Examples */
+    .bg-flat {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .bg-fortress {
+      background:
+        radial-gradient(
+          ellipse 800px 400px at top center,
+          rgba(44, 74, 107, 0.15),
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse 800px 300px at bottom center,
+          rgba(139, 0, 0, 0.08),
+          transparent 60%
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(138, 155, 168, 0.02) 2px,
+          rgba(138, 155, 168, 0.02) 4px
+        ),
+        linear-gradient(
+          to bottom,
+          #0d0d0d,
+          #1a1a1a
+        );
+      background-size:
+        100% 100%,
+        100% 100%,
+        4px 4px,
+        100% 100%;
+      box-shadow:
+        inset 0 0 80px rgba(0, 0, 0, 0.7),
+        inset 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .bg-parchment {
+      background:
+        radial-gradient(
+          ellipse at center,
+          transparent 40%,
+          rgba(0, 0, 0, 0.2) 100%
+        ),
+        repeating-linear-gradient(
+          45deg,
+          rgba(212, 165, 116, 0.02),
+          rgba(212, 165, 116, 0.02) 1px,
+          transparent 1px,
+          transparent 2px
+        ),
+        linear-gradient(
+          135deg,
+          rgba(20, 15, 10, 0.95),
+          rgba(30, 25, 20, 0.92)
+        );
+      border-left: 4px solid var(--dw-imperial-gold);
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(212, 165, 116, 0.15);
+    }
+
+    .bg-ceramite {
+      background:
+        radial-gradient(
+          circle at 8px 8px,
+          rgba(138, 155, 168, 0.4) 2px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at calc(100% - 8px) 8px,
+          rgba(138, 155, 168, 0.4) 2px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at 8px calc(100% - 8px),
+          rgba(138, 155, 168, 0.4) 2px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at calc(100% - 8px) calc(100% - 8px),
+          rgba(138, 155, 168, 0.4) 2px,
+          transparent 3px
+        ),
+        linear-gradient(
+          135deg,
+          rgba(20, 20, 20, 0.95),
+          rgba(30, 30, 30, 0.92)
+        );
+      border: 2px solid var(--dw-deathwatch-silver-dark);
+      box-shadow:
+        inset 2px 2px 4px rgba(0, 0, 0, 0.8),
+        inset -1px -1px 3px rgba(255, 255, 255, 0.03),
+        0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .bg-tactical {
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(212, 165, 116, 0.08),
+          transparent 30%
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 8px,
+          rgba(138, 155, 168, 0.05) 8px,
+          rgba(138, 155, 168, 0.05) 9px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 8px,
+          rgba(138, 155, 168, 0.05) 8px,
+          rgba(138, 155, 168, 0.05) 9px
+        ),
+        linear-gradient(
+          135deg,
+          rgba(10, 10, 10, 0.98),
+          rgba(20, 20, 20, 0.98)
+        );
+      background-size:
+        100% 100%,
+        8px 8px,
+        8px 8px,
+        100% 100%;
+      border: 2px solid var(--dw-imperial-gold-dark);
+      box-shadow:
+        inset 0 0 20px rgba(0, 0, 0, 0.8),
+        0 0 16px rgba(212, 165, 116, 0.3);
+    }
+
+    .bg-data-slate {
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgba(57, 255, 20, 0.03),
+          transparent 60%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(44, 74, 107, 0.12),
+          rgba(20, 20, 20, 0.6)
+        );
+      border: 1px solid rgba(138, 155, 168, 0.25);
+      box-shadow:
+        inset 0 2px 6px rgba(0, 0, 0, 0.7),
+        inset 0 0 12px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(212, 165, 116, 0.05);
+    }
+
+    .bg-section-glow {
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgba(212, 165, 116, 0.15),
+          transparent 70%
+        ),
+        linear-gradient(90deg,
+          transparent 0%,
+          rgba(212, 165, 116, 0.08) 20%,
+          rgba(212, 165, 116, 0.08) 80%,
+          transparent 100%
+        );
+      border-bottom: 2px solid;
+      border-image: linear-gradient(
+        to right,
+        transparent 5%,
+        var(--dw-imperial-gold-dark),
+        var(--dw-imperial-gold),
+        var(--dw-imperial-gold-dark),
+        transparent 95%
+      ) 1;
+      box-shadow: 0 0 20px rgba(212, 165, 116, 0.1);
+    }
+
+    /* Mock content */
+    .mock-text {
+      color: var(--dw-deathwatch-silver-light);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .mock-header {
+      font-family: 'Cinzel', serif;
+      color: var(--dw-imperial-gold);
+      font-size: 18px;
+      margin: 0 0 15px 0;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 8px rgba(212, 165, 116, 0.4);
+    }
+
+    .mock-stat {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--dw-hud-green);
+      font-size: 24px;
+      margin: 10px 15px;
+      text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
+    }
+
+    /* Full preview sections */
+    .full-preview {
+      padding: 40px;
+      border-radius: 8px;
+      margin: 40px 0;
+    }
+
+    .characteristic-box {
+      display: inline-block;
+      width: 90px;
+      height: 80px;
+      margin: 10px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 3px;
+    }
+
+    .char-label {
+      font-size: 11px;
+      color: var(--dw-deathwatch-silver);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .char-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 24px;
+      color: var(--dw-imperial-gold);
+      font-weight: bold;
+      text-shadow: 0 0 4px rgba(212, 165, 116, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>⚔ BACKGROUNDS & TEXTURES ⚔</h1>
+      <p>Adding Depth & Atmosphere to the Interface</p>
+    </div>
+
+    <!-- The Problem -->
+    <div class="section">
+      <h2 class="section-title">❌ Current Problem: Flat Backgrounds</h2>
+
+      <div class="comparison">
+        <div class="example-box">
+          <div class="example-header" style="background: rgba(255, 0, 0, 0.1); color: #ff6666;">BEFORE: Flat & Lifeless</div>
+          <div class="example-preview bg-flat">
+            <div class="mock-header">WEAPONS</div>
+            <div class="mock-text">
+              • Godwyn Pattern Bolter<br>
+              • Astartes Combat Knife<br>
+              • Frag Grenades (x3)
+            </div>
+            <div style="margin-top: 20px;">
+              <span class="mock-stat">45</span>
+              <span class="mock-stat">52</span>
+            </div>
+          </div>
+          <div class="example-code">background: rgba(0, 0, 0, 0.5);</div>
+        </div>
+
+        <div class="example-box">
+          <div class="example-header" style="background: rgba(0, 255, 0, 0.1); color: #66ff66;">AFTER: Atmospheric</div>
+          <div class="example-preview bg-fortress">
+            <div class="mock-header">WEAPONS</div>
+            <div class="mock-text">
+              • Godwyn Pattern Bolter<br>
+              • Astartes Combat Knife<br>
+              • Frag Grenades (x3)
+            </div>
+            <div style="margin-top: 20px;">
+              <span class="mock-stat">45</span>
+              <span class="mock-stat">52</span>
+            </div>
+          </div>
+          <div class="example-code">/* Multi-layer gradient */<br>/* Spotlight + shadows + scan lines */</div>
+        </div>
+      </div>
+
+      <p style="text-align: center; font-size: 18px; margin-top: 30px; color: #8a9ba8;">
+        <strong style="color: var(--dw-imperial-gold);">Problem:</strong> Simple flat backgrounds lack depth, atmosphere, and thematic richness. They feel sterile and generic.
+      </p>
+    </div>
+
+    <!-- Fortress Monastery Background -->
+    <div class="section">
+      <h2 class="section-title">✅ Fortress Monastery Command Center</h2>
+      <p style="font-size: 16px; margin-bottom: 30px; color: #8a9ba8;">
+        Multi-layer atmospheric background with <strong style="color: var(--dw-imperial-gold);">spotlight from above</strong> (strategic holotable),
+        <strong style="color: var(--dw-imperial-gold);">red glow from below</strong> (engine lighting), and
+        <strong style="color: var(--dw-imperial-gold);">subtle scan lines</strong> for tech aesthetic.
+      </p>
+
+      <div class="example-box">
+        <div class="example-header" style="background: rgba(44, 74, 107, 0.2); color: var(--dw-imperial-gold);">War Room Aesthetic</div>
+        <div class="example-preview bg-fortress">
+          <div style="position: absolute; top: 20px; left: 20px; right: 20px;">
+            <div class="mock-header" style="font-size: 24px;">TACTICAL DISPLAY</div>
+            <div class="mock-text" style="font-size: 16px; line-height: 2;">
+              The fortress monastery command center hums with ancient machinery. Dim lighting from overhead creates pools of shadow between tactical displays. The air carries the scent of sacred oils and the ozone tang of power conduits.
+            </div>
+            <div style="margin-top: 30px; text-align: center;">
+              <span class="mock-stat">ACTIVE</span>
+              <span class="mock-stat">READY</span>
+              <span class="mock-stat">STANDBY</span>
+            </div>
+          </div>
+        </div>
+        <div class="example-code">
+background:<br>
+&nbsp;&nbsp;/* Top spotlight effect */<br>
+&nbsp;&nbsp;radial-gradient(ellipse at top, rgba(44,74,107,0.15), transparent),<br>
+&nbsp;&nbsp;/* Bottom shadow depth */<br>
+&nbsp;&nbsp;radial-gradient(ellipse at bottom, rgba(139,0,0,0.08), transparent),<br>
+&nbsp;&nbsp;/* Subtle scan lines */<br>
+&nbsp;&nbsp;repeating-linear-gradient(0deg, transparent, rgba(138,155,168,0.02) 4px),<br>
+&nbsp;&nbsp;/* Base gradient */<br>
+&nbsp;&nbsp;linear-gradient(to bottom, #0d0d0d, #1a1a1a);
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Card Parchment -->
+    <div class="section">
+      <h2 class="section-title">✅ Battle Report Parchment</h2>
+      <p style="font-size: 16px; margin-bottom: 30px; color: #8a9ba8;">
+        Chat cards with <strong style="color: var(--dw-imperial-gold);">vignette darkening</strong>,
+        <strong style="color: var(--dw-imperial-gold);">subtle texture</strong>, and
+        <strong style="color: var(--dw-imperial-gold);">Imperial gold border</strong>. Looks like official Imperial documentation.
+      </p>
+
+      <div class="example-box">
+        <div class="example-header" style="background: rgba(139, 0, 0, 0.2); color: var(--dw-imperial-gold);">Imperial Battle Report</div>
+        <div class="example-preview bg-parchment">
+          <div class="mock-header" style="font-size: 20px;">ATTACK ROLL</div>
+          <div class="mock-text" style="font-size: 15px;">
+            <strong>Brother Theron</strong> fires his Godwyn Pattern Bolter at the Ork Warboss.<br><br>
+            <strong>BS Test:</strong> 52 (target) vs 34 (rolled)<br>
+            <strong>Result:</strong> Success with 1 Degree of Success<br>
+            <strong>Hit Location:</strong> Body (Roll: 45)
+          </div>
+          <div style="margin-top: 20px; padding: 10px; background: rgba(0, 0, 0, 0.3); border-radius: 3px;">
+            <span style="color: var(--dw-hud-green); font-weight: 600;">✓ HIT CONFIRMED</span>
+          </div>
+        </div>
+        <div class="example-code">
+background:<br>
+&nbsp;&nbsp;/* Vignette */<br>
+&nbsp;&nbsp;radial-gradient(ellipse, transparent 40%, rgba(0,0,0,0.2)),<br>
+&nbsp;&nbsp;/* Noise texture */<br>
+&nbsp;&nbsp;repeating-linear-gradient(45deg, rgba(212,165,116,0.02) 1px, transparent 2px),<br>
+&nbsp;&nbsp;/* Base gradient */<br>
+&nbsp;&nbsp;linear-gradient(135deg, rgba(20,15,10,0.95), rgba(30,25,20,0.92));<br>
+border-left: 4px solid var(--dw-imperial-gold);
+        </div>
+      </div>
+    </div>
+
+    <!-- Ceramite Plates -->
+    <div class="section">
+      <h2 class="section-title">✅ Ceramite Armor Plates</h2>
+      <p style="font-size: 16px; margin-bottom: 30px; color: #8a9ba8;">
+        Characteristic boxes with <strong style="color: var(--dw-imperial-gold);">rivet decorations</strong> in corners,
+        <strong style="color: var(--dw-imperial-gold);">metallic gradient</strong>, and
+        <strong style="color: var(--dw-imperial-gold);">deep inset shadows</strong>. Feels industrial and battle-ready.
+      </p>
+
+      <div class="example-box">
+        <div class="example-header" style="background: rgba(138, 155, 168, 0.2); color: var(--dw-deathwatch-silver-light);">Power Armor Plating</div>
+        <div class="example-preview bg-ceramite" style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap;">
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">WS</div>
+            <div class="char-value">45</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">BS</div>
+            <div class="char-value">52</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">STR</div>
+            <div class="char-value">60</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">TGH</div>
+            <div class="char-value">55</div>
+          </div>
+        </div>
+        <div class="example-code">
+background:<br>
+&nbsp;&nbsp;/* Rivets in all 4 corners */<br>
+&nbsp;&nbsp;radial-gradient(circle at 8px 8px, rgba(138,155,168,0.4) 2px, transparent),<br>
+&nbsp;&nbsp;/* ...3 more corners... */<br>
+&nbsp;&nbsp;/* Metallic gradient */<br>
+&nbsp;&nbsp;linear-gradient(135deg, rgba(20,20,20,0.95), rgba(30,30,30,0.92));<br>
+box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6);
+        </div>
+      </div>
+    </div>
+
+    <!-- Tactical Display Grid -->
+    <div class="section">
+      <h2 class="section-title">✅ Tactical Display Grid</h2>
+      <p style="font-size: 16px; margin-bottom: 30px; color: #8a9ba8;">
+        Cohesion panel with <strong style="color: var(--dw-imperial-gold);">grid pattern</strong>,
+        <strong style="color: var(--dw-imperial-gold);">corner glow</strong>, and
+        <strong style="color: var(--dw-imperial-gold);">holographic frame</strong>. Looks like a tactical holographic display.
+      </p>
+
+      <div class="example-box">
+        <div class="example-header" style="background: rgba(212, 165, 116, 0.2); color: var(--dw-imperial-gold);">Holographic Tactical Display</div>
+        <div class="example-preview bg-tactical">
+          <div style="text-align: center;">
+            <div class="mock-header" style="font-size: 16px; margin-bottom: 10px;">COHESION</div>
+            <div style="font-family: 'Share Tech Mono', monospace; font-size: 48px; color: var(--dw-imperial-gold); text-shadow: 0 0 12px rgba(212, 165, 116, 0.6);">
+              7
+            </div>
+            <div style="font-size: 13px; color: #8a9ba8; margin-top: 10px;">
+              SQUAD LEADER: Brother-Sergeant Marcus
+            </div>
+            <div style="margin-top: 30px; display: flex; justify-content: space-around;">
+              <div>
+                <div style="width: 8px; height: 8px; background: var(--dw-hud-green); border-radius: 50%; margin: 0 auto 5px; box-shadow: 0 0 8px var(--dw-hud-green);"></div>
+                <div style="font-size: 12px;">SOLO</div>
+              </div>
+              <div>
+                <div style="width: 8px; height: 8px; background: #2196f3; border-radius: 50%; margin: 0 auto 5px; box-shadow: 0 0 8px #2196f3;"></div>
+                <div style="font-size: 12px;">SQUAD</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="example-code">
+background:<br>
+&nbsp;&nbsp;/* Corner scan effect */<br>
+&nbsp;&nbsp;radial-gradient(circle at top left, rgba(212,165,116,0.08), transparent),<br>
+&nbsp;&nbsp;/* Grid pattern (horizontal) */<br>
+&nbsp;&nbsp;repeating-linear-gradient(0deg, transparent 8px, rgba(138,155,168,0.05) 9px),<br>
+&nbsp;&nbsp;/* Grid pattern (vertical) */<br>
+&nbsp;&nbsp;repeating-linear-gradient(90deg, transparent 8px, rgba(138,155,168,0.05) 9px),<br>
+&nbsp;&nbsp;/* Base dark */<br>
+&nbsp;&nbsp;linear-gradient(135deg, rgba(10,10,10,0.98), rgba(20,20,20,0.98));<br>
+box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 16px rgba(212,165,116,0.3);
+        </div>
+      </div>
+    </div>
+
+    <!-- Data-Slate Input -->
+    <div class="section">
+      <h2 class="section-title">✅ Data-Slate Input Panels</h2>
+      <p style="font-size: 16px; margin-bottom: 30px; color: #8a9ba8;">
+        Input fields with <strong style="color: var(--dw-imperial-gold);">recessed depth</strong>,
+        <strong style="color: var(--dw-imperial-gold);">inner glow</strong>, and
+        <strong style="color: var(--dw-imperial-gold);">HUD-style text</strong>. Looks like Power Armor HUD data-slates.
+      </p>
+
+      <div class="comparison">
+        <div class="example-box">
+          <div class="example-header" style="background: rgba(255, 0, 0, 0.1); color: #ff6666;">BEFORE: Flat Input</div>
+          <div class="example-preview" style="background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;">
+            <input type="text" value="Brother Theron" style="width: 80%; padding: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #e0e0e0; font-family: 'Rajdhani', sans-serif; font-size: 16px; border-radius: 3px;">
+          </div>
+          <div class="example-code">background: rgba(255, 255, 255, 0.08);<br>border: 1px solid rgba(255, 255, 255, 0.2);</div>
+        </div>
+
+        <div class="example-box">
+          <div class="example-header" style="background: rgba(0, 255, 0, 0.1); color: #66ff66;">AFTER: Data-Slate</div>
+          <div class="example-preview bg-data-slate" style="display: flex; align-items: center; justify-content: center;">
+            <input type="text" value="Brother Theron" style="width: 80%; padding: 12px; background: radial-gradient(ellipse at center, rgba(57, 255, 20, 0.03), transparent 60%), linear-gradient(135deg, rgba(44, 74, 107, 0.12), rgba(20, 20, 20, 0.6)); border: 1px solid rgba(138, 155, 168, 0.25); color: var(--dw-hud-green); font-family: 'Share Tech Mono', monospace; font-size: 16px; border-radius: 2px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 0 12px rgba(0, 0, 0, 0.4); text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);">
+          </div>
+          <div class="example-code">/* Recessed data-slate with inner glow */<br>/* HUD green text with glow effect */</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Header Glow -->
+    <div class="section">
+      <h2 class="section-title">✅ Section Header Illumination</h2>
+      <p style="font-size: 16px; margin-bottom: 30px; color: #8a9ba8;">
+        Section headers with <strong style="color: var(--dw-imperial-gold);">atmospheric glow</strong>,
+        <strong style="color: var(--dw-imperial-gold);">gradient border</strong>, and
+        <strong style="color: var(--dw-imperial-gold);">subtle background illumination</strong>. As if lit by integrated panel lighting.
+      </p>
+
+      <div class="example-box">
+        <div class="example-header" style="background: rgba(212, 165, 116, 0.2); color: var(--dw-imperial-gold);">Illuminated Headers</div>
+        <div class="example-preview" style="background: rgba(10, 10, 10, 0.9); padding: 40px;">
+          <div class="bg-section-glow" style="padding: 12px 20px; font-family: 'Cinzel', serif; font-size: 18px; color: var(--dw-imperial-gold); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px rgba(212, 165, 116, 0.5); margin: 20px 0;">
+            WEAPONS & EQUIPMENT
+          </div>
+          <div class="mock-text" style="padding-left: 20px;">
+            • Godwyn Pattern Bolter<br>
+            • Astartes Combat Knife<br>
+            • Frag Grenades (x3)
+          </div>
+
+          <div class="bg-section-glow" style="padding: 12px 20px; font-family: 'Cinzel', serif; font-size: 18px; color: var(--dw-imperial-gold); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px rgba(212, 165, 116, 0.5); margin: 30px 0 20px 0;">
+            TALENTS & TRAITS
+          </div>
+          <div class="mock-text" style="padding-left: 20px;">
+            • Bolter Mastery<br>
+            • Heightened Senses (Sight)<br>
+            • Unnatural Strength (x2)
+          </div>
+        </div>
+        <div class="example-code">
+background:<br>
+&nbsp;&nbsp;/* Center glow */<br>
+&nbsp;&nbsp;radial-gradient(ellipse, rgba(212,165,116,0.15), transparent 70%),<br>
+&nbsp;&nbsp;/* Side fade */<br>
+&nbsp;&nbsp;linear-gradient(90deg, transparent, rgba(212,165,116,0.08), transparent);<br>
+border-image: linear-gradient(to right, transparent, gold, transparent) 1;
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Preview -->
+    <div class="section">
+      <h2 class="section-title">Full Interface Preview</h2>
+
+      <div class="full-preview bg-fortress" style="border: 2px solid var(--dw-imperial-gold);">
+        <div class="mock-header" style="font-size: 28px; text-align: center; margin-bottom: 40px;">
+          BROTHER THERON • ULTRAMARINES
+        </div>
+
+        <div style="text-align: center; margin-bottom: 40px;">
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">WS</div>
+            <div class="char-value">45</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">BS</div>
+            <div class="char-value">52</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">STR</div>
+            <div class="char-value">60</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">TGH</div>
+            <div class="char-value">55</div>
+          </div>
+          <div class="characteristic-box bg-ceramite">
+            <div class="char-label">AGI</div>
+            <div class="char-value">38</div>
+          </div>
+        </div>
+
+        <div class="bg-section-glow" style="padding: 12px 20px; font-family: 'Cinzel', serif; font-size: 18px; color: var(--dw-imperial-gold); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 8px rgba(212, 165, 116, 0.5); margin: 30px 0 20px 0;">
+          TACTICAL STATUS
+        </div>
+
+        <div style="display: flex; justify-content: space-around; margin: 30px 0;">
+          <div class="bg-data-slate" style="padding: 20px; text-align: center; border-radius: 4px;">
+            <div style="font-size: 12px; color: #8a9ba8; margin-bottom: 10px;">WOUNDS</div>
+            <div style="font-family: 'Share Tech Mono', monospace; font-size: 28px; color: var(--dw-hud-green); text-shadow: 0 0 6px rgba(57, 255, 20, 0.4);">23/23</div>
+          </div>
+          <div class="bg-data-slate" style="padding: 20px; text-align: center; border-radius: 4px;">
+            <div style="font-size: 12px; color: #8a9ba8; margin-bottom: 10px;">FATIGUE</div>
+            <div style="font-family: 'Share Tech Mono', monospace; font-size: 28px; color: var(--dw-hud-green); text-shadow: 0 0 6px rgba(57, 255, 20, 0.4);">0/8</div>
+          </div>
+          <div class="bg-data-slate" style="padding: 20px; text-align: center; border-radius: 4px;">
+            <div style="font-size: 12px; color: #8a9ba8; margin-bottom: 10px;">COHESION</div>
+            <div style="font-family: 'Share Tech Mono', monospace; font-size: 28px; color: var(--dw-imperial-gold); text-shadow: 0 0 6px rgba(212, 165, 116, 0.4);">7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="header" style="margin-top: 60px;">
+      <h1 style="font-size: 36px;">KEY TAKEAWAYS</h1>
+      <div style="text-align: left; margin-top: 30px; font-size: 16px; line-height: 2;">
+        <p><strong style="color: var(--dw-imperial-gold);">✓ Multi-layer gradients</strong> create depth and atmospheric lighting</p>
+        <p><strong style="color: var(--dw-imperial-gold);">✓ Subtle patterns</strong> (scan lines, grids, rivets) add texture without clutter</p>
+        <p><strong style="color: var(--dw-imperial-gold);">✓ Box-shadow insets</strong> create recessed/raised surface effects</p>
+        <p><strong style="color: var(--dw-imperial-gold);">✓ Strategic glow</strong> emphasizes key elements (headers, stats)</p>
+        <p><strong style="color: var(--dw-imperial-gold);">✓ Thematic consistency</strong> every background references 40K (fortress, ceramite, parchment)</p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

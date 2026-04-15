@@ -9,8 +9,10 @@ description: Use when converting PNG, JPG, or other image formats to WebP format
 
 Convert images to WebP format using the project's Node.js conversion script. **The script automatically deletes original files after successful conversion.**
 
-**Primary tool:** `builds/scripts/convertToWebp.mjs` (Node.js script)  
-**Fallback:** Direct `cwebp.exe` commands (for manual control)
+**Primary tools:**
+- `builds/scripts/convertToWebp.mjs` — PNG/JPG → WebP conversion
+- `builds/scripts/removeBackground.mjs` — AI-powered background removal (rembg)
+- `cwebp.exe` — Manual fallback for custom quality settings
 
 ## Prerequisites
 
@@ -20,7 +22,9 @@ CWEBP_PATH=C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe
 MAGICK_PATH=C:\Program Files\ImageMagick\magick.exe
 ```
 
-The script reads these paths from `.env` in the project root. MAGICK_PATH is only required for `--trim` operations.
+**Required Python installation:**
+- Python 3.x with `rembg` package installed (`pip install rembg[gpu]`)
+- Used for AI-powered background removal (default for trim operations)
 
 ## Quick Reference
 
@@ -28,10 +32,11 @@ The script reads these paths from `.env` in the project root. MAGICK_PATH is onl
 |------|---------|
 | Convert single file | `node builds/scripts/convertToWebp.mjs src/icons/weapons/bolter.png` |
 | Convert directory (recursive) | `node builds/scripts/convertToWebp.mjs src/icons/weapons` |
-| Trim white background | `node builds/scripts/convertToWebp.mjs --trim src/icons/file.webp` |
+| **Remove background (AI)** | `node builds/scripts/removeBackground.mjs src/icons/file.webp` |
+| **Remove background (batch)** | `node builds/scripts/removeBackground.mjs src/icons/dir` |
+| Trim white (fast, ImageMagick) | `node builds/scripts/convertToWebp.mjs --trim src/icons/file.webp` |
 | Trim white with fuzz | `node builds/scripts/convertToWebp.mjs --trim src/icons/file.webp 15%` |
 | Trim black background | `node builds/scripts/convertToWebp.mjs --trim-black src/icons/file.webp` |
-| Trim black directory | `node builds/scripts/convertToWebp.mjs --trim-black src/icons/dir 15%` |
 
 ## Script Usage
 
@@ -57,12 +62,43 @@ node builds/scripts/convertToWebp.mjs src/icons/weapons
 3. **Automatically deletes the original file**
 4. Processes directories recursively
 
-### Trim Mode (Remove Background)
+### Background Removal Mode (AI-Powered) ⭐ DEFAULT
 
-**Removes white or black backgrounds and trims excess padding.**
+**Uses AI neural networks to detect and remove backgrounds with precision.**
 
 ```bash
-# Remove white background
+# Remove background (single file) - RECOMMENDED
+node builds/scripts/removeBackground.mjs src/icons/enemies/tyranid/gargoyle.webp
+
+# Remove background (entire directory, recursive)
+node builds/scripts/removeBackground.mjs src/icons/enemies/tyranid
+
+# Works with PNG, JPG, JPEG, WebP
+node builds/scripts/removeBackground.mjs src/icons/chaos-zealot.png
+```
+
+**What it does:**
+1. Uses U2-Net AI model to detect subject vs background
+2. Removes background with high precision (preserves fine details)
+3. Overwrites the original file (no backup created)
+4. Processes ~3-5 seconds per image (CPU mode)
+
+**Advantages:**
+- ✅ Works on complex/gradient backgrounds
+- ✅ Preserves fine details (hair, feathers, flames, anti-aliasing)
+- ✅ No manual fuzz tuning needed
+- ✅ No scrapcode artifacts from flood-fill
+
+**When to use:** Default for all background removal (quality over speed)
+
+---
+
+### Trim Mode (Fast ImageMagick Fallback)
+
+**Uses flood-fill algorithm for simple uniform backgrounds. Use `--fast` flag or when AI is too slow.**
+
+```bash
+# Remove white background (fast)
 node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp
 
 # Remove white with fuzz (for anti-aliased edges)
@@ -86,6 +122,8 @@ node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid
 - Allows color matching with tolerance
 - Use for anti-aliased or gradient edges
 - Higher fuzz = more aggressive background removal
+
+**When to use:** Only when speed matters OR backgrounds are uniform solid colors
 
 ## Manual cwebp Commands (Fallback)
 
@@ -128,18 +166,24 @@ node builds/scripts/convertToWebp.mjs src/icons/weapons
 node builds/scripts/convertToWebp.mjs --trim src/icons/weapons
 ```
 
-### Converting enemy portraits with backgrounds
+### Converting enemy portraits with backgrounds (RECOMMENDED WORKFLOW)
 
 ```bash
-# Convert PNG to WebP
+# Step 1: Convert PNG to WebP
 node builds/scripts/convertToWebp.mjs src/icons/enemies/tyranid/gargoyle.png
 
-# Remove white background and trim
+# Step 2: Remove background using AI (DEFAULT - BEST QUALITY)
+node builds/scripts/removeBackground.mjs src/icons/enemies/tyranid/gargoyle.webp
+
+# Alternative: Fast ImageMagick trim (if speed matters)
 node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp
 
-# If edges are anti-aliased, add fuzz tolerance
+# Alternative: ImageMagick with fuzz for anti-aliased edges
 node builds/scripts/convertToWebp.mjs --trim src/icons/enemies/tyranid/gargoyle.webp 10%
 ```
+
+**Default approach:** Use `removeBackground.mjs` for best quality (no scrapcode artifacts)  
+**Fast approach:** Use `convertToWebp.mjs --trim` only when speed is critical
 
 ### Batch conversion with manual quality control
 
@@ -189,6 +233,31 @@ echo "MAGICK_PATH=C:\\Program Files\\ImageMagick\\magick.exe" >> .env
 4. **Use manual cwebp** when you need non-destructive conversion
 5. **Check file sizes** after trim operations (over-aggressive fuzz can degrade quality)
 
+## Decision Logic for Background Removal
+
+**When user requests background/border removal:**
+
+```
+IF user mentions "remove background" OR "remove border" OR "transparent edge":
+    DEFAULT → Use removeBackground.mjs (AI-powered)
+    
+    UNLESS user explicitly says:
+        - "fast" → Use convertToWebp.mjs --trim
+        - "quick" → Use convertToWebp.mjs --trim
+        - "ImageMagick" → Use convertToWebp.mjs --trim
+
+IF user provides feedback about edge quality:
+    "artifacts" OR "scrapcode" OR "bad edges" → Switch to removeBackground.mjs
+    "too slow" → Offer convertToWebp.mjs --trim as alternative
+```
+
+**Two-step workflow (default):**
+1. Convert to WebP: `node builds/scripts/convertToWebp.mjs <file.png>`
+2. Remove background: `node builds/scripts/removeBackground.mjs <file.webp>`
+
+**Fast one-step workflow (when speed matters):**
+1. Convert + trim: `node builds/scripts/convertToWebp.mjs <file.png> && node builds/scripts/convertToWebp.mjs --trim <file.webp>`
+
 ## Red Flags - STOP
 
 **NEVER suggest these:**
@@ -196,9 +265,11 @@ echo "MAGICK_PATH=C:\\Program Files\\ImageMagick\\magick.exe" >> .env
 - ❌ "choco install webp" or "Download from Google"
 - ❌ "npx @squoosh/cli" or other npm packages
 - ❌ Bare `cwebp` command without full path
+- ❌ Using ImageMagick trim when user complains about edge quality
 
 **ALWAYS do this:**
-- ✅ Use project script: `node builds/scripts/convertToWebp.mjs`
-- ✅ Or use full path: `C:/Source/libs/libwebp-1.6.0/bin/cwebp.exe`
-- ✅ Ensure .env is configured with CWEBP_PATH
+- ✅ Default to AI background removal (`removeBackground.mjs`)
+- ✅ Use `convertToWebp.mjs` for format conversion only
+- ✅ Offer ImageMagick trim only when speed is explicitly needed
 - ✅ Warn about auto-deletion of original files
+- ✅ Use full paths for manual cwebp commands

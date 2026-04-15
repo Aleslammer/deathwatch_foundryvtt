@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aquila Icon Comparison</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap');
+
+    :root {
+      --dw-imperial-gold: #d4a574;
+      --dw-imperial-gold-light: #e8c9a0;
+      --dw-imperial-gold-dark: #8b6914;
+      --dw-deathwatch-silver-light: #b8c5d6;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: linear-gradient(to bottom, #0d0d0d, #1a1a1a);
+      color: var(--dw-deathwatch-silver-light);
+      padding: 40px;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 30px;
+      background: rgba(212, 165, 116, 0.1);
+      border: 2px solid rgba(212, 165, 116, 0.3);
+      border-radius: 8px;
+    }
+
+    .header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 48px;
+      color: var(--dw-imperial-gold);
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 12px rgba(212, 165, 116, 0.5);
+    }
+
+    .section {
+      margin-bottom: 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(138, 155, 168, 0.2);
+      border-radius: 8px;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      color: var(--dw-imperial-gold);
+      font-size: 32px;
+      margin: 0 0 20px 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .demo-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      border-radius: 8px;
+      padding: 40px;
+      min-height: 300px;
+    }
+
+    .demo-label {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Unicode Emoji Version */
+    .header-emoji {
+      padding: 30px;
+      background: rgba(20, 20, 20, 0.9);
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      border-radius: 8px;
+      position: relative;
+      min-height: 150px;
+    }
+
+    .header-emoji::before {
+      content: '🦅';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      font-size: 48px;
+      opacity: 0.15;
+      transform: rotate(-15deg);
+      pointer-events: none;
+    }
+
+    .header-emoji::after {
+      content: '🦅';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 48px;
+      opacity: 0.15;
+      transform: scaleX(-1) rotate(-15deg);
+      pointer-events: none;
+    }
+
+    /* Real Aquila Icon Version */
+    .header-aquila {
+      padding: 30px;
+      background: rgba(20, 20, 20, 0.9);
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      border-radius: 8px;
+      position: relative;
+      min-height: 150px;
+    }
+
+    .header-aquila::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 70px;
+      height: 70px;
+      background: url('../../src/icons/aquila.webp') no-repeat center center;
+      background-size: contain;
+      opacity: 0.18;
+      transform: rotate(-12deg);
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(212, 165, 116, 0.4));
+    }
+
+    .header-aquila::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 70px;
+      height: 70px;
+      background: url('../../src/icons/aquila.webp') no-repeat center center;
+      background-size: contain;
+      opacity: 0.18;
+      transform: scaleX(-1) rotate(-12deg);
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(212, 165, 116, 0.4));
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .header-title {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      color: var(--dw-imperial-gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    /* Characteristic Boxes */
+    .char-box-emoji {
+      width: 100px;
+      height: 90px;
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      background: rgba(20, 20, 20, 0.9);
+      text-align: center;
+      padding: 15px;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      margin: 10px;
+    }
+
+    .char-box-emoji::after {
+      content: '🦅';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 70px;
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .char-box-aquila {
+      width: 100px;
+      height: 90px;
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      background: rgba(20, 20, 20, 0.9);
+      text-align: center;
+      padding: 15px;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      margin: 10px;
+    }
+
+    .char-box-aquila::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85px;
+      height: 85px;
+      background: url('../../src/icons/aquila.webp') no-repeat center center;
+      background-size: contain;
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    .char-box-emoji > *,
+    .char-box-aquila > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .char-label {
+      font-size: 11px;
+      color: #8a9ba8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .char-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 28px;
+      color: var(--dw-imperial-gold);
+      font-weight: bold;
+    }
+
+    /* Side-by-Side Icons */
+    .icon-showcase {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 40px 0;
+      padding: 40px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+    }
+
+    .icon-display {
+      text-align: center;
+    }
+
+    .icon-large {
+      font-size: 120px;
+      margin-bottom: 20px;
+    }
+
+    .icon-large-img {
+      width: 150px;
+      height: 150px;
+      background: url('../../src/icons/aquila.webp') no-repeat center center;
+      background-size: contain;
+      margin: 0 auto 20px;
+    }
+
+    .icon-label {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      color: var(--dw-imperial-gold);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .icon-notes {
+      font-size: 13px;
+      color: #8a9ba8;
+      line-height: 1.6;
+    }
+
+    /* Pros/Cons */
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .pros-box {
+      padding: 20px;
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .cons-box {
+      padding: 20px;
+      background: rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+
+    code {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #4ecca3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>⚔ AQUILA ICON COMPARISON ⚔</h1>
+      <p>Unicode Emoji 🦅 vs. Authentic Imperial Aquila Icon</p>
+    </div>
+
+    <!-- Side-by-Side Raw Icons -->
+    <div class="section">
+      <h2 class="section-title">Raw Icon Comparison</h2>
+
+      <div class="icon-showcase">
+        <div class="icon-display">
+          <div class="icon-large">🦅</div>
+          <div class="icon-label" style="color: #ff6666;">Unicode Emoji</div>
+          <div class="icon-notes">
+            • Platform-dependent rendering<br>
+            • Generic eagle design<br>
+            • Limited control over appearance<br>
+            • Free, no files needed
+          </div>
+        </div>
+
+        <div style="font-size: 60px; color: #666;">VS</div>
+
+        <div class="icon-display">
+          <div class="icon-large-img"></div>
+          <div class="icon-label" style="color: #66ff66;">Authentic Aquila</div>
+          <div class="icon-notes">
+            • Consistent across all platforms<br>
+            • Official Warhammer 40K design<br>
+            • Full CSS control (color, size, filters)<br>
+            • <code>src/icons/aquila.webp</code> (WebP, optimized)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet Headers -->
+    <div class="section">
+      <h2 class="section-title">1. Sheet Headers</h2>
+      <p style="margin-bottom: 30px; color: #8a9ba8;">
+        Corner Aquilas on character sheet headers. Notice the difference in quality and authenticity.
+      </p>
+
+      <div class="comparison">
+        <div class="demo-box">
+          <div class="demo-label" style="color: #ff6666;">❌ Unicode Emoji</div>
+          <div class="header-emoji">
+            <div class="header-content">
+              <div class="header-title">BROTHER THERON</div>
+              <div style="font-size: 14px; color: #8a9ba8;">Tactical Marine • Ultramarines</div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; padding: 15px; background: rgba(0, 0, 0, 0.5); border-radius: 4px; font-size: 13px; color: #8a9ba8;">
+            <strong style="color: #ff6666;">Issues:</strong><br>
+            • Looks cartoonish<br>
+            • Inconsistent rendering across platforms<br>
+            • Not the Imperial Aquila design<br>
+            • Can't control details
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-label" style="color: #66ff66;">✅ Authentic Icon</div>
+          <div class="header-aquila">
+            <div class="header-content">
+              <div class="header-title">BROTHER THERON</div>
+              <div style="font-size: 14px; color: #8a9ba8;">Tactical Marine • Ultramarines</div>
+            </div>
+          </div>
+          <div style="margin-top: 20px; padding: 15px; background: rgba(0, 0, 0, 0.5); border-radius: 4px; font-size: 13px; color: #8a9ba8;">
+            <strong style="color: #66ff66;">Benefits:</strong><br>
+            • Professional, authentic appearance<br>
+            • Consistent across all browsers/OS<br>
+            • Official 40K Imperial Aquila design<br>
+            • Full CSS control (filters, shadows)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Characteristic Boxes -->
+    <div class="section">
+      <h2 class="section-title">2. Characteristic Watermarks</h2>
+      <p style="margin-bottom: 30px; color: #8a9ba8;">
+        Faint watermarks (3% opacity) behind characteristic values. The authentic Aquila is more detailed and recognizable even at low opacity.
+      </p>
+
+      <div class="comparison">
+        <div class="demo-box">
+          <div class="demo-label" style="color: #ff6666;">Unicode Emoji</div>
+          <div style="text-align: center; margin-top: 30px;">
+            <div class="char-box-emoji">
+              <div class="char-label">STRENGTH</div>
+              <div class="char-value">60</div>
+            </div>
+            <div class="char-box-emoji">
+              <div class="char-label">TOUGHNESS</div>
+              <div class="char-value">55</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-label" style="color: #66ff66;">Authentic Icon</div>
+          <div style="text-align: center; margin-top: 30px;">
+            <div class="char-box-aquila">
+              <div class="char-label">STRENGTH</div>
+              <div class="char-value">60</div>
+            </div>
+            <div class="char-box-aquila">
+              <div class="char-label">TOUGHNESS</div>
+              <div class="char-value">55</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; padding: 15px; background: rgba(212, 165, 116, 0.1); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 4px;">
+        <strong style="color: var(--dw-imperial-gold);">Note:</strong> At 3% opacity, the difference is subtle but the authentic icon maintains better detail and shape recognition.
+      </div>
+    </div>
+
+    <!-- Pros & Cons -->
+    <div class="section">
+      <h2 class="section-title">Detailed Comparison</h2>
+
+      <div class="pros-cons">
+        <div>
+          <h3 style="font-family: 'Cinzel', serif; color: #ff6666; font-size: 20px; margin-bottom: 20px;">Unicode Emoji 🦅</h3>
+
+          <div class="pros-box">
+            <strong style="color: #66ff66; font-size: 16px;">✅ Pros</strong>
+            <ul>
+              <li>No external files required</li>
+              <li>Zero file size overhead</li>
+              <li>Works offline immediately</li>
+              <li>Easy to implement (<code>content: '🦅';</code>)</li>
+            </ul>
+          </div>
+
+          <div class="cons-box" style="margin-top: 20px;">
+            <strong style="color: #ff6666; font-size: 16px;">❌ Cons</strong>
+            <ul>
+              <li><strong>Platform-dependent rendering</strong> — looks different on Windows/Mac/Linux/mobile</li>
+              <li><strong>Not the Imperial Aquila</strong> — generic eagle design</li>
+              <li><strong>Limited styling</strong> — can't change color, add glow, or filter</li>
+              <li><strong>Cartoonish appearance</strong> — doesn't match 40K aesthetic</li>
+              <li><strong>Size limitations</strong> — may look blurry when scaled</li>
+              <li><strong>Inconsistent with system</strong> — other icons are authentic</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-family: 'Cinzel', serif; color: #66ff66; font-size: 20px; margin-bottom: 20px;">Authentic Icon <img src="../../src/icons/aquila.webp" style="width: 24px; height: 24px; vertical-align: middle; margin-left: 5px;"></h3>
+
+          <div class="pros-box">
+            <strong style="color: #66ff66; font-size: 16px;">✅ Pros</strong>
+            <ul>
+              <li><strong>Official Warhammer 40K design</strong> — double-headed eagle, proper proportions</li>
+              <li><strong>Consistent rendering</strong> — looks identical on all platforms</li>
+              <li><strong>Full CSS control</strong> — color, filters, shadows, transforms</li>
+              <li><strong>Professional quality</strong> — high detail, scalable</li>
+              <li><strong>Already in your codebase</strong> — <code>src/icons/aquila.webp</code></li>
+              <li><strong>Thematically authentic</strong> — instant 40K recognition</li>
+              <li><strong>Matches system aesthetic</strong> — consistent with other icons</li>
+            </ul>
+          </div>
+
+          <div class="cons-box" style="margin-top: 20px;">
+            <strong style="color: #ff6666; font-size: 16px;">❌ Cons</strong>
+            <ul>
+              <li>Optimized WebP format (very small file size)</li>
+              <li>Requires image file in correct location</li>
+              <li>Slightly more complex CSS</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Implementation -->
+    <div class="section">
+      <h2 class="section-title">CSS Implementation</h2>
+
+      <div style="background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 4px; margin: 20px 0;">
+        <h3 style="font-family: 'Cinzel', serif; color: var(--dw-imperial-gold); font-size: 18px; margin-bottom: 15px;">Unicode Emoji Approach</h3>
+        <pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 13px; color: #4ecca3; line-height: 1.6;">.sheet-header::before {
+  content: '🦅';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  font-size: 48px;
+  opacity: 0.15;
+  transform: rotate(-15deg);
+}</pre>
+      </div>
+
+      <div style="background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 4px; margin: 20px 0;">
+        <h3 style="font-family: 'Cinzel', serif; color: var(--dw-imperial-gold); font-size: 18px; margin-bottom: 15px;">Authentic Icon Approach (Recommended)</h3>
+        <pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 13px; color: #4ecca3; line-height: 1.6;">.sheet-header::before {
+  content: '';  /* Empty — using background image */
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 70px;
+  height: 70px;
+  background: url('../icons/aquila.webp') no-repeat center;
+  background-size: contain;
+  opacity: 0.18;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 0 8px rgba(212, 165, 116, 0.4));
+}</pre>
+      </div>
+
+      <div style="margin-top: 20px; padding: 15px; background: rgba(212, 165, 116, 0.1); border: 1px solid rgba(212, 165, 116, 0.3); border-radius: 4px;">
+        <strong style="color: var(--dw-imperial-gold);">Key Differences:</strong><br>
+        • <code>content: ''</code> (empty) instead of <code>content: '🦅'</code><br>
+        • <code>background: url(...)</code> to load the image<br>
+        • <code>width</code> and <code>height</code> to size the icon<br>
+        • <code>filter: drop-shadow(...)</code> for glow effect (optional)
+      </div>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="header" style="margin-top: 60px;">
+      <h1 style="font-size: 36px;">RECOMMENDATION</h1>
+      <div style="text-align: left; margin-top: 30px; font-size: 18px; line-height: 2;">
+        <p><strong style="color: #66ff66; font-size: 24px;">✅ Use the Authentic Aquila Icon</strong></p>
+
+        <p style="margin-top: 20px;">Your system already has <code>src/icons/aquila.webp</code> — an authentic, high-quality Imperial Aquila icon. Use it instead of Unicode emojis for:</p>
+
+        <ul style="margin-top: 15px; font-size: 16px;">
+          <li>Sheet header corners</li>
+          <li>Characteristic box watermarks</li>
+          <li>Section header decorations</li>
+          <li>Chat card bullets</li>
+          <li>Cohesion panel backgrounds</li>
+        </ul>
+
+        <p style="margin-top: 30px; padding: 20px; background: rgba(212, 165, 116, 0.15); border-left: 4px solid var(--dw-imperial-gold); border-radius: 4px;">
+          <strong>Result:</strong> Professional, authentic Warhammer 40K interface that looks identical on all platforms and instantly communicates the Imperial aesthetic. The optimized WebP file size is very small (cached after first load) and the implementation is only slightly more complex than Unicode emojis.
+        </p>
+
+        <p style="margin-top: 20px; text-align: center;">
+          <strong style="color: var(--dw-imperial-gold); font-size: 20px;">🦅 Unicode: Generic → <img src="../../src/icons/aquila.webp" style="width: 32px; height: 32px; vertical-align: middle; margin: 0 10px;"> Authentic: Professional</strong>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

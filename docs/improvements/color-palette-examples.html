@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deathwatch Color Palette Examples</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: linear-gradient(to bottom, #0d0d0d, #1a1a1a);
+      color: #b8c5d6;
+      padding: 40px;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 30px;
+      background: rgba(212, 165, 116, 0.1);
+      border: 2px solid rgba(212, 165, 116, 0.3);
+      border-radius: 8px;
+    }
+
+    .header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 48px;
+      color: #d4a574;
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 12px rgba(212, 165, 116, 0.5);
+    }
+
+    .section {
+      margin-bottom: 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(138, 155, 168, 0.2);
+      border-radius: 8px;
+    }
+
+    .section h2 {
+      font-family: 'Cinzel', serif;
+      color: #d4a574;
+      font-size: 32px;
+      margin: 0 0 20px 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Color swatches */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .color-swatch {
+      border: 1px solid rgba(138, 155, 168, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .color-preview {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .color-info {
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .color-name {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #d4a574;
+    }
+
+    .color-value {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #8a9ba8;
+      margin: 3px 0;
+    }
+
+    .color-usage {
+      font-size: 13px;
+      color: #b8c5d6;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* Comparison grids */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 40px 0;
+    }
+
+    .comparison-box {
+      padding: 30px;
+      border: 2px solid rgba(138, 155, 168, 0.3);
+      border-radius: 8px;
+    }
+
+    .comparison-box h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      text-align: center;
+      margin: 0 0 30px 0;
+      text-transform: uppercase;
+    }
+
+    /* Mock UI elements */
+    .mock-button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .mock-link {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 2px 4px;
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+
+    .mock-section-header {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 10px 0;
+      margin: 20px 0 10px 0;
+      border-bottom: 2px solid;
+    }
+
+    .mock-stat-box {
+      padding: 20px;
+      border: 2px solid;
+      border-radius: 4px;
+      text-align: center;
+      margin: 10px;
+      display: inline-block;
+      min-width: 120px;
+    }
+
+    .mock-stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      opacity: 0.8;
+    }
+
+    .mock-stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      text-shadow: 0 0 8px currentColor;
+    }
+
+    /* Bootstrap comparison */
+    .bootstrap-primary { background: #007bff; color: white; }
+    .bootstrap-primary:hover { background: #0056b3; }
+
+    .bootstrap-secondary { background: #6c757d; color: white; }
+    .bootstrap-secondary:hover { background: #545b62; }
+
+    .bootstrap-success { background: green; color: white; }
+    .bootstrap-danger { background: red; color: white; }
+
+    .bootstrap-link { color: #007bff; }
+    .bootstrap-link:hover { color: #0056b3; text-decoration: underline; }
+
+    .bootstrap-header { color: #343a40; border-color: #dee2e6; }
+
+    /* Deathwatch palette */
+    .dw-primary { background: #d4a574; color: #0a0a0a; }
+    .dw-primary:hover { background: #e8c9a0; box-shadow: 0 0 12px rgba(212, 165, 116, 0.6); }
+
+    .dw-secondary { background: #5a6570; color: #b8c5d6; }
+    .dw-secondary:hover { background: #8a9ba8; }
+
+    .dw-success { background: #4ecca3; color: #0a0a0a; }
+    .dw-danger { background: #dc143c; color: white; }
+
+    .dw-link { color: #d4a574; }
+    .dw-link:hover { color: #e8c9a0; text-shadow: 0 0 4px rgba(212, 165, 116, 0.5); }
+
+    .dw-header { color: #d4a574; border-color: #d4a574; text-shadow: 0 0 8px rgba(212, 165, 116, 0.4); }
+
+    /* Palette showcase grid */
+    .palette-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      margin: 30px 0;
+    }
+
+    .palette-swatch-small {
+      height: 80px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .palette-swatch-small:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>⚔ DEATHWATCH COLOR PALETTE ⚔</h1>
+      <p>Imperial Colors vs. Generic Bootstrap</p>
+    </div>
+
+    <!-- The Problem: Bootstrap Colors -->
+    <div class="section">
+      <h2>❌ Current Problem: Bootstrap Colors</h2>
+      <p style="font-size: 18px; margin-bottom: 30px;">
+        The current system uses <strong>generic Bootstrap colors</strong> that have zero thematic connection to Warhammer 40K. These colors could be for any web application.
+      </p>
+
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #007bff; color: white;">PRIMARY</div>
+          <div class="color-info">
+            <div class="color-name">Bootstrap Blue</div>
+            <div class="color-value">#007bff</div>
+            <div class="color-value">rgb(0, 123, 255)</div>
+            <div class="color-usage">❌ Generic corporate blue. No personality.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #6c757d; color: white;">SECONDARY</div>
+          <div class="color-info">
+            <div class="color-name">Generic Gray</div>
+            <div class="color-value">#6c757d</div>
+            <div class="color-value">rgb(108, 117, 125)</div>
+            <div class="color-usage">❌ Bland, lifeless, unmemorable.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: green; color: white;">SUCCESS</div>
+          <div class="color-info">
+            <div class="color-name">Generic Green</div>
+            <div class="color-value">green</div>
+            <div class="color-value">rgb(0, 128, 0)</div>
+            <div class="color-usage">❌ Vague keyword. No specificity.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: red; color: white;">DANGER</div>
+          <div class="color-info">
+            <div class="color-name">Generic Red</div>
+            <div class="color-value">red</div>
+            <div class="color-value">rgb(255, 0, 0)</div>
+            <div class="color-usage">❌ Too bright, no nuance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deathwatch Palette: Chapter Colors -->
+    <div class="section">
+      <h2>✅ Deathwatch Chapter Colors</h2>
+      <p style="font-size: 18px; margin-bottom: 30px;">
+        Space Marines of the Deathwatch wear <strong>black armor with silver trim</strong> and <strong>Imperial gold Aquila</strong>. These are the foundation colors.
+      </p>
+
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #0a0a0a; color: #b8c5d6;">DEATHWATCH<br>BLACK</div>
+          <div class="color-info">
+            <div class="color-name">Deathwatch Black</div>
+            <div class="color-value">#0a0a0a</div>
+            <div class="color-value">--dw-deathwatch-black</div>
+            <div class="color-usage">Primary armor color. Deep, imposing darkness.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #8a9ba8; color: #0a0a0a;">DEATHWATCH<br>SILVER</div>
+          <div class="color-info">
+            <div class="color-name">Deathwatch Silver</div>
+            <div class="color-value">#8a9ba8</div>
+            <div class="color-value">--dw-deathwatch-silver</div>
+            <div class="color-usage">Armor trim, borders, text. Ceramite shine.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #d4a574; color: #0a0a0a;">IMPERIAL<br>GOLD</div>
+          <div class="color-info">
+            <div class="color-name">Imperial Gold</div>
+            <div class="color-value">#d4a574</div>
+            <div class="color-value">--dw-imperial-gold</div>
+            <div class="color-usage">Aquila, purity seals, primary actions, headers.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #8b0000; color: white;">CHAPTER<br>RED</div>
+          <div class="color-info">
+            <div class="color-name">Chapter Red</div>
+            <div class="color-value">#8b0000</div>
+            <div class="color-value">--dw-chapter-red</div>
+            <div class="color-usage">Shoulder pad accent (previous chapter).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tactical HUD Colors -->
+    <div class="section">
+      <h2>✅ Power Armor HUD Colors</h2>
+      <p style="font-size: 18px; margin-bottom: 30px;">
+        Power Armor helmets display tactical information with <strong>HUD-style readouts</strong> in green and amber.
+      </p>
+
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #39ff14; color: #0a0a0a; font-family: 'Courier New', monospace;">HUD<br>GREEN</div>
+          <div class="color-info">
+            <div class="color-name">HUD Green</div>
+            <div class="color-value">#39ff14</div>
+            <div class="color-value">--dw-hud-green</div>
+            <div class="color-usage">Tactical displays, rollable elements, success states.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #ffbf00; color: #0a0a0a;">HUD<br>AMBER</div>
+          <div class="color-info">
+            <div class="color-name">HUD Amber</div>
+            <div class="color-value">#ffbf00</div>
+            <div class="color-value">--dw-hud-amber</div>
+            <div class="color-usage">Warnings, sustained abilities, caution states.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #4dd0e1; color: #0a0a0a;">PLASMA<br>GLOW</div>
+          <div class="color-info">
+            <div class="color-name">Plasma Glow</div>
+            <div class="color-value">#4dd0e1</div>
+            <div class="color-value">--dw-plasma-glow</div>
+            <div class="color-usage">Tech effects, energy weapons, power fields.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #2c4a6b; color: #b8c5d6;">POWER ARMOR<br>BLUE</div>
+          <div class="color-info">
+            <div class="color-name">Power Armor Blue</div>
+            <div class="color-value">#2c4a6b</div>
+            <div class="color-value">--dw-power-armor-blue</div>
+            <div class="color-usage">Ceramite power field aura, squad mode.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Threat & Status Colors -->
+    <div class="section">
+      <h2>✅ Threat & Status Indicators</h2>
+
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #4ecca3; color: #0a0a0a;">SUCCESS</div>
+          <div class="color-info">
+            <div class="color-name">Success Green</div>
+            <div class="color-value">#4ecca3</div>
+            <div class="color-value">--dw-success-green</div>
+            <div class="color-usage">Success messages, positive results.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #ff6b35; color: white;">XENOS<br>WARNING</div>
+          <div class="color-info">
+            <div class="color-name">Xenos Warning</div>
+            <div class="color-value">#ff6b35</div>
+            <div class="color-value">--dw-xenos-warning</div>
+            <div class="color-usage">Enemy detection, xenos threat indicators.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #dc143c; color: white;">CRITICAL<br>DAMAGE</div>
+          <div class="color-info">
+            <div class="color-name">Critical Damage</div>
+            <div class="color-value">#dc143c</div>
+            <div class="color-value">--dw-critical-damage</div>
+            <div class="color-usage">Critical wounds, severe damage, danger.</div>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="color-preview" style="background: #8b008b; color: white;">CORRUPTION</div>
+          <div class="color-info">
+            <div class="color-name">Corruption Purple</div>
+            <div class="color-value">#8b008b</div>
+            <div class="color-value">--dw-corruption-purple</div>
+            <div class="color-usage">Chaos corruption, mental state warnings.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complete Palette Overview -->
+    <div class="section">
+      <h2>Complete Palette at a Glance</h2>
+
+      <div class="palette-showcase">
+        <div class="palette-swatch-small" style="background: #0a0a0a; color: #b8c5d6;">DEATHWATCH<br>BLACK</div>
+        <div class="palette-swatch-small" style="background: #1a1a1a; color: #b8c5d6;">BLACK<br>LIGHT</div>
+        <div class="palette-swatch-small" style="background: #8a9ba8; color: #0a0a0a;">DEATHWATCH<br>SILVER</div>
+        <div class="palette-swatch-small" style="background: #b8c5d6; color: #0a0a0a;">SILVER<br>LIGHT</div>
+        <div class="palette-swatch-small" style="background: #5a6570; color: #e0e0e0;">SILVER<br>DARK</div>
+
+        <div class="palette-swatch-small" style="background: #d4a574; color: #0a0a0a;">IMPERIAL<br>GOLD</div>
+        <div class="palette-swatch-small" style="background: #e8c9a0; color: #0a0a0a;">GOLD<br>LIGHT</div>
+        <div class="palette-swatch-small" style="background: #8b6914; color: white;">GOLD<br>DARK</div>
+
+        <div class="palette-swatch-small" style="background: #8b0000; color: white;">CHAPTER<br>RED</div>
+        <div class="palette-swatch-small" style="background: #b30000; color: white;">RED<br>LIGHT</div>
+
+        <div class="palette-swatch-small" style="background: #39ff14; color: #0a0a0a;">HUD<br>GREEN</div>
+        <div class="palette-swatch-small" style="background: #ffbf00; color: #0a0a0a;">HUD<br>AMBER</div>
+        <div class="palette-swatch-small" style="background: #4dd0e1; color: #0a0a0a;">PLASMA<br>GLOW</div>
+        <div class="palette-swatch-small" style="background: #2c4a6b; color: #b8c5d6;">POWER<br>ARMOR</div>
+
+        <div class="palette-swatch-small" style="background: #4ecca3; color: #0a0a0a;">SUCCESS<br>GREEN</div>
+        <div class="palette-swatch-small" style="background: #ff6b35; color: white;">XENOS<br>WARNING</div>
+        <div class="palette-swatch-small" style="background: #dc143c; color: white;">CRITICAL<br>DAMAGE</div>
+        <div class="palette-swatch-small" style="background: #8b008b; color: white;">CORRUPTION</div>
+      </div>
+    </div>
+
+    <!-- Before/After Comparison -->
+    <div class="section">
+      <h2>Before & After: UI Elements</h2>
+
+      <div class="comparison">
+        <!-- Bootstrap -->
+        <div class="comparison-box" style="background: rgba(0, 0, 0, 0.5);">
+          <h3 style="color: #6c757d;">❌ Bootstrap Generic</h3>
+
+          <div style="text-align: center;">
+            <button class="mock-button bootstrap-primary">Roll Attack</button>
+            <button class="mock-button bootstrap-secondary">Cancel</button>
+            <button class="mock-button bootstrap-success">Success</button>
+            <button class="mock-button bootstrap-danger">Critical</button>
+          </div>
+
+          <div style="margin: 30px 0;">
+            <p style="color: #e0e0e0;">
+              Read more about <a href="#" class="mock-link bootstrap-link">Bolter weapons</a> in the
+              <a href="#" class="mock-link bootstrap-link">equipment section</a>.
+            </p>
+          </div>
+
+          <div class="mock-section-header bootstrap-header">
+            WEAPONS & EQUIPMENT
+          </div>
+
+          <div style="text-align: center; margin-top: 30px;">
+            <div class="mock-stat-box" style="border-color: #007bff; color: #007bff;">
+              <div class="mock-stat-label">Wounds</div>
+              <div class="mock-stat-value">23/23</div>
+            </div>
+            <div class="mock-stat-box" style="border-color: green; color: green;">
+              <div class="mock-stat-label">Fatigue</div>
+              <div class="mock-stat-value">0/8</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 30px; padding: 15px; background: rgba(0, 0, 0, 0.4); border-radius: 4px; font-size: 14px; color: #999;">
+            <strong>Assessment:</strong> Functional but generic. Could be any web app. No thematic connection to Warhammer 40K.
+          </div>
+        </div>
+
+        <!-- Deathwatch -->
+        <div class="comparison-box" style="background: rgba(0, 0, 0, 0.5);">
+          <h3 style="color: #d4a574;">✅ Deathwatch Imperial</h3>
+
+          <div style="text-align: center;">
+            <button class="mock-button dw-primary">Roll Attack</button>
+            <button class="mock-button dw-secondary">Cancel</button>
+            <button class="mock-button dw-success">Success</button>
+            <button class="mock-button dw-danger">Critical</button>
+          </div>
+
+          <div style="margin: 30px 0;">
+            <p style="color: #b8c5d6;">
+              Read more about <a href="#" class="mock-link dw-link">Bolter weapons</a> in the
+              <a href="#" class="mock-link dw-link">equipment section</a>.
+            </p>
+          </div>
+
+          <div class="mock-section-header dw-header">
+            WEAPONS & EQUIPMENT
+          </div>
+
+          <div style="text-align: center; margin-top: 30px;">
+            <div class="mock-stat-box" style="border-color: #39ff14; color: #39ff14;">
+              <div class="mock-stat-label">Wounds</div>
+              <div class="mock-stat-value">23/23</div>
+            </div>
+            <div class="mock-stat-box" style="border-color: #39ff14; color: #39ff14;">
+              <div class="mock-stat-label">Fatigue</div>
+              <div class="mock-stat-value">0/8</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 30px; padding: 15px; background: rgba(0, 0, 0, 0.4); border-radius: 4px; font-size: 14px; color: #8a9ba8;">
+            <strong style="color: #d4a574;">Assessment:</strong> Instantly recognizable as Warhammer 40K. Imperial gold commands attention. HUD green feels like Power Armor displays. Distinctive and memorable.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage Guide -->
+    <div class="section">
+      <h2>Color Usage Guidelines</h2>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+          <tr style="background: rgba(212, 165, 116, 0.2); border-bottom: 2px solid #d4a574;">
+            <th style="padding: 12px; text-align: left; font-family: 'Cinzel', serif;">Color</th>
+            <th style="padding: 12px; text-align: left; font-family: 'Cinzel', serif;">Use For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #d4a574; font-weight: 600;">Imperial Gold</span></td>
+            <td style="padding: 12px;">Headers, links, primary actions, borders, active states</td>
+          </tr>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #0a0a0a; background: #8a9ba8; padding: 2px 6px; border-radius: 2px; font-weight: 600;">Deathwatch Silver</span></td>
+            <td style="padding: 12px;">Text, borders, secondary elements, ceramite surfaces</td>
+          </tr>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #39ff14; font-weight: 600; text-shadow: 0 0 4px #39ff14;">HUD Green</span></td>
+            <td style="padding: 12px;">Rollable hover states, tactical displays, success messages</td>
+          </tr>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #ffbf00; font-weight: 600;">HUD Amber</span></td>
+            <td style="padding: 12px;">Warnings, sustained abilities, caution indicators</td>
+          </tr>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #dc143c; font-weight: 600;">Critical Red</span></td>
+            <td style="padding: 12px;">Critical wounds, severe failures, danger states</td>
+          </tr>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #4dd0e1; font-weight: 600;">Plasma Glow</span></td>
+            <td style="padding: 12px;">Tech effects, weapon glows, energy indicators</td>
+          </tr>
+          <tr style="border-bottom: 1px solid rgba(138, 155, 168, 0.1);">
+            <td style="padding: 12px;"><span style="color: #8b0000; font-weight: 600;">Chapter Red</span></td>
+            <td style="padding: 12px;">Blood Angels chapter accents, dramatic emphasis</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="header" style="margin-top: 60px;">
+      <h1 style="font-size: 36px;">IMPLEMENTATION</h1>
+      <div style="text-align: left; margin-top: 30px; font-size: 16px; line-height: 1.8;">
+        <p><strong style="color: #d4a574;">Step 1:</strong> Replace CSS variables in <code style="background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 2px; font-family: monospace;">src/styles/variables.css</code></p>
+        <p><strong style="color: #d4a574;">Step 2:</strong> Update component references (buttons, links, headers)</p>
+        <p><strong style="color: #d4a574;">Step 3:</strong> Test all UI elements for contrast and readability</p>
+        <p style="margin-top: 20px;"><strong style="color: #d4a574;">Result:</strong> Interface transforms from generic Bootstrap to unmistakably Warhammer 40K Imperial aesthetic.</p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
