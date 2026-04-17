@@ -146,6 +146,11 @@
               <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
             </div>
             <span class="resource-status {{#if (lt system.xp.available 0)}}negative{{else}}positive{{/if}}">{{system.xp.available}} Available</span>
+            <div class="panel-actions" style="margin-top: 8px;">
+              <button type="button" class="panel-btn view-history-btn" data-action="viewXPHistory" title="View XP History">
+                <i class="fas fa-history"></i> History
+              </button>
+            </div>
           </div>
 
           {{!-- Fate Points Panel --}}

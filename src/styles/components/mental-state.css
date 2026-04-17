@@ -499,15 +499,20 @@
   padding: 10px;
 }
 
+.history-table-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
 .history-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9em;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid #555;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 15px;
 }
 
 .history-table thead {

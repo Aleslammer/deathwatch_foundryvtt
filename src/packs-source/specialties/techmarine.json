@@ -62,6 +62,7 @@
         "expert": 5000
       }
     },
+    "talentCosts": { "tal00000000057": 0, "tal00000000158": 0 },
     "rankCosts": {
       "1": {
         "skills": {

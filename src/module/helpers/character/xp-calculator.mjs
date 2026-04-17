@@ -40,6 +40,41 @@ export class XPCalculator {
   }
 
   /**
+   * Calculate XP breakdown by category with individual purchases
+   * @param {Actor} actor - The actor to calculate for
+   * @returns {Array<{category: string, source: string, cost: number}>} Array of XP expenditures
+   */
+  static calculateXPBreakdown(actor) {
+    const breakdown = [];
+    const chapterCosts = this._getChapterCosts(actor);
+    const specialtyCosts = this._getSpecialtyCosts(actor);
+
+    // Starting XP
+    breakdown.push({
+      category: 'Starting XP',
+      source: 'Character Creation',
+      cost: this.STARTING_XP
+    });
+
+    // Characteristic advances
+    breakdown.push(...this._getCharacteristicAdvancesBreakdown(actor));
+
+    // Skills
+    breakdown.push(...this._getSkillsBreakdown(actor, chapterCosts.skills, specialtyCosts));
+
+    // Talents
+    breakdown.push(...this._getTalentsBreakdown(actor, chapterCosts.talents, specialtyCosts.talents));
+
+    // Psychic powers
+    breakdown.push(...this._getPsychicPowersBreakdown(actor));
+
+    // Insanity reduction
+    breakdown.push(...this._getInsanityReductionBreakdown(actor));
+
+    return breakdown;
+  }
+
+  /**
    * Get chapter-specific cost overrides
    * @private
    */
@@ -261,5 +296,240 @@ export class XPCalculator {
     }
 
     return total;
+  }
+
+  /* -------------------------------------------- */
+  /*  XP Breakdown Methods                        */
+  /* -------------------------------------------- */
+
+  /**
+   * Get characteristic advances breakdown
+   * @private
+   */
+  static _getCharacteristicAdvancesBreakdown(actor) {
+    const breakdown = [];
+    const specialty = actor.system.specialtyId ? actor.items.get(actor.system.specialtyId) : null;
+    const costs = specialty?.system.characteristicCosts || {};
+
+    const charNames = {
+      ws: 'Weapon Skill',
+      bs: 'Ballistic Skill',
+      str: 'Strength',
+      tgh: 'Toughness',
+      ag: 'Agility',
+      int: 'Intelligence',
+      per: 'Perception',
+      wil: 'Willpower',
+      fel: 'Fellowship'
+    };
+
+    for (const [key, char] of Object.entries(actor.system.characteristics || {})) {
+      const charCosts = costs[key] || {};
+      const charName = charNames[key] || key.toUpperCase();
+
+      if (char.advances?.simple) {
+        breakdown.push({
+          category: 'Characteristic',
+          source: `${charName} (Simple)`,
+          cost: charCosts.simple || 0
+        });
+      }
+      if (char.advances?.intermediate) {
+        breakdown.push({
+          category: 'Characteristic',
+          source: `${charName} (Intermediate)`,
+          cost: charCosts.intermediate || 0
+        });
+      }
+      if (char.advances?.trained) {
+        breakdown.push({
+          category: 'Characteristic',
+          source: `${charName} (Trained)`,
+          cost: charCosts.trained || 0
+        });
+      }
+      if (char.advances?.expert) {
+        breakdown.push({
+          category: 'Characteristic',
+          source: `${charName} (Expert)`,
+          cost: charCosts.expert || 0
+        });
+      }
+    }
+
+    return breakdown;
+  }
+
+  /**
+   * Get skills breakdown
+   * @private
+   */
+  static _getSkillsBreakdown(actor, chapterSkillCosts, specialtyCosts) {
+    const breakdown = [];
+
+    for (const [key, skill] of Object.entries(actor.system.skills || {})) {
+      let trainCost = skill.costTrain ?? 0;
+      let masterCost = skill.costMaster ?? 0;
+      let expertCost = skill.costExpert ?? 0;
+
+      // Apply chapter overrides
+      const chapterCosts = chapterSkillCosts[key];
+      if (chapterCosts) {
+        if (chapterCosts.costTrain !== undefined) trainCost = chapterCosts.costTrain;
+        if (chapterCosts.costMaster !== undefined) masterCost = chapterCosts.costMaster;
+        if (chapterCosts.costExpert !== undefined) expertCost = chapterCosts.costExpert;
+      }
+
+      // Apply specialty base overrides
+      const specialtyBaseCosts = specialtyCosts.baseSkills[key];
+      if (specialtyBaseCosts) {
+        if (specialtyBaseCosts.costTrain !== undefined) trainCost = specialtyBaseCosts.costTrain;
+        if (specialtyBaseCosts.costMaster !== undefined) masterCost = specialtyBaseCosts.costMaster;
+        if (specialtyBaseCosts.costExpert !== undefined) expertCost = specialtyBaseCosts.costExpert;
+      }
+
+      // Apply specialty rank overrides
+      const specialtyRankCosts = specialtyCosts.skills[key];
+      if (specialtyRankCosts !== undefined) {
+        if (typeof specialtyRankCosts === 'number') {
+          trainCost = specialtyRankCosts;
+        } else if (typeof specialtyRankCosts === 'object') {
+          if (specialtyRankCosts.costTrain !== undefined) trainCost = specialtyRankCosts.costTrain;
+          if (specialtyRankCosts.costMaster !== undefined) masterCost = specialtyRankCosts.costMaster;
+          if (specialtyRankCosts.costExpert !== undefined) expertCost = specialtyRankCosts.costExpert;
+        }
+      }
+
+      if (skill.trained) {
+        breakdown.push({
+          category: 'Skill',
+          source: `${skill.label || key} (Trained)`,
+          cost: Math.max(0, trainCost)
+        });
+      }
+      if (skill.mastered) {
+        breakdown.push({
+          category: 'Skill',
+          source: `${skill.label || key} (+10)`,
+          cost: Math.max(0, masterCost)
+        });
+      }
+      if (skill.expert) {
+        breakdown.push({
+          category: 'Skill',
+          source: `${skill.label || key} (+20)`,
+          cost: Math.max(0, expertCost)
+        });
+      }
+    }
+
+    return breakdown;
+  }
+
+  /**
+   * Get talents breakdown
+   * @private
+   */
+  static _getTalentsBreakdown(actor, chapterTalentCosts, specialtyTalentCosts) {
+    const breakdown = [];
+    const talentCounts = {};
+
+    for (const item of actor.items) {
+      if (item.type !== 'talent') continue;
+
+      const sourceId = this._getTalentSourceId(item);
+      let cost = item.system.cost ?? 0;
+
+      // Apply chapter override
+      if (chapterTalentCosts[sourceId] !== undefined) cost = chapterTalentCosts[sourceId];
+
+      if (!talentCounts[item.name]) {
+        talentCounts[item.name] = {
+          count: 0,
+          sourceId: sourceId,
+          subsequentCost: item.system.subsequentCost ?? 0,
+          stackable: item.system.stackable
+        };
+      }
+
+      const talent = talentCounts[item.name];
+      talent.count++;
+
+      // Check if specialty has a cost override
+      const specialtyOverrides = specialtyTalentCosts[sourceId];
+      if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
+        if (talent.stackable) {
+          if (specialtyOverrides.length >= talent.count) {
+            cost = specialtyOverrides[talent.count - 1];
+          }
+        } else {
+          cost = specialtyOverrides[specialtyOverrides.length - 1];
+        }
+      }
+
+      let itemCost = 0;
+      if (talent.count === 1) {
+        itemCost = Math.max(0, cost);
+      } else if (talent.stackable && talent.subsequentCost) {
+        itemCost = Math.max(0, talent.subsequentCost);
+      } else {
+        itemCost = Math.max(0, cost);
+      }
+
+      const displayName = talent.stackable && talent.count > 1
+        ? `${item.name} (${talent.count})`
+        : item.name;
+
+      breakdown.push({
+        category: 'Talent',
+        source: displayName,
+        cost: itemCost
+      });
+    }
+
+    return breakdown;
+  }
+
+  /**
+   * Get psychic powers breakdown
+   * @private
+   */
+  static _getPsychicPowersBreakdown(actor) {
+    const breakdown = [];
+
+    for (const item of actor.items) {
+      if (item.type !== 'psychic-power') continue;
+      const cost = Math.max(0, item.system.cost ?? 0);
+
+      breakdown.push({
+        category: 'Psychic Power',
+        source: item.name,
+        cost: cost
+      });
+    }
+
+    return breakdown;
+  }
+
+  /**
+   * Get insanity reduction breakdown
+   * @private
+   */
+  static _getInsanityReductionBreakdown(actor) {
+    const breakdown = [];
+    const history = actor.system.insanityHistory || [];
+
+    for (const entry of history) {
+      if (entry.xpSpent && entry.xpSpent > 0) {
+        const date = new Date(entry.timestamp).toLocaleDateString();
+        breakdown.push({
+          category: 'Insanity Reduction',
+          source: `Reduction (${date})`,
+          cost: Math.max(0, entry.xpSpent)
+        });
+      }
+    }
+
+    return breakdown;
   }
 }

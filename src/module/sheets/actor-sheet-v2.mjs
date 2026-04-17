@@ -14,6 +14,7 @@ import { EnemyDataPreparer } from "./shared/data-preparers/enemy-data-preparer.m
 import { ItemListPreparer } from "./shared/data-preparers/item-list-preparer.mjs";
 import { InsanityHelper } from "../helpers/insanity/insanity-helper.mjs";
 import { CorruptionHelper } from "../helpers/corruption/corruption-helper.mjs";
+import { XPCalculator } from "../helpers/character/xp-calculator.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -70,6 +71,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       // Step 8: mental state handlers
       viewCorruptionHistory: DeathwatchActorSheetV2._onViewCorruptionHistory,
       viewInsanityHistory: DeathwatchActorSheetV2._onViewInsanityHistory,
+      viewXPHistory: DeathwatchActorSheetV2._onViewXPHistory,
       adjustCorruption: DeathwatchActorSheetV2._onAdjustCorruption,
       adjustInsanity: DeathwatchActorSheetV2._onAdjustInsanity,
       manualInsanityTest: DeathwatchActorSheetV2._onManualInsanityTest,
@@ -829,20 +831,22 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
     const content = `
       <div class="history-dialog">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date/Time</th>
-              <th>Points</th>
-              <th>Source</th>
-              <th>Total</th>
-              <th style="width: 60px;">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows || '<tr><td colspan="5" style="text-align: center;">No corruption history</td></tr>'}
-          </tbody>
-        </table>
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Points</th>
+                <th>Source</th>
+                <th>Total</th>
+                <th style="width: 60px;">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows || '<tr><td colspan="5" style="text-align: center;">No corruption history</td></tr>'}
+            </tbody>
+          </table>
+        </div>
         <div class="history-summary">
           Total Corruption: <strong>${actor.system.corruption || 0} CP</strong>
         </div>
@@ -918,23 +922,25 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
     const content = `
       <div class="history-dialog">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date/Time</th>
-              <th>Points</th>
-              <th>Source</th>
-              <th>Total</th>
-              <th>Test?</th>
-              <th>Result</th>
-              <th>XP Cost</th>
-              <th style="width: 60px;">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows || '<tr><td colspan="8" style="text-align: center;">No insanity history</td></tr>'}
-          </tbody>
-        </table>
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Points</th>
+                <th>Source</th>
+                <th>Total</th>
+                <th>Test?</th>
+                <th>Result</th>
+                <th>XP Cost</th>
+                <th style="width: 60px;">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows || '<tr><td colspan="8" style="text-align: center;">No insanity history</td></tr>'}
+            </tbody>
+          </table>
+        </div>
         <div class="history-summary">
           Total Insanity: <strong>${actor.system.insanity || 0} IP</strong>
           ${totalXPSpent > 0 ? ` | Total XP Spent: <strong>${totalXPSpent} XP</strong>` : ''}
@@ -966,6 +972,63 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
           });
         });
       }
+    });
+  }
+
+  static async _onViewXPHistory(event, target) {
+    const actor = this.actor;
+    const breakdown = XPCalculator.calculateXPBreakdown(actor);
+
+    let tableRows = '';
+    let runningTotal = 0;
+
+    for (const entry of breakdown) {
+      runningTotal += entry.cost;
+
+      tableRows += `
+        <tr>
+          <td>${entry.category}</td>
+          <td>${entry.source}</td>
+          <td class="points-cell">${entry.cost} XP</td>
+          <td>${runningTotal} XP</td>
+        </tr>
+      `;
+    }
+
+    const content = `
+      <div class="history-dialog">
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Purchase</th>
+                <th>Cost</th>
+                <th>Total Spent</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows || '<tr><td colspan="4" style="text-align: center;">No XP expenditures</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+        <div class="history-summary">
+          Total XP Spent: <strong>${actor.system.xp.spent || 0} XP</strong>
+          ${breakdown.length > 0 ? ` | Total Purchases: <strong>${breakdown.length}</strong>` : ''}
+        </div>
+      </div>
+    `;
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: `Experience Points Breakdown - ${actor.name}` },
+      content,
+      buttons: [{
+        action: 'close',
+        icon: 'fas fa-times',
+        label: 'Close',
+        callback: () => {}
+      }],
+      default: 'close'
     });
   }
 

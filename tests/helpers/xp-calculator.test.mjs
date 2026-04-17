@@ -495,11 +495,122 @@ describe('XPCalculator', () => {
     });
 
     it('uses compendiumId even when actor _id is different (drag from compendium scenario)', () => {
-      const item = { 
-        system: { compendiumId: 'tal00000000001' }, 
-        _id: 'randomActorItemId123' 
+      const item = {
+        system: { compendiumId: 'tal00000000001' },
+        _id: 'randomActorItemId123'
       };
       expect(XPCalculator._getTalentSourceId(item)).toBe('tal00000000001');
+    });
+  });
+
+  describe('calculateXPBreakdown', () => {
+    let mockActor;
+
+    beforeEach(() => {
+      mockActor = {
+        system: {
+          chapterId: null,
+          specialtyId: null,
+          characteristics: {
+            ws: { advances: { simple: true, intermediate: false, trained: false, expert: false } },
+            bs: { advances: { simple: false, intermediate: true, trained: false, expert: false } }
+          },
+          skills: {
+            awareness: { label: 'Awareness', trained: true, mastered: false, expert: false, costTrain: 200 }
+          },
+          insanityHistory: []
+        },
+        items: {
+          get: jest.fn((id) => {
+            if (id === 'spec1') {
+              return {
+                system: {
+                  characteristicCosts: {
+                    ws: { simple: 250, intermediate: 500, trained: 750, expert: 1000 },
+                    bs: { simple: 250, intermediate: 500, trained: 750, expert: 1000 }
+                  },
+                  skillCosts: {},
+                  talentCosts: {},
+                  rankCosts: {}
+                }
+              };
+            }
+            return null;
+          }),
+          [Symbol.iterator]: function* () {
+            yield { type: 'talent', name: 'Bolter Drill', system: { cost: 500, stackable: false }, _id: 'tal1' };
+            yield { type: 'psychic-power', name: 'Smite', system: { cost: 500 }, _id: 'psy1' };
+          }
+        }
+      };
+      mockActor.system.specialtyId = 'spec1';
+    });
+
+    it('returns breakdown with all categories', () => {
+      const breakdown = XPCalculator.calculateXPBreakdown(mockActor);
+
+      expect(breakdown).toEqual(expect.arrayContaining([
+        { category: 'Starting XP', source: 'Character Creation', cost: 12000 },
+        { category: 'Characteristic', source: 'Weapon Skill (Simple)', cost: 250 },
+        { category: 'Characteristic', source: 'Ballistic Skill (Intermediate)', cost: 500 },
+        { category: 'Skill', source: 'Awareness (Trained)', cost: 200 },
+        { category: 'Talent', source: 'Bolter Drill', cost: 500 },
+        { category: 'Psychic Power', source: 'Smite', cost: 500 }
+      ]));
+    });
+
+    it('calculates correct running total', () => {
+      const breakdown = XPCalculator.calculateXPBreakdown(mockActor);
+      let runningTotal = 0;
+
+      for (const entry of breakdown) {
+        runningTotal += entry.cost;
+      }
+
+      expect(runningTotal).toBe(13950); // 12000 + 250 + 500 + 200 + 500 + 500
+    });
+
+    it('includes insanity reduction entries', () => {
+      mockActor.system.insanityHistory = [
+        { timestamp: Date.now(), xpSpent: 100 },
+        { timestamp: Date.now(), xpSpent: 100 }
+      ];
+
+      const breakdown = XPCalculator.calculateXPBreakdown(mockActor);
+      const insanityEntries = breakdown.filter(e => e.category === 'Insanity Reduction');
+
+      expect(insanityEntries).toHaveLength(2);
+      expect(insanityEntries[0].cost).toBe(100);
+      expect(insanityEntries[1].cost).toBe(100);
+    });
+
+    it('handles stackable talents with count', () => {
+      mockActor.items = {
+        get: jest.fn((id) => {
+          if (id === 'spec1') {
+            return {
+              system: {
+                characteristicCosts: {},
+                skillCosts: {},
+                talentCosts: {},
+                rankCosts: {}
+              }
+            };
+          }
+          return null;
+        }),
+        [Symbol.iterator]: function* () {
+          yield { type: 'talent', name: 'Hatred', system: { cost: 500, subsequentCost: 500, stackable: true }, _id: 'tal1' };
+          yield { type: 'talent', name: 'Hatred', system: { cost: 500, subsequentCost: 500, stackable: true }, _id: 'tal2' };
+        }
+      };
+
+      const breakdown = XPCalculator.calculateXPBreakdown(mockActor);
+      const hatredEntries = breakdown.filter(e => e.source.includes('Hatred'));
+
+      expect(hatredEntries).toHaveLength(2);
+      expect(hatredEntries[0].source).toBe('Hatred');
+      expect(hatredEntries[1].source).toBe('Hatred (2)');
     });
   });
 });
