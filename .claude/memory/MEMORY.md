@@ -2,6 +2,12 @@
 
 This directory contains project-specific memory for Claude Code. These memories are version controlled and shared with the repository.
 
+**Relationship to CLAUDE.md:**
+- **[CLAUDE.md](../../CLAUDE.md)** — Project architecture, commands, coding standards (foundational documentation)
+- **Memory files** (this directory) — Session learnings, workflow preferences, project history (evolves over time)
+
+When starting work on this project, read CLAUDE.md first for architecture and commands, then consult relevant memory files for workflow preferences and lessons learned.
+
 ---
 
 ## Foundation Memories
@@ -28,6 +34,7 @@ This directory contains project-specific memory for Claude Code. These memories 
 ## Projects
 
 - [WebP Conversion](project_webp_conversion.md) — Ongoing icon optimization initiative (10 weapons converted)
+- [TDD Example: XP Calculator](project_tdd_example.md) — Reference implementation of test-driven development workflow
 
 ## Reference
 

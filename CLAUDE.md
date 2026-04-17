@@ -4,6 +4,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## Memory System
+
+**Location**: `.claude/memory/` (version controlled)
+
+This project uses Claude Code's persistent memory system to capture:
+- **Feedback** — Development preferences and lessons learned (e.g., "prefer TDD when possible")
+- **Project history** — Significant implementations and their context (e.g., XP calculator TDD example)
+- **Reference** — Quick-lookup information (e.g., test file organization, build script locations)
+
+**Key memories:**
+- [MEMORY.md](.claude/memory/MEMORY.md) — Memory index (start here)
+- [testing_standards.md](.claude/memory/testing_standards.md) — TDD workflow and test coverage goals
+- [feedback_code_quality.md](.claude/memory/feedback_code_quality.md) — Logger usage, import discipline
+- [project_tdd_example.md](.claude/memory/project_tdd_example.md) — Reference TDD implementation (XP calculator)
+
+**CLAUDE.md vs Memory:**
+- **CLAUDE.md** — Project architecture, commands, coding standards (foundational, rarely changes)
+- **Memory files** — Session learnings, workflow preferences, project history (evolves over time)
+
+**When to update memory:**
+- Capture significant implementation patterns (e.g., "prefer lowest-cost logic for XP")
+- Document lessons learned from debugging sessions
+- Record workflow preferences discovered during development
+- Press `#` during a Claude session to have Claude auto-incorporate learnings
+
+**Note:** Memory files are version controlled and shared with the repository. User-specific preferences should stay in `~/.claude/CLAUDE.md` (global defaults).
+
+---
+
 ## System Overview
 
 This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. It implements:
@@ -756,6 +785,61 @@ Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/set
 - `tests/helpers/validation.test.mjs` — Input validation utilities
 
 **FoundryAdapter pattern**: All Foundry API calls (e.g., `game.settings.get`, `ChatMessage.create`) are routed through `foundry-adapter.mjs`, which is mocked in tests. This allows 100% unit testing without a running Foundry instance.
+
+---
+
+## Test-Driven Development (TDD)
+
+**Preferred workflow** when implementing new features or fixing bugs:
+
+1. **Write failing test first** — Define expected behavior in test form before touching implementation
+2. **Run tests to verify failure** — Confirm test fails for the right reason
+3. **Implement minimal fix** — Write just enough code to make the test pass
+4. **Run tests to verify success** — All tests pass (including the new one)
+5. **Refactor if needed** — Clean up implementation while keeping tests green
+
+**When to use TDD:**
+
+- ✅ New feature development (especially in helpers, calculators, modifiers)
+- ✅ Bug fixes (write test that reproduces bug, then fix)
+- ✅ Refactoring existing logic (tests ensure behavior unchanged)
+- ✅ API contract changes (update tests first to define new contract)
+- ⚠️ UI-heavy work (integration tests harder; manual testing acceptable)
+- ⚠️ Exploratory prototypes (write tests after validating approach)
+
+**Example TDD workflow** (from XP calculator lowest-cost fix):
+
+```bash
+# 1. Write failing test
+# Add test case: "uses chapter cost when chapter is cheaper than specialty rank"
+npm test -- --testPathPattern="xp-calculator" --testNamePattern="chapter is cheaper"
+# ❌ FAIL: Expected 12300, Received 12400
+
+# 2. Implement fix in xp-calculator.mjs
+# Add _getLowestCost() helper and update cost calculation logic
+
+# 3. Verify all tests pass
+npm test -- --testPathPattern="xp-calculator"
+# ✅ PASS: 39 tests passing
+
+# 4. Run full test suite
+npm test
+# ✅ PASS: 1948 tests passing
+```
+
+**Benefits in this project:**
+
+- Helpers are pure functions → easy to test in isolation
+- FoundryAdapter pattern → no Foundry instance needed
+- Fast test execution (~1.3s for 1948 tests) → rapid feedback
+- Jest watch mode → auto-rerun on file changes
+
+**Test organization:**
+
+- Helper tests → `tests/helpers/` (e.g., `xp-calculator.test.mjs`)
+- Combat tests → `tests/combat/` (e.g., `weapon-qualities.test.mjs`)
+- Integration tests → `tests/documents/` (e.g., `chapter-skill-costs.test.mjs`)
+- Sheet tests → `tests/sheets/` (e.g., `actor-sheet-talents-traits.test.mjs`)
 
 ---
 

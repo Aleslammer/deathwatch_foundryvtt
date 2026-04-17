@@ -155,43 +155,50 @@ export class XPCalculator {
   static _calculateTalentCosts(actor, chapterTalentCosts, specialtyTalentCosts) {
     const talentCounts = {};
     let total = 0;
-    
+
     for (const item of actor.items) {
       if (item.type !== 'talent') continue;
-      
+
       const sourceId = this._getTalentSourceId(item);
-      let cost = item.system.cost ?? 0;
-      
-      // Apply chapter override
-      if (chapterTalentCosts[sourceId] !== undefined) cost = chapterTalentCosts[sourceId];
-      
+      const baseCost = item.system.cost ?? 0;
+
       if (!talentCounts[item.name]) {
-        talentCounts[item.name] = { 
-          count: 0, 
+        talentCounts[item.name] = {
+          count: 0,
           sourceId: sourceId,
           subsequentCost: item.system.subsequentCost ?? 0,
-          stackable: item.system.stackable 
+          stackable: item.system.stackable
         };
       }
-      
+
       const talent = talentCounts[item.name];
       talent.count++;
-      
-      // Check if specialty has a cost override
+
+      // Collect all applicable cost overrides
+      const costCandidates = [baseCost];
+
+      // Chapter override
+      if (chapterTalentCosts[sourceId] !== undefined) {
+        costCandidates.push(chapterTalentCosts[sourceId]);
+      }
+
+      // Specialty rank override
       const specialtyOverrides = specialtyTalentCosts[sourceId];
       if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
         if (talent.stackable) {
           // For stackable talents, use the array index for this instance (if available)
           if (specialtyOverrides.length >= talent.count) {
-            cost = specialtyOverrides[talent.count - 1];
+            costCandidates.push(specialtyOverrides[talent.count - 1]);
           }
-          // If no override for this instance, fall through to use subsequentCost
         } else {
           // For non-stackable talents, use the last (most recent rank) override
-          cost = specialtyOverrides[specialtyOverrides.length - 1];
+          costCandidates.push(specialtyOverrides[specialtyOverrides.length - 1]);
         }
       }
-      
+
+      // Use the lowest cost from all candidates (excluding -1)
+      const cost = this._getLowestCost(costCandidates);
+
       if (talent.count === 1) {
         total += Math.max(0, cost);
       } else if (talent.stackable && talent.subsequentCost) {
@@ -200,7 +207,7 @@ export class XPCalculator {
         total += Math.max(0, cost);
       }
     }
-    
+
     return total;
   }
 
@@ -244,33 +251,43 @@ export class XPCalculator {
       let masterCost = skill.costMaster ?? 0;
       let expertCost = skill.costExpert ?? 0;
 
-      // Apply chapter overrides
+      // Collect all applicable cost overrides (chapter, specialty base, specialty rank)
+      const trainCandidates = [trainCost];
+      const masterCandidates = [masterCost];
+      const expertCandidates = [expertCost];
+
+      // Chapter overrides
       const chapterCosts = chapterSkillCosts[key];
       if (chapterCosts) {
-        if (chapterCosts.costTrain !== undefined) trainCost = chapterCosts.costTrain;
-        if (chapterCosts.costMaster !== undefined) masterCost = chapterCosts.costMaster;
-        if (chapterCosts.costExpert !== undefined) expertCost = chapterCosts.costExpert;
+        if (chapterCosts.costTrain !== undefined) trainCandidates.push(chapterCosts.costTrain);
+        if (chapterCosts.costMaster !== undefined) masterCandidates.push(chapterCosts.costMaster);
+        if (chapterCosts.costExpert !== undefined) expertCandidates.push(chapterCosts.costExpert);
       }
 
-      // Apply specialty base overrides (takes precedence over chapter)
+      // Specialty base overrides
       const specialtyBaseCosts = specialtyCosts.baseSkills[key];
       if (specialtyBaseCosts) {
-        if (specialtyBaseCosts.costTrain !== undefined) trainCost = specialtyBaseCosts.costTrain;
-        if (specialtyBaseCosts.costMaster !== undefined) masterCost = specialtyBaseCosts.costMaster;
-        if (specialtyBaseCosts.costExpert !== undefined) expertCost = specialtyBaseCosts.costExpert;
+        if (specialtyBaseCosts.costTrain !== undefined) trainCandidates.push(specialtyBaseCosts.costTrain);
+        if (specialtyBaseCosts.costMaster !== undefined) masterCandidates.push(specialtyBaseCosts.costMaster);
+        if (specialtyBaseCosts.costExpert !== undefined) expertCandidates.push(specialtyBaseCosts.costExpert);
       }
 
-      // Apply specialty rank overrides (takes precedence over base specialty)
+      // Specialty rank overrides
       const specialtyRankCosts = specialtyCosts.skills[key];
       if (specialtyRankCosts !== undefined) {
         if (typeof specialtyRankCosts === 'number') {
-          trainCost = specialtyRankCosts;
+          trainCandidates.push(specialtyRankCosts);
         } else if (typeof specialtyRankCosts === 'object') {
-          if (specialtyRankCosts.costTrain !== undefined) trainCost = specialtyRankCosts.costTrain;
-          if (specialtyRankCosts.costMaster !== undefined) masterCost = specialtyRankCosts.costMaster;
-          if (specialtyRankCosts.costExpert !== undefined) expertCost = specialtyRankCosts.costExpert;
+          if (specialtyRankCosts.costTrain !== undefined) trainCandidates.push(specialtyRankCosts.costTrain);
+          if (specialtyRankCosts.costMaster !== undefined) masterCandidates.push(specialtyRankCosts.costMaster);
+          if (specialtyRankCosts.costExpert !== undefined) expertCandidates.push(specialtyRankCosts.costExpert);
         }
       }
+
+      // Use the lowest cost from all candidates (excluding -1 which means "not trainable")
+      trainCost = this._getLowestCost(trainCandidates);
+      masterCost = this._getLowestCost(masterCandidates);
+      expertCost = this._getLowestCost(expertCandidates);
 
       if (skill.trained) total += Math.max(0, trainCost);
       if (skill.mastered) total += Math.max(0, masterCost);
@@ -278,6 +295,18 @@ export class XPCalculator {
     }
 
     return total;
+  }
+
+  /**
+   * Get the lowest cost from candidates, excluding -1 (not trainable).
+   * If all candidates are -1, return -1.
+   * @private
+   * @param {Array<number>} candidates - Array of cost candidates
+   * @returns {number} Lowest cost (excluding -1), or -1 if all are -1
+   */
+  static _getLowestCost(candidates) {
+    const valid = candidates.filter(c => c !== -1);
+    return valid.length > 0 ? Math.min(...valid) : -1;
   }
 
   /**
@@ -372,33 +401,43 @@ export class XPCalculator {
       let masterCost = skill.costMaster ?? 0;
       let expertCost = skill.costExpert ?? 0;
 
-      // Apply chapter overrides
+      // Collect all applicable cost overrides (chapter, specialty base, specialty rank)
+      const trainCandidates = [trainCost];
+      const masterCandidates = [masterCost];
+      const expertCandidates = [expertCost];
+
+      // Chapter overrides
       const chapterCosts = chapterSkillCosts[key];
       if (chapterCosts) {
-        if (chapterCosts.costTrain !== undefined) trainCost = chapterCosts.costTrain;
-        if (chapterCosts.costMaster !== undefined) masterCost = chapterCosts.costMaster;
-        if (chapterCosts.costExpert !== undefined) expertCost = chapterCosts.costExpert;
+        if (chapterCosts.costTrain !== undefined) trainCandidates.push(chapterCosts.costTrain);
+        if (chapterCosts.costMaster !== undefined) masterCandidates.push(chapterCosts.costMaster);
+        if (chapterCosts.costExpert !== undefined) expertCandidates.push(chapterCosts.costExpert);
       }
 
-      // Apply specialty base overrides
+      // Specialty base overrides
       const specialtyBaseCosts = specialtyCosts.baseSkills[key];
       if (specialtyBaseCosts) {
-        if (specialtyBaseCosts.costTrain !== undefined) trainCost = specialtyBaseCosts.costTrain;
-        if (specialtyBaseCosts.costMaster !== undefined) masterCost = specialtyBaseCosts.costMaster;
-        if (specialtyBaseCosts.costExpert !== undefined) expertCost = specialtyBaseCosts.costExpert;
+        if (specialtyBaseCosts.costTrain !== undefined) trainCandidates.push(specialtyBaseCosts.costTrain);
+        if (specialtyBaseCosts.costMaster !== undefined) masterCandidates.push(specialtyBaseCosts.costMaster);
+        if (specialtyBaseCosts.costExpert !== undefined) expertCandidates.push(specialtyBaseCosts.costExpert);
       }
 
-      // Apply specialty rank overrides
+      // Specialty rank overrides
       const specialtyRankCosts = specialtyCosts.skills[key];
       if (specialtyRankCosts !== undefined) {
         if (typeof specialtyRankCosts === 'number') {
-          trainCost = specialtyRankCosts;
+          trainCandidates.push(specialtyRankCosts);
         } else if (typeof specialtyRankCosts === 'object') {
-          if (specialtyRankCosts.costTrain !== undefined) trainCost = specialtyRankCosts.costTrain;
-          if (specialtyRankCosts.costMaster !== undefined) masterCost = specialtyRankCosts.costMaster;
-          if (specialtyRankCosts.costExpert !== undefined) expertCost = specialtyRankCosts.costExpert;
+          if (specialtyRankCosts.costTrain !== undefined) trainCandidates.push(specialtyRankCosts.costTrain);
+          if (specialtyRankCosts.costMaster !== undefined) masterCandidates.push(specialtyRankCosts.costMaster);
+          if (specialtyRankCosts.costExpert !== undefined) expertCandidates.push(specialtyRankCosts.costExpert);
         }
       }
+
+      // Use the lowest cost from all candidates (excluding -1 which means "not trainable")
+      trainCost = this._getLowestCost(trainCandidates);
+      masterCost = this._getLowestCost(masterCandidates);
+      expertCost = this._getLowestCost(expertCandidates);
 
       if (skill.trained) {
         breakdown.push({
@@ -438,10 +477,7 @@ export class XPCalculator {
       if (item.type !== 'talent') continue;
 
       const sourceId = this._getTalentSourceId(item);
-      let cost = item.system.cost ?? 0;
-
-      // Apply chapter override
-      if (chapterTalentCosts[sourceId] !== undefined) cost = chapterTalentCosts[sourceId];
+      const baseCost = item.system.cost ?? 0;
 
       if (!talentCounts[item.name]) {
         talentCounts[item.name] = {
@@ -455,17 +491,28 @@ export class XPCalculator {
       const talent = talentCounts[item.name];
       talent.count++;
 
-      // Check if specialty has a cost override
+      // Collect all applicable cost overrides
+      const costCandidates = [baseCost];
+
+      // Chapter override
+      if (chapterTalentCosts[sourceId] !== undefined) {
+        costCandidates.push(chapterTalentCosts[sourceId]);
+      }
+
+      // Specialty rank override
       const specialtyOverrides = specialtyTalentCosts[sourceId];
       if (Array.isArray(specialtyOverrides) && specialtyOverrides.length > 0) {
         if (talent.stackable) {
           if (specialtyOverrides.length >= talent.count) {
-            cost = specialtyOverrides[talent.count - 1];
+            costCandidates.push(specialtyOverrides[talent.count - 1]);
           }
         } else {
-          cost = specialtyOverrides[specialtyOverrides.length - 1];
+          costCandidates.push(specialtyOverrides[specialtyOverrides.length - 1]);
         }
       }
+
+      // Use the lowest cost from all candidates (excluding -1)
+      const cost = this._getLowestCost(costCandidates);
 
       let itemCost = 0;
       if (talent.count === 1) {

@@ -1,12 +1,29 @@
 ---
 name: testing_standards
-description: Testing requirements and standards for this project
+description: Testing requirements and standards for this project - prefer Test-Driven Development (TDD) when possible
 type: feedback
 ---
 
-**Always run tests after code changes.** When tests fail, investigate the root cause before changing test expectations.
+**Prefer Test-Driven Development (TDD) when implementing features or fixing bugs.**
 
-**Why:** Test failures often indicate bugs in new code, not bugs in tests. The project has 1800+ tests with comprehensive coverage - maintaining test quality is critical.
+**Why:** Writing tests first clarifies requirements, catches bugs early, and ensures testability. The project has 1948+ tests with comprehensive coverage - TDD maintains this quality.
+
+**TDD Workflow:**
+1. **Write failing test first** — Define expected behavior before implementation
+2. **Run test to verify failure** — Confirm test fails for the right reason
+3. **Implement minimal fix** — Write just enough code to pass the test
+4. **Run tests to verify success** — Confirm all tests pass
+5. **Refactor if needed** — Clean up while keeping tests green
+
+**When to use TDD:**
+- ✅ Helper functions and business logic (pure functions, easy to test)
+- ✅ Bug fixes (write test that reproduces bug, then fix)
+- ✅ Calculations (XP, modifiers, combat math)
+- ✅ Data transformations (modifier collection, skill loading)
+- ⚠️ UI-heavy work (integration tests harder; manual testing acceptable)
+- ⚠️ Exploratory prototypes (write tests after validating approach)
+
+**Always run tests after code changes.** When tests fail, investigate the root cause before changing test expectations.
 
 **How to apply:**
 1. Run `npm test` after any code change

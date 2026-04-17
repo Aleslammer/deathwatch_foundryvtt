@@ -130,7 +130,7 @@ describe('XPCalculator', () => {
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12200); // 12000 + 100 (chapter talent) + 100 (chapter skill)
     });
 
-    it('treats chapter override of -1 as free', () => {
+    it('ignores chapter override of -1 and uses base cost', () => {
       const mockChapter = {
         system: {
           talentCosts: { 'talent1': -1 },
@@ -147,8 +147,8 @@ describe('XPCalculator', () => {
       mockActor.system.skills = {
         awareness: { trained: true, costTrain: 200 }
       };
-      
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 + 0
+
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12500); // 12000 + 300 (talent base) + 200 (skill base, -1 filtered out)
     });
 
     it('applies specialty rank-based skill cost overrides', () => {
@@ -176,7 +176,7 @@ describe('XPCalculator', () => {
       expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12400); // 12000 + 400 (specialty rank override)
     });
 
-    it('specialty rank costs take precedence over chapter costs', () => {
+    it('uses lowest cost when specialty rank and chapter both provide overrides', () => {
       const mockChapter = {
         system: {
           skillCosts: { medicae: { costTrain: 600 } }
@@ -203,11 +203,42 @@ describe('XPCalculator', () => {
       mockActor.system.skills = {
         medicae: { trained: true, costTrain: 800 }
       };
-      
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12400); // 12000 + 400 (specialty rank takes precedence)
+
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12400); // 12000 + 400 (specialty 400 < chapter 600)
     });
 
-    it('specialty base costs take precedence over chapter costs', () => {
+    it('uses chapter cost when chapter is cheaper than specialty rank', () => {
+      const mockChapter = {
+        system: {
+          skillCosts: { lore_forbidden_adeptus_mechanicus: { costTrain: 300 } }
+        }
+      };
+      const mockSpecialty = {
+        system: {
+          skillCosts: {},
+          rankCosts: {
+            '1': {
+              skills: { lore_forbidden_adeptus_mechanicus: { costTrain: 400 } },
+              talents: {}
+            }
+          }
+        }
+      };
+      mockActor.system.chapterId = 'chapter1';
+      mockActor.system.specialtyId = 'spec1';
+      mockActor.system.rank = 1;
+      mockActor.items = {
+        get: jest.fn((id) => id === 'chapter1' ? mockChapter : mockSpecialty),
+        [Symbol.iterator]: function* () {}
+      };
+      mockActor.system.skills = {
+        lore_forbidden_adeptus_mechanicus: { trained: true, costTrain: -1 }
+      };
+
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12300); // 12000 + 300 (chapter 300 < specialty 400)
+    });
+
+    it('uses specialty base cost when it is cheaper than chapter cost', () => {
       const mockChapter = {
         system: {
           skillCosts: { medicae: { costTrain: 600 } }
@@ -230,7 +261,7 @@ describe('XPCalculator', () => {
         medicae: { trained: true, costTrain: 800 }
       };
       
-      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 (specialty base takes precedence)
+      expect(XPCalculator.calculateSpentXP(mockActor)).toBe(12000); // 12000 + 0 (specialty base 0 < chapter 600)
     });
 
     it('apothecary medicae at rank 1 costs 0 XP', () => {

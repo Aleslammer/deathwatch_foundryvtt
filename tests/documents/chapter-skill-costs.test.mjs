@@ -35,7 +35,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
       expect(mockActor.system.xp.spent).toBe(12000);
     });
 
-    it('should override skill costs when chapter is assigned', () => {
+    it('should use base cost when it is lower than chapter override', () => {
       const chapterItem = {
         _id: 'chapter1',
         type: 'chapter',
@@ -65,7 +65,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
 
       prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(12100);
+      expect(mockActor.system.xp.spent).toBe(12000); // 12000 + 0 (base 0 < chapter 100)
     });
 
     it('should apply chapter costs for multiple skill levels', () => {
@@ -139,10 +139,10 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
 
       prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(12400);
+      expect(mockActor.system.xp.spent).toBe(12300); // 12000 + 0 (awareness) + 300 (command not overridden)
     });
 
-    it('should handle partial chapter cost overrides', () => {
+    it('should handle partial chapter cost overrides and use lowest costs', () => {
       const chapterItem = {
         _id: 'chapter1',
         type: 'chapter',
@@ -159,13 +159,13 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
           chapterId: 'chapter1',
           xp: { total: 13000 },
           skills: {
-            acrobatics: { 
-              trained: true, 
-              mastered: true, 
+            acrobatics: {
+              trained: true,
+              mastered: true,
               expert: true,
-              costTrain: 0, 
-              costMaster: 0, 
-              costExpert: 0 
+              costTrain: 0,
+              costMaster: 0,
+              costExpert: 0
             }
           },
           characteristics: {},
@@ -179,7 +179,7 @@ describe('DeathwatchActor - Chapter Skill Costs', () => {
 
       prepareCharacterData(mockActor);
 
-      expect(mockActor.system.xp.spent).toBe(12800);
+      expect(mockActor.system.xp.spent).toBe(12000); // 12000 + 0 + 0 + 0 (all base costs are 0, lower than chapter overrides)
     });
   });
 });

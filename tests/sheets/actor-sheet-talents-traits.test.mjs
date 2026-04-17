@@ -116,8 +116,9 @@ describe('DeathwatchActorSheetV2 - Talents and Traits', () => {
 
       expect(context.traits).toBeDefined();
       expect(context.traits.length).toBe(2);
-      expect(context.traits[0].name).toBe('Unnatural Strength (x2)');
-      expect(context.traits[1].name).toBe('Fear (2)');
+      // Traits are sorted alphabetically
+      expect(context.traits[0].name).toBe('Fear (2)');
+      expect(context.traits[1].name).toBe('Unnatural Strength (x2)');
     });
 
     it('should handle mixed item types including talents and traits', () => {

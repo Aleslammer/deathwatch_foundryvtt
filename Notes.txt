@@ -35,6 +35,7 @@ Talents:
 Weapon Upgrade:
 
 Gear:
+    TODO: Missles should be ammo for the launchers  (Otho has some)
     Relics
     Deathwatch Relics
     Chapter Relics
