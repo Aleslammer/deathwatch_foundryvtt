@@ -29,7 +29,8 @@ Skills:
 Traits
 
 Talents:
-    Modifiers are not displayed on the talent pages
+    Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
+    
 
 Weapon Upgrade:
 
