@@ -32,7 +32,17 @@
         <label>Short:</label>
         <input type="text" name="system.shortDescription" value="{{system.shortDescription}}" style="flex: 1;" />
       </div>
-      {{editor system.description target="system.description" button=true owner=owner editable=editable}}
+      {{#if editable}}
+      <prose-mirror name="system.description"
+                    value="{{source.description}}"
+                    document-uuid="{{item.uuid}}"
+                    style="height: 100%;">
+      </prose-mirror>
+      {{else}}
+      <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+        <div class="editor-content">{{{enriched.description}}}</div>
+      </div>
+      {{/if}}
     </div>
     <div class="tab" data-group="primary" data-tab="effects">
       <div class="modifiers-list" style="overflow-x: auto;">

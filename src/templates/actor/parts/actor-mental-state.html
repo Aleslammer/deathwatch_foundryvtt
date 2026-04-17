@@ -35,10 +35,10 @@
       </div>
 
       <div class="panel-actions">
-        <button class="panel-btn view-history-btn" data-action="viewCorruptionHistory" title="View Corruption History">
+        <button type="button" class="panel-btn view-history-btn" data-action="viewCorruptionHistory" title="View Corruption History">
           <i class="fas fa-history"></i> History
         </button>
-        <button class="panel-btn gm-adjust-btn" data-action="adjustCorruption" title="Adjust Corruption">
+        <button type="button" class="panel-btn gm-adjust-btn" data-action="adjustCorruption" title="Adjust Corruption">
           <i class="fas fa-edit"></i> Adjust
         </button>
       </div>
@@ -94,19 +94,19 @@
       </div>
 
       <div class="panel-actions">
-        <button class="panel-btn view-history-btn" data-action="viewInsanityHistory" title="View Insanity History">
+        <button type="button" class="panel-btn view-history-btn" data-action="viewInsanityHistory" title="View Insanity History">
           <i class="fas fa-history"></i> History
         </button>
         {{#if (gt system.insanity 0)}}
-        <button class="panel-btn purchase-btn" data-action="purchaseInsanityReduction" title="Spend XP to reduce Insanity (100 XP per point)">
+        <button type="button" class="panel-btn purchase-btn" data-action="purchaseInsanityReduction" title="Spend XP to reduce Insanity (100 XP per point)">
           <i class="fas fa-coins"></i> Purchase
         </button>
         {{/if}}
-        <button class="panel-btn gm-adjust-btn" data-action="adjustInsanity" title="Adjust Insanity">
+        <button type="button" class="panel-btn gm-adjust-btn" data-action="adjustInsanity" title="Adjust Insanity">
           <i class="fas fa-edit"></i> Adjust
         </button>
         {{#if isGM}}
-        <button class="panel-btn manual-test-btn" data-action="manualInsanityTest" title="Trigger Insanity Test">
+        <button type="button" class="panel-btn manual-test-btn" data-action="manualInsanityTest" title="Trigger Insanity Test">
           <i class="fas fa-dice-d20"></i> Test
         </button>
         {{/if}}
@@ -135,11 +135,11 @@
             </h4>
           </div>
           <div class="trauma-actions">
-            <button class="trauma-btn" data-action="editItem" data-item-id="{{trauma._id}}" title="View Details">
+            <button type="button" class="trauma-btn" data-action="editItem" data-item-id="{{trauma._id}}" title="View Details">
               <i class="fas fa-eye"></i> View
             </button>
             {{#if ../isGM}}
-            <button class="trauma-btn delete-btn" data-action="deleteItem" data-item-id="{{trauma._id}}" title="Remove">
+            <button type="button" class="trauma-btn delete-btn" data-action="deleteItem" data-item-id="{{trauma._id}}" title="Remove">
               <i class="fas fa-trash"></i>
             </button>
             {{/if}}
@@ -210,7 +210,7 @@
         </div>
       </div>
 
-      <button class="panel-btn view-curse-btn" data-action="viewCurse" title="View Full Curse Details">
+      <button type="button" class="panel-btn view-curse-btn" data-action="viewCurse" title="View Full Curse Details">
         <i class="fas fa-book"></i> View Full Curse
       </button>
     </div>

@@ -156,7 +156,7 @@
       "_id": "hichaos050000007",
       "name": "Chitinous Appendage",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/combat-knife.webp",
+      "img": "systems/deathwatch/icons/weapons/combat_knife.webp",
       "system": {
         "book": "Black Crusade",
         "page": "360",
@@ -179,7 +179,7 @@
       "_id": "hichaos050000008",
       "name": "Venomous Barb",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-weapon.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "book": "Black Crusade",
         "page": "360",

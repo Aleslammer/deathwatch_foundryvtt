@@ -306,7 +306,7 @@ export class CombatDialogHelper {
       const safeEffectName = Sanitizer.escape(charDamageEffect.name);
       const safeFormula = Sanitizer.escape(charDamageEffect.formula);
       const safeChar = Sanitizer.escape(charDamageEffect.characteristic);
-      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}"${tokenData} data-formula="${safeFormula}" data-characteristic="${safeChar}">${safeEffectName}: Roll ${safeFormula}</button>`;
+      message += `<br><button class="char-damage-btn" data-actor-id="${targetId}"${tokenData} data-formula="${safeFormula}" data-characteristic="${safeChar}" data-name="${safeEffectName}">${safeEffectName}: Roll ${safeFormula}</button>`;
     }
     
     if (isShocking && woundsTaken > 0) {

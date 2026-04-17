@@ -2,7 +2,7 @@
   "_id": "hordchaos0000004",
   "name": "Cult Zealot Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/chaos/cult-zealot_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/chaos/cult-zealot-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 26 },
@@ -63,7 +63,7 @@
       "_id": "hichaos040000003",
       "name": "Makeshift Sword",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/combat-knife.webp",
+      "img": "systems/deathwatch/icons/weapons/combat_knife.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d10+0",

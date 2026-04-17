@@ -14,7 +14,17 @@
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="description">
-      {{editor system.description target="system.description" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+      {{#if editable}}
+      <prose-mirror name="system.description"
+                    value="{{source.description}}"
+                    document-uuid="{{item.uuid}}"
+                    style="height: 100%;">
+      </prose-mirror>
+      {{else}}
+      <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+        <div class="editor-content">{{{enriched.description}}}</div>
+      </div>
+      {{/if}}
     </div>
 
     <div class="tab" data-group="primary" data-tab="curse">
@@ -25,7 +35,17 @@
 
       <div class="form-group">
         <label>Curse Overview:</label>
-        {{editor system.curseDescription target="system.curseDescription" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+        {{#if editable}}
+        <prose-mirror name="system.curseDescription"
+                      value="{{source.curseDescription}}"
+                      document-uuid="{{item.uuid}}"
+                      style="height: 100%;">
+        </prose-mirror>
+        {{else}}
+        <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+          <div class="editor-content">{{{enriched.curseDescription}}}</div>
+        </div>
+        {{/if}}
       </div>
 
       <hr/>
@@ -40,7 +60,17 @@
 
       <div class="form-group">
         <label>Description:</label>
-        {{editor system.curseLevel1Description target="system.curseLevel1Description" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+        {{#if editable}}
+        <prose-mirror name="system.curseLevel1Description"
+                      value="{{source.curseLevel1Description}}"
+                      document-uuid="{{item.uuid}}"
+                      style="height: 100%;">
+        </prose-mirror>
+        {{else}}
+        <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+          <div class="editor-content">{{{enriched.curseLevel1Description}}}</div>
+        </div>
+        {{/if}}
       </div>
 
       <div class="form-group flexrow">
@@ -76,7 +106,17 @@
 
       <div class="form-group">
         <label>Description:</label>
-        {{editor system.curseLevel2Description target="system.curseLevel2Description" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+        {{#if editable}}
+        <prose-mirror name="system.curseLevel2Description"
+                      value="{{source.curseLevel2Description}}"
+                      document-uuid="{{item.uuid}}"
+                      style="height: 100%;">
+        </prose-mirror>
+        {{else}}
+        <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+          <div class="editor-content">{{{enriched.curseLevel2Description}}}</div>
+        </div>
+        {{/if}}
       </div>
 
       <div class="form-group flexrow">
@@ -117,7 +157,17 @@
 
       <div class="form-group">
         <label>Description:</label>
-        {{editor system.curseLevel3Description target="system.curseLevel3Description" rollData=rollData button=true owner=owner editable=editable engine="prosemirror"}}
+        {{#if editable}}
+        <prose-mirror name="system.curseLevel3Description"
+                      value="{{source.curseLevel3Description}}"
+                      document-uuid="{{item.uuid}}"
+                      style="height: 100%;">
+        </prose-mirror>
+        {{else}}
+        <div class="editor" style="height: 100%; padding: 8px; overflow-y: auto;">
+          <div class="editor-content">{{{enriched.curseLevel3Description}}}</div>
+        </div>
+        {{/if}}
       </div>
 
       <div class="form-group flexrow">

@@ -13,8 +13,9 @@ describe('Characteristic Damage Integration', () => {
       type: 'character',
       system: {
         characteristics: {
-          ag: { value: 50, damage: 0 }
-        }
+          ag: { value: 50 }
+        },
+        modifiers: []
       },
       items: {
         get: jest.fn(),

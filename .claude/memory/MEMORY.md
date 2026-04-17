@@ -12,13 +12,22 @@ This directory contains project-specific memory for Claude Code. These memories 
 
 ## System Memories
 
-- [Testing Standards](testing_standards.md) — Jest with ES modules, 1813 tests across 110 suites
+- [Testing Standards](testing_standards.md) — Jest with ES modules, comprehensive test suite (1800+ tests)
 - [Compendium System](compendium_system.md) — Source JSON, validation, ID conventions
 - [Macro System](macro_system.md) — Three-tier macro architecture (compendium, API, drag-drop)
+
+## User Preferences
+
+- [UI Preferences](user_ui_preferences.md) — Compact layouts, information density, small sizing increments
 
 ## Feedback
 
 - [Code Quality Standards](feedback_code_quality.md) — Logger usage, missing imports, test-first development
+- [Characteristic Damage Migration](feedback_characteristic_damage_migration.md) — Use system.modifiers array not Active Effects
+
+## Projects
+
+- [WebP Conversion](project_webp_conversion.md) — Ongoing icon optimization initiative (10 weapons converted)
 
 ## Reference
 

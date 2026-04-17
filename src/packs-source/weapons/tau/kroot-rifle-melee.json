@@ -2,7 +2,7 @@
   "_id": "tau000000014",
   "name": "Kroot Rifle (Melee)",
   "type": "weapon",
-  "img": "systems/deathwatch/icons/weapons/kroot-rifle-melee.webp",
+  "img": "systems/deathwatch/icons/weapons/kroot-rifle.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "367",

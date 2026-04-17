@@ -18,12 +18,104 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 
 ---
 
+## Foundry VTT v13 API Reference
+
+**Official API Documentation**: https://foundryvtt.com/api/v13/
+
+**Key Classes for Development:**
+- **TextEditor**: https://foundryvtt.com/api/v13/classes/foundry.applications.ux.TextEditor.html
+  - Use `TextEditor.create({ engine: 'prosemirror', ... }, target)` for rich text editors
+  - TinyMCE is DEPRECATED (will be removed in future versions)
+  - ProseMirror is the recommended editor engine
+- **ProseMirrorEditor**: https://foundryvtt.com/api/v13/classes/foundry.applications.ux.ProseMirrorEditor.html
+  - Use `ProseMirrorEditor.create(target, content, options)` for direct ProseMirror instantiation
+  - Supports collaboration, plugins, and custom configuration
+- **ApplicationV2**: https://foundryvtt.com/api/v13/classes/foundry.applications.api.ApplicationV2.html
+- **DocumentSheetV2**: https://foundryvtt.com/api/v13/classes/foundry.applications.sheets.DocumentSheetV2.html
+
+**Rich Text Editor Usage in V2 Sheets:**
+- **DO NOT use `{{editor}}` Handlebars helper** - This is for ApplicationV1 only and does NOT work in ApplicationV2
+- **USE `<prose-mirror>` custom elements** - Native ApplicationV2 web component that self-initializes
+- Pattern: `<prose-mirror name="system.fieldName" value="{{source.fieldName}}" document-uuid="{{actor.uuid}}"></prose-mirror>`
+- The `value` attribute must use `{{source.fieldName}}` (raw source data), NOT `{{system.fieldName}}`
+- Add `document-uuid` attribute for proper document binding
+- NO manual activation needed - element auto-initializes when rendered
+- For non-editable views, provide enriched HTML via `context.enriched` in `_prepareContext()`
+
+**Working Example (Biography Editor in Character Sheet):**
+
+Template (`src/templates/actor/actor-character-sheet.html`):
+```handlebars
+<div class="biography-section">
+  <h3 class="section-header">Description</h3>
+  {{#if editable}}
+  <prose-mirror name="system.description"
+                value="{{source.description}}"
+                document-uuid="{{actor.uuid}}"
+                style="min-height: 225px;">
+  </prose-mirror>
+  {{else}}
+  <div class="editor" style="min-height: 225px; border: 1px solid #ccc; border-radius: 3px; padding: 8px;">
+    <div class="editor-content">{{{enriched.description}}}</div>
+  </div>
+  {{/if}}
+</div>
+```
+
+Sheet JavaScript (`src/module/sheets/actor-sheet-v2.mjs` in `_prepareContext()`):
+```javascript
+// Provide source data for prose-mirror value attribute
+context.source = this.actor._source.system;
+
+// Enrich HTML for non-editable views
+if (!this.isEditable) {
+  const enrichmentOptions = {
+    secrets: this.actor.isOwner,
+    relativeTo: this.actor,
+    rollData: context.rollData
+  };
+  context.enriched = {
+    description: await foundry.applications.ux.TextEditor.enrichHTML(
+      this.actor.system.description || '',
+      enrichmentOptions
+    )
+  };
+}
+```
+
+**Reference Systems for ApplicationV2 Patterns:**
+
+When encountering implementation challenges or stuck in a loop pattern:
+- **DND5e system** (`C:\Source\dnd5e`) - Official Foundry system using ApplicationV2
+  - Character biography: `templates/actors/tabs/character-biography.hbs`
+  - NPC biography: `templates/actors/tabs/npc-biography.hbs` (dialog pattern)
+  - Sheet implementations: `module/applications/actor/`
+- **Starfinder system** (`C:\Source\foundryvtt-starfinder`) - Uses ApplicationV1 with `{{editor}}` helper (different pattern)
+
+Use DND5e as the canonical reference for ApplicationV2 patterns, NOT Starfinder.
+
+---
+
+## Quick Start
+
+**Prerequisites**: Node.js v24+ (tested on v24.13.0)
+
+```bash
+npm install                 # Install dependencies
+npm test                    # Verify installation (1823 tests should pass)
+npm run build:all           # Build packs and deploy locally (requires .env setup)
+```
+
+**First-time setup**: Copy `.env` and set `LOCAL_DIR` to your Foundry systems directory.
+
+---
+
 ## Development Commands
 
 ### Testing
 
 ```bash
-npm test                    # Run all tests (1752 tests across 105 suites)
+npm test                    # Run all tests (1823 passing tests across 110 suites)
 npm run test:watch          # Watch mode
 npm run test:coverage       # Generate coverage report at coverage/lcov-report/index.html
 
@@ -41,6 +133,9 @@ npm run format:json         # Compact and format all compendium JSON files
 npm run build:packs         # Validate + compile packs to LevelDB
 npm run build:copy          # Copy src/ to local Foundry installation (see .env)
 npm run build:all           # Run build:packs + build:copy
+node builds/scripts/convertToWebp.mjs <file-or-dir>  # Convert PNG/JPG to WebP (⚠️ auto-deletes originals)
+node builds/scripts/convertToWebp.mjs --trim <file.webp>  # Remove white background + trim
+node builds/scripts/convertToWebp.mjs --trim-black <file.webp>  # Remove black background + trim
 ```
 
 **Local deployment**: Set `LOCAL_DIR` in `.env` to your Foundry systems directory (e.g., `\\thebrewery\Foundry\Data\systems\deathwatch`). Running `npm run build:copy` deploys the `src/` folder contents there.
@@ -138,6 +233,12 @@ The system uses a clean modular initialization pattern (refactored 2026-04-05):
 **Pattern**: Each module exports a single class with a static `register()` or `initialize()` method. The main entry point calls these in order. This keeps the main file under 100 lines and makes initialization logic easy to test and maintain.
 
 ### Modifier System
+
+**Two modifier systems exist:**
+- **System Modifiers** (`actor.system.modifiers` array) — Custom Deathwatch modifier system, displayed in Effects tab > Modifiers section
+- **Active Effects** (`actor.effects` collection) — Foundry core system, NOT currently displayed in UI (prepared but not rendered)
+
+For characteristic damage and manual modifiers, use System Modifiers. They integrate with the modifier-collector and show in the Effects tab.
 
 Items, talents, chapters, and traits can modify character attributes via the `modifier` field:
 
@@ -239,6 +340,35 @@ game.settings.get("deathwatch", "activeSquadAbilities"); // Array of active Squa
 
 **Socket communication**: Non-GM players send `activateSquadAbility` / `deactivateSquadAbility` socket messages; GM processes them and updates world settings.
 
+### Insanity & Corruption System
+
+**Location**: `src/module/helpers/character/insanity-helper.mjs`, `corruption-helper.mjs`
+
+Space Marines can accumulate **Insanity Points (IP)** and **Corruption Points (CP)** through psychic exposure, warp taint, and traumatic experiences.
+
+**Insanity Points**:
+
+- Threshold-based mechanical penalties (10+ IP: -5 WP, 20+ IP: -10 WP)
+- **Battle Traumas** trigger at high thresholds (40+, 60+, 80+) with permanent effects
+- **XP Recovery**: Spend 100 XP to roll 1d5 IP reduction (purchasable via character sheet)
+
+**Corruption Points**:
+
+- Track warp taint accumulation (max 100 CP)
+- **Primarch's Curse** activates at 100 CP (chapter-specific mutations):
+  - Blood Angels: Red Thirst & Black Rage
+  - Space Wolves: Wulfen transformation
+  - Dark Angels: Fallen obsession
+- Permanent, irreversible character changes
+
+**UI**: Integrated mental state panel on character sheet with IP/CP tracking, trauma list, and XP purchase button.
+
+**Key files**:
+
+- `src/module/data/actor/character.mjs` — IP/CP data fields
+- `src/module/helpers/constants/insanity-constants.mjs` — Thresholds, trauma definitions
+- `src/module/helpers/constants/corruption-constants.mjs` — CP thresholds, curse definitions
+
 ### Sheet Architecture
 
 The system uses **Foundry ApplicationV2** sheets exclusively (as of 2026-04-08):
@@ -283,6 +413,8 @@ All system-wide numeric constants are organized into domain-specific files with 
 - `psychic-constants.mjs` — Psychic power levels
 - `modifier-constants.mjs` — Modifier and effect type system
 - `squad-constants.mjs` — Squad mode, cohesion, hordes
+- `insanity-constants.mjs` — Insanity Points thresholds, battle traumas
+- `corruption-constants.mjs` — Corruption Points thresholds, primarch's curses
 - `index.mjs` — Re-exports all constants for convenience
 
 **Key constants**:
@@ -388,6 +520,17 @@ const actor = FoundryAdapter.getActor(actorId);
 ---
 
 ## Coding Standards
+
+### CSS Patterns
+
+**Font size variables** (defined in `src/styles/variables.css`):
+- `--dw-font-size-xs`: 11px | `--dw-font-size-sm`: 12px | `--dw-font-size-md`: 13px
+- `--dw-font-size-lg`: 14px | `--dw-font-size-xl`: 16px | `--dw-font-size-xxl`: 20px
+
+**Characteristic boxes** (`src/styles/components/characteristics.css`):
+- Box dimensions: 135px width × 106px height
+- Title font: `--dw-font-size-sm` (12px)
+- Center value font: `--dw-font-size-xl` (16px)
 
 ### Error Handling
 
@@ -594,6 +737,8 @@ Logger.compatibility("rollItemMacro() is deprecated", {
 
 Tests use **Jest** with ES modules. Foundry VTT globals are mocked in `tests/setup.mjs`.
 
+**Expected test results:** 110 test suites, 1822 passing tests (as of 2026-04-14)
+
 **Test structure**:
 
 - `tests/` mirrors `src/module/` structure
@@ -721,7 +866,7 @@ Each pack has a prefix pattern for IDs:
 ## Git Branch Strategy
 
 **Main branch**: `main`  
-**Development branch**: `claude` (current branch)
+**Development branch**: `claude`
 
 When creating PRs, target the `main` branch.
 

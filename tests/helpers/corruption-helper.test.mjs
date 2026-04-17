@@ -1,8 +1,29 @@
 import { jest } from '@jest/globals';
 import { CorruptionHelper } from '../../src/module/helpers/corruption/corruption-helper.mjs';
 import { CORRUPTION } from '../../src/module/helpers/constants/index.mjs';
+import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
 
 describe('CorruptionHelper', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // Ensure foundry.utils.escapeHTML is available (needed by Sanitizer)
+    if (!global.foundry) {
+      global.foundry = {};
+    }
+    if (!global.foundry.utils) {
+      global.foundry.utils = {};
+    }
+    global.foundry.utils.escapeHTML = jest.fn((text) => {
+      if (typeof text !== 'string') return text;
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    });
+  });
   describe('getFellowshipPenalty', () => {
     it('returns 0 for corruption below 50', () => {
       expect(CorruptionHelper.getFellowshipPenalty(0)).toBe(0);
@@ -65,9 +86,8 @@ describe('CorruptionHelper', () => {
   // integration tests that require a real Foundry environment to test properly.
   // Pure helper functions (getFellowshipPenalty) are tested above.
 
-  describe.skip('addCorruption', () => {
+  describe('addCorruption', () => {
     let mockActor;
-    let FoundryAdapterMock;
 
     beforeEach(() => {
       mockActor = {
@@ -78,23 +98,18 @@ describe('CorruptionHelper', () => {
         }
       };
 
-      FoundryAdapterMock = {
-        updateDocument: jest.fn(),
-        createChatMessage: jest.fn(),
-        showDialog: jest.fn(),
-        showNotification: jest.fn(),
-        getChatSpeaker: jest.fn(() => ({}))
-      };
-
-      jest.unstable_mockModule('../../src/module/helpers/foundry-adapter.mjs', () => ({
-        FoundryAdapter: FoundryAdapterMock
-      }));
+      // Mock FoundryAdapter methods
+      jest.spyOn(FoundryAdapter, 'updateDocument').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showDialog').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
     });
 
     it('updates actor corruption and history', async () => {
       await CorruptionHelper.addCorruption(mockActor, 5, "Test Source");
 
-      expect(FoundryAdapterMock.updateDocument).toHaveBeenCalledWith(
+      expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(
         mockActor,
         expect.objectContaining({
           "system.corruption": 50,
@@ -113,7 +128,7 @@ describe('CorruptionHelper', () => {
       await CorruptionHelper.addCorruption(mockActor, 10, "Warp Exposure", "mission-456");
       const afterTime = Date.now();
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       const history = call[1]["system.corruptionHistory"];
       const entry = history[0];
 
@@ -127,7 +142,7 @@ describe('CorruptionHelper', () => {
     it('posts corruption message to chat', async () => {
       await CorruptionHelper.addCorruption(mockActor, 5, "Test Source");
 
-      expect(FoundryAdapterMock.createChatMessage).toHaveBeenCalledWith(
+      expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.stringContaining("Test Character")
         })
@@ -139,7 +154,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 10, "Test Source");
 
-      expect(FoundryAdapterMock.showDialog).not.toHaveBeenCalled();
+      expect(FoundryAdapter.showDialog).not.toHaveBeenCalled();
     });
 
     it('triggers character removal at 100 CP', async () => {
@@ -147,7 +162,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 5, "Final Taint");
 
-      expect(FoundryAdapterMock.showDialog).toHaveBeenCalledWith(
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
         expect.objectContaining({
           title: expect.stringContaining("Has Fallen")
         })
@@ -159,7 +174,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 10, "Massive Corruption");
 
-      expect(FoundryAdapterMock.showDialog).toHaveBeenCalledWith(
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
         expect.objectContaining({
           title: expect.stringContaining("Has Fallen")
         })
@@ -171,7 +186,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 5, "First Corruption");
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       const history = call[1]["system.corruptionHistory"];
 
       expect(history).toHaveLength(1);
@@ -185,7 +200,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 5, "New Corruption");
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       const history = call[1]["system.corruptionHistory"];
 
       expect(history).toHaveLength(2);
@@ -198,7 +213,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 5, "Test");
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       const history = call[1]["system.corruptionHistory"];
 
       expect(Array.isArray(history)).toBe(true);
@@ -210,14 +225,13 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.addCorruption(mockActor, 5, "Test");
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       expect(call[1]["system.corruption"]).toBe(5);
     });
   });
 
-  describe.skip('postCorruptionMessage', () => {
+  describe('postCorruptionMessage', () => {
     let mockActor;
-    let FoundryAdapterMock;
 
     beforeEach(() => {
       mockActor = {
@@ -227,26 +241,21 @@ describe('CorruptionHelper', () => {
         }
       };
 
-      FoundryAdapterMock = {
-        createChatMessage: jest.fn(),
-        getChatSpeaker: jest.fn(() => ({}))
-      };
-
-      jest.unstable_mockModule('../../src/module/helpers/foundry-adapter.mjs', () => ({
-        FoundryAdapter: FoundryAdapterMock
-      }));
+      // Mock FoundryAdapter methods
+      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
     });
 
     it('posts message with actor name and points', async () => {
       await CorruptionHelper.postCorruptionMessage(mockActor, 5, "Test Source", 80);
 
-      expect(FoundryAdapterMock.createChatMessage).toHaveBeenCalledWith(
+      expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.stringContaining("Test Character")
         })
       );
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).toContain("5 CP");
       expect(call[0].content).toContain("Test Source");
       expect(call[0].content).toContain("80 CP");
@@ -255,35 +264,35 @@ describe('CorruptionHelper', () => {
     it('includes threshold in message', async () => {
       await CorruptionHelper.postCorruptionMessage(mockActor, 5, "Test Source", 80);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).toContain("100"); // CORRUPTION.PURITY_THRESHOLD
     });
 
     it('shows near threshold warning at 90+ CP', async () => {
       await CorruptionHelper.postCorruptionMessage(mockActor, 5, "Major Corruption", 92);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).toContain("Nearing Purity Threshold");
     });
 
     it('does not show near threshold warning below 90 CP', async () => {
       await CorruptionHelper.postCorruptionMessage(mockActor, 5, "Minor Corruption", 85);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).not.toContain("Nearing Purity Threshold");
     });
 
     it('shows breach warning at 100+ CP', async () => {
       await CorruptionHelper.postCorruptionMessage(mockActor, 5, "Final Corruption", 100);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).toContain("PURITY THRESHOLD BREACHED");
     });
 
     it('does not show breach warning below threshold', async () => {
       await CorruptionHelper.postCorruptionMessage(mockActor, 5, "Corruption", 99);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).not.toContain("PURITY THRESHOLD BREACHED");
     });
 
@@ -297,16 +306,15 @@ describe('CorruptionHelper', () => {
         85
       );
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       // Sanitizer should have escaped the HTML
       expect(call[0].content).not.toContain('<script>');
       expect(call[0].content).not.toContain('<img src=x');
     });
   });
 
-  describe.skip('handleCharacterRemoval', () => {
+  describe('handleCharacterRemoval', () => {
     let mockActor;
-    let FoundryAdapterMock;
 
     beforeEach(() => {
       mockActor = {
@@ -317,20 +325,15 @@ describe('CorruptionHelper', () => {
         }
       };
 
-      FoundryAdapterMock = {
-        showDialog: jest.fn(),
-        showNotification: jest.fn()
-      };
-
-      jest.unstable_mockModule('../../src/module/helpers/foundry-adapter.mjs', () => ({
-        FoundryAdapter: FoundryAdapterMock
-      }));
+      // Mock FoundryAdapter methods
+      jest.spyOn(FoundryAdapter, 'showDialog').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
     });
 
     it('shows dialog with character name and reason', async () => {
       await CorruptionHelper.handleCharacterRemoval(mockActor, "corruption");
 
-      expect(FoundryAdapterMock.showDialog).toHaveBeenCalledWith(
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
         expect.objectContaining({
           title: expect.stringContaining("Test Character"),
           content: expect.stringContaining("100 Corruption Points")
@@ -341,7 +344,7 @@ describe('CorruptionHelper', () => {
     it('shows dialog for insanity reason', async () => {
       await CorruptionHelper.handleCharacterRemoval(mockActor, "insanity");
 
-      expect(FoundryAdapterMock.showDialog).toHaveBeenCalledWith(
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.stringContaining("50 Insanity Points")
         })
@@ -351,7 +354,7 @@ describe('CorruptionHelper', () => {
     it('includes three dialog buttons', async () => {
       await CorruptionHelper.handleCharacterRemoval(mockActor, "corruption");
 
-      const call = FoundryAdapterMock.showDialog.mock.calls[0];
+      const call = FoundryAdapter.showDialog.mock.calls[0];
       const buttons = call[0].buttons;
 
       expect(buttons.archive).toBeDefined();
@@ -362,7 +365,7 @@ describe('CorruptionHelper', () => {
     it('sets default button to archive', async () => {
       await CorruptionHelper.handleCharacterRemoval(mockActor, "corruption");
 
-      const call = FoundryAdapterMock.showDialog.mock.calls[0];
+      const call = FoundryAdapter.showDialog.mock.calls[0];
       expect(call[0].default).toBe("archive");
     });
 
@@ -371,7 +374,7 @@ describe('CorruptionHelper', () => {
 
       await CorruptionHelper.handleCharacterRemoval(mockActor, "corruption");
 
-      const call = FoundryAdapterMock.showDialog.mock.calls[0];
+      const call = FoundryAdapter.showDialog.mock.calls[0];
       expect(call[0].content).not.toContain('<script>');
     });
   });

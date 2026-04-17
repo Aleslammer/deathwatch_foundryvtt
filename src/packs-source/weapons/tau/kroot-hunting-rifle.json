@@ -2,7 +2,7 @@
   "_id": "tau000000015",
   "name": "Kroot Hunting Rifle",
   "type": "weapon",
-  "img": "systems/deathwatch/icons/weapons/kroot-hunting-rifle.webp",
+  "img": "systems/deathwatch/icons/weapons/kroot-rifle.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "367",

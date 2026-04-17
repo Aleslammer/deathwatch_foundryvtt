@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deathwatch 6-Tab Structure Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --dw-deathwatch-black: #0a0a0a;
+      --dw-deathwatch-black-light: #1a1a1a;
+      --dw-deathwatch-silver: #8a9ba8;
+      --dw-deathwatch-silver-light: #b8c5d6;
+      --dw-deathwatch-silver-dark: #5a6570;
+      --dw-imperial-gold: #d4a574;
+      --dw-imperial-gold-light: #e8c9a0;
+      --dw-imperial-gold-dark: #8b6914;
+      --dw-imperial-gold-darkest: #5a4410;
+      --dw-power-armor-blue: #2c4a6b;
+      --dw-power-armor-blue-light: #3a5d87;
+      --dw-plasma-glow: #4dd0e1;
+      --dw-hud-green: #39ff14;
+      --dw-hud-amber: #ffbf00;
+      --dw-hud-cyan: #00ffff;
+      --dw-xenos-critical: #ff4500;
+      --dw-color-border: var(--dw-deathwatch-silver-dark);
+      --dw-color-border-light: var(--dw-deathwatch-silver);
+      --dw-color-text-beige: #b5b3a4;
+      --dw-font-display: 'Cinzel', serif;
+      --dw-font-body: 'Rajdhani', sans-serif;
+      --dw-font-mono: 'Share Tech Mono', monospace;
+      --dw-font-size-xs: 11px;
+      --dw-font-size-sm: 12px;
+      --dw-font-size-md: 13px;
+      --dw-font-size-lg: 14px;
+      --dw-font-size-xl: 16px;
+      --dw-spacing-sm: 4px;
+      --dw-spacing-md: 8px;
+      --dw-spacing-lg: 10px;
+      --dw-spacing-xl: 15px;
+      --dw-spacing-xxl: 20px;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: #b8c5d6;
+      font-family: var(--dw-font-body);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .sheet-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: linear-gradient(to bottom, #0d0d0d, #1a1a1a);
+      box-shadow:
+        inset 0 0 80px rgba(0, 0, 0, 0.7),
+        0 8px 32px rgba(0, 0, 0, 0.9);
+      border: 2px solid rgba(138, 155, 168, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* Sheet Header */
+    .sheet-header {
+      padding: 20px 30px;
+      background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(44, 74, 107, 0.08));
+      border-bottom: 2px solid rgba(138, 155, 168, 0.15);
+      position: relative;
+    }
+
+    .sheet-header::before,
+    .sheet-header::after {
+      content: '⚔';
+      position: absolute;
+      font-size: 60px;
+      color: #d4a574;
+      opacity: 0.18;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(212, 165, 116, 0.4));
+    }
+
+    .sheet-header::before {
+      top: 0;
+      left: 0;
+      transform: rotate(-12deg) translate(-15px, -15px);
+    }
+
+    .sheet-header::after {
+      top: 0;
+      right: 0;
+      transform: scaleX(-1) rotate(-12deg) translate(-15px, -15px);
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .character-name {
+      font-family: var(--dw-font-display);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--dw-imperial-gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 12px rgba(212, 165, 116, 0.6);
+    }
+
+    .profile-section {
+      display: flex;
+      gap: 10px;
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #999;
+      border-radius: 3px;
+      background: rgba(44, 74, 107, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .wounds-box, .fatigue-box {
+      width: 125px;
+      text-align: center;
+      border: 2px solid var(--dw-color-border);
+      border-radius: 3px;
+      padding: 8px;
+      background: rgba(20, 20, 20, 0.8);
+    }
+
+    .wounds-box h4, .fatigue-box h4 {
+      font-size: var(--dw-font-size-sm);
+      color: var(--dw-color-text-beige);
+      border-bottom: 1px solid var(--dw-color-border);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    .wounds-value {
+      font-family: var(--dw-font-mono);
+      font-size: 28px;
+      color: var(--dw-hud-green);
+      text-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
+    }
+
+    /* Tabs */
+    .sheet-tabs {
+      display: flex;
+      background: linear-gradient(to bottom, rgba(20, 20, 20, 0.6), rgba(10, 10, 10, 0.8));
+      border-bottom: 2px solid rgba(138, 155, 168, 0.15);
+    }
+
+    .tab-button {
+      padding: 15px 25px;
+      background: transparent;
+      border: none;
+      border-top: 2px solid transparent;
+      color: var(--dw-deathwatch-silver-dark);
+      font-family: var(--dw-font-body);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .tab-button:hover {
+      color: var(--dw-imperial-gold-light);
+      text-shadow: 0 0 4px rgba(212, 165, 116, 0.3);
+    }
+
+    .tab-button.active {
+      color: var(--dw-imperial-gold);
+      border-top-color: var(--dw-imperial-gold);
+      background: linear-gradient(to bottom, rgba(212, 165, 116, 0.2), rgba(212, 165, 116, 0.05));
+      text-shadow: 0 0 6px rgba(212, 165, 116, 0.5);
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+      padding: 30px;
+      min-height: 700px;
+      max-height: 700px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section-header {
+      font-family: var(--dw-font-display);
+      font-size: 16px;
+      color: var(--dw-imperial-gold);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 20px 0 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid;
+      border-image: linear-gradient(to right, var(--dw-imperial-gold-darkest), var(--dw-imperial-gold), var(--dw-imperial-gold-darkest)) 1;
+    }
+
+    /* Characteristics */
+    .characteristics-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 135px);
+      gap: 5px 5px;
+      margin-bottom: 20px;
+    }
+
+    .characteristic {
+      height: 106px;
+      width: 135px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(30, 30, 30, 0.92));
+      border: 2px solid var(--dw-deathwatch-silver-dark);
+      border-radius: 3px;
+      box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .characteristic h4 {
+      font-size: var(--dw-font-size-sm);
+      border-bottom: 1px solid var(--dw-color-text-beige);
+      margin: 16px 4px 20px;
+      padding-bottom: 4px;
+      color: var(--dw-color-text-beige);
+    }
+
+    .characteristic-modifiers {
+      display: flex;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .characteristic-mod {
+      flex: 0 0 32px;
+      height: 30px;
+      border-top: 2px groove var(--dw-imperial-gold-dark);
+      border-right: 2px groove var(--dw-imperial-gold-dark);
+      border-bottom: 2px groove var(--dw-imperial-gold-dark);
+      padding-top: 8px;
+      font-size: var(--dw-font-size-sm);
+      color: var(--dw-imperial-gold);
+    }
+
+    .characteristic-center {
+      font-size: var(--dw-font-size-xl);
+      margin: -10px 8px 10px;
+      color: var(--dw-hud-green);
+      text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
+    }
+
+    .characteristic-base {
+      flex: 0 0 32px;
+      height: 30px;
+      border-top: 2px groove var(--dw-imperial-gold-dark);
+      border-left: 2px groove var(--dw-imperial-gold-dark);
+      border-bottom: 2px groove var(--dw-imperial-gold-dark);
+      background: rgba(10, 10, 10, 0.6);
+      border-radius: 0;
+      color: var(--dw-hud-green);
+      text-align: center;
+      font-size: var(--dw-font-size-sm);
+      padding: 6px 0 0;
+    }
+
+    .characteristic-advances {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 4px;
+    }
+
+    .stud {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), rgba(138, 155, 168, 0.4));
+      border: 1px solid rgba(90, 101, 112, 0.8);
+      box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .stud.checked {
+      background: radial-gradient(circle at 30% 30%, var(--dw-imperial-gold-light), var(--dw-imperial-gold));
+      box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.4), 0 0 4px rgba(212, 165, 116, 0.4);
+    }
+
+    /* Skills */
+    .skills-container {
+      border: 1px solid var(--dw-color-border);
+      border-radius: 3px;
+      background: rgba(10, 10, 10, 0.3);
+    }
+
+    .skills-header-row {
+      display: flex;
+      padding: 8px;
+      background: linear-gradient(to bottom, rgba(44, 74, 107, 0.2), rgba(30, 30, 30, 0.8));
+      border-bottom: 2px solid var(--dw-imperial-gold-dark);
+      font-weight: 600;
+      font-size: var(--dw-font-size-sm);
+      color: var(--dw-imperial-gold);
+      text-shadow: 0 0 4px rgba(212, 165, 116, 0.3);
+    }
+
+    .skill-name-header { flex: 2; }
+    .skill-descriptor-header { flex: 1; text-align: center; }
+    .skill-characteristic-header { flex: 1; text-align: center; }
+    .skill-trained-header { flex: 0 0 20px; text-align: center; }
+    .skill-modifier-header { flex: 0 0 60px; text-align: center; }
+    .skill-total-header { flex: 0 0 50px; text-align: center; }
+
+    .skills-section-header {
+      background: rgba(44, 74, 107, 0.15);
+      border: 1px solid rgba(138, 155, 168, 0.15);
+      border-left: 3px solid var(--dw-power-armor-blue-light);
+      padding: 8px 15px;
+      margin: 10px 0;
+      color: var(--dw-deathwatch-silver-light);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .skill-item {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(138, 155, 168, 0.08);
+      font-size: var(--dw-font-size-sm);
+      transition: all 0.25s ease;
+    }
+
+    .skill-item:hover {
+      background: rgba(212, 165, 116, 0.08);
+      border-left: 2px solid var(--dw-imperial-gold);
+      padding-left: 16px;
+    }
+
+    .skill-name {
+      flex: 2;
+      color: var(--dw-deathwatch-silver-light);
+      cursor: pointer;
+    }
+
+    .skill-name:hover {
+      color: var(--dw-hud-green);
+      text-shadow: 0 0 4px rgba(57, 255, 20, 0.3);
+    }
+
+    .skill-descriptor {
+      flex: 1;
+      text-align: center;
+      font-size: var(--dw-font-size-xs);
+      color: var(--dw-deathwatch-silver-dark);
+    }
+
+    .skill-characteristic {
+      flex: 1;
+      text-align: center;
+      font-size: var(--dw-font-size-xs);
+      color: var(--dw-deathwatch-silver-dark);
+    }
+
+    .skill-trained {
+      flex: 0 0 20px;
+      text-align: center;
+    }
+
+    .skill-checkbox {
+      width: 12px;
+      height: 12px;
+    }
+
+    .skill-modifier {
+      flex: 0 0 60px;
+      text-align: center;
+    }
+
+    .skill-modifier input {
+      width: 50px;
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid var(--dw-deathwatch-silver-dark);
+      color: var(--dw-hud-cyan);
+      text-align: center;
+      padding: 2px;
+      font-size: var(--dw-font-size-xs);
+    }
+
+    .skill-total {
+      flex: 0 0 50px;
+      text-align: center;
+      color: var(--dw-imperial-gold);
+      font-weight: 600;
+    }
+
+    /* Items List */
+    .items-list {
+      list-style: none;
+      border: 1px solid rgba(138, 155, 168, 0.15);
+      border-radius: 3px;
+      background: rgba(10, 10, 10, 0.3);
+    }
+
+    .items-header {
+      display: flex;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      font-size: var(--dw-font-size-sm);
+      color: var(--dw-deathwatch-silver);
+    }
+
+    .items-list li {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-bottom: 1px solid rgba(138, 155, 168, 0.1);
+      transition: all 0.25s ease;
+    }
+
+    .items-list li:nth-child(even) {
+      background: rgba(138, 155, 168, 0.02);
+    }
+
+    .items-list li:hover {
+      background: linear-gradient(90deg, transparent, rgba(212, 165, 116, 0.08), rgba(212, 165, 116, 0.12), rgba(212, 165, 116, 0.08), transparent);
+      border-left: 2px solid var(--dw-imperial-gold);
+      padding-left: 16px;
+    }
+
+    .item-image {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      border: 1px solid rgba(138, 155, 168, 0.3);
+      border-radius: 2px;
+      background: rgba(44, 74, 107, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .item-name {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      color: var(--dw-deathwatch-silver-light);
+    }
+
+    .item-name h4 {
+      font-size: var(--dw-font-size-sm);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .item-damage,
+    .item-pen,
+    .item-type {
+      flex: 0 0 100px;
+      text-align: center;
+      color: var(--dw-deathwatch-silver);
+      font-size: var(--dw-font-size-sm);
+    }
+
+    .item-controls {
+      flex: 0 0 80px;
+      text-align: right;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .item-control {
+      color: var(--dw-imperial-gold);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .item-control:hover {
+      color: var(--dw-imperial-gold-light);
+      text-shadow: 0 0 4px rgba(212, 165, 116, 0.5);
+    }
+
+    /* Resource Panels */
+    .resource-panel-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 30px;
+    }
+
+    .resource-panel {
+      position: relative;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(44, 74, 107, 0.08));
+      border: 2px solid var(--dw-deathwatch-silver-dark);
+      border-radius: 2px;
+      clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .resource-panel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 14px;
+      height: 14px;
+      border-top: 2px solid var(--dw-imperial-gold);
+      border-left: 2px solid var(--dw-imperial-gold);
+      opacity: 0.6;
+    }
+
+    .corner-accent {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 14px;
+      height: 14px;
+      border-bottom: 2px solid var(--dw-imperial-gold);
+      border-right: 2px solid var(--dw-imperial-gold);
+      opacity: 0.6;
+    }
+
+    .resource-panel-label {
+      display: block;
+      font-family: var(--dw-font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--dw-imperial-gold);
+      margin-bottom: 4px;
+      text-shadow: 0 0 8px rgba(212, 165, 116, 0.4);
+    }
+
+    .resource-data-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--dw-font-mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .resource-data-row input {
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid var(--dw-deathwatch-silver-dark);
+      border-radius: 2px;
+      color: var(--dw-hud-cyan);
+      text-align: center;
+      font-family: var(--dw-font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 6px;
+      text-shadow: 0 0 6px rgba(0, 255, 255, 0.6);
+      width: 55px;
+    }
+
+    .resource-data-row .separator {
+      color: var(--dw-deathwatch-silver);
+      opacity: 0.6;
+    }
+
+    .resource-status {
+      display: block;
+      margin-top: 3px;
+      font-family: var(--dw-font-body);
+      font-size: 10px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .resource-status.positive {
+      color: var(--dw-hud-green);
+      text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+    }
+
+    .renown-rank-badge {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 6px;
+      background: rgba(212, 165, 116, 0.2);
+      border: 1px solid var(--dw-imperial-gold-dark);
+      border-radius: 2px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--dw-imperial-gold-light);
+    }
+
+    .xp-panel { border-color: rgba(255, 191, 0, 0.4); }
+    .xp-panel .resource-panel-label { color: var(--dw-hud-amber); text-shadow: 0 0 8px rgba(255, 191, 0, 0.5); }
+    .fate-panel { border-color: rgba(77, 208, 225, 0.4); }
+    .fate-panel .resource-panel-label { color: var(--dw-plasma-glow); text-shadow: 0 0 8px rgba(77, 208, 225, 0.5); }
+    .renown-panel { border-color: rgba(212, 165, 116, 0.4); }
+    .renown-panel .resource-data-row input { color: var(--dw-imperial-gold-light); text-shadow: 0 0 6px rgba(212, 165, 116, 0.6); }
+
+    /* Biography Fields */
+    .biography-fields {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      color: var(--dw-deathwatch-silver-dark);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid var(--dw-deathwatch-silver-dark);
+      color: var(--dw-hud-green);
+      padding: 6px 10px;
+      font-family: var(--dw-font-body);
+      font-size: 14px;
+      border-radius: 2px;
+    }
+
+    .editor-box {
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid var(--dw-deathwatch-silver-dark);
+      border-radius: 3px;
+      padding: 15px;
+      min-height: 120px;
+      color: var(--dw-deathwatch-silver-light);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* Mental State */
+    .mental-state-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(26, 26, 26, 0.4);
+      border: 1px solid rgba(138, 155, 168, 0.15);
+      border-radius: 4px;
+    }
+
+    .stat-display {
+      padding: 15px;
+      background: rgba(44, 74, 107, 0.1);
+      border-left: 3px solid var(--dw-imperial-gold);
+      border-radius: 3px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--dw-deathwatch-silver-dark);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: var(--dw-font-mono);
+      font-size: 32px;
+      color: var(--dw-hud-amber);
+      text-shadow: 0 0 8px rgba(255, 191, 0, 0.5);
+    }
+
+    /* Scrollbar */
+    .tab-content::-webkit-scrollbar { width: 8px; }
+    .tab-content::-webkit-scrollbar-track { background: rgba(10, 10, 10, 0.5); }
+    .tab-content::-webkit-scrollbar-thumb { background: var(--dw-deathwatch-silver-dark); border-radius: 4px; }
+    .tab-content::-webkit-scrollbar-thumb:hover { background: var(--dw-imperial-gold-dark); }
+  </style>
+</head>
+<body>
+  <div class="sheet-container">
+    <!-- Header -->
+    <div class="sheet-header">
+      <div class="header-content">
+        <div class="profile-section">
+          <div class="profile-img">🛡️</div>
+          <div>
+            <div class="character-name">Brother Artemis</div>
+            <div style="font-size: 13px; color: var(--dw-deathwatch-silver); margin-bottom: 10px;">
+              Blood Angels • Tactical Marine • Rank 3
+            </div>
+          </div>
+        </div>
+        <div style="flex: 1;"></div>
+        <div style="display: flex; gap: 10px;">
+          <div class="wounds-box">
+            <h4>Wounds</h4>
+            <div class="wounds-value">18 / 22</div>
+          </div>
+          <div class="fatigue-box">
+            <h4>Fatigue</h4>
+            <div class="wounds-value">2 / 8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="sheet-tabs">
+      <button class="tab-button active" data-tab="attributes">Attributes</button>
+      <button class="tab-button" data-tab="combat">Combat</button>
+      <button class="tab-button" data-tab="abilities">Abilities</button>
+      <button class="tab-button" data-tab="powers">Psychic Powers</button>
+      <button class="tab-button" data-tab="character">Character</button>
+      <button class="tab-button" data-tab="effects">Effects</button>
+    </div>
+
+    <!-- Tab: Attributes -->
+    <div class="tab-content active" data-tab="attributes">
+      <h3 class="section-header">Characteristics</h3>
+      <div class="characteristics-grid">
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud"></div>
+            <div class="stud checked"></div>
+            <div class="stud checked"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>WS</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+5</div>
+            <div class="characteristic-center">50</div>
+            <div class="characteristic-base">40</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud checked"></div>
+            <div class="stud checked"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>BS</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+4</div>
+            <div class="characteristic-center">45</div>
+            <div class="characteristic-base">35</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>STR</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+8</div>
+            <div class="characteristic-center">42</div>
+            <div class="characteristic-base">42</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>TGH</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+9</div>
+            <div class="characteristic-center">48</div>
+            <div class="characteristic-base">48</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud checked"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>AG</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+4</div>
+            <div class="characteristic-center">40</div>
+            <div class="characteristic-base">35</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>INT</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+3</div>
+            <div class="characteristic-center">38</div>
+            <div class="characteristic-base">38</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud checked"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>PER</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+4</div>
+            <div class="characteristic-center">42</div>
+            <div class="characteristic-base">37</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>WP</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+4</div>
+            <div class="characteristic-center">40</div>
+            <div class="characteristic-base">40</div>
+          </div>
+        </div>
+        <div class="characteristic">
+          <div class="characteristic-advances">
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+            <div class="stud"></div>
+          </div>
+          <h4>FEL</h4>
+          <div class="characteristic-modifiers">
+            <div class="characteristic-mod">+3</div>
+            <div class="characteristic-center">35</div>
+            <div class="characteristic-base">35</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-header">Skills</h3>
+      <div class="skills-container">
+        <div class="skills-header-row">
+          <div class="skill-name-header">Skill</div>
+          <div class="skill-descriptor-header">Descriptor</div>
+          <div class="skill-characteristic-header">Char</div>
+          <div class="skill-trained-header">T</div>
+          <div class="skill-trained-header">M</div>
+          <div class="skill-trained-header">E</div>
+          <div class="skill-modifier-header">Mod</div>
+          <div class="skill-total-header">Target</div>
+        </div>
+
+        <div class="skills-section-header">Basic Skills</div>
+        <div class="skill-item">
+          <div class="skill-name">Awareness</div>
+          <div class="skill-descriptor">—</div>
+          <div class="skill-characteristic">(Per)</div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-modifier"><input type="text" value="+10" /></div>
+          <div class="skill-total">+62</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Climb</div>
+          <div class="skill-descriptor">—</div>
+          <div class="skill-characteristic">(Str)</div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-modifier"><input type="text" value="0" /></div>
+          <div class="skill-total">+42</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Dodge</div>
+          <div class="skill-descriptor">—</div>
+          <div class="skill-characteristic">(Ag)</div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-modifier"><input type="text" value="0" /></div>
+          <div class="skill-total">+60</div>
+        </div>
+
+        <div class="skills-section-header">Advanced Skills</div>
+        <div class="skill-item">
+          <div class="skill-name">Common Lore</div>
+          <div class="skill-descriptor">Imperium</div>
+          <div class="skill-characteristic">(Int)</div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-modifier"><input type="text" value="0" /></div>
+          <div class="skill-total">+48</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Forbidden Lore</div>
+          <div class="skill-descriptor">Xenos</div>
+          <div class="skill-characteristic">(Int)</div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-modifier"><input type="text" value="0" /></div>
+          <div class="skill-total">+48</div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Tactics</div>
+          <div class="skill-descriptor">Assault Doctrine</div>
+          <div class="skill-characteristic">(Int)</div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" checked /></div>
+          <div class="skill-trained"><input type="checkbox" class="skill-checkbox" /></div>
+          <div class="skill-modifier"><input type="text" value="+10" /></div>
+          <div class="skill-total">+78</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Combat -->
+    <div class="tab-content" data-tab="combat">
+      <h3 class="section-header">Weapons</h3>
+      <ol class="items-list">
+        <li class="items-header">
+          <div style="flex: 0 0 30px;"></div>
+          <div class="item-name">Name</div>
+          <div class="item-damage">Damage</div>
+          <div class="item-pen">Pen</div>
+          <div class="item-type">Range</div>
+          <div class="item-controls">
+            <i class="fas fa-plus"></i>
+          </div>
+        </li>
+        <li>
+          <div style="flex: 0 0 30px;"><i class="fas fa-check" style="color: var(--dw-hud-green);"></i></div>
+          <div class="item-name">
+            <div class="item-image">⚔️</div>
+            <h4>Astartes Bolter</h4>
+          </div>
+          <div class="item-damage">1d10+9 X</div>
+          <div class="item-pen">4</div>
+          <div class="item-type">100m</div>
+          <div class="item-controls">
+            <i class="fas fa-crosshairs item-control"></i>
+            <i class="fas fa-dice-d20 item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div style="flex: 0 0 30px;"><i class="fas fa-check" style="color: var(--dw-hud-green);"></i></div>
+          <div class="item-name">
+            <div class="item-image">🗡️</div>
+            <h4>Astartes Combat Knife</h4>
+          </div>
+          <div class="item-damage">1d10+8 R</div>
+          <div class="item-pen">2</div>
+          <div class="item-type">Melee</div>
+          <div class="item-controls">
+            <i class="fas fa-crosshairs item-control"></i>
+            <i class="fas fa-dice-d20 item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div style="flex: 0 0 30px;"></div>
+          <div class="item-name">
+            <div class="item-image">💣</div>
+            <h4>Frag Grenades</h4>
+          </div>
+          <div class="item-damage">2d10 X</div>
+          <div class="item-pen">0</div>
+          <div class="item-type">SBx3 (24m)</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+
+      <h3 class="section-header">Armor</h3>
+      <ol class="items-list">
+        <li class="items-header">
+          <div style="flex: 0 0 30px;"></div>
+          <div class="item-name">Name</div>
+          <div class="item-damage">AP</div>
+          <div class="item-pen">Locations</div>
+          <div class="item-type">Weight</div>
+          <div class="item-controls"></div>
+        </li>
+        <li>
+          <div style="flex: 0 0 30px;"><i class="fas fa-check" style="color: var(--dw-hud-green);"></i></div>
+          <div class="item-name">
+            <div class="item-image">🛡️</div>
+            <h4>Mk VII Aquila Power Armor</h4>
+          </div>
+          <div class="item-damage">8</div>
+          <div class="item-pen">All</div>
+          <div class="item-type">180 kg</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+
+      <h3 class="section-header">Weapon Upgrades</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">🔴</div>
+            <h4>Red Dot Laser Sight</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver);">+10 BS at Short Range (Astartes Bolter)</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Tab: Abilities -->
+    <div class="tab-content" data-tab="abilities">
+      <h3 class="section-header">Talents</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">🎯</div>
+            <h4>Deathwatch Training</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Auto-confirm Righteous Fury vs. Xenos</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">👁️</div>
+            <h4>Heightened Senses (Sight)</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">+10 Awareness (vision-based)</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">💪</div>
+            <h4>Bulging Biceps</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Brace Heavy weapons as Half Action</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+
+      <h3 class="section-header">Traits</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">⚡</div>
+            <h4>Unnatural Strength (x2)</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Strength Bonus doubled</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">⚡</div>
+            <h4>Unnatural Toughness (x2)</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Toughness Bonus doubled</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+
+      <h3 class="section-header">Special Abilities</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">🩸</div>
+            <h4>Red Thirst</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">🔴 Blood Angels: +10 WS when charging</div>
+          <div class="item-controls">
+            <i class="fas fa-bolt item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">🟢</div>
+            <h4>Feat of Strength</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">🟢 Solo Mode: Re-roll failed Strength test</div>
+          <div class="item-controls">
+            <i class="fas fa-bolt item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Tab: Psychic Powers -->
+    <div class="tab-content" data-tab="powers">
+      <h3 class="section-header">Psy Rating: 4</h3>
+      <div style="margin-bottom: 20px; color: var(--dw-deathwatch-silver);">
+        <strong>Focus Power Test:</strong> WP + modifiers | <strong>Phenomena:</strong> Roll doubles | <strong>Perils:</strong> d100 on Phenomena
+      </div>
+
+      <h3 class="section-header">Telekinesis</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">🔮</div>
+            <h4>Crush</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Opposed WP: PR x 10 damage, single target</div>
+          <div class="item-controls">
+            <i class="fas fa-bolt item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">🔮</div>
+            <h4>Levitation</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Move objects or self, PR x 10 kg</div>
+          <div class="item-controls">
+            <i class="fas fa-bolt item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+
+      <h3 class="section-header">Biomancy</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">🔮</div>
+            <h4>Iron Arm</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">+20 Str, +2 Unnatural Strength for duration</div>
+          <div class="item-controls">
+            <i class="fas fa-bolt item-control"></i>
+            <i class="fas fa-edit item-control"></i>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Tab: Character -->
+    <div class="tab-content" data-tab="character">
+      <!-- RESOURCE PANELS AT TOP -->
+      <div class="resource-panel-container">
+        <div class="resource-panel xp-panel">
+          <span class="corner-accent"></span>
+          <label class="resource-panel-label">Experience Points</label>
+          <div class="resource-data-row">
+            <input type="text" value="8500" readonly />
+            <span class="separator">/</span>
+            <input type="text" value="10000" />
+          </div>
+          <span class="resource-status positive">1500 Available</span>
+        </div>
+
+        <div class="resource-panel fate-panel">
+          <span class="corner-accent"></span>
+          <label class="resource-panel-label">Fate Points</label>
+          <div class="resource-data-row">
+            <input type="text" value="3" />
+            <span class="separator">/</span>
+            <input type="text" value="5" />
+          </div>
+        </div>
+
+        <div class="resource-panel renown-panel">
+          <span class="corner-accent"></span>
+          <label class="resource-panel-label">Renown</label>
+          <div class="resource-data-row">
+            <input type="text" value="75" />
+            <span class="renown-rank-badge">Distinguished</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BIOGRAPHY FIELDS -->
+      <h3 class="section-header">Biography</h3>
+      <div class="biography-fields">
+        <div><div class="field-label">Height</div><input class="field-input" value="7'6&quot;" /></div>
+        <div><div class="field-label">Weight</div><input class="field-input" value="385 kg" /></div>
+        <div><div class="field-label">Age</div><input class="field-input" value="147 years" /></div>
+        <div><div class="field-label">Gender</div><input class="field-input" value="Male" /></div>
+        <div><div class="field-label">Eyes</div><input class="field-input" value="Red" /></div>
+        <div><div class="field-label">Hair</div><input class="field-input" value="Black" /></div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <h3 class="section-header">Description</h3>
+      <div class="editor-box">
+        Brother Artemis stands as a towering exemplar of the Blood Angels Chapter, his crimson armor adorned with purity seals earned through countless battles against the enemies of mankind. His eyes burn with barely contained fury, a testament to the Red Thirst that flows through his veins.
+      </div>
+
+      <!-- DEMEANOURS -->
+      <h3 class="section-header">Demeanours</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">🩸</div>
+            <h4>Aspire to Glory</h4>
+          </div>
+          <div style="flex: 2; color: var(--dw-deathwatch-silver); font-size: 12px;">Blood Angels Chapter Demeanour</div>
+          <div class="item-controls">
+            <i class="fas fa-trash item-control"></i>
+          </div>
+        </li>
+      </ol>
+
+      <!-- PAST EVENTS -->
+      <h3 class="section-header">Past Events</h3>
+      <div class="editor-box">
+        Inducted into the Blood Angels during the defense of Baal against Hive Fleet Leviathan. Served with distinction in the 5th Company before being selected for Deathwatch service. Notable engagements include the Purge of Ghenna Prime and the defense of Watch Fortress Erioch.
+      </div>
+
+      <!-- MENTAL STATE -->
+      <h3 class="section-header">Mental State</h3>
+      <div class="mental-state-grid">
+        <div class="stat-display">
+          <div class="stat-label">Insanity Points</div>
+          <div class="stat-value">12</div>
+          <p style="font-size: 12px; color: var(--dw-deathwatch-silver); margin-top: 10px;">
+            No mechanical penalties (threshold: 40+)
+          </p>
+          <button style="margin-top: 10px; padding: 8px 16px; background: rgba(212, 165, 116, 0.2); border: 1px solid var(--dw-imperial-gold-dark); color: var(--dw-imperial-gold); border-radius: 3px; cursor: pointer; font-family: var(--dw-font-body);">
+            Purchase IP Reduction (100 XP)
+          </button>
+        </div>
+        <div class="stat-display">
+          <div class="stat-label">Corruption Points</div>
+          <div class="stat-value">8</div>
+          <p style="font-size: 12px; color: var(--dw-deathwatch-silver); margin-top: 10px;">
+            Minimal taint (Primarch's Curse at 100 CP)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Effects -->
+    <div class="tab-content" data-tab="effects">
+      <h3 class="section-header">System Modifiers</h3>
+      <ol class="items-list">
+        <li>
+          <div class="item-name">
+            <div class="item-image">⚡</div>
+            <h4>Blood Angels Gene-Seed</h4>
+          </div>
+          <div style="flex: 1; color: var(--dw-deathwatch-silver);">+5 WS</div>
+          <div style="flex: 1; color: var(--dw-deathwatch-silver);">Characteristic</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+            <i class="fas fa-trash item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">🛡️</div>
+            <h4>Power Armor</h4>
+          </div>
+          <div style="flex: 1; color: var(--dw-deathwatch-silver);">+10 Toughness</div>
+          <div style="flex: 1; color: var(--dw-deathwatch-silver);">Characteristic</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+            <i class="fas fa-trash item-control"></i>
+          </div>
+        </li>
+        <li>
+          <div class="item-name">
+            <div class="item-image">👁️</div>
+            <h4>Heightened Senses</h4>
+          </div>
+          <div style="flex: 1; color: var(--dw-deathwatch-silver);">+20 Awareness</div>
+          <div style="flex: 1; color: var(--dw-deathwatch-silver);">Skill</div>
+          <div class="item-controls">
+            <i class="fas fa-edit item-control"></i>
+            <i class="fas fa-trash item-control"></i>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelector(`.tab-content[data-tab="${target}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

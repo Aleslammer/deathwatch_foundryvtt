@@ -2,7 +2,7 @@
   "_id": "tau000000012",
   "name": "Kroot Gun",
   "type": "weapon",
-  "img": "systems/deathwatch/icons/weapons/kroot-gun.webp",
+  "img": "systems/deathwatch/icons/weapons/kroot-rifle.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "367",

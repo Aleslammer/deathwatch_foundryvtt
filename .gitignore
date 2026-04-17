@@ -2,3 +2,4 @@ node_modules/
 src/packs
 coverage/
 .env
+.claude/settings.local.json
