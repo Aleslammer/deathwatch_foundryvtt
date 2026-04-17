@@ -599,13 +599,17 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Handle armor history drops
     if (droppedItem.type === 'armor-history') {
       event.stopPropagation();
+
+      // Extract currentTarget reference BEFORE any await operations
+      // (event.currentTarget becomes null after event dispatch completes)
+      const targetItemId = event.currentTarget?.dataset?.itemId;
+
       let historyItem = droppedItem;
       if (!droppedItem.parent) {
         const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
         historyItem = imported;
       }
 
-      let targetItemId = event.currentTarget.dataset.itemId;
       let targetItem = this.actor.items.get(targetItemId);
 
       if (!targetItem || targetItem.type !== 'armor') {
@@ -670,13 +674,17 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Handle weapon upgrade drops
     else if (droppedItem.type === 'weapon-upgrade') {
       event.stopPropagation();
+
+      // Extract currentTarget reference BEFORE any await operations
+      // (event.currentTarget becomes null after event dispatch completes)
+      const targetItemId = event.currentTarget?.dataset?.itemId;
+
       let upgradeItem = droppedItem;
       if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
         const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
         upgradeItem = imported;
       }
 
-      let targetItemId = event.currentTarget.dataset.itemId;
       let targetItem = this.actor.items.get(targetItemId);
 
       if (!targetItem || targetItem.type !== 'weapon') {

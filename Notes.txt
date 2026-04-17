@@ -28,7 +28,8 @@ Skills:
 
 Traits
 
-Talents
+Talents:
+    Modifiers are not displayed on the talent pages
 
 Weapon Upgrade:
 
@@ -55,6 +56,7 @@ Enemies:
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects  
+    TODO: Armor History for DeathIs joy should allow for critical damage modifer.
 
 Psychic Powers:
     TODO: Add powers from Black Crusade
