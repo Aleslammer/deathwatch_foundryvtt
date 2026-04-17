@@ -165,7 +165,7 @@
       "_id": "eichaos150000007",
       "name": "Venomous Barb",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/generic-weapon.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "book": "Black Crusade",
         "page": "360",

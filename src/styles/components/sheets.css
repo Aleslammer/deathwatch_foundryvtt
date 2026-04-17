@@ -84,6 +84,28 @@
   flex: 0;
 }
 
+/* Character Sub-Tabs */
+.deathwatch .character-subtabs {
+  margin: 0 0 20px 0;
+  padding: 0;
+  border-bottom: 1px solid rgba(138, 155, 168, 0.2);
+  background: transparent;
+}
+
+.deathwatch .character-subtabs .item {
+  font-size: var(--dw-font-size-sm);
+  padding: 6px 16px;
+  border-top: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dw-deathwatch-silver-dark);
+}
+
+.deathwatch .character-subtabs .item.active {
+  border-bottom-color: var(--dw-imperial-gold);
+  border-top: none;
+  background: transparent;
+}
+
 .deathwatch .sheet-body,
 .deathwatch .sheet-body .tab {
   height: 100%;
@@ -112,6 +134,20 @@
 .deathwatch .demeanours-section,
 .deathwatch .past-events-section {
   margin-bottom: 20px;
+}
+
+.deathwatch .biography-section,
+.deathwatch .past-events-section,
+.deathwatch .mental-state-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.deathwatch .biography-section prose-mirror,
+.deathwatch .past-events-section prose-mirror {
+  flex: 1;
+  min-height: 225px;
 }
 
 .deathwatch .demeanours-list {

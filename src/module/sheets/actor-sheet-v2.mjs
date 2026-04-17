@@ -119,7 +119,10 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     return { sheet: content };
   }
 
-  tabGroups = { primary: "characteristics" };
+  tabGroups = {
+    primary: "characteristics",
+    character: "bio"
+  };
 
   /** @override */
   get title() {
@@ -170,6 +173,11 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     if (this.actor.type === 'character') {
       CharacterDataPreparer.prepare(context, this.actor);
       ItemListPreparer.prepare(context, this.actor);
+
+      // Split demeanours into personal and chapter
+      const demeanours = this.actor.items.filter(i => i.type === 'demeanour');
+      context.personalDemeanour = demeanours.find(d => !d.system.chapter || d.system.chapter.toLowerCase() === 'all');
+      context.chapterDemeanour = demeanours.find(d => d.system.chapter && d.system.chapter.toLowerCase() !== 'all');
     } else if (this.actor.type === 'npc') {
       NPCDataPreparer.prepare(context, this.actor);
       ItemListPreparer.prepare(context, this.actor);
@@ -451,6 +459,24 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       tab.addEventListener('click', () => { this._activeTab = tab.dataset.tab; });
     });
 
+    // Character sub-tabs
+    const characterTab = html.querySelector('.tab[data-tab="description"]');
+    if (characterTab) {
+      const characterSubTabs = new foundry.applications.ux.Tabs({
+        navSelector: '.character-subtabs',
+        contentSelector: '.tab[data-tab="description"]',
+        initial: this._activeCharacterSubTab || 'bio',
+        group: 'character'
+      });
+      characterSubTabs.bind(characterTab);
+      this._characterSubTabs = characterSubTabs;
+      characterSubTabs.activate(this._activeCharacterSubTab || 'bio');
+      // Track active sub-tab across re-renders
+      characterTab.querySelectorAll('.character-subtabs .item').forEach(tab => {
+        tab.addEventListener('click', () => { this._activeCharacterSubTab = tab.dataset.tab; });
+      });
+    }
+
     // Select all text on focus
     html.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
       input.addEventListener('focus', () => input.select());
@@ -530,6 +556,13 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     html.querySelectorAll('.specialty-drop-zone').forEach(el => {
       el.addEventListener('drop', (ev) => this._onDropSpecialty(ev), false);
       el.addEventListener('dragover', (ev) => ev.preventDefault(), false);
+    });
+
+    // Demeanour drop zones (both empty and filled slots)
+    html.querySelectorAll('.demeanour-drop-zone-wrapper').forEach((wrapper, index) => {
+      const slotType = index === 0 ? 'personal' : 'chapter';
+      wrapper.addEventListener('drop', (ev) => this._onDropDemeanour(ev, slotType), false);
+      wrapper.addEventListener('dragover', (ev) => ev.preventDefault(), false);
     });
 
     // Restore skills scroll position
@@ -708,6 +741,51 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     const specialtyItem = await Item.create(droppedItem.toObject(), { parent: this.actor });
     await this.actor.update({ "system.specialtyId": specialtyItem.id });
     ui.notifications.info(`Specialty set to ${specialtyItem.name}.`);
+  }
+
+  /* istanbul ignore next */
+  async _onDropDemeanour(event, slotType) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data.type !== 'Item') return;
+
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem || droppedItem.type !== 'demeanour') {
+      ui.notifications.warn('Only Demeanour items can be dropped here.');
+      return;
+    }
+
+    // Check if slot is already occupied
+    const existingDemeanours = this.actor.items.filter(i => i.type === 'demeanour');
+    const personalDemeanour = existingDemeanours.find(d => !d.system.chapter || d.system.chapter.toLowerCase() === 'all');
+    const chapterDemeanour = existingDemeanours.find(d => d.system.chapter && d.system.chapter.toLowerCase() !== 'all');
+
+    if (slotType === 'personal' && personalDemeanour) {
+      ui.notifications.warn('Personal Demeanour slot is already occupied. Remove the existing demeanour first.');
+      return;
+    }
+
+    if (slotType === 'chapter' && chapterDemeanour) {
+      ui.notifications.warn('Chapter Demeanour slot is already occupied. Remove the existing demeanour first.');
+      return;
+    }
+
+    // Validate dropped demeanour matches slot type
+    const isPersonalDemeanour = !droppedItem.system.chapter || droppedItem.system.chapter.toLowerCase() === 'all';
+    if (slotType === 'personal' && !isPersonalDemeanour) {
+      ui.notifications.warn('This is a Chapter-specific demeanour. Drop it in the Chapter Demeanour slot instead.');
+      return;
+    }
+    if (slotType === 'chapter' && isPersonalDemeanour) {
+      ui.notifications.warn('This is a Personal demeanour. Drop it in the Personal Demeanour slot instead.');
+      return;
+    }
+
+    // Add demeanour to actor
+    await Item.create(droppedItem.toObject(), { parent: this.actor });
+    ui.notifications.info(`${droppedItem.name} added as ${slotType === 'personal' ? 'Personal' : 'Chapter'} Demeanour.`);
   }
 
   /* -------------------------------------------- */
