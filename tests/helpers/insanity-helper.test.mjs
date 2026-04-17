@@ -1,8 +1,43 @@
 import { jest } from '@jest/globals';
 import { InsanityHelper } from '../../src/module/helpers/insanity/insanity-helper.mjs';
-import { INSANITY_TRACK } from '../../src/module/helpers/constants/index.mjs';
+import { INSANITY_TRACK, BATTLE_TRAUMA, INSANITY_REDUCTION } from '../../src/module/helpers/constants/index.mjs';
+import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
 
 describe('InsanityHelper', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // Ensure foundry.utils.escapeHTML is available (needed by Sanitizer)
+    if (!global.foundry) {
+      global.foundry = {};
+    }
+    if (!global.foundry.utils) {
+      global.foundry.utils = {};
+    }
+    global.foundry.utils.escapeHTML = jest.fn((text) => {
+      if (typeof text !== 'string') return text;
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    });
+
+    // Mock global game object for RollTable tests
+    global.game = {
+      ...global.game,
+      packs: {
+        get: jest.fn()
+      },
+      tables: {
+        getName: jest.fn()
+      }
+    };
+
+    // Mock global fromUuid for compendium item resolution
+    global.fromUuid = jest.fn();
+  });
   describe('getTrackLevel', () => {
     it('returns 0 for insanity 0-30', () => {
       expect(InsanityHelper.getTrackLevel(0)).toBe(0);
@@ -96,9 +131,8 @@ describe('InsanityHelper', () => {
   // integration tests that require a real Foundry environment to test properly.
   // Pure helper functions (getTrackLevel, getTraumaModifier) are tested above.
 
-  describe.skip('addInsanity', () => {
+  describe('addInsanity', () => {
     let mockActor;
-    let FoundryAdapterMock;
 
     beforeEach(() => {
       // Create mock actor
@@ -114,27 +148,20 @@ describe('InsanityHelper', () => {
         }
       };
 
-      // Mock FoundryAdapter
-      FoundryAdapterMock = {
-        updateDocument: jest.fn(),
-        createChatMessage: jest.fn(),
-        showDialog: jest.fn(),
-        showNotification: jest.fn(),
-        evaluateRoll: jest.fn(),
-        sendRollToChat: jest.fn(),
-        getChatSpeaker: jest.fn(() => ({}))
-      };
-
-      // Replace FoundryAdapter module in InsanityHelper
-      jest.unstable_mockModule('../../src/module/helpers/foundry-adapter.mjs', () => ({
-        FoundryAdapter: FoundryAdapterMock
-      }));
+      // Mock FoundryAdapter methods
+      jest.spyOn(FoundryAdapter, 'updateDocument').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showDialog').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'evaluateRoll').mockResolvedValue({ total: 50 });
+      jest.spyOn(FoundryAdapter, 'sendRollToChat').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
     });
 
     it('updates actor insanity and history', async () => {
       await InsanityHelper.addInsanity(mockActor, 5, "Test Source");
 
-      expect(FoundryAdapterMock.updateDocument).toHaveBeenCalledWith(
+      expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(
         mockActor,
         expect.objectContaining({
           "system.insanity": 30,
@@ -154,7 +181,7 @@ describe('InsanityHelper', () => {
       await InsanityHelper.addInsanity(mockActor, 5, "Test Source", "mission-123");
       const afterTime = Date.now();
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       const history = call[1]["system.insanityHistory"];
       const entry = history[0];
 
@@ -168,7 +195,7 @@ describe('InsanityHelper', () => {
     it('posts insanity message to chat', async () => {
       await InsanityHelper.addInsanity(mockActor, 5, "Test Source");
 
-      expect(FoundryAdapterMock.createChatMessage).toHaveBeenCalledWith(
+      expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.stringContaining("Test Character")
         })
@@ -180,7 +207,7 @@ describe('InsanityHelper', () => {
 
       await InsanityHelper.addInsanity(mockActor, 4, "Test Source");
 
-      expect(FoundryAdapterMock.showDialog).not.toHaveBeenCalled();
+      expect(FoundryAdapter.showDialog).not.toHaveBeenCalled();
     });
 
     it('triggers insanity test when crossing 10-point boundary', async () => {
@@ -189,7 +216,7 @@ describe('InsanityHelper', () => {
       await InsanityHelper.addInsanity(mockActor, 5, "Test Source");
 
       // Should prompt for insanity test
-      expect(FoundryAdapterMock.showDialog).toHaveBeenCalledWith(
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
         expect.objectContaining({
           title: "Insanity Test Required"
         })
@@ -202,7 +229,7 @@ describe('InsanityHelper', () => {
 
       await InsanityHelper.addInsanity(mockActor, 2, "Test Source");
 
-      expect(FoundryAdapterMock.showDialog).not.toHaveBeenCalled();
+      expect(FoundryAdapter.showDialog).not.toHaveBeenCalled();
     });
 
     it('triggers character removal at 100 IP', async () => {
@@ -210,7 +237,7 @@ describe('InsanityHelper', () => {
 
       await InsanityHelper.addInsanity(mockActor, 5, "Final Trauma");
 
-      expect(FoundryAdapterMock.showDialog).toHaveBeenCalledWith(
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
         expect.objectContaining({
           title: expect.stringContaining("Has Fallen")
         })
@@ -218,9 +245,8 @@ describe('InsanityHelper', () => {
     });
   });
 
-  describe.skip('rollInsanityTest', () => {
+  describe('rollInsanityTest', () => {
     let mockActor;
-    let FoundryAdapterMock;
 
     beforeEach(() => {
       mockActor = {
@@ -239,23 +265,21 @@ describe('InsanityHelper', () => {
           characteristics: {
             wil: { value: 40 }
           }
+        },
+        items: {
+          filter: jest.fn(() => [])
         }
       };
 
-      FoundryAdapterMock = {
-        updateDocument: jest.fn(),
-        evaluateRoll: jest.fn(async () => ({ total: 35 })),
-        sendRollToChat: jest.fn(),
-        getChatSpeaker: jest.fn(() => ({}))
-      };
-
-      jest.unstable_mockModule('../../src/module/helpers/foundry-adapter.mjs', () => ({
-        FoundryAdapter: FoundryAdapterMock
-      }));
+      // Mock FoundryAdapter methods
+      jest.spyOn(FoundryAdapter, 'updateDocument').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'evaluateRoll').mockResolvedValue({ total: 35 });
+      jest.spyOn(FoundryAdapter, 'sendRollToChat').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
     });
 
     it('updates history with test result on success', async () => {
-      FoundryAdapterMock.evaluateRoll.mockResolvedValue({ total: 25 }); // Success (40 target, 25 roll)
+      FoundryAdapter.evaluateRoll.mockResolvedValue({ total: 25 }); // Success (40 target, 25 roll)
 
       await InsanityHelper.rollInsanityTest(mockActor, {
         wp: 40,
@@ -265,7 +289,7 @@ describe('InsanityHelper', () => {
         threshold: 4
       });
 
-      expect(FoundryAdapterMock.updateDocument).toHaveBeenCalledWith(
+      expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(
         mockActor,
         expect.objectContaining({
           "system.lastInsanityTestAt": 4,
@@ -280,7 +304,7 @@ describe('InsanityHelper', () => {
     });
 
     it('updates history with test result on failure', async () => {
-      FoundryAdapterMock.evaluateRoll.mockResolvedValue({ total: 45 }); // Failure (30 target, 45 roll)
+      FoundryAdapter.evaluateRoll.mockResolvedValue({ total: 45 }); // Failure (30 target, 45 roll)
 
       await InsanityHelper.rollInsanityTest(mockActor, {
         wp: 40,
@@ -290,7 +314,7 @@ describe('InsanityHelper', () => {
         threshold: 4
       });
 
-      const call = FoundryAdapterMock.updateDocument.mock.calls[0];
+      const call = FoundryAdapter.updateDocument.mock.calls[0];
       const history = call[1]["system.insanityHistory"];
 
       expect(history[0].testRolled).toBe(true);
@@ -298,7 +322,7 @@ describe('InsanityHelper', () => {
     });
 
     it('posts test result to chat', async () => {
-      FoundryAdapterMock.evaluateRoll.mockResolvedValue({ total: 25 });
+      FoundryAdapter.evaluateRoll.mockResolvedValue({ total: 25 });
 
       await InsanityHelper.rollInsanityTest(mockActor, {
         wp: 40,
@@ -308,11 +332,11 @@ describe('InsanityHelper', () => {
         threshold: 3
       });
 
-      expect(FoundryAdapterMock.sendRollToChat).toHaveBeenCalled();
+      expect(FoundryAdapter.sendRollToChat).toHaveBeenCalled();
     });
 
     it('includes modifier breakdown in chat message', async () => {
-      FoundryAdapterMock.evaluateRoll.mockResolvedValue({ total: 25 });
+      FoundryAdapter.evaluateRoll.mockResolvedValue({ total: 25 });
 
       await InsanityHelper.rollInsanityTest(mockActor, {
         wp: 40,
@@ -322,7 +346,7 @@ describe('InsanityHelper', () => {
         threshold: 3
       });
 
-      const call = FoundryAdapterMock.sendRollToChat.mock.calls[0];
+      const call = FoundryAdapter.sendRollToChat.mock.calls[0];
       const flavor = call[1].flavor;
 
       expect(flavor).toContain("Base WP: 40");
@@ -332,7 +356,7 @@ describe('InsanityHelper', () => {
     });
 
     it('omits zero modifiers from breakdown', async () => {
-      FoundryAdapterMock.evaluateRoll.mockResolvedValue({ total: 25 });
+      FoundryAdapter.evaluateRoll.mockResolvedValue({ total: 25 });
 
       await InsanityHelper.rollInsanityTest(mockActor, {
         wp: 40,
@@ -342,7 +366,7 @@ describe('InsanityHelper', () => {
         threshold: 2
       });
 
-      const call = FoundryAdapterMock.sendRollToChat.mock.calls[0];
+      const call = FoundryAdapter.sendRollToChat.mock.calls[0];
       const flavor = call[1].flavor;
 
       expect(flavor).toContain("Base WP: 40");
@@ -351,9 +375,8 @@ describe('InsanityHelper', () => {
     });
   });
 
-  describe.skip('postInsanityMessage', () => {
+  describe('postInsanityMessage', () => {
     let mockActor;
-    let FoundryAdapterMock;
 
     beforeEach(() => {
       mockActor = {
@@ -363,26 +386,21 @@ describe('InsanityHelper', () => {
         }
       };
 
-      FoundryAdapterMock = {
-        createChatMessage: jest.fn(),
-        getChatSpeaker: jest.fn(() => ({}))
-      };
-
-      jest.unstable_mockModule('../../src/module/helpers/foundry-adapter.mjs', () => ({
-        FoundryAdapter: FoundryAdapterMock
-      }));
+      // Mock FoundryAdapter methods
+      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
     });
 
     it('posts message with actor name and points', async () => {
       await InsanityHelper.postInsanityMessage(mockActor, 5, "Test Source", 50);
 
-      expect(FoundryAdapterMock.createChatMessage).toHaveBeenCalledWith(
+      expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.stringContaining("Test Character")
         })
       );
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).toContain("5 IP");
       expect(call[0].content).toContain("Test Source");
       expect(call[0].content).toContain("50 IP");
@@ -391,22 +409,563 @@ describe('InsanityHelper', () => {
     it('includes track level in message', async () => {
       await InsanityHelper.postInsanityMessage(mockActor, 5, "Test Source", 50);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
       expect(call[0].content).toContain("Track Level 1");
     });
 
     it('shows test required warning when crossing threshold', async () => {
-      await InsanityHelper.postInsanityMessage(mockActor, 8, "Major Trauma", 38);
+      // oldTotal=25, adding 8 points → newTotal=33 (crosses 30 threshold)
+      // needsTest = 33 >= 10 && (33 % 10 = 3) < 8 = true
+      await InsanityHelper.postInsanityMessage(mockActor, 8, "Major Trauma", 33);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
-      expect(call[0].content).toContain("INSANITY TEST REQUIRED");
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
+      expect(call[0].content).toContain("TEST REQUIRED");
     });
 
     it('does not show test warning when not crossing threshold', async () => {
       await InsanityHelper.postInsanityMessage(mockActor, 3, "Minor Trauma", 28);
 
-      const call = FoundryAdapterMock.createChatMessage.mock.calls[0];
-      expect(call[0].content).not.toContain("INSANITY TEST REQUIRED");
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
+      expect(call[0].content).not.toContain("TEST REQUIRED");
+    });
+  });
+
+  /* -------------------------------------------- */
+  /*  promptInsanityTest                          */
+  /* -------------------------------------------- */
+
+  describe('promptInsanityTest', () => {
+    let mockActor;
+
+    beforeEach(() => {
+      mockActor = {
+        name: "Test Character",
+        system: {
+          insanity: 45,
+          characteristics: {
+            wil: { value: 40 }
+          }
+        }
+      };
+
+      jest.spyOn(FoundryAdapter, 'showDialog').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
+    });
+
+    it('shows dialog with correct title', async () => {
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Insanity Test Required"
+        })
+      );
+    });
+
+    it('includes actor name and current insanity', async () => {
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("Test Character");
+      expect(call[0].content).toContain("45");
+    });
+
+    it('shows track level and modifier', async () => {
+      mockActor.system.insanity = 45; // Track level 1, modifier -10
+
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("Track Level 1");
+      expect(call[0].content).toContain("-10");
+    });
+
+    it('calculates correct base target number', async () => {
+      mockActor.system.insanity = 45; // Track level 1, modifier -10
+      mockActor.system.characteristics.wil.value = 50;
+
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      // Base target = WP 50 + modifier -10 = 40
+      expect(call[0].content).toContain("40");
+    });
+
+    it('includes roll and later buttons', async () => {
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].buttons.roll).toBeDefined();
+      expect(call[0].buttons.later).toBeDefined();
+    });
+
+    it('sets default button to roll', async () => {
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].default).toBe("roll");
+    });
+
+    it('includes render callback for dynamic updates', async () => {
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].render).toBeDefined();
+      expect(typeof call[0].render).toBe('function');
+    });
+
+    it('sanitizes actor name for XSS', async () => {
+      mockActor.name = '<script>alert("XSS")</script>';
+
+      await InsanityHelper.promptInsanityTest(mockActor, 4);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).not.toContain('<script>');
+    });
+  });
+
+  /* -------------------------------------------- */
+  /*  rollBattleTrauma                            */
+  /* -------------------------------------------- */
+
+  describe('rollBattleTrauma', () => {
+    let mockActor, mockTable, mockTablePack, mockTraumaItem;
+
+    beforeEach(() => {
+      mockActor = {
+        name: "Test Character",
+        items: {
+          filter: jest.fn(() => [])
+        }
+      };
+
+      mockTraumaItem = {
+        name: "Battle Trauma Test",
+        uuid: "Compendium.deathwatch.battle-traumas.bt-000000000001",
+        system: {
+          key: "trauma-test",
+          description: "Test trauma description"
+        },
+        toObject: jest.fn(() => ({ name: "Battle Trauma Test" }))
+      };
+
+      mockTable = {
+        name: "Battle Trauma Table",
+        draw: jest.fn(async () => ({
+          results: [{
+            name: "Battle Trauma Test",
+            description: "Compendium.deathwatch.battle-traumas.bt-000000000001",
+            type: "document",
+            uuid: "result-uuid"
+          }]
+        }))
+      };
+
+      mockTablePack = {
+        index: {
+          find: jest.fn(() => ({ _id: "table-123", name: "Battle Trauma Table" }))
+        },
+        getDocument: jest.fn(async () => mockTable)
+      };
+
+      global.game.packs.get.mockReturnValue(mockTablePack);
+      global.fromUuid.mockResolvedValue(mockTraumaItem);
+
+      jest.spyOn(FoundryAdapter, 'createEmbeddedDocuments').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
+    });
+
+    it('finds Battle Trauma Table from compendium', async () => {
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(global.game.packs.get).toHaveBeenCalledWith("deathwatch.tables");
+      expect(mockTablePack.index.find).toHaveBeenCalled();
+      expect(mockTablePack.getDocument).toHaveBeenCalledWith("table-123");
+    });
+
+    it('falls back to world tables if compendium not found', async () => {
+      global.game.packs.get.mockReturnValue(null);
+      global.game.tables.getName.mockReturnValue(mockTable);
+
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(global.game.tables.getName).toHaveBeenCalledWith("Battle Trauma Table");
+    });
+
+    it('shows error if table not found', async () => {
+      global.game.packs.get.mockReturnValue(null);
+      global.game.tables.getName.mockReturnValue(null);
+
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith(
+        "error",
+        expect.stringContaining("Battle Trauma Table not found")
+      );
+    });
+
+    it('draws from table without displaying chat', async () => {
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(mockTable.draw).toHaveBeenCalledWith({ displayChat: false });
+    });
+
+    it('resolves trauma item from compendium UUID', async () => {
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(global.fromUuid).toHaveBeenCalledWith("Compendium.deathwatch.battle-traumas.bt-000000000001");
+    });
+
+    it('adds trauma item to actor', async () => {
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(FoundryAdapter.createEmbeddedDocuments).toHaveBeenCalledWith(
+        mockActor,
+        "Item",
+        [{ name: "Battle Trauma Test" }]
+      );
+    });
+
+    it('posts trauma details to chat', async () => {
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: expect.stringContaining("Test Character")
+        })
+      );
+
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
+      expect(call[0].content).toContain("Battle Trauma Test");
+    });
+
+    it('rerolls on duplicate trauma', async () => {
+      // Actor already has this trauma
+      mockActor.items.filter.mockReturnValue([
+        { system: { key: "trauma-test" } }
+      ]);
+
+      // First roll returns duplicate, second returns different trauma
+      const differentTrauma = {
+        ...mockTraumaItem,
+        name: "Different Trauma",
+        system: { key: "trauma-different", description: "" }
+      };
+
+      let callCount = 0;
+      mockTable.draw.mockImplementation(async () => {
+        callCount++;
+        return {
+          results: [{
+            name: callCount === 1 ? "Battle Trauma Test" : "Different Trauma",
+            description: callCount === 1
+              ? "Compendium.deathwatch.battle-traumas.bt-000000000001"
+              : "Compendium.deathwatch.battle-traumas.bt-000000000002",
+            type: "document"
+          }]
+        };
+      });
+
+      global.fromUuid.mockImplementation(async (uuid) => {
+        return uuid.includes("bt-000000000001") ? mockTraumaItem : differentTrauma;
+      });
+
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(mockTable.draw).toHaveBeenCalledTimes(2);
+      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith(
+        "info",
+        expect.stringContaining("already has")
+      );
+    });
+
+    it('stops rerolling after max attempts', async () => {
+      // Actor has all traumas
+      const existingTraumas = Array.from({ length: 20 }, (_, i) => ({
+        system: { key: `trauma-${i}` }
+      }));
+      mockActor.items.filter.mockReturnValue(existingTraumas);
+
+      // Always return duplicate
+      mockTraumaItem.system.key = "trauma-0";
+
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(mockTable.draw).toHaveBeenCalledTimes(BATTLE_TRAUMA.MAX_REROLL_ATTEMPTS);
+      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith(
+        "warn",
+        expect.stringContaining("has all possible battle traumas")
+      );
+      expect(FoundryAdapter.createEmbeddedDocuments).not.toHaveBeenCalled();
+    });
+
+    it('shows error if trauma item cannot be resolved', async () => {
+      global.fromUuid.mockResolvedValue(null);
+
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith(
+        "error",
+        expect.stringContaining("Could not find trauma item")
+      );
+      expect(FoundryAdapter.createEmbeddedDocuments).not.toHaveBeenCalled();
+    });
+
+    it('sanitizes actor and trauma names for XSS', async () => {
+      mockActor.name = '<script>alert("XSS")</script>';
+      mockTraumaItem.name = '<img src=x onerror="alert(1)">';
+
+      await InsanityHelper.rollBattleTrauma(mockActor);
+
+      const call = FoundryAdapter.createChatMessage.mock.calls[0];
+      expect(call[0].content).not.toContain('<script>');
+      expect(call[0].content).not.toContain('<img src=x');
+    });
+  });
+
+  /* -------------------------------------------- */
+  /*  handleCharacterRemoval                      */
+  /* -------------------------------------------- */
+
+  describe('handleCharacterRemoval', () => {
+    let mockActor;
+
+    beforeEach(() => {
+      mockActor = {
+        name: "Test Character",
+        system: {
+          insanity: 100,
+          corruption: 50
+        }
+      };
+
+      jest.spyOn(FoundryAdapter, 'showDialog').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
+    });
+
+    it('shows dialog with character name and insanity points', async () => {
+      await InsanityHelper.handleCharacterRemoval(mockActor, "insanity");
+
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: expect.stringContaining("Test Character"),
+          content: expect.stringContaining("100 Insanity Points")
+        })
+      );
+    });
+
+    it('shows dialog with corruption points when reason is corruption', async () => {
+      await InsanityHelper.handleCharacterRemoval(mockActor, "corruption");
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("50 Corruption Points");
+    });
+
+    it('includes appropriate message for insanity', async () => {
+      await InsanityHelper.handleCharacterRemoval(mockActor, "insanity");
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("shattered by the horrors");
+    });
+
+    it('includes appropriate message for corruption', async () => {
+      await InsanityHelper.handleCharacterRemoval(mockActor, "corruption");
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("taint is too great");
+    });
+
+    it('includes three dialog buttons', async () => {
+      await InsanityHelper.handleCharacterRemoval(mockActor, "insanity");
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].buttons.archive).toBeDefined();
+      expect(call[0].buttons.keep).toBeDefined();
+      expect(call[0].buttons.delay).toBeDefined();
+    });
+
+    it('sets default button to archive', async () => {
+      await InsanityHelper.handleCharacterRemoval(mockActor, "insanity");
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].default).toBe("archive");
+    });
+
+    it('sanitizes actor name for XSS', async () => {
+      mockActor.name = '<script>alert("XSS")</script>';
+
+      await InsanityHelper.handleCharacterRemoval(mockActor, "insanity");
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).not.toContain('<script>');
+    });
+  });
+
+  /* -------------------------------------------- */
+  /*  purchaseInsanityReduction                   */
+  /* -------------------------------------------- */
+
+  describe('purchaseInsanityReduction', () => {
+    let mockActor;
+
+    beforeEach(() => {
+      mockActor = {
+        name: "Test Character",
+        system: {
+          insanity: 50,
+          insanityHistory: [],
+          xp: {
+            available: 500
+          }
+        }
+      };
+
+      jest.spyOn(FoundryAdapter, 'showDialog').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'showNotification').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'updateDocument').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'createChatMessage').mockResolvedValue(undefined);
+      jest.spyOn(FoundryAdapter, 'getChatSpeaker').mockReturnValue({});
+    });
+
+    it('shows dialog with current insanity and XP', async () => {
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      expect(FoundryAdapter.showDialog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Purchase Insanity Reduction",
+          content: expect.stringContaining("50 IP")
+        })
+      );
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("500");
+    });
+
+    it('calculates track floor correctly for level 1', async () => {
+      mockActor.system.insanity = 45; // Track level 1, floor is 31
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      // Max points = 45 - 31 = 14
+      expect(call[0].content).toContain("31 IP minimum");
+    });
+
+    it('calculates track floor correctly for level 2', async () => {
+      mockActor.system.insanity = 75; // Track level 2, floor is 61
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("61 IP minimum");
+    });
+
+    it('calculates track floor correctly for level 3', async () => {
+      mockActor.system.insanity = 95; // Track level 3, floor is 91
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain("91 IP minimum");
+    });
+
+    it('limits max points by XP affordability', async () => {
+      mockActor.system.insanity = 50;
+      mockActor.system.xp.available = 250; // Can afford 2 points
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      const maxAttr = call[0].content.match(/max="(\d+)"/);
+      expect(parseInt(maxAttr[1])).toBe(2);
+    });
+
+    it('limits max points by track floor', async () => {
+      mockActor.system.insanity = 33; // Track level 1, floor 31, only 2 points available
+      mockActor.system.xp.available = 1000; // Plenty of XP
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      const maxAttr = call[0].content.match(/max="(\d+)"/);
+      expect(parseInt(maxAttr[1])).toBe(2);
+    });
+
+    it('shows warning if insufficient XP', async () => {
+      mockActor.system.xp.available = 50; // Not enough for 1 point
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith(
+        'warn',
+        expect.stringContaining("Not enough XP")
+      );
+      expect(FoundryAdapter.showDialog).not.toHaveBeenCalled();
+    });
+
+    it('shows warning if at track floor', async () => {
+      mockActor.system.insanity = 31; // Exactly at track level 1 floor
+      mockActor.system.xp.available = 500;
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      expect(FoundryAdapter.showNotification).toHaveBeenCalledWith(
+        'warn',
+        expect.stringContaining("Cannot reduce insanity below current track level")
+      );
+      expect(FoundryAdapter.showDialog).not.toHaveBeenCalled();
+    });
+
+    it('treats 100+ insanity as track level 3 for floor calculation', async () => {
+      mockActor.system.insanity = 105; // Above removal threshold
+      mockActor.system.xp.available = 2000;
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      // Floor should be 91 (track level 3)
+      expect(call[0].content).toContain("91 IP minimum");
+    });
+
+    it('includes purchase and cancel buttons', async () => {
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].buttons.purchase).toBeDefined();
+      expect(call[0].buttons.cancel).toBeDefined();
+    });
+
+    it('sets default button to purchase', async () => {
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].default).toBe("purchase");
+    });
+
+    it('includes render callback for dynamic preview', async () => {
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].render).toBeDefined();
+      expect(typeof call[0].render).toBe('function');
+    });
+
+    it('shows XP cost per point', async () => {
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).toContain(INSANITY_REDUCTION.XP_COST_PER_POINT.toString());
+    });
+
+    it('sanitizes actor name for XSS', async () => {
+      mockActor.name = '<script>alert("XSS")</script>';
+
+      await InsanityHelper.purchaseInsanityReduction(mockActor);
+
+      const call = FoundryAdapter.showDialog.mock.calls[0];
+      expect(call[0].content).not.toContain('<script>');
     });
   });
 });
