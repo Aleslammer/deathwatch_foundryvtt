@@ -2,11 +2,13 @@
 
 This directory contains project-specific memory for Claude Code. These memories are version controlled and shared with the repository.
 
-**Relationship to CLAUDE.md:**
-- **[CLAUDE.md](../../CLAUDE.md)** — Project architecture, commands, coding standards (foundational documentation)
-- **Memory files** (this directory) — Session learnings, workflow preferences, project history (evolves over time)
+**Documentation Structure:**
+- **[CLAUDE.md](../../CLAUDE.md)** — Quick start + essential commands + pointers to detailed docs
+- **[.claude/memory/](MEMORY.md)** — This directory: Session learnings, workflow preferences, project history (evolves over time)
+- **[.claude/docs/](../docs/README.md)** — Deep-dive developer reference documentation (loaded on demand)
+- **[docs/](../../docs/)** — User-facing guides for GMs and players (not for Claude)
 
-When starting work on this project, read CLAUDE.md first for architecture and commands, then consult relevant memory files for workflow preferences and lessons learned.
+When starting work on this project, read CLAUDE.md first for quick start, then consult memory files for workflow context, and dive into `.claude/docs/` for detailed subsystem documentation.
 
 ---
 
