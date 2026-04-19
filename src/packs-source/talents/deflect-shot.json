@@ -10,6 +10,7 @@
     "benefit": "Parry primitive/thrown ranged attacks",
     "description": "<p>The character's weapons move with such speed that they can deflect thrown weapons and shots fired from primitive weapons. <b>The character may spend a Reaction to Parry an incoming ranged attack from a primitive or thrown weapon.</b></p>",
     "compendiumId": "tal00000000048",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

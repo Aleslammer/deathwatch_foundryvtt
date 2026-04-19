@@ -10,6 +10,7 @@
     "benefit": "Gain Auto-stabilised Trait",
     "description": "<p>The character's already impressive bionic body structure is steadied by a gyro-array guided by a targeting system linked to the machine-spirit. <b>The character gains the Auto-stabilised Trait (see page 130).</b></p>",
     "compendiumId": "tal00000000079",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

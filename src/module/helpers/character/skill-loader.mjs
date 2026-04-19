@@ -25,11 +25,11 @@ export class SkillLoader {
       Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
       return {};
     }
-    
+
     const mergedSkills = {};
     const sortedEntries = Object.entries(skillDefinitions)
       .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-    
+
     for (const [key, definition] of sortedEntries) {
       mergedSkills[key] = {
         ...definition,
@@ -39,7 +39,23 @@ export class SkillLoader {
         modifier: actorSkills[key]?.modifier || 0
       };
     }
-    
+
     return mergedSkills;
+  }
+
+  /**
+   * Get training data for a skill level
+   * @param {string} skillKey - Skill key (e.g., "awareness")
+   * @param {string} level - Training level: "trained", "mastered", or "expert"
+   * @returns {{cost: number, rank: number}|null} Training data or null if unavailable
+   */
+  static getTrainingData(skillKey, level) {
+    if (!skillDefinitions) {
+      Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
+      return null;
+    }
+
+    const skill = skillDefinitions[skillKey];
+    return skill?.training?.[level] || null;
   }
 }

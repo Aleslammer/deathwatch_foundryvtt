@@ -10,6 +10,7 @@
     "benefit": "Immune to seduction, resistant to charm",
     "description": "<p>Either chemical and surgical treatments or sheer will has rendered the character immune to most mundane temptations. Seduction attempts against him automatically fail, and <b>Charm Tests increase their Difficulty by one level</b>. Taking this Talent gives the character <b>one Insanity Point</b>.</p>",
     "compendiumId": "tal00000000035",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

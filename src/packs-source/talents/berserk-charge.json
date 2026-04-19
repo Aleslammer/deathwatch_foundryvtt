@@ -10,6 +10,7 @@
     "benefit": "+20 Bonus when Charging",
     "description": "<p>The character has learned to put the whole force of his momentum behind his weapon blows. When the character charges into combat, few can stand before him. If the character uses the Charge Action, he gains a <b>+20 bonus to Weapon Skill instead of +10</b>.</p>",
     "compendiumId": "tal00000000027",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

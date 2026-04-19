@@ -10,6 +10,7 @@
     "benefit": "+10 Fellowship Tests with Imperial Navy",
     "description": "<p>The character knows how to deal with a particular social group or organisation. <b>He gains a +10 bonus to all Fellowship Tests when interacting with the chosen group.</b> The GM and player may agree to award this Talent when appropriate to the adventure or campaign.</p>",
     "compendiumId": "tal00000000183",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 5
   }
 }

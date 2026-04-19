@@ -19,6 +19,7 @@
         "effectType": "psy-rating",
         "enabled": true
       }
-    ]
+    ],
+    "rankRequired": 1
   }
 }

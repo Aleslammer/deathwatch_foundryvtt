@@ -10,6 +10,7 @@
     "benefit": "No penalty for called shots with melee weapons",
     "description": "<p>The character's eye, hand, and weapon act seamlessly together, placing the character blows exactly where the character intends. <b>When making a called shot with a melee weapon, the character does not incur the normal –20 penalty.</b></p>",
     "compendiumId": "tal00000000201",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

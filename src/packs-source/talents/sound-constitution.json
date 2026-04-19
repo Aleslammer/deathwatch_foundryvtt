@@ -21,6 +21,7 @@
         "effectType": "wounds",
         "enabled": true
       }
-    ]
+    ],
+    "rankRequired": 7
   }
 }

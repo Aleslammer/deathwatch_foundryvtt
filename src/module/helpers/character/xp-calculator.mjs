@@ -1,4 +1,5 @@
 import { XP_CONSTANTS } from "../constants/index.mjs";
+import { SkillLoader } from './skill-loader.mjs';
 
 /**
  * XP calculation utilities for character progression
@@ -245,49 +246,13 @@ export class XPCalculator {
    */
   static _calculateSkillCosts(actor, chapterSkillCosts, specialtyCosts) {
     let total = 0;
+    const currentRank = actor.system.rank || 1;
 
     for (const [key, skill] of Object.entries(actor.system.skills || {})) {
-      let trainCost = skill.costTrain ?? 0;
-      let masterCost = skill.costMaster ?? 0;
-      let expertCost = skill.costExpert ?? 0;
-
-      // Collect all applicable cost overrides (chapter, specialty base, specialty rank)
-      const trainCandidates = [trainCost];
-      const masterCandidates = [masterCost];
-      const expertCandidates = [expertCost];
-
-      // Chapter overrides
-      const chapterCosts = chapterSkillCosts[key];
-      if (chapterCosts) {
-        if (chapterCosts.costTrain !== undefined) trainCandidates.push(chapterCosts.costTrain);
-        if (chapterCosts.costMaster !== undefined) masterCandidates.push(chapterCosts.costMaster);
-        if (chapterCosts.costExpert !== undefined) expertCandidates.push(chapterCosts.costExpert);
-      }
-
-      // Specialty base overrides
-      const specialtyBaseCosts = specialtyCosts.baseSkills[key];
-      if (specialtyBaseCosts) {
-        if (specialtyBaseCosts.costTrain !== undefined) trainCandidates.push(specialtyBaseCosts.costTrain);
-        if (specialtyBaseCosts.costMaster !== undefined) masterCandidates.push(specialtyBaseCosts.costMaster);
-        if (specialtyBaseCosts.costExpert !== undefined) expertCandidates.push(specialtyBaseCosts.costExpert);
-      }
-
-      // Specialty rank overrides
-      const specialtyRankCosts = specialtyCosts.skills[key];
-      if (specialtyRankCosts !== undefined) {
-        if (typeof specialtyRankCosts === 'number') {
-          trainCandidates.push(specialtyRankCosts);
-        } else if (typeof specialtyRankCosts === 'object') {
-          if (specialtyRankCosts.costTrain !== undefined) trainCandidates.push(specialtyRankCosts.costTrain);
-          if (specialtyRankCosts.costMaster !== undefined) masterCandidates.push(specialtyRankCosts.costMaster);
-          if (specialtyRankCosts.costExpert !== undefined) expertCandidates.push(specialtyRankCosts.costExpert);
-        }
-      }
-
-      // Use the lowest cost from all candidates (excluding -1 which means "not trainable")
-      trainCost = this._getLowestCost(trainCandidates);
-      masterCost = this._getLowestCost(masterCandidates);
-      expertCost = this._getLowestCost(expertCandidates);
+      // Get effective costs with rank checking
+      const trainCost = this._getEffectiveSkillCost(actor, key, 'trained', chapterSkillCosts, specialtyCosts, currentRank);
+      const masterCost = this._getEffectiveSkillCost(actor, key, 'mastered', chapterSkillCosts, specialtyCosts, currentRank);
+      const expertCost = this._getEffectiveSkillCost(actor, key, 'expert', chapterSkillCosts, specialtyCosts, currentRank);
 
       if (skill.trained) total += Math.max(0, trainCost);
       if (skill.mastered) total += Math.max(0, masterCost);
@@ -295,6 +260,83 @@ export class XPCalculator {
     }
 
     return total;
+  }
+
+  /**
+   * Get effective skill cost for a training level with rank prerequisite checking
+   * @private
+   */
+  static _getEffectiveSkillCost(actor, skillKey, trainingLevel, chapterSkillCosts, specialtyCosts, currentRank) {
+    const trainingData = this._getEffectiveTrainingData(actor, skillKey, trainingLevel, chapterSkillCosts, specialtyCosts);
+
+    if (!trainingData) return -1; // Never available
+
+    // Return -1 if rank requirement not met
+    return currentRank >= trainingData.rank ? trainingData.cost : -1;
+  }
+
+  /**
+   * Get effective training data with chapter/specialty overrides
+   * Uses LOWEST cost among base/chapter/specialty (player gets best deal)
+   * @private
+   */
+  static _getEffectiveTrainingData(actor, skillKey, trainingLevel, chapterSkillCosts, specialtyCosts) {
+    const baseTraining = SkillLoader.getTrainingData(skillKey, trainingLevel);
+    const currentRank = actor.system.rank || 1;
+
+    // Collect cost candidates (exclude -1 which means "not trainable")
+    const costCandidates = [];
+    let effectiveRank = baseTraining?.rank ?? 99;
+
+    // Base cost
+    if (baseTraining && baseTraining.cost >= 0) {
+      costCandidates.push(baseTraining.cost);
+    }
+
+    // Chapter override (uses costTrain/costMaster/costExpert structure)
+    const chapterSkillData = chapterSkillCosts[skillKey];
+    if (chapterSkillData) {
+      const costKey = {
+        'trained': 'costTrain',
+        'mastered': 'costMaster',
+        'expert': 'costExpert'
+      }[trainingLevel];
+
+      if (costKey && chapterSkillData[costKey] !== undefined && chapterSkillData[costKey] >= 0) {
+        costCandidates.push(chapterSkillData[costKey]);
+      }
+    }
+
+    // Specialty rank overrides
+    const specialty = actor.system.specialtyId ? actor.items.get(actor.system.specialtyId) : null;
+    if (specialty?.system?.rankCosts) {
+      for (let rank = 1; rank <= currentRank; rank++) {
+        const rankSkillData = specialty.system.rankCosts[rank.toString()]?.skills?.[skillKey];
+        if (rankSkillData) {
+          const costKey = {
+            'trained': 'costTrain',
+            'mastered': 'costMaster',
+            'expert': 'costExpert'
+          }[trainingLevel];
+
+          if (costKey && rankSkillData[costKey] !== undefined && rankSkillData[costKey] >= 0) {
+            costCandidates.push(rankSkillData[costKey]);
+            // If specialty offers this skill at this rank, make it available at this rank
+            effectiveRank = Math.min(effectiveRank, rank);
+          }
+        }
+      }
+    }
+
+    // Return lowest cost, or -1 if no valid candidates
+    if (costCandidates.length === 0) {
+      return null;  // Skill not trainable at this level
+    }
+
+    return {
+      cost: Math.min(...costCandidates),
+      rank: effectiveRank
+    };
   }
 
   /**
@@ -391,53 +433,18 @@ export class XPCalculator {
 
   /**
    * Get skills breakdown
+   * Uses the same calculation logic as _calculateSkillCosts to ensure consistency
    * @private
    */
   static _getSkillsBreakdown(actor, chapterSkillCosts, specialtyCosts) {
     const breakdown = [];
+    const currentRank = actor.system.rank || 1;
 
     for (const [key, skill] of Object.entries(actor.system.skills || {})) {
-      let trainCost = skill.costTrain ?? 0;
-      let masterCost = skill.costMaster ?? 0;
-      let expertCost = skill.costExpert ?? 0;
-
-      // Collect all applicable cost overrides (chapter, specialty base, specialty rank)
-      const trainCandidates = [trainCost];
-      const masterCandidates = [masterCost];
-      const expertCandidates = [expertCost];
-
-      // Chapter overrides
-      const chapterCosts = chapterSkillCosts[key];
-      if (chapterCosts) {
-        if (chapterCosts.costTrain !== undefined) trainCandidates.push(chapterCosts.costTrain);
-        if (chapterCosts.costMaster !== undefined) masterCandidates.push(chapterCosts.costMaster);
-        if (chapterCosts.costExpert !== undefined) expertCandidates.push(chapterCosts.costExpert);
-      }
-
-      // Specialty base overrides
-      const specialtyBaseCosts = specialtyCosts.baseSkills[key];
-      if (specialtyBaseCosts) {
-        if (specialtyBaseCosts.costTrain !== undefined) trainCandidates.push(specialtyBaseCosts.costTrain);
-        if (specialtyBaseCosts.costMaster !== undefined) masterCandidates.push(specialtyBaseCosts.costMaster);
-        if (specialtyBaseCosts.costExpert !== undefined) expertCandidates.push(specialtyBaseCosts.costExpert);
-      }
-
-      // Specialty rank overrides
-      const specialtyRankCosts = specialtyCosts.skills[key];
-      if (specialtyRankCosts !== undefined) {
-        if (typeof specialtyRankCosts === 'number') {
-          trainCandidates.push(specialtyRankCosts);
-        } else if (typeof specialtyRankCosts === 'object') {
-          if (specialtyRankCosts.costTrain !== undefined) trainCandidates.push(specialtyRankCosts.costTrain);
-          if (specialtyRankCosts.costMaster !== undefined) masterCandidates.push(specialtyRankCosts.costMaster);
-          if (specialtyRankCosts.costExpert !== undefined) expertCandidates.push(specialtyRankCosts.costExpert);
-        }
-      }
-
-      // Use the lowest cost from all candidates (excluding -1 which means "not trainable")
-      trainCost = this._getLowestCost(trainCandidates);
-      masterCost = this._getLowestCost(masterCandidates);
-      expertCost = this._getLowestCost(expertCandidates);
+      // Use the same effective cost calculation as _calculateSkillCosts
+      const trainCost = this._getEffectiveSkillCost(actor, key, 'trained', chapterSkillCosts, specialtyCosts, currentRank);
+      const masterCost = this._getEffectiveSkillCost(actor, key, 'mastered', chapterSkillCosts, specialtyCosts, currentRank);
+      const expertCost = this._getEffectiveSkillCost(actor, key, 'expert', chapterSkillCosts, specialtyCosts, currentRank);
 
       if (skill.trained) {
         breakdown.push({

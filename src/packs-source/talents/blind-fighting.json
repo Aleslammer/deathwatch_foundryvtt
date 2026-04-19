@@ -11,6 +11,7 @@
     "description": "<p>Years of practice and development of other senses allows the character to fight in close combat without the benefit of sight. This Talent reduces all penalties for obscured vision by half, permitting the character to fight in fog, smoke, or darkness more effectively</p>",
     "cost": 800,
     "compendiumId": "tal00000000030",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 7
   }
 }

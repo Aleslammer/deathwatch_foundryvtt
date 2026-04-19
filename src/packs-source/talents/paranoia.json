@@ -19,6 +19,7 @@
         "effectType": "initiative",
         "enabled": true
       }
-    ]
+    ],
+    "rankRequired": 6
   }
 }

@@ -9,7 +9,9 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
-    
+    TODO: XP Costs are way off.  Need to check override system is working.
+
+
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
         Melee attack
@@ -74,3 +76,27 @@ Campaign Systems
     Rank advancement UI — visual progression through Deathwatch ranks
 
 
+Here is what is standard
+
+Skills  
+    Basic
+        Awareness
+        Climb
+        Dodge
+        Intimidate
+        Silent Move
+    Advanced
+        Chipher - Chapter Runes
+        Drive - Ground
+        Lore Common - Adeptus Astartes
+        Lore Common - Deathwatch
+        Lore Common - Imperium
+        Lore Common - War
+        Lore Forbidden - Xenos
+        Lore Scholastic - Codex Astartes
+        Navigation - Surface
+        Speak Language - High Gothic
+        Speak Language - Low Gothic
+        Tracking
+        
+        Tactics (Pick One)

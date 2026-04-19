@@ -53,12 +53,14 @@ export class CharacterDataPreparer {
   }
 
   /**
-   * Prepare skills with costs, totals, and sorting.
+   * Prepare skills with costs, totals, sorting, and rank availability.
    * @param {Object} context - Sheet context
    * @param {Actor} actor - Actor document
    */
   static prepareSkills(context, actor) {
     if (!context.system.skills) return;
+
+    const currentRank = context.system.rank || 1;
 
     // Get skill cost overrides
     const costs = this._getSkillCosts(context);
@@ -75,6 +77,56 @@ export class CharacterDataPreparer {
 
       // Apply cost overrides
       this._applySkillCosts(v, k, costs);
+
+      // Add rank availability flags for UI
+      this._addRankAvailability(v, k, currentRank, costs.specialtyRankRequirements);
+    }
+  }
+
+  /**
+   * Add rank availability flags to skill for UI display.
+   * @param {Object} skill - Skill object
+   * @param {string} skillKey - Skill key
+   * @param {number} currentRank - Character's current rank
+   * @param {Object} specialtyRankReqs - Specialty rank requirements map
+   * @private
+   */
+  static _addRankAvailability(skill, skillKey, currentRank, specialtyRankReqs = {}) {
+    // Check each training level for rank availability
+    const trainingLevels = [
+      { level: 'trained', costKey: 'costTrain', rankKey: 'trainedRank' },
+      { level: 'mastered', costKey: 'costMaster', rankKey: 'masteredRank' },
+      { level: 'expert', costKey: 'costExpert', rankKey: 'expertRank' }
+    ];
+
+    for (const { level, costKey, rankKey } of trainingLevels) {
+      const trainingData = skill[level] || skill.training?.[level];
+      const hasCostOverride = skill[costKey] !== undefined && skill[costKey] !== null;
+      const specialtyRank = specialtyRankReqs[skillKey]?.[rankKey];
+
+      if (trainingData === null || trainingData === undefined) {
+        // Check if specialty/chapter provides cost override for forbidden skill
+        if (hasCostOverride) {
+          // Use specialty's explicit rank requirement if available
+          const rankRequired = specialtyRank !== undefined ? specialtyRank : 1;
+          skill[`${level}Available`] = currentRank >= rankRequired;
+          skill[`${level}RankRequired`] = rankRequired;
+        } else {
+          // Never available
+          skill[`${level}Available`] = false;
+          skill[`${level}RankRequired`] = -1;
+        }
+      } else if (typeof trainingData === 'object' && trainingData.rank !== undefined) {
+        // New nested format - base skill has rank requirement
+        // Specialty rank override takes precedence over base rank requirement
+        const rankRequired = specialtyRank !== undefined ? specialtyRank : trainingData.rank;
+        skill[`${level}Available`] = currentRank >= rankRequired;
+        skill[`${level}RankRequired`] = rankRequired;
+      } else {
+        // Legacy format or always available
+        skill[`${level}Available`] = true;
+        skill[`${level}RankRequired`] = 1;
+      }
     }
   }
 
@@ -99,6 +151,7 @@ export class CharacterDataPreparer {
 
     // Get specialty rank-based skill cost overrides (cumulative from rank 1 to current rank)
     const specialtySkillCosts = {};
+    const specialtySkillRanks = {}; // Maps skillKey -> { trainedRank, masteredRank, expertRank }
     const specialtyTalentCosts = {}; // Maps talent ID to array of costs
 
     if (context.specialtyItem && context.specialtyItem.system.rankCosts) {
@@ -111,6 +164,19 @@ export class CharacterDataPreparer {
           if (rankData.skills) {
             for (const [skillKey, skillCost] of Object.entries(rankData.skills)) {
               if (!specialtySkillCosts[skillKey]) specialtySkillCosts[skillKey] = {};
+              if (!specialtySkillRanks[skillKey]) specialtySkillRanks[skillKey] = {};
+
+              // Track which rank each training level becomes available
+              if (skillCost.costTrain !== undefined) {
+                specialtySkillRanks[skillKey].trainedRank = rank;
+              }
+              if (skillCost.costMaster !== undefined) {
+                specialtySkillRanks[skillKey].masteredRank = rank;
+              }
+              if (skillCost.costExpert !== undefined) {
+                specialtySkillRanks[skillKey].expertRank = rank;
+              }
+
               Object.assign(specialtySkillCosts[skillKey], skillCost);
             }
           }
@@ -133,7 +199,8 @@ export class CharacterDataPreparer {
     return {
       chapter: chapterSkillCosts,
       specialtyBase: specialtyBaseSkillCosts,
-      specialtyRank: specialtySkillCosts
+      specialtyRank: specialtySkillCosts,
+      specialtyRankRequirements: specialtySkillRanks
     };
   }
 
