@@ -75,6 +75,7 @@ Campaign Systems
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
 
+Hadarr - Need to address his gear Also alot of skills pete took I think fall into cant take route but need to validate with class and speciality
 
 Here is what is standard
 
@@ -82,12 +83,14 @@ Skills
     Basic
         Awareness
         Climb
+        Concealment
         Dodge
         Intimidate
         Silent Move
     Advanced
         Chipher - Chapter Runes
         Drive - Ground
+        Literacy
         Lore Common - Adeptus Astartes
         Lore Common - Deathwatch
         Lore Common - Imperium
@@ -100,3 +103,20 @@ Skills
         Tracking
         
         Tactics (Pick One)
+
+Talents
+    Ambidextrous
+    Astartes Weapons Training
+    Bulging Biceps
+    Deathwatch Training Talent
+    Heightened Senses (Sound)
+    Heightened Senses (Sight)
+    Killing Strike
+    Nerves of Steel
+    Quick Draw
+    Resistance (Psychic Powers)
+    True Grit
+    Unarmed Master
+Traits
+    Unnatural Strength (x2)
+    Unnatural Toughness (x2)

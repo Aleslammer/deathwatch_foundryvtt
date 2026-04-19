@@ -64,7 +64,7 @@
     },
     "rankCosts": {
       "1": {
-        "skills": {},
+        "skills": { "command": { "costTrain": 0 } },
         "talents": {
           "tal00000000010": 500,
           "tal00000000014": 1000,
