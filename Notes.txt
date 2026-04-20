@@ -10,6 +10,7 @@ TODO: I have issues still with first load of html files.
 
 System:
     TODO: XP Costs are way off.  Need to check override system is working.
+    TODO: Characteristic Advances do not adjust the characteristic bonus.   Just the modifier.   SO a Strength check with expert advance is still strength 40 but has +20 to the roll.
 
 
     TODO: add extensive logging for each of the critical system paths
@@ -76,6 +77,9 @@ Campaign Systems
     Rank advancement UI — visual progression through Deathwatch ranks
 
 Hadarr - Need to address his gear Also alot of skills pete took I think fall into cant take route but need to validate with class and speciality
+    Gear Powered modifiers (narthecium +20 medicae is not being show on the modifiers tab.)
+    Drugs shoudl be stackable...
+    
 
 Here is what is standard
 
