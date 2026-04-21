@@ -340,9 +340,18 @@
     "characteristic": "ag",
     "descriptor": "Movement",
     "training": {
-      "trained": null,
-      "mastered": null,
-      "expert": null
+      "trained": {
+        "cost": 200,
+        "rank": 1
+      },
+      "mastered": {
+        "cost": null,
+        "rank": 2
+      },
+      "expert": {
+        "cost": null,
+        "rank": 3
+      }
     }
   },
   "chem_use": {
@@ -1355,9 +1364,18 @@
     "characteristic": "per",
     "descriptor": "",
     "training": {
-      "trained": null,
-      "mastered": null,
-      "expert": null
+      "trained": {
+        "cost": -1,
+        "rank": 1
+      },
+      "mastered": {
+        "cost": -1,
+        "rank": 2
+      },
+      "expert": {
+        "cost": -1,
+        "rank": 3
+      }
     }
   },
   "security": {
