@@ -17,7 +17,7 @@
         "_id": "254dddfc4b3d5051",
         "name": "Brain Leech Worms",
         "modifier": "2d10+6",
-        "effectType": "weapon-damage",
+        "effectType": "weapon-damage-override",
         "enabled": true
       }
     ]

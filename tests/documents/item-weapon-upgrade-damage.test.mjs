@@ -13,12 +13,12 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
     return weapon;
   }
 
-  describe('_applyWeaponUpgradeModifiers - weapon-damage', () => {
+  describe('_applyWeaponUpgradeModifiers - weapon-damage-override', () => {
     it('overrides weapon damage with upgrade modifier', () => {
       const mockUpgrade = {
         system: {
           modifiers: [
-            { name: 'Brain Leech Worms', modifier: '2d10+6', effectType: 'weapon-damage', enabled: true }
+            { name: 'Brain Leech Worms', modifier: '2d10+6', effectType: 'weapon-damage-override', enabled: true }
           ]
         }
       };
@@ -30,7 +30,7 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       expect(weapon.effectiveDamage).toBe('2d10+6');
     });
 
-    it('does not set effectiveDamage when no weapon-damage modifier', () => {
+    it('does not set effectiveDamage when no weapon-damage-override modifier', () => {
       const mockUpgrade = {
         system: {
           modifiers: [
@@ -46,11 +46,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       expect(weapon.effectiveDamage).toBeUndefined();
     });
 
-    it('ignores disabled weapon-damage modifier', () => {
+    it('ignores disabled weapon-damage-override modifier', () => {
       const mockUpgrade = {
         system: {
           modifiers: [
-            { name: 'Disabled', modifier: '2d10+6', effectType: 'weapon-damage', enabled: false }
+            { name: 'Disabled', modifier: '2d10+6', effectType: 'weapon-damage-override', enabled: false }
           ]
         }
       };
@@ -62,12 +62,12 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       expect(weapon.effectiveDamage).toBeUndefined();
     });
 
-    it('uses last weapon-damage modifier when multiple exist', () => {
+    it('uses last weapon-damage-override modifier when multiple exist', () => {
       const mockUpgrade = {
         system: {
           modifiers: [
-            { name: 'First', modifier: '1d10+2', effectType: 'weapon-damage', enabled: true },
-            { name: 'Second', modifier: '2d10+6', effectType: 'weapon-damage', enabled: true }
+            { name: 'First', modifier: '1d10+2', effectType: 'weapon-damage-override', enabled: true },
+            { name: 'Second', modifier: '2d10+6', effectType: 'weapon-damage-override', enabled: true }
           ]
         }
       };
@@ -83,7 +83,7 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       const mockUpgrade = {
         system: {
           modifiers: [
-            { name: 'Damage', modifier: '2d10+6', effectType: 'weapon-damage', enabled: true }
+            { name: 'Damage', modifier: '2d10+6', effectType: 'weapon-damage-override', enabled: true }
           ]
         }
       };
@@ -99,7 +99,7 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       const mockUpgrade = {
         system: {
           modifiers: [
-            { name: 'Brain Leech Worms', modifier: '2d10+6', effectType: 'weapon-damage', enabled: true }
+            { name: 'Brain Leech Worms', modifier: '2d10+6', effectType: 'weapon-damage-override', enabled: true }
           ]
         }
       };
@@ -115,7 +115,7 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       const mockUpgrade1 = {
         system: {
           modifiers: [
-            { name: 'Damage Override', modifier: '2d10+6', effectType: 'weapon-damage', enabled: true }
+            { name: 'Damage Override', modifier: '2d10+6', effectType: 'weapon-damage-override', enabled: true }
           ]
         }
       };

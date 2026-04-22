@@ -137,7 +137,7 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
       if (upgrade && Array.isArray(upgrade.system.modifiers)) {
         for (const mod of upgrade.system.modifiers) {
           if (mod.enabled !== false) {
-            if (mod.effectType === 'weapon-damage') {
+            if (mod.effectType === 'weapon-damage-override') {
               damageOverride = mod.modifier;
             } else if (mod.effectType === 'weapon-range') {
               const modStr = String(mod.modifier);
@@ -199,6 +199,7 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
       return;
     }
 
+    let damageOverride = null;
     let damageModifier = 0;
     let rofOverride = null;
     let blastValue = null;
@@ -210,7 +211,9 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
 
     for (const mod of ammo.system.modifiers) {
       if (mod.enabled !== false) {
-        if (mod.effectType === 'weapon-damage') {
+        if (mod.effectType === 'weapon-damage-override') {
+          damageOverride = mod.modifier;
+        } else if (mod.effectType === 'weapon-damage') {
           if (mod.qualityException && this.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === mod.qualityException)) {
             continue;
           }
@@ -242,7 +245,13 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
       }
     }
 
-    if (damageModifier !== 0 && baseDmg) {
+    // Apply damage override first (replaces base damage completely)
+    if (damageOverride && String(damageOverride).trim()) {
+      this.effectiveDamage = damageOverride;
+    }
+
+    // Then apply additive damage modifier on top of override or base
+    if (damageModifier !== 0 && (this.effectiveDamage || baseDmg)) {
       const base = this.effectiveDamage || baseDmg;
       this.effectiveDamage = `${base} ${damageModifier >= 0 ? '+' : ''}${damageModifier}`;
     }

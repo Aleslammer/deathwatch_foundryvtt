@@ -64,6 +64,9 @@ Armor:
 Psychic Powers:
     TODO: Add powers from Black Crusade
 
+Modifier-System:
+    TODO: we need to standardize one single logic flow and ALL items go through this...
+
 Orks:
 
 Gameplay:
