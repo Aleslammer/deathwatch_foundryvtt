@@ -125,3 +125,6 @@ Talents
 Traits
     Unnatural Strength (x2)
     Unnatural Toughness (x2)
+
+
+Notes we need to do some more testing on blast damage against hordes I do no think it is working.

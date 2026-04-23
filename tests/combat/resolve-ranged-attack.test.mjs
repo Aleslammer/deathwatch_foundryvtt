@@ -350,4 +350,98 @@ describe('resolveRangedAttack', () => {
       expect(result.modifierParts.some(p => p.includes('Aim'))).toBe(true);
     });
   });
+
+  describe('resolveRangedAttack hitsParts generation', () => {
+    it('generates hitsParts for single target with single shot', async () => {
+      const actor = makeActor(45);
+      const weapon = makeWeapon({ name: 'Bolter', rof: 'S/3/10' });
+
+      const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, baseOptions({
+        hitValue: 30, aim: 0, autoFire: RATE_OF_FIRE_MODIFIERS.SINGLE,
+        rofParts: ['S', '3', '10']
+      }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(Array.isArray(result.hitsParts)).toBe(true);
+      expect(result.hitsParts).toContain('Degrees of Success: 1');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('<strong>Total: 1 Hit</strong>');
+    });
+
+    it('generates hitsParts for single target with full auto', async () => {
+      const actor = makeActor(60);
+      const weapon = makeWeapon({ name: 'Bolter', rof: 'S/3/10' });
+
+      const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, baseOptions({
+        hitValue: 10, aim: 0, autoFire: RATE_OF_FIRE_MODIFIERS.FULL_AUTO,
+        rofParts: ['S', '3', '10']
+      }));
+
+      const dos = Math.floor((result.targetNumber - 10) / 10);
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts).toContain(`Degrees of Success: ${dos}`);
+      expect(result.hitsParts.some(p => p.includes('Rate of Fire'))).toBe(true);
+      expect(result.hitsParts.some(p => p.includes('rounds'))).toBe(true);
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain(`<strong>Total:`);
+    });
+
+    it('includes Twin-Linked bonus in hitsParts when DoS >= 2', async () => {
+      setupQualityPack(['twin-linked']);
+      const actor = makeActor(60);
+      const weapon = makeWeapon({ attachedQualities: [{ id: 'twin-linked' }], rof: 'S/3/10' });
+
+      const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, baseOptions({
+        hitValue: 10, aim: 0, autoFire: RATE_OF_FIRE_MODIFIERS.SINGLE,
+        rofParts: ['S', '3', '10']
+      }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts).toContain('Degrees of Success: 7');
+      expect(result.hitsParts.some(p => p.includes('Twin-Linked'))).toBe(true);
+    });
+
+    it('includes Storm bonus in hitsParts when hits > 0', async () => {
+      setupQualityPack(['storm']);
+      const actor = makeActor(60);
+      const weapon = makeWeapon({ attachedQualities: [{ id: 'storm' }], rof: 'S/3/10' });
+
+      const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, baseOptions({
+        hitValue: 10, aim: 0, autoFire: RATE_OF_FIRE_MODIFIERS.FULL_AUTO,
+        rofParts: ['S', '3', '10']
+      }));
+
+      expect(result.hitsParts).toBeDefined();
+      if (result.hitsTotal > 0) {
+        expect(result.hitsParts.some(p => p.includes('Storm'))).toBe(true);
+      }
+    });
+
+    it('shows plural for multiple hits', async () => {
+      const actor = makeActor(60);
+      const weapon = makeWeapon({ rof: 'S/3/10' });
+
+      const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, baseOptions({
+        hitValue: 10, aim: 0, autoFire: RATE_OF_FIRE_MODIFIERS.FULL_AUTO,
+        rofParts: ['S', '3', '10']
+      }));
+
+      expect(result.hitsParts).toBeDefined();
+      if (result.hitsTotal > 1) {
+        expect(result.hitsParts[result.hitsParts.length - 1]).toContain('Hits</strong>');
+      }
+    });
+
+    it('shows singular for single hit', async () => {
+      const actor = makeActor(45);
+      const weapon = makeWeapon({ rof: 'S/3/10' });
+
+      const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, baseOptions({
+        hitValue: 30, aim: 0, autoFire: RATE_OF_FIRE_MODIFIERS.SINGLE,
+        rofParts: ['S', '3', '10']
+      }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('Hit</strong>');
+      expect(result.hitsParts[result.hitsParts.length - 1]).not.toContain('Hits</strong>');
+    });
+  });
 });

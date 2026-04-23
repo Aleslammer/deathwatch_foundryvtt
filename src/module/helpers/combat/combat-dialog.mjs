@@ -159,9 +159,20 @@ export class CombatDialogHelper {
     return `[Attack] ${safeWeaponName} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${warnings}`;
   }
 
-  static buildAttackFlavor(label, modifierParts) {
-    if (modifierParts.length === 0) return label;
-    return `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`;
+  static buildAttackFlavor(label, modifierParts, hitsParts = []) {
+    let flavor = label;
+
+    // Add Hits section if hitsParts provided
+    if (hitsParts.length > 0) {
+      flavor += `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Hits</summary><div style="font-size:0.85em;margin-top:4px;">${hitsParts.join('<br>')}</div></details>`;
+    }
+
+    // Add Modifiers section if modifierParts provided
+    if (modifierParts.length > 0) {
+      flavor += `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`;
+    }
+
+    return flavor;
   }
 
   static validateWeaponForAttack(weapon, actor) {

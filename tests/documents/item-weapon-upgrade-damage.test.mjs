@@ -9,7 +9,7 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
   function createWeapon(systemOverrides, actor) {
     const weapon = new DeathwatchWeapon();
     Object.assign(weapon, { range: 0, dmg: '', damage: '', attachedUpgrades: [], wt: 0, ...systemOverrides });
-    weapon.parent = { actor };
+    weapon.parent = { actor, system: weapon };
     return weapon;
   }
 
@@ -22,10 +22,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('2d10+6');
     });
@@ -38,10 +39,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
@@ -54,10 +56,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
@@ -71,10 +74,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ dmg: '1d10+4', attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('2d10+6');
     });
@@ -87,10 +91,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ dmg: '', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ dmg: '', attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
@@ -103,10 +108,11 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ damage: '1d10+4', attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ damage: '1d10+4', attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('2d10+6');
     });
@@ -135,7 +141,7 @@ describe('DeathwatchWeapon - Weapon Upgrade Damage', () => {
       };
       const weapon = createWeapon({ dmg: '1d10+4', range: 100, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('2d10+6');
       expect(weapon.effectiveRange).toBe(70);

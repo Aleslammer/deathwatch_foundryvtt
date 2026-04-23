@@ -7,14 +7,14 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockActor = {
-      items: { get: jest.fn() }
+      items: new Map()
     };
   });
 
   function createWeapon(systemOverrides) {
     const weapon = new DeathwatchWeapon();
     Object.assign(weapon, { range: 0, dmg: '', damage: '', rof: '', class: '', attachedUpgrades: [], attachedQualities: [], loadedAmmo: null, penetration: 0, pen: 0, wt: 0, ...systemOverrides });
-    weapon.parent = { actor: mockActor };
+    weapon.parent = { actor: mockActor, system: weapon };
     return weapon;
   }
 
@@ -27,10 +27,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('1d10+5 -2');
     });
@@ -43,10 +44,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('1d10 +3');
     });
@@ -60,10 +62,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '2d10+10', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '2d10+10', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('2d10+10 -3');
     });
@@ -77,10 +80,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('1d10+5 -2');
     });
@@ -93,10 +97,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
@@ -104,17 +109,18 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
     it('should handle no loaded ammo', () => {
       const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: null });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
 
     it('should handle ammo with no modifiers array', () => {
       const mockAmmo = { system: {} };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
@@ -127,10 +133,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
     });
@@ -144,10 +151,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10+5', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('1d10+5 -2');
     });
@@ -160,10 +168,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ class: 'Heavy', rof: 'S/3/10', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ class: 'Heavy', rof: 'S/3/10', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRof).toBe('S/-/-');
     });
@@ -176,10 +185,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ class: 'Basic', rof: 'S/3/-', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ class: 'Basic', rof: 'S/3/-', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRof).toBeUndefined();
     });
@@ -192,10 +202,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ dmg: '1d10+5', rof: 'S/3/-', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ dmg: '1d10+5', rof: 'S/3/-', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRof).toBeUndefined();
     });
@@ -209,10 +220,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ class: 'Heavy', dmg: '1d10+10', rof: 'S/3/10', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ class: 'Heavy', dmg: '1d10+10', rof: 'S/3/10', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBe('1d10+10 -2');
       expect(weapon.effectiveRof).toBe('S/-/-');
@@ -226,10 +238,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ class: 'Heavy', dmg: '1d10+10', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ class: 'Heavy', dmg: '1d10+10', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveBlast).toBe(3);
     });
@@ -242,10 +255,11 @@ describe('DeathwatchWeapon - Ammunition Modifiers', () => {
           ]
         }
       };
-      mockActor.items.get.mockReturnValue(mockAmmo);
-      const weapon = createWeapon({ class: 'Basic', dmg: '1d10+5', loadedAmmo: 'ammo123' });
+      const ammoId = 'ammo123';
+      mockActor.items.set(ammoId, mockAmmo);
+      const weapon = createWeapon({ class: 'Basic', dmg: '1d10+5', loadedAmmo: ammoId });
 
-      weapon._applyAmmunitionModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveBlast).toBeUndefined();
     });

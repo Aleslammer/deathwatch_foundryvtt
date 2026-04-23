@@ -1,4 +1,5 @@
 import DeathwatchItemBase from './base-item.mjs';
+import { WeaponModifierCollector } from '../../helpers/combat/weapon-modifier-collector.mjs';
 
 const { fields } = foundry.data;
 
@@ -45,13 +46,7 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
     const actor = this.parent?.actor;
     if (!actor) return;
 
-    if (Array.isArray(this.attachedUpgrades)) {
-      this._applyWeaponUpgradeModifiers();
-    }
-
-    if (this.loadedAmmo) {
-      this._applyAmmunitionModifiers();
-    }
+    // Weapon modifiers applied by _applyOwnModifiers() via WeaponModifierCollector
   }
 
   static CHAR_KEYS = ['ws', 'bs', 'str', 'tg', 'ag', 'int', 'per', 'wil', 'fs'];
@@ -73,30 +68,129 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
   }
 
   _applyOwnModifiers() {
-    if (!Array.isArray(this.modifiers)) return;
+    const actor = this.parent?.actor;
+    const weapon = this.parent;
 
-    const weaponClass = (this.class || '').toLowerCase();
+    // Require proper Item/Actor context
+    if (!actor || !weapon || !weapon.system) {
+      return;
+    }
 
-    for (const mod of this.modifiers) {
-      if (mod.enabled === false) continue;
-      if (mod.weaponClass && weaponClass !== mod.weaponClass.toLowerCase()) continue;
+    // Use WeaponModifierCollector to get all weapon modifiers (weapon + upgrades + ammo)
+    const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {});
 
-      if (mod.effectType === 'weapon-damage') {
-        const dmgMod = this._resolveCharBonus(mod.modifier);
-        const baseDmg = this.effectiveDamage || this.dmg;
-        if (baseDmg && dmgMod !== 0) {
-          this.effectiveDamage = `${baseDmg} ${dmgMod >= 0 ? '+' : ''}${dmgMod}`;
-        }
-      } else if (mod.effectType === 'weapon-rof') {
-        this.effectiveRof = mod.modifier;
-      } else if (mod.effectType === 'weapon-blast') {
-        this.effectiveBlast = parseInt(mod.modifier) || 0;
-      } else if (mod.effectType === 'weapon-penetration') {
-        const basePen = parseInt(this.effectivePenetration ?? this.penetration ?? 0);
-        this.effectivePenetration = Math.max(basePen, parseInt(mod.modifier) || 0);
+    const baseDmg = this.dmg || this.damage;
+
+    // Apply damage override FIRST (replaces base damage completely)
+    // Only apply if weapon has base damage (legacy behavior)
+    if (weaponMods.damageOverride && weaponMods.damageOverride.formula && String(weaponMods.damageOverride.formula).trim() && baseDmg) {
+      this.effectiveDamage = weaponMods.damageOverride.formula;
+    }
+
+    // Apply additive damage modifiers (on top of override OR base damage)
+    // Sum all damage modifiers first, then apply once
+    let totalDamageMod = 0;
+    for (const mod of weaponMods.damage) {
+      // Skip if quality exception exists and weapon has that quality
+      if (mod.qualityException && this.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === mod.qualityException)) {
+        continue;
+      }
+      totalDamageMod += this._resolveCharBonus(mod.modifier);
+    }
+    if (totalDamageMod !== 0) {
+      const currentDmg = this.effectiveDamage || baseDmg;
+      if (currentDmg) {
+        this.effectiveDamage = `${currentDmg} ${totalDamageMod >= 0 ? '+' : ''}${totalDamageMod}`;
       }
     }
+
+    // Apply rate of fire modifiers (check weaponClass if specified)
+    const weaponClass = (this.class || '').toLowerCase();
+    for (const mod of weaponMods.rof) {
+      const requiredClass = (mod.weaponClass || '').toLowerCase();
+      if (!requiredClass || weaponClass.includes(requiredClass)) {
+        this.effectiveRof = mod.modifier;
+        break; // First match wins
+      }
+    }
+
+    // Apply blast modifiers (check weaponClass if specified)
+    for (const mod of weaponMods.blast) {
+      const requiredClass = (mod.weaponClass || '').toLowerCase();
+      if (!requiredClass || weaponClass.includes(requiredClass)) {
+        this.effectiveBlast = parseInt(mod.modifier) || 0;
+        break; // First match wins
+      }
+    }
+
+    // Apply felling modifiers
+    if (weaponMods.felling.length > 0) {
+      this.effectiveFelling = parseInt(weaponMods.felling[0].modifier) || 0;
+    }
+
+    // Apply penetration modifiers
+    for (const mod of weaponMods.penetration) {
+      const basePen = parseInt(this.effectivePenetration ?? this.pen ?? this.penetration ?? 0);
+      if (mod.effectType === 'weapon-penetration') {
+        this.effectivePenetration = Math.max(basePen, parseInt(mod.modifier) || 0);
+      } else if (mod.effectType === 'weapon-penetration-modifier') {
+        this.effectivePenetration = Math.max(0, basePen + (parseInt(mod.modifier) || 0));
+      }
+    }
+
+    // Apply range modifiers (additive and multiplier)
+    const baseRange = parseInt(this.range) || 0;
+    if (baseRange === 0) {
+      this.effectiveRange = this.range; // Preserve non-numeric or zero range
+    } else if (weaponMods.range.length > 0) {
+      let rangeAdditive = 0;
+      let rangeMultiplier = 1;
+
+      for (const mod of weaponMods.range) {
+        const modStr = String(mod.modifier);
+        if (modStr.startsWith('x')) {
+          rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
+        } else {
+          rangeAdditive += parseInt(mod.modifier) || 0;
+        }
+      }
+
+      if (rangeAdditive !== 0 || rangeMultiplier !== 1) {
+        this.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
+      } else {
+        this.effectiveRange = baseRange;
+      }
+    } else {
+      this.effectiveRange = baseRange; // No modifiers, set to base
+    }
+
+    // Apply weight modifiers (additive and multiplier)
+    const baseWeight = parseFloat(this.wt) || 0;
+    if (baseWeight > 0 && weaponMods.weight.length > 0) {
+      let weightAdditive = 0;
+      let weightMultiplier = 1;
+
+      for (const mod of weaponMods.weight) {
+        const modStr = String(mod.modifier);
+        if (modStr.startsWith('x')) {
+          weightMultiplier *= parseFloat(modStr.substring(1)) || 1;
+        } else {
+          weightAdditive += parseFloat(mod.modifier) || 0;
+        }
+      }
+
+      if (weightAdditive !== 0 || weightMultiplier !== 1) {
+        this.effectiveWeight = Math.max(0, (baseWeight + weightAdditive) * weightMultiplier);
+      } else {
+        this.effectiveWeight = baseWeight;
+      }
+    } else if (baseWeight > 0) {
+      this.effectiveWeight = baseWeight;
+    } else {
+      delete this.effectiveWeight;
+    }
   }
+
 
   /**
    * Called from actor _prepareCharacterData() after psy rating is computed.
@@ -116,166 +210,4 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
     this.effectivePenetration = basePen + psyRating;
   }
 
-  _applyWeaponUpgradeModifiers() {
-    const actor = this.parent?.actor;
-    if (!actor) return;
-
-    const baseDmg = this.dmg || this.damage;
-    const baseRange = parseInt(this.range) || 0;
-    const baseWeight = parseFloat(this.wt) || 0;
-
-    let damageOverride = null;
-    let rangeAdditive = 0;
-    let rangeMultiplier = 1;
-    let weightAdditive = 0;
-    let weightMultiplier = 1;
-
-    for (const upgradeRef of this.attachedUpgrades) {
-      const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
-      const upgrade = actor.items.get(upgradeId);
-
-      if (upgrade && Array.isArray(upgrade.system.modifiers)) {
-        for (const mod of upgrade.system.modifiers) {
-          if (mod.enabled !== false) {
-            if (mod.effectType === 'weapon-damage-override') {
-              damageOverride = mod.modifier;
-            } else if (mod.effectType === 'weapon-range') {
-              const modStr = String(mod.modifier);
-              if (modStr.startsWith('x')) {
-                rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
-              } else {
-                rangeAdditive += parseInt(mod.modifier) || 0;
-              }
-            } else if (mod.effectType === 'weapon-weight') {
-              const modStr = String(mod.modifier);
-              if (modStr.startsWith('x')) {
-                weightMultiplier *= parseFloat(modStr.substring(1)) || 1;
-              } else {
-                weightAdditive += parseFloat(mod.modifier) || 0;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    if (damageOverride && baseDmg) {
-      this.effectiveDamage = damageOverride;
-    }
-
-    if (baseRange === 0) {
-      this.effectiveRange = this.range;
-    } else if (rangeAdditive !== 0 || rangeMultiplier !== 1) {
-      this.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
-    } else {
-      this.effectiveRange = baseRange;
-    }
-
-    if (baseWeight > 0 && (weightAdditive !== 0 || weightMultiplier !== 1)) {
-      this.effectiveWeight = Math.max(0, (baseWeight + weightAdditive) * weightMultiplier);
-    } else if (baseWeight > 0) {
-      this.effectiveWeight = baseWeight;
-    } else {
-      delete this.effectiveWeight;
-    }
-  }
-
-  _applyAmmunitionModifiers() {
-    const actor = this.parent?.actor;
-    if (!actor) return;
-
-    const ammo = actor.items.get(this.loadedAmmo);
-    if (!ammo || !Array.isArray(ammo.system.modifiers)) {
-      return;
-    }
-
-    const baseDmg = this.dmg || this.damage;
-    const baseRof = this.rof;
-    const basePen = parseInt(this.pen || this.penetration) || 0;
-    const baseRange = parseInt(this.range) || 0;
-    const weaponClass = (this.class || '').toLowerCase();
-
-    if (!baseDmg && !baseRof) {
-      return;
-    }
-
-    let damageOverride = null;
-    let damageModifier = 0;
-    let rofOverride = null;
-    let blastValue = null;
-    let penOverride = null;
-    let penModifier = 0;
-    let rangeAdditive = 0;
-    let rangeMultiplier = 1;
-    let fellingValue = null;
-
-    for (const mod of ammo.system.modifiers) {
-      if (mod.enabled !== false) {
-        if (mod.effectType === 'weapon-damage-override') {
-          damageOverride = mod.modifier;
-        } else if (mod.effectType === 'weapon-damage') {
-          if (mod.qualityException && this.attachedQualities?.some(q => (typeof q === 'string' ? q : q.id) === mod.qualityException)) {
-            continue;
-          }
-          damageModifier += parseInt(mod.modifier) || 0;
-        } else if (mod.effectType === 'weapon-rof') {
-          const requiredClass = (mod.weaponClass || '').toLowerCase();
-          if (!requiredClass || weaponClass.includes(requiredClass)) {
-            rofOverride = mod.modifier;
-          }
-        } else if (mod.effectType === 'weapon-blast') {
-          const requiredClass = (mod.weaponClass || '').toLowerCase();
-          if (!requiredClass || weaponClass.includes(requiredClass)) {
-            blastValue = parseInt(mod.modifier) || 0;
-          }
-        } else if (mod.effectType === 'weapon-felling') {
-          fellingValue = parseInt(mod.modifier) || 0;
-        } else if (mod.effectType === 'weapon-penetration') {
-          penOverride = parseInt(mod.modifier) || 0;
-        } else if (mod.effectType === 'weapon-penetration-modifier') {
-          penModifier += parseInt(mod.modifier) || 0;
-        } else if (mod.effectType === 'weapon-range') {
-          const modStr = String(mod.modifier);
-          if (modStr.startsWith('x')) {
-            rangeMultiplier *= parseFloat(modStr.substring(1)) || 1;
-          } else {
-            rangeAdditive += parseInt(mod.modifier) || 0;
-          }
-        }
-      }
-    }
-
-    // Apply damage override first (replaces base damage completely)
-    if (damageOverride && String(damageOverride).trim()) {
-      this.effectiveDamage = damageOverride;
-    }
-
-    // Then apply additive damage modifier on top of override or base
-    if (damageModifier !== 0 && (this.effectiveDamage || baseDmg)) {
-      const base = this.effectiveDamage || baseDmg;
-      this.effectiveDamage = `${base} ${damageModifier >= 0 ? '+' : ''}${damageModifier}`;
-    }
-
-    if (rofOverride && baseRof) {
-      this.effectiveRof = rofOverride;
-    }
-
-    if (blastValue !== null) {
-      this.effectiveBlast = blastValue;
-    }
-
-    if (penOverride !== null) {
-      this.effectivePenetration = Math.max(basePen, penOverride);
-    } else if (penModifier !== 0) {
-      this.effectivePenetration = Math.max(0, basePen + penModifier);
-    }
-
-    if (baseRange > 0 && (rangeAdditive !== 0 || rangeMultiplier !== 1)) {
-      this.effectiveRange = Math.floor((baseRange + rangeAdditive) * rangeMultiplier);
-    }
-
-    if (fellingValue !== null) {
-      this.effectiveFelling = fellingValue;
-    }
-  }
 }

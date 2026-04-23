@@ -219,6 +219,49 @@ describe('CombatDialogHelper', () => {
       expect(flavor).toContain('+5 Misc');
     });
   });
+
+  describe('buildAttackFlavor with hitsParts', () => {
+    it('returns label only when no parts provided', () => {
+      const label = 'Test Attack';
+      const result = CombatDialogHelper.buildAttackFlavor(label, [], []);
+      expect(result).toBe('Test Attack');
+    });
+
+    it('adds Hits section when hitsParts provided', () => {
+      const label = 'Test Attack';
+      const hitsParts = ['Degrees of Success: 8', 'Base Hits: 3', '<strong>Total: 3</strong>'];
+      const result = CombatDialogHelper.buildAttackFlavor(label, [], hitsParts);
+
+      expect(result).toContain('<details');
+      expect(result).toContain('<summary style="cursor:pointer;font-size:0.9em;">Hits</summary>');
+      expect(result).toContain('Degrees of Success: 8');
+      expect(result).toContain('Base Hits: 3');
+      expect(result).toContain('<strong>Total: 3</strong>');
+    });
+
+    it('adds both Hits and Modifiers sections when both provided', () => {
+      const label = 'Test Attack';
+      const hitsParts = ['Base Hits: 3'];
+      const modifierParts = ['BS: 45'];
+      const result = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
+
+      expect(result).toContain('Hits</summary>');
+      expect(result).toContain('Modifiers</summary>');
+      // Hits should appear before Modifiers
+      const hitsIndex = result.indexOf('Hits</summary>');
+      const modsIndex = result.indexOf('Modifiers</summary>');
+      expect(hitsIndex).toBeLessThan(modsIndex);
+    });
+
+    it('maintains backward compatibility with only modifierParts', () => {
+      const label = 'Test Attack';
+      const modifierParts = ['BS: 45', 'Aim: +10'];
+      const result = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
+
+      expect(result).toContain('Modifiers</summary>');
+      expect(result).not.toContain('Hits</summary>');
+    });
+  });
 });
 
 describe('validateWeaponForAttack', () => {

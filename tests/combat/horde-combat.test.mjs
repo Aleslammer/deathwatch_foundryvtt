@@ -6,20 +6,44 @@ describe('HordeCombatHelper', () => {
   describe('calculateHordeHits', () => {
 
     describe('Blast weapons', () => {
-      it('hits equal to Blast value', () => {
-        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 4 })).toBe(4);
+      it('Blast adds to default 1 baseHit', () => {
+        // Default baseHits(1) + Blast(4) = 5
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 4 })).toBe(5);
       });
 
-      it('Blast(3) hits 3 times', () => {
-        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 3 })).toBe(3);
+      it('Blast(3) adds to default baseHit', () => {
+        // Default baseHits(1) + Blast(3) = 4
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 3 })).toBe(4);
       });
 
-      it('Blast with Explosive damage type gets +1 bonus hit', () => {
-        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 4, damageType: 'Explosive' })).toBe(5);
+      it('Blast with Explosive damage type stacks both bonuses', () => {
+        // Default baseHits(1) + Blast(4) + Explosive(1) = 6
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 4, damageType: 'Explosive' })).toBe(6);
       });
 
-      it('Blast with non-Explosive damage type gets no bonus', () => {
-        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 4, damageType: 'Energy' })).toBe(4);
+      it('Blast with non-Explosive damage type gets no explosive bonus', () => {
+        // Default baseHits(1) + Blast(4) = 5
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 4, damageType: 'Energy' })).toBe(5);
+      });
+
+      it('Full Auto + Blast is additive (baseHits + blastValue)', () => {
+        // Full Auto lands 5 hits, Blast(2) adds 2 more - total 7
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 2, baseHits: 5 })).toBe(7);
+      });
+
+      it('Blast adds to baseHits additively', () => {
+        // 2 baseHits + Blast(10) - total 12
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 10, baseHits: 2 })).toBe(12);
+      });
+
+      it('Full Auto + Blast(2) + Explosive stacks all bonuses', () => {
+        // baseHits(5) + Blast(2) + Explosive(1) = 8
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 2, baseHits: 5, damageType: 'Explosive' })).toBe(8);
+      });
+
+      it('Blast(2) with 3 capped baseHits + Explosive = 6 total', () => {
+        // baseHits(3) + Blast(2) + Explosive(1) = 6
+        expect(HordeCombatHelper.calculateHordeHits({ blastValue: 2, baseHits: 3, damageType: 'Explosive' })).toBe(6);
       });
     });
 

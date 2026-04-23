@@ -43,9 +43,113 @@ Items, talents, chapters, and traits can modify character attributes via the `mo
 
 ## Modifier Collection and Application
 
-Modifiers are collected by `modifier-collector.mjs` and applied by `modifiers.mjs` when computing derived data.
+**Two modifier collection systems exist:**
 
-**Performance optimization**: Actor data models convert `actor.items` Map to Array once at the start of `prepareDerivedData()` and pass the array to all modifier methods. This eliminates redundant Map→Array conversions (previously 3+ per update, now only 1), providing ~3x performance improvement. The modifier collector methods accept both Map and Array for backward compatibility.
+1. **ModifierCollector** (`src/module/helpers/character/modifier-collector.mjs`)
+   - For actor-level modifiers (characteristics, skills, wounds, armor, movement, psy rating)
+   - Collected once per `prepareDerivedData()` call
+   - Sources: actor.system.modifiers, item modifiers (always-active), active effects
+
+2. **WeaponModifierCollector** (`src/module/helpers/combat/weapon-modifier-collector.mjs`)
+   - For weapon-specific modifiers (damage, penetration, range, righteous fury, etc.)
+   - Collected per attack (context-dependent)
+   - Sources: weapon.system.modifiers, attached upgrades, loaded ammunition
+
+**Performance optimization**: Actor data models convert `actor.items` Map to Array once at the start of `prepareDerivedData()` and pass the array to all modifier methods. This eliminates redundant Map→Array conversions (previously 3+ per update, now only 1), providing ~3x performance improvement. Both collector classes accept Map or Array for backward compatibility.
+
+---
+
+## Weapon Modifier Collection
+
+**Location**: `src/module/helpers/combat/weapon-modifier-collector.mjs`
+
+For weapon-specific modifiers (damage, penetration, range, etc.), use `WeaponModifierCollector` instead of `ModifierCollector`.
+
+**Why separate?**
+- **Different lifecycle**: Actor modifiers collected once per update, weapon modifiers collected per attack
+- **Different sources**: Weapon + upgrades + ammo (context-dependent)
+- **Different context**: Attack context affects which modifiers apply (single-shot vs auto-fire)
+
+### Usage
+
+```javascript
+import { WeaponModifierCollector } from '../helpers/combat/weapon-modifier-collector.mjs';
+
+// Collect all weapon-related modifiers
+const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {
+  isSingleShot: true,
+  isAutoFire: false
+});
+
+// Structured output (grouped by effect type)
+console.log(weaponMods.damage);           // weapon-damage modifiers
+console.log(weaponMods.penetration);      // weapon-penetration modifiers
+console.log(weaponMods.characteristic);   // characteristic modifiers (BS bonuses from upgrades)
+console.log(weaponMods.righteousFury);    // righteous-fury-threshold modifiers
+console.log(weaponMods.magnitudeBonus);   // magnitude-bonus-damage modifiers
+console.log(weaponMods.characteristicDamage);  // characteristic-damage effect (or null)
+console.log(weaponMods.ignoresNaturalArmor);   // boolean flag
+console.log(weaponMods.prematureDetonation);   // { threshold: 101, source: null }
+```
+
+### Context-Aware Filtering
+
+Some modifiers only apply in specific contexts:
+
+- **Motion Predictor** (`requiresAutoFire: true`): Only active during semi-auto/full-auto attacks
+- **Single-shot upgrades** (`singleShotOnly: true`): Only active when `roundsFired === 1`
+
+Pass context object to enable filtering:
+
+```javascript
+// Single shot attack - Motion Predictor won't be collected
+const singleShotMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {
+  isSingleShot: true,
+  isAutoFire: false
+});
+
+// Full-auto attack - Motion Predictor WILL be collected
+const fullAutoMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {
+  isSingleShot: false,
+  isAutoFire: true
+});
+```
+
+### Collected Sources
+
+`WeaponModifierCollector` collects modifiers from three sources:
+
+1. **Weapon's own modifiers** (`weapon.system.modifiers`)
+2. **Attached upgrades** (`weapon.system.attachedUpgrades` → `upgrade.system.modifiers`)
+3. **Loaded ammunition** (`weapon.system.loadedAmmo` → `ammo.system.modifiers`)
+
+All modifiers include a `source` field identifying which item provided the modifier.
+
+### Migration from WeaponUpgradeHelper
+
+**Old pattern** (deprecated):
+
+```javascript
+const upgradeModifiers = await WeaponUpgradeHelper.getModifiers(weapon, isSingleShot, isAutoFire);
+const bsBonus = upgradeModifiers
+  .filter(m => m.effectType === 'characteristic' && m.valueAffected === 'bs')
+  .reduce((sum, m) => sum + parseInt(m.modifier), 0);
+```
+
+**New pattern** (recommended):
+
+```javascript
+const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, { isSingleShot, isAutoFire });
+const bsBonus = weaponMods.characteristic
+  .filter(m => m.valueAffected === 'bs')
+  .reduce((sum, m) => sum + parseInt(m.modifier), 0);
+```
+
+**Benefits**:
+- Collects weapon + upgrade + ammo modifiers in one pass
+- Pre-grouped by effect type (no filter needed for most cases)
+- Consistent with ModifierCollector pattern
+- Easier to test and maintain
 
 ---
 
