@@ -515,19 +515,22 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Character sub-tabs
     const characterTab = html.querySelector('.tab[data-tab="description"]');
     if (characterTab) {
-      const characterSubTabs = new foundry.applications.ux.Tabs({
-        navSelector: '.character-subtabs',
-        contentSelector: '.tab[data-tab="description"]',
-        initial: this._activeCharacterSubTab || 'bio',
-        group: 'character'
-      });
-      characterSubTabs.bind(characterTab);
-      this._characterSubTabs = characterSubTabs;
-      characterSubTabs.activate(this._activeCharacterSubTab || 'bio');
-      // Track active sub-tab across re-renders
-      characterTab.querySelectorAll('.character-subtabs .item').forEach(tab => {
-        tab.addEventListener('click', () => { this._activeCharacterSubTab = tab.dataset.tab; });
-      });
+      const characterSubTabsNav = characterTab.querySelector('.character-subtabs');
+      if (characterSubTabsNav) {
+        const characterSubTabs = new foundry.applications.ux.Tabs({
+          navSelector: '.character-subtabs',
+          contentSelector: '.tab[data-tab="description"]',
+          initial: this._activeCharacterSubTab || 'bio',
+          group: 'character'
+        });
+        characterSubTabs.bind(characterTab);
+        this._characterSubTabs = characterSubTabs;
+        characterSubTabs.activate(this._activeCharacterSubTab || 'bio');
+        // Track active sub-tab across re-renders
+        characterTab.querySelectorAll('.character-subtabs .item').forEach(tab => {
+          tab.addEventListener('click', () => { this._activeCharacterSubTab = tab.dataset.tab; });
+        });
+      }
     }
 
     // Select all text on focus

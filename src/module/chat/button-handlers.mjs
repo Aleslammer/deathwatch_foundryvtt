@@ -322,11 +322,12 @@ export class ChatButtonHandlers {
       const button = ev.currentTarget;
       const location = button.dataset.location;
       const damageType = button.dataset.damageType;
+      const criticalDamage = button.dataset.criticalDamage ? parseInt(button.dataset.criticalDamage) : undefined;
 
       const actor = this._resolveActor(button, 'actorId');
       Validation.requireDocument(actor, 'Actor', 'Roll Critical');
 
-      await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType);
+      await CriticalEffectsHelper.applyCriticalEffect(actor, location, damageType, criticalDamage);
     }, 'Roll Critical')));
   }
 

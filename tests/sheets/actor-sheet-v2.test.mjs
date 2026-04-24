@@ -614,5 +614,96 @@ describe('DeathwatchActorSheetV2', () => {
         await DeathwatchActorSheetV2._onRemoveHistory.call(sheet, {}, target);
       });
     });
+
+    describe('_onRender', () => {
+      let sheet, mockHtml, mockDescriptionTab, mockSubtabsNav;
+
+      beforeEach(() => {
+        sheet = new DeathwatchActorSheetV2({ document: mockActor });
+
+        // Mock Foundry's Tabs class
+        global.foundry = global.foundry || {};
+        global.foundry.applications = global.foundry.applications || {};
+        global.foundry.applications.ux = global.foundry.applications.ux || {};
+        global.foundry.applications.ux.Tabs = jest.fn().mockImplementation(() => ({
+          bind: jest.fn(),
+          activate: jest.fn()
+        }));
+
+        // Mock requestAnimationFrame
+        global.requestAnimationFrame = jest.fn(cb => cb());
+
+        mockDescriptionTab = {
+          querySelector: jest.fn(),
+          querySelectorAll: jest.fn(() => [
+            { dataset: { tab: 'bio' }, addEventListener: jest.fn() }
+          ])
+        };
+
+        mockSubtabsNav = {
+          classList: { contains: jest.fn() }
+        };
+
+        mockHtml = {
+          querySelector: jest.fn(),
+          querySelectorAll: jest.fn((selector) => {
+            if (selector === '.sheet-tabs .item') return [{ dataset: { tab: 'characteristics' }, addEventListener: jest.fn() }];
+            if (selector === 'input[type="text"], input[type="number"]') return [];
+            if (selector === '.section-header') return [];
+            return [];
+          })
+        };
+
+        // Set sheet.element to mockHtml (since _onRender uses this.element)
+        sheet.element = mockHtml;
+
+        // Set sheet.actor (used in _onRender)
+        sheet.actor = mockActor;
+        mockActor.getFlag = jest.fn(() => ({}));
+      });
+
+      it('should not initialize character subtabs when character-subtabs nav is missing', () => {
+        mockActor.type = 'enemy';
+
+        // Mock description tab exists but no character-subtabs nav (like enemy sheet)
+        mockHtml.querySelector.mockImplementation((selector) => {
+          if (selector === '.tab[data-tab="description"]') return mockDescriptionTab;
+          return null;
+        });
+        mockDescriptionTab.querySelector.mockReturnValue(null); // No .character-subtabs
+
+        // Should not throw error when character-subtabs nav is missing
+        sheet._onRender({}, mockHtml);
+
+        // Should have initialized main tabs (once) but NOT character subtabs
+        expect(global.foundry.applications.ux.Tabs).toHaveBeenCalledTimes(1); // Only main tabs
+        expect(sheet._characterSubTabs).toBeUndefined();
+      });
+
+      it('should initialize character subtabs for character actor with character-subtabs nav', () => {
+        mockActor.type = 'character';
+
+        // Mock description tab WITH character-subtabs nav (like character sheet)
+        mockHtml.querySelector.mockImplementation((selector) => {
+          if (selector === '.tab[data-tab="description"]') return mockDescriptionTab;
+          return null;
+        });
+        mockDescriptionTab.querySelector.mockImplementation((selector) => {
+          if (selector === '.character-subtabs') return mockSubtabsNav;
+          return null;
+        });
+
+        // Should initialize tabs successfully
+        sheet._onRender({}, mockHtml);
+
+        // Debug: check what was called
+        expect(mockHtml.querySelector).toHaveBeenCalledWith('.tab[data-tab="description"]');
+        expect(mockDescriptionTab.querySelector).toHaveBeenCalledWith('.character-subtabs');
+
+        // Should have initialized character subtabs
+        expect(sheet._characterSubTabs).toBeDefined();
+        expect(global.foundry.applications.ux.Tabs).toHaveBeenCalledTimes(2); // Main tabs + character subtabs
+      });
+    });
   });
 });
