@@ -29,6 +29,62 @@ describe('CombatDialogHelper', () => {
     });
   });
 
+  describe('buildAttackModifiers - movement penalties', () => {
+    it('does not apply movement penalty when isMoving is false', () => {
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        autoFire: RATE_OF_FIRE_MODIFIERS.SEMI_AUTO,
+        isMoving: false
+      });
+      expect(result.modifiers).toBe(10); // Only Semi-Auto bonus
+      expect(result.targetNumber).toBe(50);
+    });
+
+    it('applies -10 penalty for Semi-Auto when moving', () => {
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        autoFire: RATE_OF_FIRE_MODIFIERS.SEMI_AUTO,
+        isMoving: true
+      });
+      expect(result.modifiers).toBe(0); // +10 Semi-Auto, -10 movement
+      expect(result.targetNumber).toBe(40);
+    });
+
+    it('applies -30 penalty for Full-Auto when moving', () => {
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        autoFire: RATE_OF_FIRE_MODIFIERS.FULL_AUTO,
+        isMoving: true
+      });
+      expect(result.modifiers).toBe(-10); // +20 Full-Auto, -30 movement
+      expect(result.targetNumber).toBe(30);
+    });
+
+    it('does not apply movement penalty for Single Shot when moving', () => {
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        autoFire: RATE_OF_FIRE_MODIFIERS.SINGLE,
+        isMoving: true
+      });
+      expect(result.modifiers).toBe(0); // No movement penalty for Single
+      expect(result.targetNumber).toBe(40);
+    });
+
+    it('stacks movement penalty with other modifiers', () => {
+      const result = CombatDialogHelper.buildAttackModifiers({
+        bs: 40,
+        bsAdv: 5,
+        aim: 10,
+        autoFire: RATE_OF_FIRE_MODIFIERS.FULL_AUTO,
+        calledShot: -20,
+        isMoving: true
+      });
+      // +5 bsAdv, +10 aim, +20 Full-Auto, -20 called shot, -30 movement = -15
+      expect(result.modifiers).toBe(-15);
+      expect(result.targetNumber).toBe(25);
+    });
+  });
+
   describe('buildModifierParts', () => {
     it('includes all non-zero modifiers', () => {
       const parts = CombatDialogHelper.buildModifierParts(40, 5, 10, 10, -20, 10, -20, 5);
@@ -63,6 +119,38 @@ describe('CombatDialogHelper', () => {
       const parts = CombatDialogHelper.buildModifierParts(40, 0, 0, 0, 0, 0, 0, 0, 0, 0, upgradeModifiers);
       expect(parts).not.toContain('Brain Leech Worms');
       expect(parts).toHaveLength(1);
+    });
+  });
+
+  describe('buildModifierParts - movement display', () => {
+    it('does not display movement penalty when zero', () => {
+      const parts = CombatDialogHelper.buildModifierParts(
+        40, 0, 0, 10, 0, 0, 0, 0, 0, 0, [], 0, '', 0
+      );
+      expect(parts.join(',')).not.toContain('Moving while firing');
+    });
+
+    it('displays -10 movement penalty in modifier parts', () => {
+      const parts = CombatDialogHelper.buildModifierParts(
+        40, 0, 0, 10, 0, 0, 0, 0, 0, 0, [], 0, '', -10
+      );
+      expect(parts).toContain('-10 Moving while firing');
+    });
+
+    it('displays -30 movement penalty in modifier parts', () => {
+      const parts = CombatDialogHelper.buildModifierParts(
+        40, 0, 0, 20, 0, 0, 0, 0, 0, 0, [], 0, '', -30
+      );
+      expect(parts).toContain('-30 Moving while firing');
+    });
+
+    it('displays Rate of Fire before movement penalty', () => {
+      const parts = CombatDialogHelper.buildModifierParts(
+        40, 0, 0, 20, 0, 0, 0, 0, 0, 0, [], 0, '', -30
+      );
+      const rofIndex = parts.findIndex(p => p.includes('Rate of Fire'));
+      const movementIndex = parts.findIndex(p => p.includes('Moving while firing'));
+      expect(rofIndex).toBeLessThan(movementIndex);
     });
   });
 
