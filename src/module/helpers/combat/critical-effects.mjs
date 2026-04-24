@@ -10,7 +10,7 @@ export class CriticalEffectsHelper {
     "Left Leg": "leg"
   };
 
-  static async applyCriticalEffect(actor, location, damageType) {
+  static async applyCriticalEffect(actor, location, damageType, preCalculatedCriticalDamage) {
     const critLocation = this.LOCATION_MAP[location] || 'body';
     const pack = game.packs.get('deathwatch.critical-effects');
     if (!pack) {
@@ -19,7 +19,9 @@ export class CriticalEffectsHelper {
     }
 
     const index = await pack.getIndex();
-    const totalCriticalDamage = Math.max(0, actor.system.wounds.value - actor.system.wounds.max);
+    const totalCriticalDamage = preCalculatedCriticalDamage !== undefined
+      ? preCalculatedCriticalDamage
+      : Math.max(0, actor.system.wounds.value - actor.system.wounds.max);
     const effectLevel = Math.min(totalCriticalDamage, 10);
 
     if (effectLevel < 1) {

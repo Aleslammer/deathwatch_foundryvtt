@@ -10,6 +10,7 @@
     "benefit": "Use Psyniscience Skill as Half Action instead of Full Action",
     "description": "<p>The character's senses have evolved to perceive the warp in parallel with the physical world, though it requires some concentration to do so. <b>After gaining this Talent, using the Psyniscience Skill requires a Half Action instead of a Full Action.</b></p>",
     "compendiumId": "tal00000000271",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

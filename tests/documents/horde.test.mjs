@@ -121,8 +121,9 @@ describe('DeathwatchHorde combat methods', () => {
     expect(defenses.unnaturalToughnessMultiplier).toBe(1);
   });
 
-  it('calculateHitsReceived uses horde blast rules', () => {
-    expect(horde.calculateHitsReceived({ blastValue: 3 })).toBe(3);
+  it('calculateHitsReceived uses horde blast rules (additive)', () => {
+    // Default baseHits(1) + Blast(3) = 4
+    expect(horde.calculateHitsReceived({ blastValue: 3 })).toBe(4);
   });
 
   it('calculateHitsReceived uses horde melee rules', () => {

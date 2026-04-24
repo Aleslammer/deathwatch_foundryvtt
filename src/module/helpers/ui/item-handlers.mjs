@@ -139,8 +139,20 @@ export class ItemHandlers {
     // Sort talents by name (numeric option handles "Psy Rating 3" vs "Psy Rating 10")
     categories.talents.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
+    // Sort traits by name (numeric option handles trait multipliers)
+    categories.traits.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
     // Group duplicate traits and add count/multiplier
     categories.traits = this.groupTraits(categories.traits);
+
+    // Sort special abilities by name
+    categories.specialAbilities.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    // Sort implants by name
+    categories.implants.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    // Sort cybernetics by name
+    categories.cybernetics.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
     // Calculate section summaries
     categories.summaries = this.buildSummaries(categories);

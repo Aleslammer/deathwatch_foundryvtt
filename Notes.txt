@@ -9,10 +9,7 @@ C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.p
 TODO: I have issues still with first load of html files.
 
 System:
-    Slightly increase the characteristic text box width.   Intellegence scrolls off the right side.
-    Description\Past Event\Item Description edit fields need testing.  The promisemirror is not filling the full form.
 
-    
     TODO: add extensive logging for each of the critical system paths
         Ranged attack
         Melee attack
@@ -31,15 +28,19 @@ Skills:
 
 Traits
 
-Talents
+Talents:
+    Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
+    
 
 Weapon Upgrade:
 
 Gear:
+    Chapter Trappings (Many players have these)
+
+    TODO: Missles should be ammo for the launchers  (Otho has some)
     Relics
     Deathwatch Relics
     Chapter Relics
-    Chapter Trappings
     Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
 
 Rites of Battle
@@ -51,8 +52,6 @@ Ammmunition
 TODO: Automated Animations - Can we use this for things?  Need to look at tutorial and look into it some more....
 
 Enemies:
-    TODO: add chaos
-    TODO: Add tauT
     TODO: add dark eldar
     todo: add eldar
     
@@ -60,9 +59,13 @@ Enemies:
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
           164 - Terminator Armour has forcefield like effects  
+    TODO: Armor History for DeathIs joy should allow for critical damage modifer.
 
 Psychic Powers:
     TODO: Add powers from Black Crusade
+
+Modifier-System:
+    TODO: we need to standardize one single logic flow and ALL items go through this...
 
 Orks:
 
@@ -73,5 +76,62 @@ Campaign Systems
     Oath system — Kill-team oaths granting bonuses
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
+
+Hadarr - Need to address his gear Also alot of skills pete took I think fall into cant take route but need to validate with class and speciality
+    Gear Powered modifiers (narthecium +20 medicae is not being show on the modifiers tab.)
+    Drugs shoudl be stackable...
+    
+
+Here is what is standard
+
+Skills  
+    Basic
+        Awareness
+        Climb
+        Concealment
+        Dodge
+        Intimidate
+        Silent Move
+    Advanced
+        Chipher - Chapter Runes
+        Drive - Ground
+        Literacy
+        Lore Common - Adeptus Astartes
+        Lore Common - Deathwatch
+        Lore Common - Imperium
+        Lore Common - War
+        Lore Forbidden - Xenos
+        Lore Scholastic - Codex Astartes
+        Navigation - Surface
+        Speak Language - High Gothic
+        Speak Language - Low Gothic
+        Tracking
+        
+        Tactics (Pick One)
+
+Talents
+    Ambidextrous
+    Astartes Weapons Training
+    Bulging Biceps
+    Deathwatch Training Talent
+    Heightened Senses (Sound)
+    Heightened Senses (Sight)
+    Killing Strike
+    Nerves of Steel
+    Quick Draw
+    Resistance (Psychic Powers)
+    True Grit
+    Unarmed Master
+Traits
+    Unnatural Strength (x2)
+    Unnatural Toughness (x2)
+
+
+Still need to test out Test 4
+Testing out the hit expander I think the bolter looks right but the heavy bolter has some wierdness
+DoS and multi shot seem off
+
+    Bolter semi auto - DoS = 3 RoF = 3 Hits = 2?
+        Target 60 Rolled a 27
 
 

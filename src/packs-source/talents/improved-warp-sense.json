@@ -10,6 +10,7 @@
     "benefit": "Use Psyniscience Skill as Free Action",
     "description": "<p>The character can now see the warp and physical universe side by side, no longer taking any concentration on his part. <b>After gaining this Talent, the character may use the Psyniscience Skill as a Free Action.</b></p>",
     "compendiumId": "tal00000000134",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

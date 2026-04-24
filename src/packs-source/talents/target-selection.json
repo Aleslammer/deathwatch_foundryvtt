@@ -10,6 +10,7 @@
     "benefit": "Shoot into melee with no penalty",
     "description": "<p>The character's dread gaze marks out his chosen victim, and not even the riotous confusion of close combat interferes. <b>The character may shoot into melee with no penalty.</b></p>",
     "compendiumId": "tal00000000255",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

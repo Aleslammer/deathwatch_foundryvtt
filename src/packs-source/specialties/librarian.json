@@ -99,7 +99,7 @@
           "lore_scholastic_occult": { "costTrain": 400 },
           "lore_scholastic_philosophy": { "costTrain": 400 },
           "lore_scholastic_tactica_imperialis": { "costTrain": 400 },
-          "psyniscience": { "costTrain": 400 }
+          "psyniscience": { "costTrain": 0 }
         },
         "talents": {
           "tal00000000089": 600,

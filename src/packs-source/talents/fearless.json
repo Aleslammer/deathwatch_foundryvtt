@@ -11,6 +11,7 @@
     "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
     "cost": 1000,
     "compendiumId": "tal00000000002",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 7
   }
 }

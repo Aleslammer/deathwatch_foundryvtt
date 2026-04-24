@@ -18,6 +18,7 @@
         "effectType": "armor",
         "enabled": true
       }
-    ]
+    ],
+    "rankRequired": 1
   }
 }

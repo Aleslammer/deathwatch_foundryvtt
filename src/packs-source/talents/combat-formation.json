@@ -10,6 +10,7 @@
     "benefit": "Use Int Bonus for Initiative",
     "description": "<p>The character has directed his comrades to prepare for danger, planning out their actions for many contingencies if attacked. Before rolling Initiative, all other members of the group may choose to use the character's Intelligence Bonus for all Initiative rolls rather than individual Agility Bonuses.</p>",
     "compendiumId": "tal00000000037",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

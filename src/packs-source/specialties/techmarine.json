@@ -62,18 +62,18 @@
         "expert": 5000
       }
     },
+    "talentCosts": { "tal00000000057": 0, "tal00000000158": 0 },
     "rankCosts": {
       "1": {
         "skills": {
           "lore_forbidden_adeptus_mechanicus": { "costTrain": 400 },
           "security": { "costTrain": 400 },
-          "tech_use": { "costTrain": 400 }
+          "tech_use": { "costTrain": 0 },
+          "speak_language_techna_lingua": { "costTrain": 0 }
         },
         "talents": {
           "tal00000000016": 500,
-          "tal00000000057": 600,
           "tal00000000084": 500,
-          "tal00000000158": 500,
           "tal00000000256": 500,
           "tal00000000257": 800
         }

@@ -165,5 +165,60 @@ describe('CriticalEffectsHelper', () => {
 
       expect(global.ui.notifications.warn).toHaveBeenCalledWith('Critical effect not found for level 5!');
     });
+
+    it('uses pre-calculated critical damage when provided', async () => {
+      mockActor.system.wounds.value = 15; // Below max, no critical damage from actor state
+      mockPack.getIndex.mockResolvedValue([
+        { _id: 'energy-body0007' }
+      ]);
+      mockPack.getDocument.mockResolvedValue({
+        _id: 'energy-body0007',
+        system: { description: 'Severe trauma' },
+        toObject: () => ({ _id: 'energy-body0007' })
+      });
+
+      await CriticalEffectsHelper.applyCriticalEffect(mockActor, 'Body', 'Energy', 7);
+
+      expect(global.ui.notifications.info).toHaveBeenCalledWith('Critical effect Level 7 added to Test Marine');
+      expect(global.Item.createDocuments).toHaveBeenCalled();
+    });
+
+    it('calculates from actor state when pre-calculated damage not provided', async () => {
+      mockActor.system.wounds.value = 23; // 3 over max
+      mockPack.getIndex.mockResolvedValue([
+        { _id: 'energy-body0003' }
+      ]);
+      mockPack.getDocument.mockResolvedValue({
+        _id: 'energy-body0003',
+        system: { description: 'Moderate trauma' },
+        toObject: () => ({ _id: 'energy-body0003' })
+      });
+
+      await CriticalEffectsHelper.applyCriticalEffect(mockActor, 'Body', 'Energy');
+
+      expect(global.ui.notifications.info).toHaveBeenCalledWith('Critical effect Level 3 added to Test Marine');
+    });
+
+    it('warns if pre-calculated critical damage is zero', async () => {
+      await CriticalEffectsHelper.applyCriticalEffect(mockActor, 'Body', 'Energy', 0);
+
+      expect(global.ui.notifications.warn).toHaveBeenCalledWith('No critical damage to apply!');
+    });
+
+    it('caps pre-calculated critical damage at 10', async () => {
+      mockActor.system.wounds.value = 15;
+      mockPack.getIndex.mockResolvedValue([
+        { _id: 'energy-body0010' }
+      ]);
+      mockPack.getDocument.mockResolvedValue({
+        _id: 'energy-body0010',
+        system: { description: 'Maximum damage' },
+        toObject: () => ({ _id: 'energy-body0010' })
+      });
+
+      await CriticalEffectsHelper.applyCriticalEffect(mockActor, 'Body', 'Energy', 15);
+
+      expect(global.ui.notifications.info).toHaveBeenCalledWith('Critical effect Level 10 added to Test Marine');
+    });
   });
 });

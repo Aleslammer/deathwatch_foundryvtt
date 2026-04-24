@@ -9,7 +9,7 @@ describe('DeathwatchWeapon - Effective Range', () => {
   function createWeapon(systemOverrides, actor) {
     const weapon = new DeathwatchWeapon();
     Object.assign(weapon, { range: 0, dmg: '', damage: '', attachedUpgrades: [], wt: 0, ...systemOverrides });
-    weapon.parent = { actor };
+    weapon.parent = { actor, system: weapon };
     return weapon;
   }
 
@@ -18,7 +18,7 @@ describe('DeathwatchWeapon - Effective Range', () => {
       const mockActor = { items: { get: jest.fn() } };
       const weapon = createWeapon({ range: 100, attachedUpgrades: [] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRange).toBe(100);
     });
@@ -31,10 +31,11 @@ describe('DeathwatchWeapon - Effective Range', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ range: 100, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ range: 100, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRange).toBe(70);
     });
@@ -47,10 +48,11 @@ describe('DeathwatchWeapon - Effective Range', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ range: 100, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ range: 100, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRange).toBe(110);
     });
@@ -64,10 +66,11 @@ describe('DeathwatchWeapon - Effective Range', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ range: 100, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ range: 100, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       // (100 + 10) * 0.5 = 55
       expect(weapon.effectiveRange).toBe(55);
@@ -97,7 +100,7 @@ describe('DeathwatchWeapon - Effective Range', () => {
       };
       const weapon = createWeapon({ range: 100, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       // (100 + 20) * 0.8 = 96
       expect(weapon.effectiveRange).toBe(96);
@@ -111,10 +114,11 @@ describe('DeathwatchWeapon - Effective Range', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ range: 100, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ range: 100, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRange).toBe(100);
     });
@@ -123,7 +127,7 @@ describe('DeathwatchWeapon - Effective Range', () => {
       const mockActor = { items: { get: jest.fn() } };
       const weapon = createWeapon({ range: 'SBx3', attachedUpgrades: [] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRange).toBe('SBx3');
     });
@@ -132,7 +136,7 @@ describe('DeathwatchWeapon - Effective Range', () => {
       const mockActor = { items: { get: jest.fn() } };
       const weapon = createWeapon({ range: 0, attachedUpgrades: [] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveRange).toBe(0);
     });
@@ -145,10 +149,11 @@ describe('DeathwatchWeapon - Effective Range', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ range: 101, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ range: 101, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       // 101 * 0.7 = 70.7, floored to 70
       expect(weapon.effectiveRange).toBe(70);

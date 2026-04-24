@@ -11,6 +11,7 @@
     "description": "<p>The character has developed unequalled mastery of unarmed combat techniques. <b>The character's unarmed combat attacks do 1d10 + Strength Bonus in Impact Damage, and these attacks no longer have the Primitive quality.</b></p>",
     "cost": 0,
     "compendiumId": "tal00000000264",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

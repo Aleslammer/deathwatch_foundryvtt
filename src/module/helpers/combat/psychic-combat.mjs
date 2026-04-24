@@ -82,6 +82,9 @@ export class PsychicCombatHelper {
   /**
    * Filter collected modifiers for psychic-test and no-perils effect types.
    *
+   * NOTE: This operates on output from ModifierCollector.collectAllModifiers(),
+   * NOT WeaponModifierCollector (psychic powers use actor modifiers, not weapon mods).
+   *
    * Extracts psychic-specific modifiers from the full modifier list:
    * - psychic-test: Bonus to Focus Power Test target number
    * - no-perils: Suppresses Perils of the Warp (e.g., Psychic Hood)

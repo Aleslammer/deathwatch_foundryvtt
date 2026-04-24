@@ -10,6 +10,7 @@
     "benefit": "Use Launcher weapons without penalty.",
     "description": "<p>The character has received Basic Weapon Training in Launcher weapons, and can use them without penalty. <b>Weapon Skill or Ballistic Skill Tests used with a weapon that a character does not have training for suffer a –20 penalty.</b></p>",
     "compendiumId": "tal00000000019",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

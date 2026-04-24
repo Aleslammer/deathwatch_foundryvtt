@@ -167,8 +167,9 @@ export class MeleeCombatHelper {
     const degreesOfSuccess = success ? CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber) : 0;
     let hitsTotal = success ? 1 : 0;
 
+    let hasPowerField = false;
     if (targetActor && hitsTotal > 0) {
-      const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
+      hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
       hitsTotal = targetActor.system.calculateHitsReceived({
         isMelee: true, degreesOfSuccess, hasPowerField, baseHits: 1
       });
@@ -178,9 +179,36 @@ export class MeleeCombatHelper {
       ws, aim, allOut, charge, calledShot, runningTarget, miscModifier, defensivePenalty, sizeModifier, sizeLabel
     });
 
+    // Build hits breakdown array
+    const hitsParts = [];
+    const isHordeTarget = targetActor && targetActor.type === 'horde';
+
+    if (success) {
+      hitsParts.push(`Degrees of Success: ${degreesOfSuccess}`);
+
+      if (isHordeTarget) {
+        // Melee vs horde: base hits = floor(DoS ÷ 2), minimum 1 on success
+        const baseHits = degreesOfSuccess >= 2 ? Math.floor(degreesOfSuccess / 2) : 1;
+        hitsParts.push(`Base Hits: ${baseHits} (DoS ÷ 2, minimum 1 on success)`);
+
+        if (hasPowerField) {
+          hitsParts.push(`Power Field: +1`);
+        }
+
+        hitsParts.push(`<strong>Total: ${hitsTotal}</strong>`);
+      } else {
+        // Single target - always 1 hit on success
+        hitsParts.push(`<strong>1 Hit</strong> (successful attack)`);
+      }
+    } else {
+      // Miss
+      hitsParts.push(`Degrees of Success: ${degreesOfSuccess} (negative = miss)`);
+      hitsParts.push(`<strong>Total: 0 Hits (MISS)</strong>`);
+    }
+
     return {
       hitValue, targetNumber, success, degreesOfSuccess,
-      hitsTotal, modifierParts, defensivePenalty
+      hitsTotal, modifierParts, defensivePenalty, hitsParts
     };
   }
 
@@ -348,7 +376,7 @@ export class MeleeCombatHelper {
               sizeModifier, sizeLabel, targetActor
             });
 
-            const { targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts } = result;
+            const { targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts, hitsParts } = result;
 
             CombatHelper.lastAttackRoll = hitValue;
             CombatHelper.lastAttackTarget = targetNumber;
@@ -358,9 +386,7 @@ export class MeleeCombatHelper {
 
             let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
             if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;
-            const flavor = modifierParts.length > 0 
-              ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`
-              : label;
+            const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
 
             hitRoll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
@@ -401,7 +427,7 @@ export class MeleeCombatHelper {
       sizeModifier, sizeLabel, targetActor
     });
 
-    const { targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts } = result;
+    const { targetNumber, success, degreesOfSuccess, hitsTotal, modifierParts, hitsParts } = result;
 
     CombatHelper.lastAttackRoll = hitValue;
     CombatHelper.lastAttackTarget = targetNumber;
@@ -411,9 +437,7 @@ export class MeleeCombatHelper {
 
     let label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, false);
     if (success) label += `<br><em>${degreesOfSuccess} Degree${degreesOfSuccess !== 1 ? 's' : ''} of Success</em>`;
-    const flavor = modifierParts.length > 0
-      ? `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`
-      : label;
+    const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
 
     hitRoll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),

@@ -10,6 +10,7 @@
     "benefit": "Ignore injury, Fatigue, and Stunning in combat",
     "description": "<p>The character's will or faith can sustain him when his flesh fails. <b>He ignores the effects of injury, Fatigue, and Stunning during combat.</b> This Talent does not prevent the Damage, but allows the character to temporarily ignore its effects for the duration of the combat. Death still affects him normally.</p>",
     "compendiumId": "tal00000000055",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

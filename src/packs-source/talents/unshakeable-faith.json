@@ -10,6 +10,7 @@
     "benefit": "Re-roll failed Willpower Tests to avoid Fear",
     "description": "<p>The character's confidence in the Emperor is so strong that the character can face any danger. <b>The character may re-roll any failed Willpower Tests to avoid the effects of Fear (see page 276).</b></p>",
     "compendiumId": "tal00000000267",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

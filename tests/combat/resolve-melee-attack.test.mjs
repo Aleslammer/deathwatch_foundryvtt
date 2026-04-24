@@ -188,4 +188,141 @@ describe('resolveMeleeAttack', () => {
       expect(result.modifierParts).toContain('+10 Charge');
     });
   });
+
+  describe('melee attack hitsParts for horde', () => {
+    it('generates hitsParts array for horde target with basic attack', async () => {
+      const horde = {
+        type: 'horde',
+        system: { calculateHitsReceived: jest.fn(() => 1) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(makeActor(50), makeWeapon(), baseOptions({ hitValue: 30, targetActor: horde }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(Array.isArray(result.hitsParts)).toBe(true);
+      expect(result.hitsParts.length).toBeGreaterThan(0);
+      expect(result.hitsParts[0]).toContain('Degrees of Success: 2');
+      expect(result.hitsParts).toContain('Base Hits: 1 (DoS ÷ 2, minimum 1 on success)');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('Total: 1');
+    });
+
+    it('generates hitsParts with Power Field bonus for horde', async () => {
+      const weapon = makeWeapon({ attachedQualities: [{ id: 'power-field' }] });
+      const horde = {
+        type: 'horde',
+        system: { calculateHitsReceived: jest.fn(() => 2) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(makeActor(50), weapon, baseOptions({ hitValue: 30, targetActor: horde }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts).toContain('Power Field: +1');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('Total: 2');
+    });
+
+    it('generates hitsParts for single target (1 hit on success)', async () => {
+      const singleTarget = {
+        type: 'character',
+        system: { calculateHitsReceived: jest.fn(() => 1) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(makeActor(50), makeWeapon(), baseOptions({ hitValue: 30, targetActor: singleTarget }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts).toContain('Degrees of Success: 2');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('1 Hit');
+    });
+
+    it('generates hitsParts for miss (0 hits)', async () => {
+      const horde = {
+        type: 'horde',
+        system: { calculateHitsReceived: jest.fn(() => 0) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(makeActor(50), makeWeapon(), baseOptions({ hitValue: 65, targetActor: horde }));
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts[0]).toContain('Degrees of Success: 0');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('Total: 0 Hits (MISS)');
+    });
+  });
+
+  describe('hitsParts special scenarios', () => {
+    it('handles successful hit with 0 DoS against single target', async () => {
+      const singleTarget = {
+        type: 'character',
+        system: { calculateHitsReceived: jest.fn(() => 1) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(
+        makeActor(50),
+        makeWeapon({ name: 'Chainsword' }),
+        baseOptions({ hitValue: 50, targetActor: singleTarget })
+      );
+
+      expect(result.hitsTotal).toBe(1);
+      expect(result.degreesOfSuccess).toBe(0);
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts).toContain('Degrees of Success: 0');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('1 Hit');
+    });
+
+    it('shows hitsParts for Power Field single target attack', async () => {
+      const weapon = makeWeapon({ attachedQualities: [{ id: 'power-field' }], name: 'Power Sword' });
+      const singleTarget = {
+        type: 'character',
+        system: { calculateHitsReceived: jest.fn(() => 1) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(
+        makeActor(50),
+        weapon,
+        baseOptions({ hitValue: 30, targetActor: singleTarget })
+      );
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts).toContain('Degrees of Success: 2');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('1 Hit');
+    });
+
+    it('handles Scatter quality in melee (if applicable) with hitsParts', async () => {
+      const weapon = makeWeapon({ attachedQualities: [{ id: 'scatter' }], name: 'Scatter Weapon' });
+      const result = await MeleeCombatHelper.resolveMeleeAttack(
+        makeActor(50),
+        weapon,
+        baseOptions({ hitValue: 30 })
+      );
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts.some(part => part.includes('Degrees of Success'))).toBe(true);
+    });
+
+    it('generates hitsParts showing miss with zero DoS', async () => {
+      const horde = {
+        type: 'horde',
+        system: { calculateHitsReceived: jest.fn(() => 0) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(
+        makeActor(50),
+        makeWeapon(),
+        baseOptions({ hitValue: 51, targetActor: horde })
+      );
+
+      expect(result.hitsTotal).toBe(0);
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts[0]).toContain('Degrees of Success: 0');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('MISS');
+    });
+
+    it('handles high DoS melee attack on horde with proper hitsParts', async () => {
+      const horde = {
+        type: 'horde',
+        system: { calculateHitsReceived: jest.fn(() => 4) }
+      };
+      const result = await MeleeCombatHelper.resolveMeleeAttack(
+        makeActor(50),
+        makeWeapon(),
+        baseOptions({ hitValue: 10, targetActor: horde })
+      );
+
+      expect(result.hitsParts).toBeDefined();
+      expect(result.hitsParts[0]).toContain('Degrees of Success: 4');
+      expect(result.hitsParts).toContain('Base Hits: 2 (DoS ÷ 2, minimum 1 on success)');
+      expect(result.hitsParts[result.hitsParts.length - 1]).toContain('Total: 4');
+    });
+  });
 });

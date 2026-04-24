@@ -11,6 +11,7 @@
     "description": "<p>The character has an innate ability to derive meaning from unknown languages, and make himself understood using this intuitive grasp. <b>The character treats all languages as Basic Skills. This is not the same as true knowledge of the language, and tests using this Talent suffer a –10 penalty due to the simplistic nature of translation.</b></p>",
     "cost": 500,
     "compendiumId": "tal00000000200",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 2
   }
 }

@@ -19,6 +19,7 @@
         "valueAffected": "medicae",
         "enabled": true
       }
-    ]
+    ],
+    "rankRequired": 1
   }
 }

@@ -9,7 +9,7 @@ describe('DeathwatchWeapon - Effective Weight', () => {
   function createWeapon(systemOverrides, actor) {
     const weapon = new DeathwatchWeapon();
     Object.assign(weapon, { range: 0, dmg: '', damage: '', attachedUpgrades: [], wt: 0, ...systemOverrides });
-    weapon.parent = { actor };
+    weapon.parent = { actor, system: weapon };
     return weapon;
   }
 
@@ -22,10 +22,11 @@ describe('DeathwatchWeapon - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveWeight).toBe(5);
     });
@@ -38,10 +39,11 @@ describe('DeathwatchWeapon - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveWeight).toBe(8);
     });
@@ -55,10 +57,11 @@ describe('DeathwatchWeapon - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       // (10 - 2) * 0.5 = 4
       expect(weapon.effectiveWeight).toBe(4);
@@ -72,10 +75,11 @@ describe('DeathwatchWeapon - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveWeight).toBe(0);
     });
@@ -88,10 +92,11 @@ describe('DeathwatchWeapon - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ wt: 0, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ wt: 0, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       expect(weapon.effectiveWeight).toBeUndefined();
     });
@@ -104,10 +109,11 @@ describe('DeathwatchWeapon - Effective Weight', () => {
           ]
         }
       };
-      const mockActor = { items: { get: jest.fn().mockReturnValue(mockUpgrade) } };
-      const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'upgrade001' }] }, mockActor);
+      const upgradeId = 'upgrade001';
+      const mockActor = { items: new Map([[upgradeId, mockUpgrade]]) };
+      const weapon = createWeapon({ wt: 10, attachedUpgrades: [upgradeId] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       // Should be base weight since modifier is disabled
       expect(weapon.effectiveWeight).toBe(10);
@@ -137,7 +143,7 @@ describe('DeathwatchWeapon - Effective Weight', () => {
       };
       const weapon = createWeapon({ wt: 10, attachedUpgrades: [{ id: 'u1' }, { id: 'u2' }] }, mockActor);
 
-      weapon._applyWeaponUpgradeModifiers();
+      weapon._applyOwnModifiers();
 
       // (10 - 1) * 0.5 = 4.5
       expect(weapon.effectiveWeight).toBe(4.5);

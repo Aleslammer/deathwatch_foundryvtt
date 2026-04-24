@@ -478,3 +478,21 @@
   margin: 1px 0;
   line-height: 1.4;
 }
+
+/* Talent rank availability */
+.deathwatch .talent-unavailable {
+  opacity: 0.6;
+  background-color: rgba(200, 200, 200, 0.1);
+}
+
+.deathwatch .rank-gate {
+  color: #d9534f;
+  font-weight: bold;
+  margin-left: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.deathwatch .rank-gate i {
+  font-size: 10px;
+}

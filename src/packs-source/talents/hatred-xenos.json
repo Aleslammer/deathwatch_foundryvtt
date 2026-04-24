@@ -11,6 +11,7 @@
     "description": "<p>A group, organisation, or race has wronged the character in the past, fuelling this animosity. <b>When fighting opponents of that group in close combat, the character gains a +10 bonus to all Weapon Skill Tests made against them.</b></p>",
     "cost": 500,
     "compendiumId": "tal00000000119",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 2
   }
 }

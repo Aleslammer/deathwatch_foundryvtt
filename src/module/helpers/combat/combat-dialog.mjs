@@ -39,23 +39,34 @@ export class CombatDialogHelper {
       isAccurate = false,
       isInaccurate = false,
       isGyroStabilised = false,
-      isTwinLinked = false
+      isTwinLinked = false,
+      isMoving = false
     } = options;
 
     const effectiveAim = isInaccurate ? 0 : aim;
     const accurateBonus = (isAccurate && !isInaccurate && aim > 0) ? 10 : 0;
     const twinLinkedBonus = isTwinLinked ? 20 : 0;
     const gyroRangeMod = isGyroStabilised ? this.applyGyroStabilisedRangeLimit(rangeMod) : rangeMod;
-    const modifiers = bsAdv + effectiveAim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus + sizeModifier;
+
+    let movementPenalty = 0;
+    if (isMoving) {
+      if (autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
+        movementPenalty = -10;
+      } else if (autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
+        movementPenalty = -30;
+      }
+    }
+
+    const modifiers = bsAdv + effectiveAim + autoFire + calledShot + gyroRangeMod + runningTarget + miscModifier + accurateBonus + twinLinkedBonus + sizeModifier + movementPenalty;
     const clampedModifiers = Math.max(-60, Math.min(60, modifiers));
-    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus, effectiveAim };
+    return { modifiers, clampedModifiers, targetNumber: bs + clampedModifiers, accurateBonus, gyroRangeMod, twinLinkedBonus, effectiveAim, movementPenalty };
   }
 
   static applyGyroStabilisedRangeLimit(rangeMod) {
     return Math.max(rangeMod, -10);
   }
 
-  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0, upgradeModifiers = [], sizeModifier = 0, sizeLabel = "") {
+  static buildModifierParts(bs, bsAdv, aim, autoFire, calledShot, autoRangeMod, runningTarget, miscModifier, accurateBonus = 0, twinLinkedBonus = 0, upgradeModifiers = [], sizeModifier = 0, sizeLabel = "", movementPenalty = 0) {
     const parts = [];
     parts.push(`${bs} Base BS`);
     if (bsAdv !== 0) parts.push(`${bsAdv >= 0 ? '+' : ''}${bsAdv} BS Advances`);
@@ -63,6 +74,7 @@ export class CombatDialogHelper {
     if (accurateBonus !== 0) parts.push(`+${accurateBonus} Accurate`);
     if (twinLinkedBonus !== 0) parts.push(`+${twinLinkedBonus} Twin-Linked`);
     if (autoFire !== 0) parts.push(`+${autoFire} Rate of Fire`);
+    if (movementPenalty !== 0) parts.push(`${movementPenalty} Moving while firing`);
     if (calledShot !== 0) parts.push(`${calledShot} Called Shot`);
     if (autoRangeMod !== 0) parts.push(`${autoRangeMod >= 0 ? '+' : ''}${autoRangeMod} Range`);
     if (runningTarget !== 0) parts.push(`${runningTarget} Running Target`);
@@ -159,9 +171,20 @@ export class CombatDialogHelper {
     return `[Attack] ${safeWeaponName} - Target: ${targetNumber}<br><strong>${hitsTotal > 0 ? 'HIT!' : 'MISS!'} - ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>${warnings}`;
   }
 
-  static buildAttackFlavor(label, modifierParts) {
-    if (modifierParts.length === 0) return label;
-    return `${label}<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`;
+  static buildAttackFlavor(label, modifierParts, hitsParts = []) {
+    let flavor = label;
+
+    // Add Hits section if hitsParts provided
+    if (hitsParts.length > 0) {
+      flavor += `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Hits</summary><div style="font-size:0.85em;margin-top:4px;">${hitsParts.join('<br>')}</div></details>`;
+    }
+
+    // Add Modifiers section if modifierParts provided
+    if (modifierParts.length > 0) {
+      flavor += `<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:0.9em;">Modifiers</summary><div style="font-size:0.85em;margin-top:4px;">${modifierParts.join('<br>')}</div></details>`;
+    }
+
+    return flavor;
   }
 
   static validateWeaponForAttack(weapon, actor) {

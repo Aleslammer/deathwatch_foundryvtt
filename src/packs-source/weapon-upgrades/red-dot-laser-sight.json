@@ -18,7 +18,8 @@
         "modifier": "10",
         "effectType": "characteristic",
         "valueAffected": "bs",
-        "enabled": true
+        "enabled": true,
+        "singleShotOnly": true
       }
     ]
   }

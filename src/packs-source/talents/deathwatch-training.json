@@ -11,6 +11,7 @@
     "description": "<p>All Deathwatch Space Marines automatically confirm any Righteous Fury results (see page 245) against alien enemies without needing to re-roll the Ballistic Skill Test or Weapon Skill Test.</p>",
     "cost": "0",
     "compendiumId": "tal00000000047",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

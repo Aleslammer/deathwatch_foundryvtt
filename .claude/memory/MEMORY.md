@@ -2,6 +2,14 @@
 
 This directory contains project-specific memory for Claude Code. These memories are version controlled and shared with the repository.
 
+**Documentation Structure:**
+- **[CLAUDE.md](../../CLAUDE.md)** — Quick start + essential commands + pointers to detailed docs
+- **[.claude/memory/](MEMORY.md)** — This directory: Session learnings, workflow preferences, project history (evolves over time)
+- **[.claude/docs/](../docs/README.md)** — Deep-dive developer reference documentation (loaded on demand)
+- **[docs/](../../docs/)** — User-facing guides for GMs and players (not for Claude)
+
+When starting work on this project, read CLAUDE.md first for quick start, then consult memory files for workflow context, and dive into `.claude/docs/` for detailed subsystem documentation.
+
 ---
 
 ## Foundation Memories
@@ -28,6 +36,8 @@ This directory contains project-specific memory for Claude Code. These memories 
 ## Projects
 
 - [WebP Conversion](project_webp_conversion.md) — Ongoing icon optimization initiative (10 weapons converted)
+- [TDD Example: XP Calculator](project_tdd_example.md) — Reference implementation of test-driven development workflow
+- [Legacy Weapon Modifier Removal](project_legacy_weapon_modifier_removal.md) — Consolidated duplicate modifier logic into WeaponModifierCollector (~170 lines removed)
 
 ## Reference
 

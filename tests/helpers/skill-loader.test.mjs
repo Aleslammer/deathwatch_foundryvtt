@@ -47,10 +47,11 @@ describe('SkillLoader', () => {
 
     it('preserves all skill definition properties', () => {
       const skills = SkillLoader.loadSkills();
-      
-      expect(skills.awareness.costTrain).toBe(0);
-      expect(skills.awareness.costMaster).toBe(300);
-      expect(skills.awareness.costExpert).toBe(800);
+
+      // Skills use training structure from skills.json
+      expect(skills.awareness.training.trained.cost).toBe(0);
+      expect(skills.awareness.training.mastered.cost).toBe(300);
+      expect(skills.awareness.training.expert.cost).toBe(800);
       expect(skills.awareness.descriptor).toBe('');
     });
 

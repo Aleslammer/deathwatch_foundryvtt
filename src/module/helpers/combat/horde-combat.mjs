@@ -20,6 +20,8 @@ export class HordeCombatHelper {
    * @returns {number} Total hits against the horde
    */
   static calculateHordeHits(options) {
+    console.log('[HordeCombat] calculateHordeHits called with:', options);
+
     const {
       damageType = '',
       blastValue = 0,
@@ -33,15 +35,29 @@ export class HordeCombatHelper {
       effectivePR = 0
     } = options;
 
+    console.log('[HordeCombat] Extracted values:', {
+      damageType,
+      blastValue,
+      isFlame,
+      isMelee,
+      baseHits
+    });
+
     // Psychic powers: hits = effective PR
     if (isPsychic) {
+      console.log('[HordeCombat] Psychic path, returning:', effectivePR);
       return Math.max(0, effectivePR);
     }
 
-    // Blast weapons hit a number of times equal to Blast value
+    // Blast weapons add bonus hits equal to Blast value
+    // Stacks additively with baseHits (from Full Auto, etc.)
     if (blastValue > 0) {
-      let hits = blastValue;
+      let hits = baseHits + blastValue;
+
+      // Explosive bonus applies when weapon has both Blast quality and Explosive damage type
       if (damageType.toLowerCase() === 'explosive') hits += 1;
+
+      console.log('[HordeCombat] Blast path, baseHits:', baseHits, 'blastValue:', blastValue, 'explosive bonus:', damageType.toLowerCase() === 'explosive' ? 1 : 0, 'total hits:', hits);
       return hits;
     }
 
@@ -63,6 +79,7 @@ export class HordeCombatHelper {
     // Ranged (non-blast, non-flame): use normal hits + explosive bonus
     let hits = baseHits;
     if (damageType.toLowerCase() === 'explosive') hits += 1;
+    console.log('[HordeCombat] Ranged non-blast path, returning hits:', hits);
     return hits;
   }
 

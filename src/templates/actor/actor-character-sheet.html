@@ -8,7 +8,7 @@
       </div>
       <div style="display: flex; gap: 10px; align-items: flex-start;">
         <div style="flex: 0 0 100px; text-align: center;">
-          <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 3px; border: 1px solid #999; cursor: pointer;" />
+          <img class="profile-img" src="{{actor.img}}" data-action="editImage" data-edit="img" title="{{actor.name}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 3px; border: 1px solid #999; cursor: pointer;" />
           <div style="font-size: 0.7em; color: #666; margin-top: 2px;">Profile</div>
         </div>
         <div style="flex: 0 0 100px; text-align: center;">
@@ -146,6 +146,11 @@
               <input type="text" name="system.xp.total" value="{{system.xp.total}}" data-dtype="Number" />
             </div>
             <span class="resource-status {{#if (lt system.xp.available 0)}}negative{{else}}positive{{/if}}">{{system.xp.available}} Available</span>
+            <div class="panel-actions" style="margin-top: 8px;">
+              <button type="button" class="panel-btn view-history-btn" data-action="viewXPHistory" title="View XP History">
+                <i class="fas fa-history"></i> History
+              </button>
+            </div>
           </div>
 
           {{!-- Fate Points Panel --}}

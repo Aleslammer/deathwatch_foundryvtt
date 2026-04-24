@@ -14,7 +14,7 @@ describe('DeathwatchWeapon - Own Modifiers', () => {
   function createWeapon(systemOverrides) {
     const weapon = new DeathwatchWeapon();
     Object.assign(weapon, { range: 0, dmg: '', damage: '', rof: '', class: '', attachedUpgrades: [], attachedQualities: [], loadedAmmo: null, penetration: 0, pen: 0, wt: 0, modifiers: [], ...systemOverrides });
-    weapon.parent = { actor: mockActor };
+    weapon.parent = { actor: mockActor, system: weapon };
     return weapon;
   }
 
@@ -346,6 +346,39 @@ describe('DeathwatchWeapon - Own Modifiers', () => {
       weapon._applyOwnModifiers();
 
       expect(weapon.effectiveDamage).toBeUndefined();
+    });
+
+    describe('weapon-damage-override via collector', () => {
+      it('should apply damage override from loaded ammo', () => {
+        setCharacteristics();
+
+        const ammoId = 'missile-ammo';
+        const ammo = {
+          name: 'Frag Missile',
+          system: {
+            modifiers: [
+              { name: 'Missile Damage', modifier: '3d10+10', effectType: 'weapon-damage-override', enabled: true }
+            ]
+          }
+        };
+
+        mockActor.items.get.mockReturnValue(ammo);
+        mockActor.items = new Map([[ammoId, ammo]]);
+
+        const weapon = createWeapon({
+          dmg: '1d10+5',
+          loadedAmmo: ammoId
+        });
+        weapon.parent = {
+          actor: mockActor,
+          system: weapon
+        };
+
+        weapon._applyOwnModifiers();
+
+        expect(weapon.effectiveDamage).toBe('3d10+10');
+      });
+
     });
   });
 });

@@ -799,7 +799,37 @@ describe('ChatButtonHandlers', () => {
       expect(CriticalEffectsHelper.applyCriticalEffect).toHaveBeenCalledWith(
         expect.objectContaining({ id: 'actor-123' }),
         'Body',
-        'Energy'
+        'Energy',
+        undefined
+      );
+    });
+
+    it('should pass pre-calculated critical damage from dataset when provided', async () => {
+      mockButton.dataset.criticalDamage = '5';
+      ChatButtonHandlers._registerRollCriticalButton(mockHtml);
+
+      const clickHandler = mockButton.addEventListener.mock.calls[0][1];
+      await clickHandler({ currentTarget: mockButton });
+
+      expect(CriticalEffectsHelper.applyCriticalEffect).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'actor-123' }),
+        'Body',
+        'Energy',
+        5
+      );
+    });
+
+    it('should pass undefined critical damage when not in dataset', async () => {
+      ChatButtonHandlers._registerRollCriticalButton(mockHtml);
+
+      const clickHandler = mockButton.addEventListener.mock.calls[0][1];
+      await clickHandler({ currentTarget: mockButton });
+
+      expect(CriticalEffectsHelper.applyCriticalEffect).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'actor-123' }),
+        'Body',
+        'Energy',
+        undefined
       );
     });
   });

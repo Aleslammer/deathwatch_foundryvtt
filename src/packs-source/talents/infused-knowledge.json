@@ -10,6 +10,7 @@
     "benefit": "Treat Common and Scholastic Lore as Basic Skills, +10 if already possessed",
     "description": "<p>The character has been infused with a great wealth of lore and knowledge, either through punishing noetic techniques or by arcane methods kept secret by the guardians of technology and knowledge. <b>The character treats all Common and Scholastic Lore Skills as Basic Skills. This Talent also provides a +10 bonus to any tests involving Common or Scholastic Lore for which the character already possesses the Skill.</b></p>",
     "compendiumId": "tal00000000136",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

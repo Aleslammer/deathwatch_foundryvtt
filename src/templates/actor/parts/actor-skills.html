@@ -34,13 +34,13 @@
             ({{lookup ../config.CharacteristicWords skill.characteristic}})
           </div>
           <div class="skill-trained">
-            <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} />
+            <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} {{#unless skill.trainedAvailable}}disabled title="Available at Rank {{skill.trainedRankRequired}}"{{/unless}} />
           </div>
           <div class="skill-mastered">
-            <input type="checkbox" name="system.skills.{{key}}.mastered" {{checked skill.mastered}} {{#unless skill.trained}}disabled{{/unless}} />
+            <input type="checkbox" name="system.skills.{{key}}.mastered" {{checked skill.mastered}} {{#unless skill.trained}}disabled{{/unless}} {{#unless skill.masteredAvailable}}disabled title="Available at Rank {{skill.masteredRankRequired}}"{{/unless}} />
           </div>
           <div class="skill-expert">
-            <input type="checkbox" name="system.skills.{{key}}.expert" {{checked skill.expert}} {{#unless skill.mastered}}disabled{{/unless}} />
+            <input type="checkbox" name="system.skills.{{key}}.expert" {{checked skill.expert}} {{#unless skill.mastered}}disabled{{/unless}} {{#unless skill.expertAvailable}}disabled title="Available at Rank {{skill.expertRankRequired}}"{{/unless}} />
           </div>
           <div class="skill-modifier">
             <input type="number" name="system.skills.{{key}}.modifier" value="{{skill.modifier}}" data-dtype="Number" />
@@ -77,13 +77,13 @@
             ({{lookup ../config.CharacteristicWords skill.characteristic}})
           </div>
           <div class="skill-trained">
-            <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} />
+            <input type="checkbox" name="system.skills.{{key}}.trained" {{checked skill.trained}} {{#unless skill.trainedAvailable}}disabled title="Available at Rank {{skill.trainedRankRequired}}"{{/unless}} />
           </div>
           <div class="skill-mastered">
-            <input type="checkbox" name="system.skills.{{key}}.mastered" {{checked skill.mastered}} {{#unless skill.trained}}disabled{{/unless}} />
+            <input type="checkbox" name="system.skills.{{key}}.mastered" {{checked skill.mastered}} {{#unless skill.trained}}disabled{{/unless}} {{#unless skill.masteredAvailable}}disabled title="Available at Rank {{skill.masteredRankRequired}}"{{/unless}} />
           </div>
           <div class="skill-expert">
-            <input type="checkbox" name="system.skills.{{key}}.expert" {{checked skill.expert}} {{#unless skill.mastered}}disabled{{/unless}} />
+            <input type="checkbox" name="system.skills.{{key}}.expert" {{checked skill.expert}} {{#unless skill.mastered}}disabled{{/unless}} {{#unless skill.expertAvailable}}disabled title="Available at Rank {{skill.expertRankRequired}}"{{/unless}} />
           </div>
           <div class="skill-modifier">
             <input type="number" name="system.skills.{{key}}.modifier" value="{{skill.modifier}}" data-dtype="Number" />

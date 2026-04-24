@@ -14,6 +14,7 @@ import { EnemyDataPreparer } from "./shared/data-preparers/enemy-data-preparer.m
 import { ItemListPreparer } from "./shared/data-preparers/item-list-preparer.mjs";
 import { InsanityHelper } from "../helpers/insanity/insanity-helper.mjs";
 import { CorruptionHelper } from "../helpers/corruption/corruption-helper.mjs";
+import { XPCalculator } from "../helpers/character/xp-calculator.mjs";
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -32,6 +33,8 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     window: { resizable: true },
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
+      // Step 1: actor document handlers
+      editImage: DeathwatchActorSheetV2._onEditImage,
       // Step 2: show-item-in-chat handlers
       showTalent: DeathwatchActorSheetV2._onShowItem,
       showTrait: DeathwatchActorSheetV2._onShowItem,
@@ -70,6 +73,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       // Step 8: mental state handlers
       viewCorruptionHistory: DeathwatchActorSheetV2._onViewCorruptionHistory,
       viewInsanityHistory: DeathwatchActorSheetV2._onViewInsanityHistory,
+      viewXPHistory: DeathwatchActorSheetV2._onViewXPHistory,
       adjustCorruption: DeathwatchActorSheetV2._onAdjustCorruption,
       adjustInsanity: DeathwatchActorSheetV2._onAdjustInsanity,
       manualInsanityTest: DeathwatchActorSheetV2._onManualInsanityTest,
@@ -188,7 +192,9 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
     context.rollData = this.actor.getRollData();
     context.effects = prepareActiveEffectCategories(this.actor.effects);
-    context.modifiers = this.actor.system.modifiers || [];
+    // Sort modifiers alphabetically by name
+    const modifiers = this.actor.system.modifiers || [];
+    context.modifiers = modifiers.sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true }));
     context.statusEffects = CONFIG.statusEffects.map(effect => ({
       ...effect,
       active: this.actor.hasCondition?.(effect.id) || false
@@ -200,6 +206,53 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   /* -------------------------------------------- */
   /*  Action Handlers                             */
   /* -------------------------------------------- */
+
+  /**
+   * Edit actor profile image.
+   * Opens FilePicker to allow users to select a new portrait for their character.
+   * Adapted from DND5e's ApplicationV2 implementation.
+   * @param {Event} event - Triggering click event
+   * @param {HTMLElement} target - Image element that was clicked
+   */
+  static async _onEditImage(event, target) {
+    const attr = target.dataset.edit;
+    const current = foundry.utils.getProperty(this.document._source, attr);
+    const defaultArtwork = this.document.constructor.getDefaultArtwork?.(this.document._source) ?? {};
+    const defaultImage = foundry.utils.getProperty(defaultArtwork, attr);
+    const fp = new foundry.applications.apps.FilePicker.implementation({
+      current,
+      type: target.dataset.type || "image",
+      redirectToRoot: defaultImage ? [defaultImage] : [],
+      callback: path => {
+        const isVideo = foundry.helpers.media.VideoHelper.hasVideoExtension(path);
+        if ( ((target instanceof HTMLVideoElement) && isVideo)
+          || ((target instanceof HTMLImageElement) && !isVideo) ) target.src = path;
+        else {
+          const repl = document.createElement(isVideo ? "video" : "img");
+          Object.assign(repl.dataset, target.dataset);
+          if ( isVideo ) Object.assign(repl, {
+            autoplay: true, muted: true, disablePictureInPicture: true, loop: true, playsInline: true
+          });
+          repl.src = path;
+          target.replaceWith(repl);
+        }
+
+        if ( this.options.form.submitOnChange ) {
+          if ( attr.startsWith("token.") ) this.token.update({ [attr.slice(6)]: path });
+          else {
+            const submit = new Event("submit", { cancelable: true });
+            this.form.dispatchEvent(submit);
+          }
+        }
+      },
+      position: {
+        top: this.position.top + 40,
+        left: this.position.left + 10
+      },
+      document: this.document
+    });
+    await fp.browse();
+  }
 
   /**
    * Generic show-item-in-chat handler. Works for talents, traits, implants,
@@ -462,19 +515,22 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Character sub-tabs
     const characterTab = html.querySelector('.tab[data-tab="description"]');
     if (characterTab) {
-      const characterSubTabs = new foundry.applications.ux.Tabs({
-        navSelector: '.character-subtabs',
-        contentSelector: '.tab[data-tab="description"]',
-        initial: this._activeCharacterSubTab || 'bio',
-        group: 'character'
-      });
-      characterSubTabs.bind(characterTab);
-      this._characterSubTabs = characterSubTabs;
-      characterSubTabs.activate(this._activeCharacterSubTab || 'bio');
-      // Track active sub-tab across re-renders
-      characterTab.querySelectorAll('.character-subtabs .item').forEach(tab => {
-        tab.addEventListener('click', () => { this._activeCharacterSubTab = tab.dataset.tab; });
-      });
+      const characterSubTabsNav = characterTab.querySelector('.character-subtabs');
+      if (characterSubTabsNav) {
+        const characterSubTabs = new foundry.applications.ux.Tabs({
+          navSelector: '.character-subtabs',
+          contentSelector: '.tab[data-tab="description"]',
+          initial: this._activeCharacterSubTab || 'bio',
+          group: 'character'
+        });
+        characterSubTabs.bind(characterTab);
+        this._characterSubTabs = characterSubTabs;
+        characterSubTabs.activate(this._activeCharacterSubTab || 'bio');
+        // Track active sub-tab across re-renders
+        characterTab.querySelectorAll('.character-subtabs .item').forEach(tab => {
+          tab.addEventListener('click', () => { this._activeCharacterSubTab = tab.dataset.tab; });
+        });
+      }
     }
 
     // Select all text on focus
@@ -599,13 +655,17 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Handle armor history drops
     if (droppedItem.type === 'armor-history') {
       event.stopPropagation();
+
+      // Extract currentTarget reference BEFORE any await operations
+      // (event.currentTarget becomes null after event dispatch completes)
+      const targetItemId = event.currentTarget?.dataset?.itemId;
+
       let historyItem = droppedItem;
       if (!droppedItem.parent) {
         const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
         historyItem = imported;
       }
 
-      let targetItemId = event.currentTarget.dataset.itemId;
       let targetItem = this.actor.items.get(targetItemId);
 
       if (!targetItem || targetItem.type !== 'armor') {
@@ -670,13 +730,17 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Handle weapon upgrade drops
     else if (droppedItem.type === 'weapon-upgrade') {
       event.stopPropagation();
+
+      // Extract currentTarget reference BEFORE any await operations
+      // (event.currentTarget becomes null after event dispatch completes)
+      const targetItemId = event.currentTarget?.dataset?.itemId;
+
       let upgradeItem = droppedItem;
       if (!droppedItem.parent || droppedItem.parent.id !== this.actor.id) {
         const imported = await Item.create(droppedItem.toObject(), { parent: this.actor });
         upgradeItem = imported;
       }
 
-      let targetItemId = event.currentTarget.dataset.itemId;
       let targetItem = this.actor.items.get(targetItemId);
 
       if (!targetItem || targetItem.type !== 'weapon') {
@@ -821,20 +885,22 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
     const content = `
       <div class="history-dialog">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date/Time</th>
-              <th>Points</th>
-              <th>Source</th>
-              <th>Total</th>
-              <th style="width: 60px;">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows || '<tr><td colspan="5" style="text-align: center;">No corruption history</td></tr>'}
-          </tbody>
-        </table>
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Points</th>
+                <th>Source</th>
+                <th>Total</th>
+                <th style="width: 60px;">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows || '<tr><td colspan="5" style="text-align: center;">No corruption history</td></tr>'}
+            </tbody>
+          </table>
+        </div>
         <div class="history-summary">
           Total Corruption: <strong>${actor.system.corruption || 0} CP</strong>
         </div>
@@ -910,23 +976,25 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
 
     const content = `
       <div class="history-dialog">
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date/Time</th>
-              <th>Points</th>
-              <th>Source</th>
-              <th>Total</th>
-              <th>Test?</th>
-              <th>Result</th>
-              <th>XP Cost</th>
-              <th style="width: 60px;">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows || '<tr><td colspan="8" style="text-align: center;">No insanity history</td></tr>'}
-          </tbody>
-        </table>
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date/Time</th>
+                <th>Points</th>
+                <th>Source</th>
+                <th>Total</th>
+                <th>Test?</th>
+                <th>Result</th>
+                <th>XP Cost</th>
+                <th style="width: 60px;">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows || '<tr><td colspan="8" style="text-align: center;">No insanity history</td></tr>'}
+            </tbody>
+          </table>
+        </div>
         <div class="history-summary">
           Total Insanity: <strong>${actor.system.insanity || 0} IP</strong>
           ${totalXPSpent > 0 ? ` | Total XP Spent: <strong>${totalXPSpent} XP</strong>` : ''}
@@ -958,6 +1026,63 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
           });
         });
       }
+    });
+  }
+
+  static async _onViewXPHistory(event, target) {
+    const actor = this.actor;
+    const breakdown = XPCalculator.calculateXPBreakdown(actor);
+
+    let tableRows = '';
+    let runningTotal = 0;
+
+    for (const entry of breakdown) {
+      runningTotal += entry.cost;
+
+      tableRows += `
+        <tr>
+          <td>${entry.category}</td>
+          <td>${entry.source}</td>
+          <td class="points-cell">${entry.cost} XP</td>
+          <td>${runningTotal} XP</td>
+        </tr>
+      `;
+    }
+
+    const content = `
+      <div class="history-dialog">
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Purchase</th>
+                <th>Cost</th>
+                <th>Total Spent</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows || '<tr><td colspan="4" style="text-align: center;">No XP expenditures</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+        <div class="history-summary">
+          Total XP Spent: <strong>${actor.system.xp.spent || 0} XP</strong>
+          ${breakdown.length > 0 ? ` | Total Purchases: <strong>${breakdown.length}</strong>` : ''}
+        </div>
+      </div>
+    `;
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: `Experience Points Breakdown - ${actor.name}` },
+      content,
+      buttons: [{
+        action: 'close',
+        icon: 'fas fa-times',
+        label: 'Close',
+        callback: () => {}
+      }],
+      default: 'close'
     });
   }
 

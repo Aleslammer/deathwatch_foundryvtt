@@ -10,6 +10,7 @@
     "benefit": "Disarm foes in close combat",
     "description": "<p>The character can wrest weapons from his opponent's hands through practised technique or brute force. <b>If in close combat, the character may use a Full Action to disarm his foe by making an Opposed Weapon Skill Test.</b> If the character wins the Test, the enemy drops his weapon at his feet. Should the character obtain three or more Degrees of Success, he may take the enemy's weapon from him.</p>",
     "compendiumId": "tal00000000050",
-    "modifiers": []
+    "modifiers": [],
+    "rankRequired": 1
   }
 }

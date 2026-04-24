@@ -10,6 +10,7 @@ import { Logger } from "../logger.mjs";
 import { HordeCombatHelper } from "./horde-combat.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 import { CyberneticHelper } from "../cybernetic-helper.mjs";
+import { WeaponModifierCollector } from "./weapon-modifier-collector.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -298,14 +299,11 @@ export class CombatHelper {
    * @private
    */
   static _getFuryThreshold(weapon, actor) {
-    if (!weapon.system.loadedAmmo || !actor) return 10;
-    const ammo = actor.items.get(weapon.system.loadedAmmo);
-    if (!ammo || !Array.isArray(ammo.system.modifiers)) return 10;
+    if (!weapon || !actor) return 10;
 
-    for (const mod of ammo.system.modifiers) {
-      if (mod.enabled !== false && mod.effectType === 'righteous-fury-threshold') {
-        return parseInt(mod.modifier) || 10;
-      }
+    const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {});
+    if (weaponMods.righteousFury.length > 0) {
+      return parseInt(weaponMods.righteousFury[0].modifier) || 10;
     }
     return 10;
   }
@@ -333,16 +331,10 @@ export class CombatHelper {
   static async _getMagnitudeBonusDamage(weapon, actor) {
     let total = 0;
 
-    // Check ammo modifiers
-    if (weapon.system.loadedAmmo && actor) {
-      const ammo = actor.items.get(weapon.system.loadedAmmo);
-      if (ammo && Array.isArray(ammo.system.modifiers)) {
-        for (const mod of ammo.system.modifiers) {
-          if (mod.enabled !== false && mod.effectType === 'magnitude-bonus-damage') {
-            total += parseInt(mod.modifier) || 0;
-          }
-        }
-      }
+    // Check ammo modifiers via collector
+    if (weapon && actor) {
+      const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {});
+      total += weaponMods.magnitudeBonus.reduce((sum, mod) => sum + (parseInt(mod.modifier) || 0), 0);
     }
 
     // Check Devastating weapon quality
@@ -371,19 +363,17 @@ export class CombatHelper {
    * @private
    */
   static _getCharacteristicDamageEffect(weapon, actor) {
-    if (!weapon.system.loadedAmmo || !actor) return null;
-    const ammo = actor.items.get(weapon.system.loadedAmmo);
-    if (!ammo || !Array.isArray(ammo.system.modifiers)) return null;
+    if (!weapon || !actor) return null;
 
-    for (const mod of ammo.system.modifiers) {
-      if (mod.enabled !== false && mod.effectType === 'characteristic-damage') {
-        return {
-          formula: mod.modifier,
-          characteristic: mod.valueAffected,
-          name: mod.name
-        };
-      }
+    const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {});
+    const charDamage = weaponMods.characteristicDamage;
+
+    // Strip 'source' field for backward compatibility with legacy callers
+    if (charDamage) {
+      const { source, ...legacyFormat } = charDamage;
+      return legacyFormat;
     }
+
     return null;
   }
 
@@ -403,16 +393,10 @@ export class CombatHelper {
    * @private
    */
   static _getIgnoresNaturalArmour(weapon, actor) {
-    if (!weapon.system.loadedAmmo || !actor) return false;
-    const ammo = actor.items.get(weapon.system.loadedAmmo);
-    if (!ammo || !Array.isArray(ammo.system.modifiers)) return false;
+    if (!weapon || !actor) return false;
 
-    for (const mod of ammo.system.modifiers) {
-      if (mod.enabled !== false && mod.effectType === 'ignores-natural-armour') {
-        return true;
-      }
-    }
-    return false;
+    const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {});
+    return weaponMods.ignoresNaturalArmor;
   }
 
   /**

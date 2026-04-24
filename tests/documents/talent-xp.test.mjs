@@ -122,7 +122,7 @@ describe('Talent XP Cost', () => {
       actor.items = { [Symbol.iterator]: function* () { yield* mockItems; }, get: (id) => id === 'spec1' ? mockSpecialty : null };
       prepareCharacterData(actor);
 
-      expect(actor.system.xp.spent).toBe(12750); // 12000 + 500 + 250 + 0
+      expect(actor.system.xp.spent).toBe(12750); // 12000 + 500 (talent) + 250 (characteristic) + 0 (awareness trained from skills.json)
     });
 
     it('ignores talents without cost field', () => {

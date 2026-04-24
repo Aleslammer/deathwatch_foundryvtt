@@ -3,6 +3,7 @@ import { CombatDialogHelper } from "./combat-dialog.mjs";
 import { CombatHelper } from "./combat.mjs";
 import { WeaponQualityHelper } from "./weapon-quality-helper.mjs";
 import { WeaponUpgradeHelper } from "./weapon-upgrade-helper.mjs";
+import { WeaponModifierCollector } from "./weapon-modifier-collector.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 
 /**
@@ -62,18 +63,8 @@ export class RangedCombatHelper {
    * // Returns: { detonates: true, threshold: 95 } if using volatile plasma ammo
    */
   static checkPrematureDetonation(weapon, actor, hitValue) {
-    let threshold = 101;
-    if (weapon.system.loadedAmmo && actor) {
-      const ammo = actor.items.get(weapon.system.loadedAmmo);
-      if (ammo?.system.modifiers) {
-        for (const mod of ammo.system.modifiers) {
-          if (mod.enabled !== false && mod.effectType === 'premature-detonation') {
-            threshold = parseInt(mod.modifier) || 101;
-            break;
-          }
-        }
-      }
-    }
+    const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, {});
+    const threshold = weaponMods.prematureDetonation.threshold;
     return { detonates: hitValue >= threshold, threshold };
   }
 
@@ -231,6 +222,7 @@ export class RangedCombatHelper {
    * @property {boolean} return.hasReliable - Whether weapon has Reliable quality
    * @property {number} return.ammoExpended - Total ammo consumed
    * @property {Object[]} return.modifierParts - Breakdown of all modifiers
+   * @property {string[]} return.hitsParts - Array of hit calculation breakdown strings
    * @example
    * const result = await RangedCombatHelper.resolveRangedAttack(actor, boltgun, {
    *   hitValue: 42,
@@ -249,7 +241,7 @@ export class RangedCombatHelper {
     const {
       hitValue, aim, autoFire, calledShot, runningTarget, miscModifier,
       rangeMod, rangeLabel, rofParts,
-      sizeModifier = 0, sizeLabel = '', targetActor = null
+      sizeModifier = 0, sizeLabel = '', targetActor = null, isMoving = false
     } = options;
 
     const bs = actor.system.characteristics.bs.value || 0;
@@ -271,9 +263,9 @@ export class RangedCombatHelper {
     const isSingleShot = roundsFired === 1;
     const isAutoFire = autoFire !== RATE_OF_FIRE_MODIFIERS.SINGLE;
 
-    const upgradeModifiers = await WeaponUpgradeHelper.getModifiers(weapon, isSingleShot, isAutoFire);
-    const upgradeBSBonus = upgradeModifiers
-      .filter(m => m.effectType === 'characteristic' && m.valueAffected === 'bs')
+    const weaponMods = WeaponModifierCollector.collectWeaponModifiers(weapon, actor, { isSingleShot, isAutoFire });
+    const upgradeBSBonus = weaponMods.characteristic
+      .filter(m => m.valueAffected === 'bs')
       .reduce((sum, m) => sum + (parseInt(m.modifier) || 0), 0);
 
     const hasTelescopicSight = await WeaponUpgradeHelper.hasUpgrade(weapon, 'telescopic-sight');
@@ -284,11 +276,11 @@ export class RangedCombatHelper {
       telescopicRangeMod = 0;
     }
 
-    const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus } = CombatDialogHelper.buildAttackModifiers({
+    const { targetNumber, accurateBonus, gyroRangeMod, twinLinkedBonus, movementPenalty } = CombatDialogHelper.buildAttackModifiers({
       bs, bsAdv: 0, aim, autoFire, calledShot,
       rangeMod: telescopicRangeMod, runningTarget,
       miscModifier: miscModifier + upgradeBSBonus,
-      sizeModifier, isAccurate, isInaccurate, isGyroStabilised, isTwinLinked
+      sizeModifier, isAccurate, isInaccurate, isGyroStabilised, isTwinLinked, isMoving
     });
 
     const { detonates: hasPrematureDetonation } = RangedCombatHelper.checkPrematureDetonation(weapon, actor, hitValue);
@@ -296,16 +288,36 @@ export class RangedCombatHelper {
     let hitsTotal = CombatDialogHelper.calculateHits(hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked);
 
     if (targetActor && hitsTotal > 0) {
+      console.log('[RangedCombat] Target actor type:', targetActor.type);
+      console.log('[RangedCombat] Weapon for blast check:', {
+        name: weapon.name,
+        effectiveBlast: weapon.system.effectiveBlast,
+        attachedQualities: weapon.system.attachedQualities
+      });
+
       const blastValue = await WeaponQualityHelper.getBlastValue(weapon);
+      console.log('[RangedCombat] Blast value retrieved:', blastValue);
+
       const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
       const hasPowerField = await WeaponQualityHelper.hasQuality(weapon, 'power-field');
       const degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber);
+
+      console.log('[RangedCombat] Calling calculateHitsReceived with:', {
+        targetType: targetActor.type,
+        baseHits: hitsTotal,
+        blastValue,
+        isFlame,
+        degreesOfSuccess
+      });
+
       hitsTotal = targetActor.system.calculateHitsReceived({
         damageType: weapon.system.dmgType || '',
         blastValue, isFlame,
         flameRange: parseInt(weapon.system.effectiveRange || weapon.system.range) || 0,
         isMelee: false, degreesOfSuccess, hasPowerField, baseHits: hitsTotal
       });
+
+      console.log('[RangedCombat] Hits after calculateHitsReceived:', hitsTotal);
     }
 
     const isHorde = actor.type === 'horde';
@@ -317,15 +329,93 @@ export class RangedCombatHelper {
 
     const modifierParts = CombatDialogHelper.buildModifierParts(
       bs, 0, aim, autoFire, calledShot, gyroRangeMod, runningTarget,
-      miscModifier, accurateBonus, twinLinkedBonus, upgradeModifiers, sizeModifier, sizeLabel
+      miscModifier, accurateBonus, twinLinkedBonus, weaponMods.characteristic, sizeModifier, sizeLabel, movementPenalty
     );
+
+    // Build hits breakdown array
+    const hitsParts = [];
+    const degreesOfSuccess = CombatDialogHelper.calculateDegreesOfSuccess(hitValue, targetNumber);
+    const isHordeTarget = targetActor && targetActor.type === 'horde';
+    hitsParts.push(`Degrees of Success: ${degreesOfSuccess}`);
+
+    // For multi-shot attacks, show RoF details
+    if (roundsFired > 1) {
+      const rateLabel = autoFire === RATE_OF_FIRE_MODIFIERS.FULL_AUTO ? 'Full Auto' :
+                        autoFire === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO ? 'Semi-Auto' : 'Single';
+      hitsParts.push(`Rate of Fire: ${roundsFired} rounds (${rateLabel})`);
+    }
+
+    // For horde targets, show detailed breakdown (single or multi-shot)
+    if (isHordeTarget && hitsTotal > 0) {
+      // Calculate base hits (before Blast/Explosive bonuses)
+      const baseHitsBeforeHordeCalc = CombatDialogHelper.calculateHits(
+        hitValue, targetNumber, maxHits, autoFire, isScatter, isPointBlank, isStorm, isTwinLinked
+      );
+      hitsParts.push(`Base Hits: ${baseHitsBeforeHordeCalc} (capped at ${maxHits})`);
+
+      // Check for blast and explosive after horde calculation
+      const blastValue = await WeaponQualityHelper.getBlastValue(weapon);
+      if (blastValue > 0) {
+        hitsParts.push(`Blast [${blastValue}]: +${blastValue}`);
+      }
+
+      const isExplosive = weapon.system.dmgType?.toLowerCase() === 'explosive';
+      if (isExplosive) {
+        hitsParts.push(`Explosive Damage: +1`);
+      }
+    } else if (roundsFired > 1) {
+      // Single target with multi-shot
+      const displayHits = isStorm && hitsTotal > 0 ? Math.floor(hitsTotal / 2) : hitsTotal;
+      hitsParts.push(`Base Hits: ${displayHits} (capped at ${maxHits})`);
+
+      // Twin-Linked bonus
+      if (isTwinLinked && degreesOfSuccess >= 2) {
+        hitsParts.push(`Twin-Linked: +1 (2+ DoS)`);
+      }
+
+      // Storm quality
+      if (isStorm && hitsTotal > 0) {
+        const preStormHits = Math.floor(hitsTotal / 2);
+        hitsParts.push(`Storm Quality: ×2 (${preStormHits} → ${hitsTotal})`);
+      }
+
+      // Scatter at Point Blank
+      if (isScatter && isPointBlank && degreesOfSuccess > 0) {
+        const scatterBonus = Math.floor(degreesOfSuccess / 2);
+        if (scatterBonus > 0) {
+          hitsParts.push(`Scatter (Point Blank): +${scatterBonus} (DoS ÷ 2)`);
+        }
+      }
+    } else {
+      // Single shot attacks against single targets
+      // Twin-Linked bonus
+      if (isTwinLinked && degreesOfSuccess >= 2) {
+        hitsParts.push(`Twin-Linked: +1 (2+ DoS)`);
+      }
+
+      // Storm quality
+      if (isStorm && hitsTotal > 0) {
+        const preStormHits = Math.floor(hitsTotal / 2);
+        hitsParts.push(`Storm Quality: ×2 (${preStormHits} → ${hitsTotal})`);
+      }
+
+      // Scatter at Point Blank
+      if (isScatter && isPointBlank && degreesOfSuccess > 0) {
+        const scatterBonus = Math.floor(degreesOfSuccess / 2);
+        if (scatterBonus > 0) {
+          hitsParts.push(`Scatter (Point Blank): +${scatterBonus} (DoS ÷ 2)`);
+        }
+      }
+    }
+
+    hitsParts.push(`<strong>Total: ${hitsTotal} Hit${hitsTotal !== 1 ? 's' : ''}</strong>`);
 
     return {
       hitValue, targetNumber, hitsTotal, maxHits, roundsFired,
       isJammed, hasPrematureDetonation, isOverheated,
-      hasReliable, ammoExpended, modifierParts,
+      hasReliable, ammoExpended, modifierParts, hitsParts,
       isStorm, isTwinLinked, isScatter, isPointBlank,
-      accurateBonus, twinLinkedBonus, gyroRangeMod, upgradeModifiers
+      accurateBonus, twinLinkedBonus, gyroRangeMod, weaponMods
     };
   }
 
@@ -382,6 +472,7 @@ export class RangedCombatHelper {
     }
 
     const bs = actor.system.characteristics.bs.value || 0;
+    const agBonus = actor.system.characteristics?.ag?.mod || 0;
 
     const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
@@ -429,6 +520,9 @@ export class RangedCombatHelper {
     const hasSemiAuto = rofParts[1] && rofParts[1] !== '-' && (!hasAmmoManagement || currentAmmo >= semiAutoRounds);
     const hasFullAuto = rofParts[2] && rofParts[2] !== '-' && (!hasAmmoManagement || currentAmmo >= fullAutoRounds);
 
+    const weaponClass = weapon.system.class?.toLowerCase() || '';
+    const canMoveWhileFiring = weaponClass === 'pistol' || weaponClass === 'basic';
+
     let rofOptions = '';
     if (hasSingle) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SINGLE}" data-rounds="1">Single (1 round)</option>`;
     if (hasSemiAuto) rofOptions += `<option value="${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}" data-rounds="${semiAutoRounds}">Semi-Auto (+${RATE_OF_FIRE_MODIFIERS.SEMI_AUTO}, ${semiAutoRounds} rounds)</option>`;
@@ -453,6 +547,12 @@ export class RangedCombatHelper {
         <select id="autoFire" name="autoFire">
           ${rofOptions}
         </select>
+      </div>
+      <div class="form-group" id="movingGroup" style="display: none;">
+        <label title="Movement penalty info">
+          <i class="far fa-square" id="movingIcon"></i> Move up to ${agBonus}m (loses +10 bonus)
+          <input type="checkbox" id="moving" name="moving" style="display:none;" />
+        </label>
       </div>
       <div class="form-group" style="display: flex; gap: 20px;">
         <label title="${COMBAT_PENALTIES.CALLED_SHOT} penalty"><i class="far fa-square" id="calledShotIcon"></i> Called Shot
@@ -485,6 +585,68 @@ export class RangedCombatHelper {
           this.value = this.value.replace(/[^0-9+\-]/g, '');
         });
 
+        // Get references for moving checkbox
+        const rofSelect = el.querySelector('#autoFire');
+        const movingGroup = el.querySelector('#movingGroup');
+        const movingCheckbox = el.querySelector('#moving');
+        const movingLabel = movingGroup?.querySelector('label');
+
+        // Function to update checkbox visibility and label
+        const updateMovingCheckbox = () => {
+          const selectedRoF = parseInt(rofSelect.value);
+
+          if (selectedRoF === RATE_OF_FIRE_MODIFIERS.SEMI_AUTO) {
+            movingGroup.style.display = '';  // Show
+
+            if (canMoveWhileFiring) {
+              movingLabel.innerHTML = `<i class="far fa-square" id="movingIcon"></i> Move up to ${agBonus}m (loses +10 bonus)
+  <input type="checkbox" id="moving" name="moving" style="display:none;" />`;
+              const freshCheckbox = movingGroup.querySelector('#moving');
+              freshCheckbox.disabled = !canMoveWhileFiring;
+              movingLabel.title = 'Semi-Auto: moving cancels the +10 bonus (net modifier: 0)';
+            } else {
+              const reason = weaponClass === 'heavy'
+                ? 'Heavy weapons cannot move while firing auto-fire'
+                : 'Thrown weapons cannot move during auto-fire attacks';
+              movingLabel.innerHTML = `<i class="far fa-square" id="movingIcon"></i> Move up to ${agBonus}m (loses +10 bonus)
+  <input type="checkbox" id="moving" name="moving" style="display:none;" />`;
+              const freshCheckbox = movingGroup.querySelector('#moving');
+              freshCheckbox.disabled = !canMoveWhileFiring;
+              movingLabel.title = reason;
+            }
+          }
+          else if (selectedRoF === RATE_OF_FIRE_MODIFIERS.FULL_AUTO) {
+            movingGroup.style.display = '';  // Show
+
+            if (canMoveWhileFiring) {
+              movingLabel.innerHTML = `<i class="far fa-square" id="movingIcon"></i> Move up to ${agBonus}m (becomes -10 penalty)
+  <input type="checkbox" id="moving" name="moving" style="display:none;" />`;
+              const freshCheckbox = movingGroup.querySelector('#moving');
+              freshCheckbox.disabled = !canMoveWhileFiring;
+              movingLabel.title = 'Full-Auto: moving cancels +20 and adds -10 (net modifier: -10)';
+            } else {
+              const reason = weaponClass === 'heavy'
+                ? 'Heavy weapons cannot move while firing auto-fire'
+                : 'Thrown weapons cannot move during auto-fire attacks';
+              movingLabel.innerHTML = `<i class="far fa-square" id="movingIcon"></i> Move up to ${agBonus}m (becomes -10 penalty)
+  <input type="checkbox" id="moving" name="moving" style="display:none;" />`;
+              const freshCheckbox = movingGroup.querySelector('#moving');
+              freshCheckbox.disabled = !canMoveWhileFiring;
+              movingLabel.title = reason;
+            }
+          }
+          else {
+            movingGroup.style.display = 'none';  // Hide for Single Shot
+            movingCheckbox.checked = false;  // Reset state when hidden
+          }
+        };
+
+        // Initial update
+        updateMovingCheckbox();
+
+        // Listen for RoF changes
+        rofSelect.addEventListener('change', updateMovingCheckbox);
+
         const setupCheckbox = (id) => {
           const label = el.querySelector(`label:has(#${id})`);
           if (!label) return;
@@ -492,6 +654,10 @@ export class RangedCombatHelper {
             e.preventDefault();
             const cb = label.querySelector(`#${id}`);
             const icon = label.querySelector(`#${id}Icon`);
+
+            // Check if disabled before toggling
+            if (cb.disabled) return;
+
             cb.checked = !cb.checked;
             icon.classList.toggle('fa-square');
             icon.classList.toggle('fa-check-square');
@@ -502,6 +668,7 @@ export class RangedCombatHelper {
         };
         setupCheckbox('calledShot');
         setupCheckbox('runningTarget');
+        setupCheckbox('moving');
 
         if (hasOptions) {
           if (options.aim !== undefined) el.querySelector('#aim').value = CombatDialogHelper.mapAimOption(options.aim);
@@ -517,6 +684,19 @@ export class RangedCombatHelper {
             el.querySelector('#runningTargetIcon').classList.replace('fa-square', 'fa-check-square');
           }
           if (options.miscModifier !== undefined) el.querySelector('#miscModifier').value = options.miscModifier;
+
+          // Handle preset moving option
+          if (options.moving) {
+            const movingCb = el.querySelector('#moving');
+            const movingIcon = el.querySelector('#movingIcon');
+            if (movingCb && !movingCb.disabled) {
+              movingCb.checked = true;
+              movingIcon?.classList.replace('fa-square', 'fa-check-square');
+            }
+          }
+
+          // Update checkbox visibility after setting presets
+          updateMovingCheckbox();
         }
       },
       buttons: [
@@ -529,6 +709,7 @@ export class RangedCombatHelper {
             const calledShot = el.querySelector('#calledShot').checked ? COMBAT_PENALTIES.CALLED_SHOT : 0;
             const runningTarget = el.querySelector('#runningTarget').checked ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
             const miscModifier = parseInt(el.querySelector('#miscModifier').value) || 0;
+            const isMoving = el.querySelector('#moving')?.checked || false;
 
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
@@ -539,19 +720,29 @@ export class RangedCombatHelper {
             const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, {
               hitValue, aim, autoFire, calledShot, runningTarget, miscModifier,
               rangeMod: autoRangeMod, rangeLabel, rofParts,
-              sizeModifier, sizeLabel, targetActor
+              sizeModifier, sizeLabel, targetActor, isMoving
             });
 
             let { hitsTotal, isJammed } = result;
             const { targetNumber, hasPrematureDetonation, isOverheated, hasReliable,
-                    ammoExpended, modifierParts, isStorm, isTwinLinked } = result;
+                    ammoExpended, modifierParts, hitsParts, isStorm, isTwinLinked } = result;
 
             // Flame vs Horde: extra 1d5 hits (requires a roll)
             if (targetActor?.type === 'horde' && hitsTotal > 0) {
               const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
               if (isFlame) {
                 const flameRoll = await new Roll('1d5').evaluate();
+                const oldTotal = hitsTotal;
                 hitsTotal += flameRoll.total;
+
+                // Update hitsParts with flame bonus
+                if (hitsParts && Array.isArray(hitsParts)) {
+                  hitsParts.push(`Flame vs Horde: +${flameRoll.total} (1d5)`);
+                  // Update total line (remove old, add new)
+                  hitsParts.pop(); // Remove old total
+                  hitsParts.push(`<strong>Total: ${hitsTotal}</strong>`);
+                }
+
                 await flameRoll.toMessage({
                   speaker: ChatMessage.getSpeaker({ actor }),
                   flavor: `<strong>Flame vs Horde:</strong> +${flameRoll.total} additional hits (1d5)`,
@@ -607,7 +798,7 @@ export class RangedCombatHelper {
 
             // Post chat message
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
-            const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
+            const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
             hitRoll.toMessage({
               speaker: ChatMessage.getSpeaker({ actor }),
               flavor: flavor,
@@ -666,6 +857,7 @@ export class RangedCombatHelper {
     const calledShot = options.calledShot ? COMBAT_PENALTIES.CALLED_SHOT : 0;
     const runningTarget = options.runningTarget ? COMBAT_PENALTIES.RUNNING_TARGET : 0;
     const miscModifier = options.miscModifier || 0;
+    const isMoving = options.moving || false;
 
     const rof = weapon.system.effectiveRof || weapon.system.rof || "S/-/-";
     const rofParts = rof.split('/');
@@ -704,18 +896,29 @@ export class RangedCombatHelper {
     const result = await RangedCombatHelper.resolveRangedAttack(actor, weapon, {
       hitValue, aim, autoFire, calledShot, runningTarget, miscModifier,
       rangeMod: autoRangeMod, rangeLabel, rofParts,
-      sizeModifier, sizeLabel, targetActor
+      sizeModifier, sizeLabel, targetActor,
+      isMoving
     });
 
     let { hitsTotal, isJammed } = result;
     const { targetNumber, hasPrematureDetonation, isOverheated, hasReliable,
-            ammoExpended, modifierParts, isStorm, isTwinLinked } = result;
+            ammoExpended, modifierParts, hitsParts, isStorm, isTwinLinked } = result;
 
     if (targetActor?.type === 'horde' && hitsTotal > 0) {
       const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
       if (isFlame) {
         const flameRoll = await new Roll('1d5').evaluate();
+        const oldTotal = hitsTotal;
         hitsTotal += flameRoll.total;
+
+        // Update hitsParts with flame bonus
+        if (hitsParts && Array.isArray(hitsParts)) {
+          hitsParts.push(`Flame vs Horde: +${flameRoll.total} (1d5)`);
+          // Update total line (remove old, add new)
+          hitsParts.pop(); // Remove old total
+          hitsParts.push(`<strong>Total: ${hitsTotal}</strong>`);
+        }
+
         await flameRoll.toMessage({
           speaker: ChatMessage.getSpeaker({ actor }),
           flavor: `<strong>Flame vs Horde:</strong> +${flameRoll.total} additional hits (1d5)`,
@@ -764,7 +967,7 @@ export class RangedCombatHelper {
     CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0 && options.calledShotLocation) ? options.calledShotLocation : null;
 
     const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
-    const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts);
+    const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
     hitRoll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: flavor,
