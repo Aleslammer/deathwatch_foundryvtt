@@ -1,3 +1,6 @@
+import { Logger } from '../helpers/logger.mjs';
+import { CategoryLoggingConfig } from '../ui/category-logging-config.mjs';
+
 /**
  * Registers all world and client settings for the Deathwatch system.
  */
@@ -64,9 +67,30 @@ export class SettingsRegistrar {
       default: 'INFO',
       onChange: () => {
         // Reinitialize logger with new level
-        const Logger = game.modules.get('deathwatch')?.api?.Logger;
-        if (Logger) Logger.init();
+        Logger.init();
       }
+    });
+
+    // Category logging setting (hidden, controlled by custom UI)
+    game.settings.register('deathwatch', 'enabledLogCategories', {
+      scope: 'client',
+      config: false,
+      type: Array,
+      default: [],
+      onChange: () => {
+        // Reinitialize logger with new categories
+        Logger.init();
+      }
+    });
+
+    // Category logging configuration menu
+    game.settings.registerMenu('deathwatch', 'categoryLoggingMenu', {
+      name: 'Configure Category Logging',
+      label: 'Category Logging',
+      hint: 'Enable detailed logging for specific subsystems (Combat, Character, Psychic, Squad, Items, System)',
+      icon: 'fas fa-list-check',
+      type: CategoryLoggingConfig,
+      restricted: false
     });
   }
 }

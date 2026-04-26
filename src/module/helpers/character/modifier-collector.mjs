@@ -114,10 +114,10 @@ export class ModifierCollector {
       const isActive = item.type === 'chapter' || item.type === 'trait' || item.type === 'talent' || item.system.equipped;
       if (!isActive) continue;
 
-      Logger.debug('MODIFIERS', `Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
+      Logger.category('CHARACTER.MODIFIERS').debug(`Checking item: ${item.name}, type: ${item.type}, equipped: ${item.system.equipped}`);
 
       if (item.system.modifiers) {
-        Logger.debug('MODIFIERS', `  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
+        Logger.category('CHARACTER.MODIFIERS').debug(`  Found ${item.system.modifiers.length} modifiers on ${item.name}`);
         for (const mod of item.system.modifiers) {
           if (mod.enabled !== false) {
             modifiers.push({ ...mod, source: item.name });
@@ -130,7 +130,7 @@ export class ModifierCollector {
       }
     }
 
-    Logger.debug('MODIFIERS', `Total item modifiers collected: ${modifiers.length}`);
+    Logger.category('CHARACTER.MODIFIERS').debug(`Total item modifiers collected: ${modifiers.length}`);
     return modifiers;
   }
 
@@ -143,22 +143,22 @@ export class ModifierCollector {
   static collectArmorHistoryModifiers(armor, allItems) {
     const modifiers = [];
 
-    Logger.debug('MODIFIERS', `  Armor ${armor.name} has ${armor.system.attachedHistories.length} attached histories`);
+    Logger.category('CHARACTER.MODIFIERS').debug(`  Armor ${armor.name} has ${armor.system.attachedHistories.length} attached histories`);
 
     for (const historyId of armor.system.attachedHistories) {
       // Use .get() if available (Map or test mock), otherwise use .find() (Array)
       const history = typeof allItems.get === 'function'
         ? allItems.get(historyId)
         : allItems.find(item => item._id === historyId || item.id === historyId);
-      Logger.debug('MODIFIERS', `    History ID: ${historyId}, found: ${!!history}`);
+      Logger.category('CHARACTER.MODIFIERS').debug(`    History ID: ${historyId}, found: ${!!history}`);
 
       if (history) {
-        Logger.debug('MODIFIERS', `    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
+        Logger.category('CHARACTER.MODIFIERS').debug(`    History: ${history.name}, modifiers: ${history.system.modifiers?.length || 0}`);
       }
 
       if (history && Array.isArray(history.system.modifiers)) {
         for (const mod of history.system.modifiers) {
-          Logger.debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
+          Logger.category('CHARACTER.MODIFIERS').debug(`      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
           if (mod.enabled !== false) {
             modifiers.push({ ...mod, source: `${history.name} (${armor.name})` });
           }
@@ -178,7 +178,7 @@ export class ModifierCollector {
   static collectWeaponUpgradeModifiers(weapon, allItems) {
     const modifiers = [];
 
-    Logger.debug('MODIFIERS', `  Weapon ${weapon.name} has ${weapon.system.attachedUpgrades.length} attached upgrades`);
+    Logger.category('CHARACTER.MODIFIERS').debug(`  Weapon ${weapon.name} has ${weapon.system.attachedUpgrades.length} attached upgrades`);
 
     for (const upgradeRef of weapon.system.attachedUpgrades) {
       const upgradeId = typeof upgradeRef === 'string' ? upgradeRef : upgradeRef.id;
@@ -186,15 +186,15 @@ export class ModifierCollector {
       const upgrade = typeof allItems.get === 'function'
         ? allItems.get(upgradeId)
         : allItems.find(item => item._id === upgradeId || item.id === upgradeId);
-      Logger.debug('MODIFIERS', `    Upgrade ID: ${upgradeId}, found: ${!!upgrade}`);
+      Logger.category('CHARACTER.MODIFIERS').debug(`    Upgrade ID: ${upgradeId}, found: ${!!upgrade}`);
 
       if (upgrade) {
-        Logger.debug('MODIFIERS', `    Upgrade: ${upgrade.name}, modifiers: ${upgrade.system.modifiers?.length || 0}`);
+        Logger.category('CHARACTER.MODIFIERS').debug(`    Upgrade: ${upgrade.name}, modifiers: ${upgrade.system.modifiers?.length || 0}`);
       }
 
       if (upgrade && Array.isArray(upgrade.system.modifiers)) {
         for (const mod of upgrade.system.modifiers) {
-          Logger.debug('MODIFIERS', `      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
+          Logger.category('CHARACTER.MODIFIERS').debug(`      Modifier: ${mod.name}, ${mod.modifier}, ${mod.effectType}, ${mod.valueAffected}`);
           if (mod.enabled !== false) {
             modifiers.push({ ...mod, source: `${upgrade.name} (${weapon.name})` });
           }

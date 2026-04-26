@@ -45,7 +45,7 @@ export class CombatHelper {
    * // Returns: { modifier: +10, label: "Short" }
    */
   static calculateRangeModifier(distance, weaponRange) {
-    Logger.debug('COMBAT', `Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
+    Logger.category('COMBAT.RANGED').debug(`Distance: ${distance}m, Weapon Range: ${weaponRange}m`);
     if (distance <= 2) {
       return { modifier: RANGE_MODIFIERS.POINT_BLANK, label: "Point Blank" };
     } else if (distance < (weaponRange * 0.5)) {

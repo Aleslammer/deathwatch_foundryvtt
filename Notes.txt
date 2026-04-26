@@ -1,25 +1,8 @@
-
-file://energon1/Misc/RPG/Deathwatch/Deathwatch%20-%20Core%20Rulebook.pdf
-
-to convert a png to webp!
-https://developers.google.com/speed/webp/download
-C:\Source\libs\libwebp-1.6.0\bin\cwebp.exe "./src/icons/weapons/tau-missle-pod.png" -o "./src/icons/weapons/tau-missle-pod.webp"
-
-
-TODO: I have issues still with first load of html files.
-
 System:
 
-    TODO: add extensive logging for each of the critical system paths
-        Ranged attack
-        Melee attack
-        Psychic attack
-        Ranged damage
-        Melee Damage
-        Psychic Damage
-        Mechanics (ammo depletion etc)
-        system events
-        cohesion        
+    TODO: System template.json is deprecated. System-provided Document types should be defined in system.json, and optionally be associated with a system data model. Please see the KB article on System Data Models for more details: https://foundryvtt.com/article/system-data-models/. Support for template.json will be removed in V16.
+    TODO: need to add official module installation from GitHub
+    TODO: Implement Standard Character values.   
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -125,13 +108,3 @@ Talents
 Traits
     Unnatural Strength (x2)
     Unnatural Toughness (x2)
-
-
-Still need to test out Test 4
-Testing out the hit expander I think the bolter looks right but the heavy bolter has some wierdness
-DoS and multi shot seem off
-
-    Bolter semi auto - DoS = 3 RoF = 3 Hits = 2?
-        Target 60 Rolled a 27
-
-

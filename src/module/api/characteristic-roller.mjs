@@ -105,13 +105,13 @@ export class CharacteristicRoller {
     // Validate inputs
     const actor = game.actors.get(actorId);
     if (!actor) {
-      Logger.error('CHAR_ROLLER', `Actor not found: ${actorId}`);
+      Logger.category('CHARACTER.CHARACTERISTICS').error(`Actor not found: ${actorId}`);
       ui.notifications.error(`Actor not found: ${actorId}`);
       return null;
     }
 
     if (!characteristicKey || typeof characteristicKey !== 'string') {
-      Logger.error('CHAR_ROLLER', 'Characteristic key must be a non-empty string');
+      Logger.category('CHARACTER.CHARACTERISTICS').error('Characteristic key must be a non-empty string');
       ui.notifications.error('Characteristic key must be provided');
       return null;
     }
@@ -122,7 +122,7 @@ export class CharacteristicRoller {
     // Validate characteristic exists
     const characteristic = actor.system.characteristics?.[charKey];
     if (!characteristic) {
-      Logger.error('CHAR_ROLLER', `Characteristic not found: ${characteristicKey}`);
+      Logger.category('CHARACTER.CHARACTERISTICS').error(`Characteristic not found: ${characteristicKey}`);
       ui.notifications.error(`Characteristic "${characteristicKey}" not found on actor ${actor.name}`);
       return null;
     }
@@ -145,7 +145,7 @@ export class CharacteristicRoller {
     // Parse difficulty modifier
     const difficultyModifier = this._parseDifficulty(difficulty);
 
-    Logger.debug('CHAR_ROLLER', `Rolling ${label} for ${actor.name}`, {
+    Logger.category('CHARACTER.CHARACTERISTICS').debug(`Rolling ${label} for ${actor.name}`, {
       charKey,
       value: characteristic.value,
       modifier,

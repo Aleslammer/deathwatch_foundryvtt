@@ -79,13 +79,13 @@ export class SkillRoller {
     // Validate inputs
     const actor = game.actors.get(actorId);
     if (!actor) {
-      Logger.error('SKILL_ROLLER', `Actor not found: ${actorId}`);
+      Logger.category('CHARACTER.SKILLS').error(`Actor not found: ${actorId}`);
       ui.notifications.error(`Actor not found: ${actorId}`);
       return null;
     }
 
     if (!skillName || typeof skillName !== 'string') {
-      Logger.error('SKILL_ROLLER', 'Skill name must be a non-empty string');
+      Logger.category('CHARACTER.SKILLS').error('Skill name must be a non-empty string');
       ui.notifications.error('Skill name must be provided');
       return null;
     }
@@ -95,7 +95,7 @@ export class SkillRoller {
     const skillKey = this._findSkillKey(skills, skillName);
 
     if (!skillKey) {
-      Logger.error('SKILL_ROLLER', `Skill not found: ${skillName}`);
+      Logger.category('CHARACTER.SKILLS').error(`Skill not found: ${skillName}`);
       ui.notifications.error(`Skill "${skillName}" not found on actor ${actor.name}`);
       return null;
     }
@@ -105,7 +105,7 @@ export class SkillRoller {
 
     // Validate skill can be used
     if (!skill.isBasic && !skill.trained) {
-      Logger.warn('SKILL_ROLLER', `Skill ${label} is untrained advanced skill`);
+      Logger.category('CHARACTER.SKILLS').warn(`Skill ${label} is untrained advanced skill`);
       ui.notifications.warn(`${label} is an advanced skill and must be trained to use.`);
       return null;
     }
@@ -127,7 +127,7 @@ export class SkillRoller {
     // Parse difficulty modifier
     const difficultyModifier = this._parseDifficulty(difficulty);
 
-    Logger.debug('SKILL_ROLLER', `Rolling ${label} for ${actor.name}`, {
+    Logger.category('CHARACTER.SKILLS').debug(`Rolling ${label} for ${actor.name}`, {
       skillTotal,
       modifier,
       difficultyModifier,

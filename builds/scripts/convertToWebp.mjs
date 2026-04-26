@@ -23,27 +23,28 @@
  *   node builds/scripts/convertToWebp.mjs --trim-black src/icons/enemies/tyranid/file.webp
  *   node builds/scripts/convertToWebp.mjs --trim-black src/icons/enemies/tyranid 15%
  */
-import { readdirSync, statSync, unlinkSync, readFileSync, existsSync } from "fs";
-import { join, extname, basename, dirname, resolve } from "path";
+import { readdirSync, statSync, unlinkSync } from "fs";
+import { join, extname, basename, dirname } from "path";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
+import { getEnv } from "./loadEnv.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const envPath = resolve(__dirname, "../../.env");
-const env = existsSync(envPath) ? readFileSync(envPath, "utf-8") : "";
 
-function getEnv(key) {
-  const match = env.match(new RegExp(`^${key}=(.+)$`, "m"));
-  return match ? match[1].trim() : null;
+// Determine which env file to use (default or local)
+const envFile = process.env.ENV_FILE || 'default';
+
+function getEnvVar(key) {
+  return getEnv(key, envFile);
 }
 
 // ── Trim mode: remove background color ────────────────────────────────────
 
 if (process.argv[2] === "--trim" || process.argv[2] === "--trim-black") {
   const color = process.argv[2] === "--trim-black" ? "black" : "white";
-  const MAGICK = getEnv("MAGICK_PATH");
+  const MAGICK = getEnvVar("MAGICK_PATH");
   if (!MAGICK) {
-    console.error("MAGICK_PATH not set. Add to .env: MAGICK_PATH=C:\\Program Files\\ImageMagick\\magick.exe");
+    console.error("MAGICK_PATH not set. Add to env/.env or env/local.env: MAGICK_PATH=C:\\Program Files\\ImageMagick\\magick.exe");
     process.exit(1);
   }
 
@@ -95,9 +96,9 @@ if (process.argv[2] === "--trim" || process.argv[2] === "--trim-black") {
 
 // ── Convert mode: PNG/JPG to WebP ─────────────────────────────────────────
 
-const CWEBP = getEnv("CWEBP_PATH");
+const CWEBP = getEnvVar("CWEBP_PATH");
 if (!CWEBP) {
-  console.error("CWEBP_PATH not set. Add to .env: CWEBP_PATH=C:\\path\\to\\cwebp.exe");
+  console.error("CWEBP_PATH not set. Add to env/.env or env/local.env: CWEBP_PATH=C:\\path\\to\\cwebp.exe");
   process.exit(1);
 }
 
