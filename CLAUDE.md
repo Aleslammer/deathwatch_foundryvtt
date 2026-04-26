@@ -149,7 +149,7 @@ This project uses Claude Code's persistent memory system to capture:
 - **Item Keys** — Never match by ID/name, use `key` field ([item-patterns.md](.claude/docs/item-patterns.md))
 - **Constants** — No magic numbers, use constants from `src/module/helpers/constants/` ([constants.md](.claude/docs/constants.md))
 - **Error Handling** — Wrap event listeners with `ErrorHandler.wrap()` ([coding-standards.md](.claude/docs/coding-standards.md))
-- **Logging** — Use `Logger.debug/info/warn/error()` not `console.*` ([coding-standards.md](.claude/docs/coding-standards.md))
+- **Logging** — Use `Logger.category('X.Y').debug()` for subsystem logs or `Logger.debug()` for one-off messages. Never use `console.*` ([coding-standards.md](.claude/docs/coding-standards.md))
 
 ---
 
