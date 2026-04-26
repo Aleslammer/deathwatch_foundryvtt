@@ -52,7 +52,7 @@ export class InsanityHelper {
    * @returns {Promise<void>}
    */
   static async addInsanity(actor, points, source, missionId = null) {
-    Logger.debug('INSANITY', 'Adding insanity', { actor: actor.name, points, source, oldTotal: actor.system.insanity });
+    Logger.category('CHARACTER.INSANITY').debug( 'Adding insanity', { actor: actor.name, points, source, oldTotal: actor.system.insanity });
     const oldTotal = actor.system.insanity || 0;
     const newTotal = oldTotal + points;
 
@@ -77,7 +77,7 @@ export class InsanityHelper {
     // (handles cases where insanity was reduced via GM adjustment)
     if (oldThreshold < lastTestAt) {
       lastTestAt = oldThreshold;
-      Logger.debug('INSANITY', 'Resetting lastTestAt due to reduced insanity', {
+      Logger.category('CHARACTER.INSANITY').debug( 'Resetting lastTestAt due to reduced insanity', {
         from: actor.system.lastInsanityTestAt,
         to: lastTestAt
       });
@@ -95,7 +95,7 @@ export class InsanityHelper {
 
     await FoundryAdapter.updateDocument(actor, updateData);
 
-    Logger.debug('INSANITY', 'Threshold check', {
+    Logger.category('CHARACTER.INSANITY').debug( 'Threshold check', {
       oldTotal,
       newTotal,
       oldThreshold,
@@ -109,7 +109,7 @@ export class InsanityHelper {
 
     if (newThreshold > oldThreshold && newThreshold > lastTestAt) {
       // Trigger insanity test
-      Logger.debug('INSANITY', 'Triggering insanity test', { threshold: newThreshold });
+      Logger.category('CHARACTER.INSANITY').debug( 'Triggering insanity test', { threshold: newThreshold });
       await this.promptInsanityTest(actor, newThreshold);
     }
 
@@ -129,7 +129,7 @@ export class InsanityHelper {
    * @returns {Promise<void>}
    */
   static async promptInsanityTest(actor, threshold) {
-    Logger.debug('INSANITY', 'Prompting insanity test', { actor: actor.name, threshold, insanity: actor.system.insanity });
+    Logger.category('CHARACTER.INSANITY').debug( 'Prompting insanity test', { actor: actor.name, threshold, insanity: actor.system.insanity });
     const trackLevel = this.getTrackLevel(actor.system.insanity);
     const trackModifier = INSANITY_TRACK.MODIFIERS[`LEVEL_${trackLevel}`];
     const wp = actor.system.characteristics?.wil?.value || 0;
@@ -321,7 +321,7 @@ export class InsanityHelper {
       const draw = await table.draw({ displayChat: false });
       const result = draw.results[0];
 
-      Logger.debug('INSANITY', 'Battle Trauma roll result', {
+      Logger.category('CHARACTER.INSANITY').debug( 'Battle Trauma roll result', {
         name: result.name,
         description: result.description,
         type: result.type,
@@ -339,12 +339,12 @@ export class InsanityHelper {
       }
 
       if (!traumaItem) {
-        Logger.error('INSANITY', 'Could not resolve trauma item from result', result);
+        Logger.category('CHARACTER.INSANITY').error( 'Could not resolve trauma item from result', result);
         FoundryAdapter.showNotification("error", `Could not find trauma item for result. Check that the Battle Trauma Table has valid compendium UUIDs in the description field.`);
         return;
       }
 
-      Logger.debug('INSANITY', 'Trauma item resolved', { name: traumaItem.name, uuid: traumaItem.uuid });
+      Logger.category('CHARACTER.INSANITY').debug( 'Trauma item resolved', { name: traumaItem.name, uuid: traumaItem.uuid });
 
       // Check for duplicate
       if (!existingKeys.has(traumaItem.system.key)) {

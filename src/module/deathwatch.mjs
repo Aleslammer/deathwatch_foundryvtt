@@ -34,7 +34,7 @@ import { CharacteristicRoller } from "./api/characteristic-roller.mjs";
 Hooks.once('init', async function () {
   // Initialize logger first (before settings are registered)
   Logger.init();
-  Logger.info('INIT', 'Initializing system');
+  Logger.category('SYSTEM.INIT').info('Initializing system');
 
   // Load skill definitions
   await SkillLoader.init();
@@ -84,7 +84,7 @@ Hooks.once('init', async function () {
   // Preload Handlebars templates
   await preloadHandlebarsTemplates();
 
-  Logger.info('INIT', 'Initialization complete');
+  Logger.category('SYSTEM.INIT').info('Initialization complete');
 });
 
 /* -------------------------------------------- */
@@ -92,7 +92,7 @@ Hooks.once('init', async function () {
 /* -------------------------------------------- */
 
 Hooks.once('ready', async function () {
-  Logger.info('READY', 'System ready');
+  Logger.category('SYSTEM.INIT').info('System ready');
 
   // Initialize socket communication
   SocketHandler.initialize();
@@ -103,5 +103,5 @@ Hooks.once('ready', async function () {
   // Initialize ready hook handlers (hotbar, combat tracker, system macros)
   await ReadyHook.initialize();
 
-  Logger.info('READY', 'Ready');
+  Logger.category('SYSTEM.INIT').info('Ready');
 });

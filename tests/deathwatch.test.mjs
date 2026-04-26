@@ -47,6 +47,7 @@ describe('deathwatch.mjs', () => {
       macros: { find: jest.fn() },
       settings: {
         register: jest.fn(),
+        registerMenu: jest.fn(),
         get: jest.fn(),
         set: jest.fn()
       },

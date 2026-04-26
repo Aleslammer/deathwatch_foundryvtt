@@ -22,7 +22,7 @@ export class SkillLoader {
 
   static loadSkills(actorSkills = {}) {
     if (!skillDefinitions) {
-      Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
+      Logger.error('Skills not loaded. Call SkillLoader.init() first.');
       return {};
     }
 
@@ -51,7 +51,7 @@ export class SkillLoader {
    */
   static getTrainingData(skillKey, level) {
     if (!skillDefinitions) {
-      Logger.error('SKILLS', 'Skills not loaded. Call SkillLoader.init() first.');
+      Logger.error('Skills not loaded. Call SkillLoader.init() first.');
       return null;
     }
 
