@@ -1,8 +1,6 @@
 System:
 
-    TODO: System template.json is deprecated. System-provided Document types should be defined in system.json, and optionally be associated with a system data model. Please see the KB article on System Data Models for more details: https://foundryvtt.com/article/system-data-models/. Support for template.json will be removed in V16.
     TODO: need to add official module installation from GitHub
-    TODO: Implement Standard Character values.   
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -13,7 +11,6 @@ Traits
 
 Talents:
     Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
-    
 
 Weapon Upgrade:
 
@@ -64,47 +61,3 @@ Hadarr - Need to address his gear Also alot of skills pete took I think fall int
     Gear Powered modifiers (narthecium +20 medicae is not being show on the modifiers tab.)
     Drugs shoudl be stackable...
     
-
-Here is what is standard
-
-Skills  
-    Basic
-        Awareness
-        Climb
-        Concealment
-        Dodge
-        Intimidate
-        Silent Move
-    Advanced
-        Chipher - Chapter Runes
-        Drive - Ground
-        Literacy
-        Lore Common - Adeptus Astartes
-        Lore Common - Deathwatch
-        Lore Common - Imperium
-        Lore Common - War
-        Lore Forbidden - Xenos
-        Lore Scholastic - Codex Astartes
-        Navigation - Surface
-        Speak Language - High Gothic
-        Speak Language - Low Gothic
-        Tracking
-        
-        Tactics (Pick One)
-
-Talents
-    Ambidextrous
-    Astartes Weapons Training
-    Bulging Biceps
-    Deathwatch Training Talent
-    Heightened Senses (Sound)
-    Heightened Senses (Sight)
-    Killing Strike
-    Nerves of Steel
-    Quick Draw
-    Resistance (Psychic Powers)
-    True Grit
-    Unarmed Master
-Traits
-    Unnatural Strength (x2)
-    Unnatural Toughness (x2)
