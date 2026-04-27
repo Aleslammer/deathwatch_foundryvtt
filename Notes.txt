@@ -15,7 +15,9 @@ Talents:
 Weapon Upgrade:
 
 Gear:
-    Chapter Trappings (Many players have these)
+    TODO: Chapter Trappings (Many players have these)
+        need to look into the non-standard chapters if they have chapter specific trappings available to them.
+
 
     TODO: Missles should be ammo for the launchers  (Otho has some)
     Relics
