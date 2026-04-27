@@ -15,12 +15,7 @@ Talents:
 Weapon Upgrade:
 
 Gear:
-    TODO: Chapter Trappings (Many players have these)
-        need to look into the non-standard chapters if they have chapter specific trappings available to them.
-
-
-    TODO: Missles should be ammo for the launchers  (Otho has some)
-    Relics
+    TODO:Relics
     Deathwatch Relics
     Chapter Relics
     Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
@@ -35,7 +30,7 @@ TODO: Automated Animations - Can we use this for things?  Need to look at tutori
 
 Enemies:
     TODO: add dark eldar
-    todo: add eldar
+    TODO: add eldar
     
 
 Armor:
