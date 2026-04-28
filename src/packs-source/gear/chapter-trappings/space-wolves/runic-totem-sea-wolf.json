@@ -17,7 +17,7 @@
         "_id": "ct-sw-003-mod-01",
         "name": "Totem of the Sea Wolf",
         "modifier": "3",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "skill",
         "valueAffected": "drive-generic",
         "enabled": true

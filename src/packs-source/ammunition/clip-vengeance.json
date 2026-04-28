@@ -16,6 +16,7 @@
         "_id": "85bce0107abbe78a",
         "name": "Vengeance Penetration",
         "modifier": "9",
+        "type": "equipment",
         "effectType": "weapon-penetration",
         "enabled": true
       },
@@ -23,6 +24,7 @@
         "_id": "156d89340009c9db",
         "name": "Vengeance Felling",
         "modifier": "1",
+        "type": "equipment",
         "effectType": "weapon-felling",
         "enabled": true
       },
@@ -30,6 +32,7 @@
         "_id": "14c02748a1951a38",
         "name": "Vengeance Detonation",
         "modifier": "91",
+        "type": "equipment",
         "effectType": "premature-detonation",
         "enabled": true
       }

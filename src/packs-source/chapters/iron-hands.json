@@ -25,6 +25,7 @@
         "_id": "905e44006b08f157",
         "name": "Chapter Bonus",
         "modifier": 5,
+        "type": "chapter",
         "effectType": "characteristic",
         "valueAffected": "bs",
         "enabled": true
@@ -33,6 +34,7 @@
         "_id": "9f3babaa455038b6",
         "name": "Chapter Bonus",
         "modifier": 5,
+        "type": "chapter",
         "effectType": "characteristic",
         "valueAffected": "tg",
         "enabled": true

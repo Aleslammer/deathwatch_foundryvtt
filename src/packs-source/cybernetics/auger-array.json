@@ -13,6 +13,7 @@
         "_id": "mod000000004",
         "name": "Auger Array Awareness Bonus",
         "modifier": 20,
+        "type": "equipment",
         "effectType": "skill",
         "valueAffected": "awareness",
         "enabled": true

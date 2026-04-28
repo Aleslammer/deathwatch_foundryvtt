@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import { DeathwatchItemSheetV2 } from '../../src/module/sheets/item-sheet-v2.mjs';
+import { MODIFIER_TYPES } from '../../src/module/helpers/constants/modifier-constants.mjs';
 
 describe('DeathwatchItemSheetV2', () => {
   let sheet;
@@ -154,6 +155,76 @@ describe('DeathwatchItemSheetV2', () => {
       const context = { system: mockItem.system };
       sheet._prepareArmorData(context, null);
       expect(context.system.attachedHistories).toEqual([]);
+    });
+  });
+
+  describe('getDefaultModifierType', () => {
+    describe('Type: Talent', () => {
+      it('should return MODIFIER_TYPES.TALENT for talent items', () => {
+        mockItem.type = 'talent';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.TALENT);
+      });
+    });
+
+    describe('Type: Trait', () => {
+      it('should return MODIFIER_TYPES.TRAIT for trait items', () => {
+        mockItem.type = 'trait';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.TRAIT);
+      });
+    });
+
+    describe('Type: Armor', () => {
+      it('should return MODIFIER_TYPES.EQUIPMENT for armor items', () => {
+        mockItem.type = 'armor';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.EQUIPMENT);
+      });
+    });
+
+    describe('Type: Gear', () => {
+      it('should return MODIFIER_TYPES.CHAPTER for chapter trapping gear (key contains "chapter-")', () => {
+        mockItem.type = 'gear';
+        mockItem.system.key = 'chapter-trapping-relic';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.CHAPTER);
+      });
+
+      it('should return MODIFIER_TYPES.CHAPTER for gear with "chapter-" at start of key', () => {
+        mockItem.type = 'gear';
+        mockItem.system.key = 'chapter-blessed-icon';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.CHAPTER);
+      });
+
+      it('should return MODIFIER_TYPES.EQUIPMENT for non-chapter gear', () => {
+        mockItem.type = 'gear';
+        mockItem.system.key = 'standard-gear';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.EQUIPMENT);
+      });
+
+      it('should return MODIFIER_TYPES.EQUIPMENT for gear with undefined key', () => {
+        mockItem.type = 'gear';
+        mockItem.system.key = undefined;
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.EQUIPMENT);
+      });
+    });
+
+    describe('Type: Unknown', () => {
+      it('should return MODIFIER_TYPES.CIRCUMSTANCE for unknown item types', () => {
+        mockItem.type = 'unknown-type';
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.CIRCUMSTANCE);
+      });
+
+      it('should return MODIFIER_TYPES.CIRCUMSTANCE for undefined item type', () => {
+        mockItem.type = undefined;
+        const result = sheet.getDefaultModifierType();
+        expect(result).toBe(MODIFIER_TYPES.CIRCUMSTANCE);
+      });
     });
   });
 });

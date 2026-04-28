@@ -17,7 +17,7 @@
         "_id": "ct-ba-002-mod-01",
         "name": "Icon of Inspiration",
         "modifier": "3",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "skill",
         "valueAffected": "command",
         "enabled": true

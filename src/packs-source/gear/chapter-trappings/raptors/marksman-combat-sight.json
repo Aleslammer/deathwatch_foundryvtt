@@ -17,7 +17,7 @@
         "_id": "ct-rap-001-mod-01",
         "name": "Laser Tracer",
         "modifier": "10",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "characteristic",
         "valueAffected": "bs",
         "enabled": false,
@@ -27,7 +27,7 @@
         "_id": "ct-rap-001-mod-02",
         "name": "Long Range Imaging",
         "modifier": "0",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "custom",
         "valueAffected": "",
         "enabled": false
@@ -36,7 +36,7 @@
         "_id": "ct-rap-001-mod-03",
         "name": "Focal Targeter",
         "modifier": "0",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "custom",
         "valueAffected": "",
         "enabled": false
@@ -45,7 +45,7 @@
         "_id": "ct-rap-001-mod-04",
         "name": "Shadow Light",
         "modifier": "0",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "custom",
         "valueAffected": "",
         "enabled": false
@@ -54,7 +54,7 @@
         "_id": "ct-rap-001-mod-05",
         "name": "Audible Trigger",
         "modifier": "0",
-        "type": "equipment",
+        "type": "chapter",
         "effectType": "custom",
         "valueAffected": "",
         "enabled": false

@@ -21,6 +21,7 @@
         "_id": "8a9a28be7dfc0e5b",
         "name": "Enhanced Strength",
         "modifier": "20",
+        "type": "equipment",
         "effectType": "characteristic-post-multiplier",
         "valueAffected": "str",
         "enabled": true
@@ -29,6 +30,7 @@
         "_id": "2146b73106e00db4",
         "name": "Giant Among Men",
         "modifier": "1",
+        "type": "equipment",
         "effectType": "movement",
         "enabled": true
       },
@@ -36,6 +38,7 @@
         "_id": "633673e117942e47",
         "name": "Hulking Size",
         "modifier": "-10",
+        "type": "equipment",
         "effectType": "skill",
         "valueAffected": "concealment",
         "enabled": true
