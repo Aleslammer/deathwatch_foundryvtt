@@ -1,5 +1,4 @@
 System:
-
     TODO: need to add official module installation from GitHub
 
 Mental State:
@@ -10,7 +9,7 @@ Skills:
 Traits
 
 Talents:
-    Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
+    TODO: Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
 
 Weapon Upgrade:
 
@@ -29,6 +28,7 @@ Ammmunition
 TODO: Automated Animations - Can we use this for things?  Need to look at tutorial and look into it some more....
 
 Enemies:
+    TODO: there are a few enemies with the talent cripling strike of which was just changed to modifier system.   These enemies need to be modified to suppor that
     TODO: add dark eldar
     TODO: add eldar
     
@@ -56,5 +56,4 @@ Campaign Systems
 
 Hadarr - Need to address his gear Also alot of skills pete took I think fall into cant take route but need to validate with class and speciality
     Gear Powered modifiers (narthecium +20 medicae is not being show on the modifiers tab.)
-    Drugs shoudl be stackable...
-    
+ 

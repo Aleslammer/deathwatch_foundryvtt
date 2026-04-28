@@ -154,51 +154,219 @@ describe('Talent Damage Bonuses', () => {
   });
 
   describe('CombatHelper.getCriticalDamageBonus', () => {
+    it('returns 2 for ranged with critical-damage modifier (modifier-based)', () => {
+      // Use a different talent name to prove it's using modifiers, not name lookup
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Some Other Talent',
+          system: {
+            modifiers: [{
+              name: 'Ranged Critical Bonus',
+              modifier: 2,
+              effectType: 'critical-damage',
+              valueAffected: 'ranged',
+              enabled: true
+            }]
+          }
+        }]
+      };
+      expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(2);
+    });
+
     it('returns 2 for ranged with Crack Shot', () => {
-      const actor = { items: [{ type: 'talent', name: 'Crack Shot', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Crack Shot',
+          system: {
+            modifiers: [{
+              name: 'Crack Shot',
+              modifier: 2,
+              effectType: 'critical-damage',
+              valueAffected: 'ranged',
+              enabled: true
+            }]
+          }
+        }]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(2);
     });
 
     it('returns 0 for ranged without Crack Shot', () => {
-      const actor = { items: [] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: []
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(0);
     });
 
     it('returns 0 for melee with Crack Shot (ranged only)', () => {
-      const actor = { items: [{ type: 'talent', name: 'Crack Shot', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Crack Shot',
+          system: {
+            modifiers: [{
+              name: 'Crack Shot',
+              modifier: 2,
+              effectType: 'critical-damage',
+              valueAffected: 'ranged',
+              enabled: true
+            }]
+          }
+        }]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, true)).toBe(0);
     });
 
     it('returns 4 for melee with Crippling Strike', () => {
-      const actor = { items: [{ type: 'talent', name: 'Crippling Strike', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Crippling Strike',
+          system: {
+            modifiers: [{
+              name: 'Crippling Strike',
+              modifier: 4,
+              effectType: 'critical-damage',
+              valueAffected: 'melee',
+              enabled: true
+            }]
+          }
+        }]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, true)).toBe(4);
     });
 
     it('returns 0 for ranged with Crippling Strike (melee only)', () => {
-      const actor = { items: [{ type: 'talent', name: 'Crippling Strike', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Crippling Strike',
+          system: {
+            modifiers: [{
+              name: 'Crippling Strike',
+              modifier: 4,
+              effectType: 'critical-damage',
+              valueAffected: 'melee',
+              enabled: true
+            }]
+          }
+        }]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, false)).toBe(0);
     });
 
     it('returns 2 for melee with Street Fighting and unarmed weapon', () => {
-      const actor = { items: [{ type: 'talent', name: 'Street Fighting', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Street Fighting',
+          system: {
+            modifiers: [{
+              name: 'Street Fighting',
+              modifier: 2,
+              effectType: 'critical-damage',
+              valueAffected: 'melee',
+              enabled: true
+            }]
+          }
+        }]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Unarmed')).toBe(2);
     });
 
     it('returns 2 for melee with Street Fighting and knife weapon', () => {
-      const actor = { items: [{ type: 'talent', name: 'Street Fighting', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Street Fighting',
+          system: {
+            modifiers: [{
+              name: 'Street Fighting',
+              modifier: 2,
+              effectType: 'critical-damage',
+              valueAffected: 'melee',
+              enabled: true
+            }]
+          }
+        }]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Combat Knife')).toBe(2);
     });
 
     it('returns 0 for melee with Street Fighting and non-knife weapon', () => {
-      const actor = { items: [{ type: 'talent', name: 'Street Fighting', system: {} }] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [{
+          type: 'talent',
+          name: 'Street Fighting',
+          system: {
+            modifiers: [{
+              name: 'Street Fighting',
+              modifier: 2,
+              effectType: 'critical-damage',
+              valueAffected: 'melee',
+              enabled: true,
+              weaponRestriction: 'unarmed-or-knife'
+            }]
+          }
+        }]
+      };
+      // Street Fighting restricted to unarmed/knife only
       expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Power Sword')).toBe(0);
     });
 
     it('Crippling Strike and Street Fighting stack for knife', () => {
-      const actor = { items: [
-        { type: 'talent', name: 'Crippling Strike', system: {} },
-        { type: 'talent', name: 'Street Fighting', system: {} }
-      ] };
+      const actor = {
+        system: { modifiers: [] },
+        effects: [],
+        items: [
+          {
+            type: 'talent',
+            name: 'Crippling Strike',
+            system: {
+              modifiers: [{
+                name: 'Crippling Strike',
+                modifier: 4,
+                effectType: 'critical-damage',
+                valueAffected: 'melee',
+                enabled: true
+              }]
+            }
+          },
+          {
+            type: 'talent',
+            name: 'Street Fighting',
+            system: {
+              modifiers: [{
+                name: 'Street Fighting',
+                modifier: 2,
+                effectType: 'critical-damage',
+                valueAffected: 'melee',
+                enabled: true
+              }]
+            }
+          }
+        ]
+      };
       expect(CombatHelper.getCriticalDamageBonus(actor, true, 'Combat Knife')).toBe(6);
     });
 

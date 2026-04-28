@@ -5,10 +5,24 @@
 
 // Modifier Types
 export const MODIFIER_TYPES = {
-  UNTYPED: 'untyped',
-  CIRCUMSTANCE: 'circumstance',
+  TRAIT: 'trait',
   EQUIPMENT: 'equipment',
-  TRAIT: 'trait'
+  TALENT: 'talent',
+  CIRCUMSTANCE: 'circumstance',
+  CHAPTER: 'chapter',
+  PSYCHIC: 'psychic',
+  UNTYPED: 'untyped' // Deprecated - for legacy modifiers only
+};
+
+// Modifier type labels for UI display
+export const MODIFIER_TYPE_LABELS = {
+  [MODIFIER_TYPES.TRAIT]: 'Trait',
+  [MODIFIER_TYPES.EQUIPMENT]: 'Equipment',
+  [MODIFIER_TYPES.TALENT]: 'Talent',
+  [MODIFIER_TYPES.CIRCUMSTANCE]: 'Circumstance',
+  [MODIFIER_TYPES.CHAPTER]: 'Chapter',
+  [MODIFIER_TYPES.PSYCHIC]: 'Psychic',
+  [MODIFIER_TYPES.UNTYPED]: 'Untyped (Legacy)'
 };
 
 // Effect Types
@@ -39,7 +53,8 @@ export const EFFECT_TYPES = {
   PREMATURE_DETONATION: 'premature-detonation',
   IGNORES_NATURAL_ARMOUR: 'ignores-natural-armour',
   PSYCHIC_TEST: 'psychic-test',
-  NO_PERILS: 'no-perils'
+  NO_PERILS: 'no-perils',
+  CRITICAL_DAMAGE: 'critical-damage'
 };
 
 // Effect type labels for UI display
@@ -70,5 +85,6 @@ export const EFFECT_TYPE_LABELS = {
   [EFFECT_TYPES.PREMATURE_DETONATION]: 'Premature Detonation',
   [EFFECT_TYPES.IGNORES_NATURAL_ARMOUR]: 'Ignores Natural Armour',
   [EFFECT_TYPES.PSYCHIC_TEST]: 'Psychic Test',
-  [EFFECT_TYPES.NO_PERILS]: 'No Perils of the Warp'
+  [EFFECT_TYPES.NO_PERILS]: 'No Perils of the Warp',
+  [EFFECT_TYPES.CRITICAL_DAMAGE]: 'Critical Damage'
 };

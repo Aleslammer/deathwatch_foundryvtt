@@ -11,6 +11,7 @@ import { HordeCombatHelper } from "./horde-combat.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 import { CyberneticHelper } from "../cybernetic-helper.mjs";
 import { WeaponModifierCollector } from "./weapon-modifier-collector.mjs";
+import { ModifierCollector } from "../character/modifier-collector.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -465,16 +466,30 @@ export class CombatHelper {
    * // Returns: 6 if actor has both Crippling Strike and Street Fighting
    */
   static getCriticalDamageBonus(actor, isMelee, weaponName = '') {
-    if (!actor?.items) return 0;
-    let bonus = 0;
-    if (isMelee) {
-      if (this.hasTalent(actor, 'Crippling Strike')) bonus += 4;
-      const name = weaponName.toLowerCase();
-      const isUnarmedOrKnife = name.includes('unarmed') || name.includes('knife') || name.includes('combat knife');
-      if (isUnarmedOrKnife && this.hasTalent(actor, 'Street Fighting')) bonus += 2;
-    } else {
-      if (this.hasTalent(actor, 'Crack Shot')) bonus += 2;
-    }
+    if (!actor?.items || !actor?.system) return 0;
+
+    // Collect all modifiers from actor
+    const modifiers = ModifierCollector.collectAllModifiers(actor, actor.items);
+
+    // Filter for critical-damage modifiers matching attack type
+    const attackType = isMelee ? 'melee' : 'ranged';
+    const critDamageMods = modifiers.filter(m => {
+      if (m.effectType !== 'critical-damage' || m.valueAffected !== attackType || m.enabled === false) {
+        return false;
+      }
+
+      // Check weapon restriction if specified
+      if (m.weaponRestriction === 'unarmed-or-knife') {
+        const name = weaponName.toLowerCase();
+        return name.includes('unarmed') || name.includes('knife') || name.includes('combat knife');
+      }
+
+      return true;
+    });
+
+    // Sum up the bonuses
+    const bonus = critDamageMods.reduce((sum, m) => sum + parseInt(m.modifier), 0);
+
     return bonus;
   }
 
