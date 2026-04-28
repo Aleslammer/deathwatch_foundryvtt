@@ -80,7 +80,7 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       purchaseInsanityReduction: DeathwatchActorSheetV2._onPurchaseInsanityReduction,
       showTrauma: DeathwatchActorSheetV2._onShowItem,
       viewCurse: DeathwatchActorSheetV2._onViewCurse,
-      // Step 9: drag-and-drop (handled via _onDrop override)
+      // Step 9: drag-and-drop (gear stacking handled via _onDropItem override)
     }
   };
 
@@ -110,6 +110,11 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
     // Save scroll positions before re-render
     const el = this.element;
     if (el) {
+      // Save the main scrollable container (sheet-body) - used by gear tab and other tabs
+      const sheetBody = el.querySelector('.sheet-body');
+      if (sheetBody) this._sheetBodyScrollTop = sheetBody.scrollTop;
+
+      // Save the skills sub-panel scroll position (independent scrollable area)
       const sc = el.querySelector(".skills-section")?.parentElement;
       if (sc) this._skillsScrollTop = sc.scrollTop;
     }
@@ -621,7 +626,13 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
       wrapper.addEventListener('dragover', (ev) => ev.preventDefault(), false);
     });
 
-    // Restore skills scroll position
+    // Restore sheet-body scroll position (main scroll for gear and other tabs)
+    if (this._sheetBodyScrollTop !== undefined) {
+      const sheetBody = html.querySelector('.sheet-body');
+      if (sheetBody) sheetBody.scrollTop = this._sheetBodyScrollTop;
+    }
+
+    // Restore skills sub-panel scroll position (independent scrollable area)
     if (this._skillsScrollTop !== undefined) {
       const sc = html.querySelector(".skills-section")?.parentElement;
       if (sc) sc.scrollTop = this._skillsScrollTop;
@@ -641,6 +652,41 @@ export class DeathwatchActorSheetV2 extends HandlebarsApplicationMixin(
   /* -------------------------------------------- */
   /*  Drop Handlers                               */
   /* -------------------------------------------- */
+
+  /**
+   * Override _onDropItem to intercept gear drops for stacking logic.
+   * Uses the Foundry V2 pattern: _onDrop resolves the item, then calls _onDropItem.
+   * This avoids async/DataTransfer timing issues that occur when awaiting in _onDrop.
+   * @param {DragEvent} event - The originating drop event
+   * @param {Item} item - The resolved dropped item document
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _onDropItem(event, item) {
+    // Only intercept gear items
+    if (!item || item.type !== 'gear') return super._onDropItem(event, item);
+
+    // Only intercept stackable gear
+    if (!item.system.stackable) return super._onDropItem(event, item);
+
+    // Search for existing stackable gear with same key on this actor
+    const existingItem = this.actor.items.find(i =>
+      i.type === 'gear' &&
+      i.name === item.name &&
+      i.system.stackable === true
+    );
+
+    if (existingItem) {
+      // Stack it - increment quantity instead of creating duplicate
+      const newQuantity = (existingItem.system.quantity || 1) + (item.system.quantity || 1);
+      await existingItem.update({ 'system.quantity': newQuantity });
+      ui.notifications.info(`${item.name} quantity increased to ${newQuantity}.`);
+      return; // Don't call super - we handled the stacking
+    }
+
+    // No existing match - use default behavior to create the item
+    return super._onDropItem(event, item);
+  }
 
   /* istanbul ignore next */
   async _onDropItemOnItem(event) {

@@ -148,6 +148,9 @@ export class ItemHandlers {
     // Sort special abilities by name
     categories.specialAbilities.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
+    // Group stackable gear items
+    categories.gear = this.groupGear(categories.gear);
+
     // Sort implants by name
     categories.implants.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
@@ -177,8 +180,18 @@ export class ItemHandlers {
     const armorCount = categories.armor.length;
     const armorEquipped = categories.armor.filter(a => a.system.equipped).length;
 
-    const gearCount = categories.gear.length;
-    const gearWeight = categories.gear.reduce((sum, g) => sum + (parseFloat(g.system.wt) || 0), 0);
+    const gearCount = categories.gear.reduce((sum, g) => {
+      // Grouped items have quantity field or ids array
+      if (g.quantity) return sum + g.quantity;
+      if (g.ids) return sum + g.ids.length;
+      return sum + 1;
+    }, 0);
+
+    const gearWeight = categories.gear.reduce((sum, g) => {
+      const weight = parseFloat(g.system.wt) || 0;
+      const quantity = g.quantity || 1;
+      return sum + (weight * quantity);
+    }, 0);
 
     const ammoCount = categories.ammunition.length;
     const ammoLoaded = categories.weapons.filter(w => w.system.loadedAmmo).length;
@@ -193,7 +206,7 @@ export class ItemHandlers {
 
   static groupTraits(traits) {
     const grouped = new Map();
-    
+
     for (const trait of traits) {
       const key = trait.name;
       if (grouped.has(key)) {
@@ -223,7 +236,41 @@ export class ItemHandlers {
         }
       }
     }
-    
+
     return Array.from(grouped.values());
+  }
+
+  /**
+   * Group stackable gear items by name and sum quantities
+   * @param {Array} gearItems The gear items to group
+   * @returns {Array} Grouped gear items with summed quantities
+   */
+  static groupGear(gearItems) {
+    const grouped = new Map();
+
+    for (const item of gearItems) {
+      if (item.system.stackable) {
+        const key = item.name;
+        if (grouped.has(key)) {
+          const existing = grouped.get(key);
+          existing.quantity += (item.system.quantity || 1);
+          existing.ids.push(item._id);
+        } else {
+          grouped.set(key, {
+            ...item,
+            quantity: item.system.quantity || 1,
+            ids: [item._id]
+          });
+        }
+      } else {
+        // Non-stackable items use their ID as unique key
+        grouped.set(`${item._id}-${item.name}`, item);
+      }
+    }
+
+    // Convert to array and sort alphabetically
+    return Array.from(grouped.values()).sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true })
+    );
   }
 }

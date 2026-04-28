@@ -46,6 +46,19 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
 
   /** @override — render using per-instance template to avoid static PARTS sharing */
   async _renderHTML(context, options) {
+    // Save scroll position before re-render
+    const el = this.element;
+    if (el) {
+      // Try multiple selectors to find the actual scrollable container
+      // In ApplicationV2, the scrollable container is usually .window-content or the parent of .sheet-body
+      const scrollable = el.querySelector(".window-content") ||
+                         el.querySelector(".sheet-body")?.parentElement ||
+                         el.querySelector(".sheet-body");
+      if (scrollable && scrollable.scrollTop !== undefined) {
+        this._sheetScrollTop = scrollable.scrollTop;
+      }
+    }
+
     const template = this._itemTemplate;
     const compiled = await foundry.applications.handlebars.getTemplate(template);
     const htmlString = compiled(context, { allowProtoMethodsByDefault: true, allowProtoPropertiesByDefault: true });
@@ -306,6 +319,17 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
       html.querySelectorAll('.sheet-tabs .item').forEach(tab => {
         tab.addEventListener('click', () => { this._activeTab = tab.dataset.tab; });
       });
+    }
+
+    // Restore scroll position
+    if (this._sheetScrollTop !== undefined) {
+      // Try multiple selectors to find the actual scrollable container
+      const scrollable = html.querySelector(".window-content") ||
+                         html.querySelector(".sheet-body")?.parentElement ||
+                         html.querySelector(".sheet-body");
+      if (scrollable && scrollable.scrollTop !== undefined) {
+        scrollable.scrollTop = this._sheetScrollTop;
+      }
     }
 
     // Quality value change

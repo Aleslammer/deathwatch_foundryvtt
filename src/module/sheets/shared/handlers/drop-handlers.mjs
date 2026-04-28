@@ -29,6 +29,56 @@ export class DropHandlers {
       el.addEventListener('drop', (event) => this._onDropSpecialty(event, actor), false);
       el.addEventListener('dragover', ev => ev.preventDefault(), false);
     });
+
+    // Drop handler for actor-level drops (for gear stacking)
+    html.find('.window-content').first().each((i, el) => {
+      el.addEventListener('drop', async (event) => {
+        const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+        if (data.type !== 'Item') return;
+
+        const droppedItem = await Item.implementation.fromDropData(data);
+        if (!droppedItem || droppedItem.type !== 'gear') return;
+
+        const stacked = await this._onDropGearForStacking(event, actor, droppedItem);
+        if (stacked) {
+          event.preventDefault();
+          event.stopPropagation();
+          return false;
+        }
+      }, false);
+    });
+  }
+
+  /**
+   * Handle stacking logic for gear items.
+   * @param {Event} event - The drop event
+   * @param {Actor} actor - Actor document
+   * @param {Item} droppedItem - The dropped gear item
+   * @returns {Promise<boolean>} True if item was stacked, false if new item should be created
+   * @private
+   */
+  static async _onDropGearForStacking(event, actor, droppedItem) {
+    // Only auto-stack if item is stackable
+    if (!droppedItem.system.stackable) {
+      return false;
+    }
+
+    // Search for existing stackable gear with same name
+    const existingItem = actor.items.find(i =>
+      i.type === 'gear' &&
+      i.name === droppedItem.name &&
+      i.system.stackable === true
+    );
+
+    if (existingItem) {
+      // Increment existing item quantity
+      const newQuantity = (existingItem.system.quantity || 1) + (droppedItem.system.quantity || 1);
+      await existingItem.update({ 'system.quantity': newQuantity });
+      ui.notifications.info(`${droppedItem.name} quantity increased to ${newQuantity}.`);
+      return true;
+    }
+
+    return false;
   }
 
   /**

@@ -17,6 +17,8 @@ export default class DeathwatchGear extends DeathwatchItemBase {
 
     schema.shortDescription = new fields.StringField({ initial: "", blank: true });
     schema.wt = new fields.NumberField({ initial: 0, min: 0 });
+    schema.quantity = new fields.NumberField({ initial: 1, min: 0, integer: true });
+    schema.stackable = new fields.BooleanField({ initial: false });
 
     return schema;
   }

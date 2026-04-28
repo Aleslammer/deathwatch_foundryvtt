@@ -40,9 +40,9 @@ Armor:
 
 Psychic Powers:
     TODO: Add powers from Black Crusade
+    TODO: Add chapter specific psychic Powers from First Founding and Honor the Chapter
 
 Modifier-System:
-    TODO: we need to standardize one single logic flow and ALL items go through this...
 
 Orks:
 
