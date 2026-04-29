@@ -228,13 +228,12 @@ export class CombatDialogHelper {
       isPowerFist = false,
       isLightningClaw = false,
       hasLightningClawPair = false,
-      crushingBlowBonus = 0,
-      mightyShotBonus = 0
+      weaponDamageBonus = 0
     } = options;
 
     let formula = baseDmg;
     const effectiveMin = Math.max(provenRating, (hitIndex === 0 ? degreesOfSuccess : 0));
-    
+
     if (isTearing) {
       formula = formula.replace(/(\d+)(d\d+)/g, (match, count, die) => {
         const diceCount = parseInt(count);
@@ -246,7 +245,7 @@ export class CombatDialogHelper {
         return `${count}${die}min${effectiveMin}`;
       });
     }
-    
+
     if (hitIndex === 0 && !isMelee && isAccurate && isAiming && isSingleShot && degreesOfSuccess >= 2) {
       const extraDice = Math.min(Math.floor(degreesOfSuccess / 2), 2);
       formula += ` + ${extraDice}d10`;
@@ -256,20 +255,16 @@ export class CombatDialogHelper {
       const effectiveStrBonus = isPowerFist ? strBonus * 2 : strBonus;
       formula += ` + ${effectiveStrBonus}`;
     }
-    
+
     if (isLightningClaw && degreesOfSuccess > 0) {
       const bonusPerDegree = hasLightningClawPair ? 2 : 1;
       formula += ` + ${degreesOfSuccess * bonusPerDegree}`;
     }
-    
-    if (isMelee && crushingBlowBonus > 0) {
-      formula += ` + ${crushingBlowBonus}`;
+
+    if (weaponDamageBonus > 0) {
+      formula += ` + ${weaponDamageBonus}`;
     }
-    
-    if (!isMelee && mightyShotBonus > 0) {
-      formula += ` + ${mightyShotBonus}`;
-    }
-    
+
     return formula;
   }
 

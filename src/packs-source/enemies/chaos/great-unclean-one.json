@@ -38,6 +38,7 @@
   "items": [
     {
       "_id": "eichaos120000001",
+      "_sourceId": "tal00000000043",
       "name": "Crippling Strike",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -48,26 +49,38 @@
         "benefit": "+4 Critical Damage",
         "description": "<p>The character can land his blows precisely where they inflict the most harm, cutting into seams or hammering at weak points. <b>When the character's melee attack causes Critical Damage add +4 Damage.</b></p>",
         "compendiumId": "tal00000000043",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "crippstrike00001",
+            "name": "Crippling Strike - Critical Damage",
+            "modifier": 4,
+            "type": "talent",
+            "effectType": "critical-damage",
+            "valueAffected": "melee",
+            "enabled": true
+          }
+        ]
       }
     },
     {
       "_id": "eichaos120000002",
+      "_sourceId": "tal00000000055",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "115",
+        "page": "116",
         "prerequisite": "Strength 40",
         "benefit": "Stunned results become normal hits",
-        "description": "<p>After making a successful melee attack, the character may spend a Fate Point and immediately count the result as if he had rolled a 10 for location, though the amount of damage caused is unchanged.</p>",
+        "description": "<p>The character's will or faith can sustain him when his flesh fails. <b>He ignores the effects of injury, Fatigue, and Stunning during combat.</b> This Talent does not prevent the Damage, but allows the character to temporarily ignore its effects for the duration of the combat. Death still affects him normally.</p>",
         "compendiumId": "tal00000000055",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos120000003",
+      "_sourceId": "tal00000000051",
       "name": "Disturbing Voice",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -83,6 +96,7 @@
     },
     {
       "_id": "eichaos120000004",
+      "_sourceId": "tal00000000114",
       "name": "Hammer Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -98,6 +112,7 @@
     },
     {
       "_id": "eichaos120000005",
+      "_sourceId": "tal00000000116",
       "name": "Hardy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -113,21 +128,23 @@
     },
     {
       "_id": "eichaos120000006",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "128",
+        "page": "127",
         "prerequisite": "WS 35",
         "benefit": "Half Action melee attack twice",
-        "description": "<p>The character may make a Half Action to make two melee attacks this turn, each with a -10 penalty to hit.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos120000007",
+      "_sourceId": "tal00000000253",
       "name": "Takedown",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -143,6 +160,7 @@
     },
     {
       "_id": "eichaos120000008",
+      "_sourceId": "tal00000000259",
       "name": "Thunder Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -158,6 +176,7 @@
     },
     {
       "_id": "eichaos120000009",
+      "_sourceId": "tal00000000264",
       "name": "Unarmed Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

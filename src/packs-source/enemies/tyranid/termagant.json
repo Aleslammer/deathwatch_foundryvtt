@@ -33,6 +33,7 @@
   "items": [
     {
       "_id": "eityranid0200001",
+      "_sourceId": "tal00000000143",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -41,7 +42,7 @@
         "page": "121",
         "prerequisite": "Agility 30",
         "benefit": "Stand up as Free Action",
-        "description": "<p>The character may stand up as a Free Action.</p>",
+        "description": "<p>A combination of athletic ability and speed allow the character to spring to his feet in virtually any circumstance. <b>The character may stand up as a Free Action.</b></p>",
         "compendiumId": "tal00000000143",
         "modifiers": []
       }

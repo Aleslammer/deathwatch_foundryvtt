@@ -34,6 +34,7 @@
   "items": [
     {
       "_id": "hityranid0300001",
+      "_sourceId": "tal00000000046",
       "name": "Death From Above",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -42,13 +43,14 @@
         "page": "115",
         "prerequisite": "Adeptus Astartes, Pilot (Personal)",
         "benefit": "Extra damage on jump pack charge",
-        "description": "<p>A Space Marine descending into battle on trails of fire is a true angel of death come to bring ruin and ending on all who stand in his way. When the Battle-Brother makes a Charge Action using a jump pack, his melee attack deals an extra d10 Damage for every two Degrees of Success, to a maximum bonus of 2d10.</p>",
+        "description": "<p>A Space Marine descending into battle on trails of fire is a true angel of death come to bring ruin and ending on all who stand in his way. <b>When the Battle-Brother makes a Charge Action using a jump pack, his melee attack deals an extra d10 Damage for every two Degrees of Success, to a maximum bonus of 2d10.</b></p>",
         "compendiumId": "tal00000000046",
         "modifiers": []
       }
     },
     {
       "_id": "hityranid0300002",
+      "_sourceId": "tal00000000143",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -57,7 +59,7 @@
         "page": "121",
         "prerequisite": "Agility 30",
         "benefit": "Stand up as Free Action",
-        "description": "<p>The character may stand up as a Free Action.</p>",
+        "description": "<p>A combination of athletic ability and speed allow the character to spring to his feet in virtually any circumstance. <b>The character may stand up as a Free Action.</b></p>",
         "compendiumId": "tal00000000143",
         "modifiers": []
       }

@@ -45,6 +45,7 @@
   "items": [
     {
       "_id": "eichaos130000001",
+      "_sourceId": "tal00000000038",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -53,13 +54,14 @@
         "page": "114",
         "prerequisite": "WS 30",
         "benefit": "No ganging up bonus against you",
-        "description": "<p>The character has proven himself in desperate melees where he is assailed by a swarm of foes. When outnumbered in melee combat, the character never counts as outnumbered when being attacked.</p>",
+        "description": "<p>The character's weapon seems to be everywhere at once, keeping many more opponents at bay in close combat than would seem possible. <b>Opponents fighting the character in hand-to-hand combat gain no bonuses for outnumbering him.</b></p>",
         "compendiumId": "tal00000000038",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos130000002",
+      "_sourceId": "tal00000000213",
       "name": "Resistance (Psychic Powers)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -75,21 +77,23 @@
     },
     {
       "_id": "eichaos130000003",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "128",
+        "page": "127",
         "prerequisite": "WS 35",
         "benefit": "Half Action melee attack twice",
-        "description": "<p>The character may make a Half Action to make two melee attacks this turn, each with a -10 penalty to hit.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos130000004",
+      "_sourceId": "tal00000000250",
       "name": "Strong Minded",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

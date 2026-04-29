@@ -30,30 +30,32 @@
   "items": [
     {
       "_id": "eihuman060000001",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>The character is immune to the effects of mundane sources of Fear. The character still takes Pinning tests as normal, but passes them automatically (as if he had rolled 01). Fearless cannot be taken by any character with the Jaded talent.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eihuman060000002",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
-        "page": "126",
+        "book": "DeathWatch Core Rulebook",
+        "page": "127",
         "prerequisite": "WS 35",
         "benefit": "Make two melee attacks",
-        "description": "<p>The character can make a Swift Attack as a Full Action. The character may make two melee attacks as part of this Action (one must be with his primary weapon). Both attacks use the character's full WS. The character may only make a single reaction in the round he uses this talent.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }

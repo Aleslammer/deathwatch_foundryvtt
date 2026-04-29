@@ -9,7 +9,6 @@ Skills:
 Traits
 
 Talents:
-    TODO: Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
 
 Weapon Upgrade:
 
@@ -28,10 +27,8 @@ Ammmunition
 TODO: Automated Animations - Can we use this for things?  Need to look at tutorial and look into it some more....
 
 Enemies:
-    TODO: there are a few enemies with the talent cripling strike of which was just changed to modifier system.   These enemies need to be modified to suppor that
     TODO: add dark eldar
     TODO: add eldar
-    
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
@@ -54,6 +51,3 @@ Campaign Systems
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
 
-Hadarr - Need to address his gear Also alot of skills pete took I think fall into cant take route but need to validate with class and speciality
-    Gear Powered modifiers (narthecium +20 medicae is not being show on the modifiers tab.)
- 

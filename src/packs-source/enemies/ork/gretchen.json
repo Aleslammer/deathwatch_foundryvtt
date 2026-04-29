@@ -33,6 +33,7 @@
   "items": [
     {
       "_id": "eiork05000000001",
+      "_sourceId": "tal00000000129",
       "name": "Heightened Senses (Sound)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -41,7 +42,7 @@
         "page": "120",
         "prerequisite": "PER 30",
         "benefit": "+10 to Awareness Tests involving sound",
-        "description": "<p>The character gains a <b>+10 bonus to any tests specifically involving sound</b>.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sound) would apply to an Awareness Test to hear distant footsteps, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his ears</b>.</p>",
         "compendiumId": "tal00000000129",
         "modifiers": []
       }

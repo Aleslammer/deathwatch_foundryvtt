@@ -32,6 +32,7 @@
   "items": [
     {
       "_id": "eityranid0500001",
+      "_sourceId": "tal00000000011",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -40,13 +41,14 @@
         "page": "113",
         "prerequisite": "Agility 30",
         "benefit": "No penalty for using off-hand",
-        "description": "<p>The character may use either hand equally well without the –20 penalty for actions using the off hand.</p>",
+        "description": "<p>This Talent does not represent true ambidexterity so much as sufficient training with both hands to make the distinction moot. The character may use either hand equally well for any task, and does not suffer the <b>–20 penalty for actions using his off hand</b>.</p><p>Special: When combined with a Two-Weapon Wielder Talent, the penalty for making attacks with both weapons in the same turn drops to –10.</p>",
         "compendiumId": "tal00000000011",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500002",
+      "_sourceId": "tal00000000027",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -55,13 +57,14 @@
         "page": "114",
         "prerequisite": "",
         "benefit": "+20 to WS when charging",
-        "description": "<p>The character may make a Charge action and gain a +20 bonus to Weapon Skill instead of the normal +10.</p>",
+        "description": "<p>The character has learned to put the whole force of his momentum behind his weapon blows. When the character charges into combat, few can stand before him. If the character uses the Charge Action, he gains a <b>+20 bonus to Weapon Skill instead of +10</b>.</p>",
         "compendiumId": "tal00000000027",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500003",
+      "_sourceId": "tal00000000038",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -70,13 +73,14 @@
         "page": "115",
         "prerequisite": "Weapon Skill 30",
         "benefit": "Opponents get no bonus for outnumbering",
-        "description": "<p>The character's weapon mastery is such that opponents get no bonus for outnumbering the character in close combat.</p>",
+        "description": "<p>The character's weapon seems to be everywhere at once, keeping many more opponents at bay in close combat than would seem possible. <b>Opponents fighting the character in hand-to-hand combat gain no bonuses for outnumbering him.</b></p>",
         "compendiumId": "tal00000000038",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500004",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -85,13 +89,14 @@
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. The character is immune to the effects of Fear and Pinning, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500005",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -100,43 +105,46 @@
         "page": "119",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Spend Reaction for extra melee attack after All Out Attack",
-        "description": "<p>If the character successfully hits with an All Out Attack action, the character may spend a Reaction to make an additional melee attack with the same weapon at the same target using the same modifiers as the original attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500006",
+      "_sourceId": "tal00000000129",
       "name": "Heightened Senses (Sound)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
         "prerequisite": "",
         "benefit": "+10 to Awareness tests involving sound",
-        "description": "<p>The character gains a +10 bonus to any tests specifically involving sound.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sound) would apply to an Awareness Test to hear distant footsteps, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his ears</b>.</p>",
         "compendiumId": "tal00000000129",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500007",
+      "_sourceId": "tal00000000128",
       "name": "Heightened Senses (Smell)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
         "prerequisite": "",
         "benefit": "+10 to Awareness tests involving smell",
-        "description": "<p>The character gains a +10 bonus to any tests specifically involving smell.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Smell) would apply to an Awareness Test to detect a faint odor, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his nose</b>.</p>",
         "compendiumId": "tal00000000128",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500008",
+      "_sourceId": "tal00000000139",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -145,13 +153,14 @@
         "page": "121",
         "prerequisite": "Toughness 40",
         "benefit": "Test Toughness to overcome Stunning",
-        "description": "<p>If the character is ever Stunned, the character may make a Toughness Test to overcome the effects. If the character succeeds, the Stunned condition is removed.</p>",
+        "description": "<p>The character has taken blows from Orks and given back as good as he got. The character can bounce back from most strikes without ill effects. <b>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</b></p>",
         "compendiumId": "tal00000000139",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500009",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -160,13 +169,14 @@
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500010",
+      "_sourceId": "tal00000000261",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -175,13 +185,14 @@
         "page": "128",
         "prerequisite": "Toughness 40",
         "benefit": "Halve Critical Damage taken (round up)",
-        "description": "<p>Whenever the character suffers Critical Damage, halve the amount (rounding up). This does not affect the effects of Critical Damage, only the amount.</p>",
+        "description": "<p>The character is able to shrug off wounds that would fell lesser men. <b>Whenever the character suffers Critical Damage, halve the result (rounding up).</b></p><p><b>Example:</b> Agamemnon takes a grievous wound from a tyranid warrior. After reduction for Armour and Toughness, the Scything Talon strike still does 8 Damage. Unfortunately, it's been tough going and Agamemnon only has 4 Wounds remaining, which would normally result in 4 points of Critical Damage. However, since he has the True Grit Talent, he only takes 2 points of Critical Damage.</p>",
         "compendiumId": "tal00000000261",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0500011",
+      "_sourceId": "tal00000000263",
       "name": "Two-Weapon Wielder (Melee)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -190,7 +201,7 @@
         "page": "128",
         "prerequisite": "Weapon Skill 35, Ballistic Skill 35, Ambidextrous",
         "benefit": "Attack with two melee weapons",
-        "description": "<p>When armed with two single-handed melee weapons, the character may attack with both weapons as part of a Full Action. Both attacks suffer a –20 penalty to Weapon Skill.</p>",
+        "description": "<p>Years of training allow the character to use a weapon in each hand when needed. <b>When armed with two weapons of the same type, the character may spend a Full Action to attack with both. Both tests made to attack with the weapons suffer a –20 penalty (see Chapter VIII: Combat for more details on fighting with two weapons). The character must possess Two-Weapon Wielder (Melee) and Two-Weapon Wielder (Ballistic) if he wishes to use a gun and hand weapon with this Talent.</b></p>",
         "compendiumId": "tal00000000263",
         "modifiers": []
       }

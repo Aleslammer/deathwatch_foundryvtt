@@ -33,6 +33,7 @@
   "items": [
     {
       "_id": "hichaos040000001",
+      "_sourceId": "tal00000000052",
       "name": "Double Team",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

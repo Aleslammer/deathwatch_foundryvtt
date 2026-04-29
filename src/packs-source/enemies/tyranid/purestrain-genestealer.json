@@ -32,6 +32,7 @@
   "items": [
     {
       "_id": "eityranid0900001",
+      "_sourceId": "tal00000000011",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -40,13 +41,14 @@
         "page": "113",
         "prerequisite": "Agility 30",
         "benefit": "No penalty for using off-hand",
-        "description": "<p>The character may use either hand equally well without the –20 penalty for actions using the off hand.</p>",
+        "description": "<p>This Talent does not represent true ambidexterity so much as sufficient training with both hands to make the distinction moot. The character may use either hand equally well for any task, and does not suffer the <b>–20 penalty for actions using his off hand</b>.</p><p>Special: When combined with a Two-Weapon Wielder Talent, the penalty for making attacks with both weapons in the same turn drops to –10.</p>",
         "compendiumId": "tal00000000011",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0900002",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -55,13 +57,14 @@
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. The character is immune to the effects of Fear and Pinning, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0900003",
+      "_sourceId": "tal00000000115",
       "name": "Hard Target",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -77,6 +80,7 @@
     },
     {
       "_id": "eityranid0900004",
+      "_sourceId": "tal00000000143",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -85,13 +89,14 @@
         "page": "121",
         "prerequisite": "Agility 30",
         "benefit": "Stand up as Free Action",
-        "description": "<p>The character may stand up as a Free Action.</p>",
+        "description": "<p>A combination of athletic ability and speed allow the character to spring to his feet in virtually any circumstance. <b>The character may stand up as a Free Action.</b></p>",
         "compendiumId": "tal00000000143",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0900005",
+      "_sourceId": "tal00000000145",
       "name": "Lightning Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -107,6 +112,7 @@
     },
     {
       "_id": "eityranid0900006",
+      "_sourceId": "tal00000000146",
       "name": "Lightning Reflexes",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -122,6 +128,7 @@
     },
     {
       "_id": "eityranid0900007",
+      "_sourceId": "tal00000000247",
       "name": "Step Aside",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -137,6 +144,7 @@
     },
     {
       "_id": "eityranid0900008",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -145,7 +153,7 @@
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }

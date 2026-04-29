@@ -10,7 +10,16 @@
     "benefit": "+2 melee damage",
     "description": "<p>The character has the ability to focus his entire body into close combat attacks. <b>The character adds +2 to damage inflicted in melee.</b></p>",
     "compendiumId": "tal00000000044",
-    "modifiers": [],
+    "modifiers": [
+      {
+        "_id": "crushingblow0001",
+        "name": "Crushing Blow - Melee Damage",
+        "modifier": 2,
+        "type": "talent",
+        "effectType": "weapon-damage",
+        "enabled": true
+      }
+    ],
     "rankRequired": 1
   }
 }
