@@ -2,7 +2,7 @@
   "_id": "hordchaos0000005",
   "name": "Mutant Devotee Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/chaos/mutant-devotee_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/chaos/mutant-devotee-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 36 },

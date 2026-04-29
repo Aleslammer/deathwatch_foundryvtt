@@ -5,58 +5,24 @@
   "img": "systems/deathwatch/icons/enemies/tyranid/hivetyrant.webp",
   "system": {
     "characteristics": {
-      "ws": {
-        "base": 78
-      },
-      "bs": {
-        "base": 33
-      },
-      "str": {
-        "base": 60
-      },
-      "tg": {
-        "base": 53
-      },
-      "ag": {
-        "base": 45
-      },
-      "int": {
-        "base": 45
-      },
-      "per": {
-        "base": 49
-      },
-      "wil": {
-        "base": 70
-      },
-      "fs": {
-        "base": 0
-      }
+      "ws": { "base": 78 },
+      "bs": { "base": 33 },
+      "str": { "base": 60 },
+      "tg": { "base": 53 },
+      "ag": { "base": 45 },
+      "int": { "base": 45 },
+      "per": { "base": 49 },
+      "wil": { "base": 70 },
+      "fs": { "base": 0 }
     },
-    "wounds": {
-      "base": 120,
-      "max": 120,
-      "value": 0
-    },
-    "fatigue": {
-      "value": 0,
-      "max": 0
-    },
+    "wounds": { "base": 120, "max": 120, "value": 0 },
+    "fatigue": { "value": 0, "max": 0 },
     "skills": {
-      "awareness": {
-        "trained": true
-      },
-      "climb": {
-        "trained": true
-      },
-      "swim": {
-        "trained": true
-      }
+      "awareness": { "trained": true },
+      "climb": { "trained": true },
+      "swim": { "trained": true }
     },
-    "psyRating": {
-      "value": 8,
-      "base": 8
-    },
+    "psyRating": { "value": 8, "base": 8 },
     "modifiers": [],
     "conditions": {},
     "description": "<p>The Master of the battle-swarm, the Hive Tyrant is a massively built and powerful creature which serves in some part as a 'leader' of the Tyranid attack on the ground. Akin in power to a living tank, able to rip through armour plate like wet paper and wreak indiscriminate slaughter, they are also incredibly fast and lithe. Some may even possess wings and extreme biomorphic mutations, often taking the place of unwholesome weapons which may burn or strangle their victims at range. Each is also a powerful psychic node for the greater Tyranid Hive Mind, not merely providing the swarm with a strategic focus and overriding purpose, but also harnessing the Hive Mind's raw power offensively to drive fragile human minds insane with fear and burn out the brains of enemy psykers who would match their paltry powers against it.</p><p><strong>Death Shock:</strong> When a Hive Tyrant is slain, its death sends a shockwave through the Hive Mind. All Tyranid Creatures within synapse range (Willpower Bonus x 10 metres) that do not have the Fearless Talent or Synapse Creature Trait will automatically break and flee as quickly as they can (this effect overrides the effects of Instinctive Behaviour in this instance). Any Tyranid Creature with the Fearless or Synapse Creature Trait must pass a Challenging (+0) Willpower Test or be stunned for one round.</p><p><strong>Traits:</strong> Brutal Charge, Dark Sight, Fear 4 (Terrifying), Natural Armour (10), Multiple Arms, Unnatural Strength (x3), Unnatural Toughness (x3), Improved Natural Weapons (Scything Talons), Shadow in the Warp, Size (Massive), Synapse Creature, Tyranid</p><p><strong>Source:</strong> Deathwatch Core Rulebook, p. 369</p>",
@@ -603,8 +569,6 @@
     "disposition": -1,
     "width": 3,
     "height": 3,
-    "bar1": {
-      "attribute": "wounds"
-    }
+    "bar1": { "attribute": "wounds" }
   }
 }

@@ -51,3 +51,10 @@ Campaign Systems
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
 
+
+
+
+Please create a token image for foundry vtt an imperial themed circular border.  And outside the circle is transparent. Inside the circle should be a warhammer 40k Charron Pattern Battle Servitor.  They are 
+The Charron Pattern is a light battle servitor, humanoid in shape, found often in the service of the Imperial Navy and numerous other star vessels as shock troops and defenders in boarding actions. Those found in the Koronus Expanse are often very old, their inorganic components having been recycled through numerous bodies and recovered from the fallen of the battlefield. As a result they have a reputation for their machine spirits being unreliable in combat and not knowing friend from foe on occasion. This makes some captains reluctant to employ them save in the direst need.
+
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\human\renegade-militia.png"

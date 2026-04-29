@@ -5,74 +5,27 @@
   "img": "systems/deathwatch/icons/enemies/tyranid/ravener.webp",
   "system": {
     "characteristics": {
-      "ws": {
-        "base": 60
-      },
-      "bs": {
-        "base": 0
-      },
-      "str": {
-        "base": 45
-      },
-      "tg": {
-        "base": 40
-      },
-      "ag": {
-        "base": 50
-      },
-      "int": {
-        "base": 17
-      },
-      "per": {
-        "base": 50
-      },
-      "wil": {
-        "base": 35
-      },
-      "fs": {
-        "base": 0
-      }
+      "ws": { "base": 60 },
+      "bs": { "base": 0 },
+      "str": { "base": 45 },
+      "tg": { "base": 40 },
+      "ag": { "base": 50 },
+      "int": { "base": 17 },
+      "per": { "base": 50 },
+      "wil": { "base": 35 },
+      "fs": { "base": 0 }
     },
-    "wounds": {
-      "base": 40,
-      "max": 40,
-      "value": 0
-    },
-    "fatigue": {
-      "value": 0,
-      "max": 0
-    },
+    "wounds": { "base": 40, "max": 40, "value": 0 },
+    "fatigue": { "value": 0, "max": 0 },
     "skills": {
-      "awareness": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      },
-      "climb": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      },
-      "concealment": {
-        "trained": true
-      },
-      "silent_move": {
-        "trained": true
-      },
-      "swim": {
-        "trained": true,
-        "mastered": true
-      },
-      "tracking": {
-        "trained": true,
-        "mastered": true,
-        "expert": true
-      }
+      "awareness": { "trained": true, "mastered": true, "expert": true },
+      "climb": { "trained": true, "mastered": true, "expert": true },
+      "concealment": { "trained": true },
+      "silent_move": { "trained": true },
+      "swim": { "trained": true, "mastered": true },
+      "tracking": { "trained": true, "mastered": true, "expert": true }
     },
-    "psyRating": {
-      "value": 0,
-      "base": 0
-    },
+    "psyRating": { "value": 0, "base": 0 },
     "modifiers": [],
     "conditions": {},
     "description": "<p>Raveners are horrific predators that burrow through the earth with frightening speed and precision. They are twisted, serpentine creatures whose armoured bodies are several times the size of a grown man's, and yet they move with a lightning-like speed that can see their victims slashed apart into bloody chunks, having never seen their assailant. Vulnerable only to massed firepower and heavy weapons, the Ravener's prey stands little chance if caught alone or off guard, as they often exploit their ability to burrow through almost any substance to surprise their victims, sensing their way by vibrations as faint as a beating heart, through many metres of intervening material.</p><p><strong>Extraordinary Senses:</strong> Raveners can see in many spectrums of light and also sense changes in the air around them or slight tremors in the ground. Raveners may therefore make Awareness Tests to detect enemies even if they would not normally be able to do so due to intervening terrain or other conditions. In addition, Raveners' senses are so good that they never suffer more than -30 to Perception Tests regardless of modifiers.</p><p><strong>Surprise Strike:</strong> Raveners can appear from almost anywhere without warning, usually from under the feet of their prey, bursting up and taking entire squads by surprise. If a Ravener attacks by emerging from the ground or wall, it automatically gains Surprise (see page 235 in the Deathwatch Rulebook) over its enemies.</p><p><strong>Traits:</strong> Dark Sight, Fear 3 (Horrifying), Burrower, Instinctive Behaviour (Feed), Natural Armour (6), Multiple Arms, Unnatural Strength (x2), Unnatural Toughness (x2), Improved Natural Weapons (Scything Talons), Size (Enormous), Tyranid, Unnatural Senses (30m)</p><p><strong>Source:</strong> Mark of the Xenos, p. 41</p>",
@@ -494,18 +447,10 @@
         "reload": "—",
         "equipped": false,
         "attachedQualities": [
-          {
-            "id": "proven"
-          },
-          {
-            "id": "storm"
-          },
-          {
-            "id": "tearing"
-          },
-          {
-            "id": "living-ammunition"
-          }
+          { "id": "proven" },
+          { "id": "storm" },
+          { "id": "tearing" },
+          { "id": "living-ammunition" }
         ],
         "attachedUpgrades": [],
         "description": "<p>A conical lump of flesh that showers its target with a mass of worm-like parasites.</p>",
@@ -528,15 +473,9 @@
         "reload": "—",
         "equipped": false,
         "attachedQualities": [
-          {
-            "id": "proven"
-          },
-          {
-            "id": "tearing"
-          },
-          {
-            "id": "living-ammunition"
-          }
+          { "id": "proven" },
+          { "id": "tearing" },
+          { "id": "living-ammunition" }
         ],
         "attachedUpgrades": [],
         "description": "<p>A complex weapon symbiote that shoots maggot-like organisms at targets with a spasm of agonised muscle.</p>",
@@ -559,12 +498,8 @@
         "reload": "—",
         "equipped": false,
         "attachedQualities": [
-          {
-            "id": "twin-linked"
-          },
-          {
-            "id": "living-ammunition"
-          }
+          { "id": "twin-linked" },
+          { "id": "living-ammunition" }
         ],
         "attachedUpgrades": [],
         "description": "<p>Carried in pairs, these weapon beasts fire a sustained volley of razor sharp darts. RoF upgraded to S/2/4 due to Lightning Attack talent. Adds Strength Bonus to damage.</p>",
@@ -579,8 +514,6 @@
     "disposition": -1,
     "width": 2,
     "height": 2,
-    "bar1": {
-      "attribute": "wounds"
-    }
+    "bar1": { "attribute": "wounds" }
   }
 }

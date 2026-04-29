@@ -2,7 +2,7 @@
   "_id": "hordchaos0000001",
   "name": "Renegade Militia Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/chaos/renegade-militia_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/chaos/renegade-militia-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 35 },
