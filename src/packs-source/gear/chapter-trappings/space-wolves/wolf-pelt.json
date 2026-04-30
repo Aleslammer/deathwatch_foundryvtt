@@ -2,7 +2,7 @@
   "_id": "ct-sw-001",
   "name": "Wolf Pelt",
   "type": "gear",
-  "img": "systems/deathwatch/icons/gear/default.webp",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "170",

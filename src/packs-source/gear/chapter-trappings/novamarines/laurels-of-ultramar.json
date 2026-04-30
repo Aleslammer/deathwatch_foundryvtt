@@ -2,7 +2,7 @@
   "_id": "ct-nm-001",
   "name": "Laurels of Ultramar",
   "type": "gear",
-  "img": "systems/deathwatch/icons/gear/default.webp",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
   "system": {
     "book": "Honor the Chapter",
     "page": "81",

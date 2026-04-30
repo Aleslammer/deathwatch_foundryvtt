@@ -2,7 +2,7 @@
   "_id": "ct-da-003",
   "name": "Robe (Seeker's Robe)",
   "type": "gear",
-  "img": "systems/deathwatch/icons/gear/default.webp",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "170",

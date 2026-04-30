@@ -2,7 +2,7 @@
   "_id": "ct-ba-002",
   "name": "Golden Icons (Icon of Inspiration)",
   "type": "gear",
-  "img": "systems/deathwatch/icons/gear/default.webp",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "170",

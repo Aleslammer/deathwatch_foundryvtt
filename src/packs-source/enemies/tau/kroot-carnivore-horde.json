@@ -295,7 +295,7 @@
       "_id": "hitau03000000015",
       "name": "Kroot Beak",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/natural-weapon.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d5",

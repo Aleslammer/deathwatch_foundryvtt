@@ -2,7 +2,7 @@
   "_id": "ct-sw-002",
   "name": "Runic Totem (Bloodied Hunter)",
   "type": "gear",
-  "img": "systems/deathwatch/icons/gear/default.webp",
+  "img": "systems/deathwatch/icons/generic/gear.webp",
   "system": {
     "book": "Deathwatch Core Rulebook",
     "page": "170",
