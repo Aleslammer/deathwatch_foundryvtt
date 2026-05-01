@@ -16,6 +16,7 @@
         "_id": "krak000000000001",
         "name": "Krak Missile Damage",
         "modifier": "3d10+10",
+        "type": "equipment",
         "effectType": "weapon-damage-override",
         "enabled": true
       },
@@ -23,6 +24,7 @@
         "_id": "krak000000000002",
         "name": "Krak Missile Penetration",
         "modifier": "8",
+        "type": "equipment",
         "effectType": "weapon-penetration",
         "enabled": true
       },
@@ -30,6 +32,7 @@
         "_id": "krak000000000003",
         "name": "Krak Missile Blast",
         "modifier": "1",
+        "type": "equipment",
         "effectType": "weapon-blast",
         "enabled": true
       }

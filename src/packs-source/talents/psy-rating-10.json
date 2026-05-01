@@ -16,6 +16,7 @@
         "_id": "edb9ae5359845b27",
         "name": "Psy Rating 10",
         "modifier": "1",
+        "type": "talent",
         "effectType": "psy-rating",
         "enabled": true
       }

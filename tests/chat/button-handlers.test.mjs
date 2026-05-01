@@ -5,6 +5,7 @@ import { PsychicCombatHelper } from '../../src/module/helpers/combat/psychic-com
 import { CriticalEffectsHelper } from '../../src/module/helpers/combat/critical-effects.mjs';
 import { FireHelper } from '../../src/module/helpers/combat/fire-helper.mjs';
 import { CohesionHelper } from '../../src/module/helpers/cohesion.mjs';
+import { MODIFIER_TYPES } from '../../src/module/helpers/constants/modifier-constants.mjs';
 
 /**
  * Tests for ChatButtonHandlers
@@ -693,7 +694,7 @@ describe('ChatButtonHandlers', () => {
             _id: 'random-id-123',
             name: 'Toxic Effect',
             modifier: -3,
-            type: 'untyped',
+            type: MODIFIER_TYPES.CIRCUMSTANCE,
             modifierType: 'constant',
             effectType: 'characteristic',
             valueAffected: 'ag',
@@ -714,7 +715,7 @@ describe('ChatButtonHandlers', () => {
               _id: 'existing-id',
               name: 'Toxic Effect',
               modifier: -2,
-              type: 'untyped',
+              type: MODIFIER_TYPES.CIRCUMSTANCE,
               modifierType: 'constant',
               effectType: 'characteristic',
               valueAffected: 'ag',
@@ -740,7 +741,7 @@ describe('ChatButtonHandlers', () => {
             _id: 'existing-id',
             name: 'Toxic Effect',
             modifier: -5, // -2 + -3 = -5
-            type: 'untyped',
+            type: MODIFIER_TYPES.CIRCUMSTANCE,
             modifierType: 'constant',
             effectType: 'characteristic',
             valueAffected: 'ag',

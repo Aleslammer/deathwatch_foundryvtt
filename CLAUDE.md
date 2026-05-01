@@ -42,11 +42,14 @@ This is a **Foundry VTT v13 game system** for Warhammer 40,000: Deathwatch RPG. 
 
 ```bash
 npm install                 # Install dependencies
-npm test                    # Verify installation (1823 tests should pass)
+npm test                    # Verify installation (2129 tests should pass)
 npm run build:all           # Build packs and deploy locally (requires .env setup)
 ```
 
-**First-time setup**: Copy `.env` and set `LOCAL_DIR` to your Foundry systems directory.
+**First-time setup**: Create `.env` file with `LOCAL_DIR` pointing to your Foundry systems directory:
+```
+LOCAL_DIR=C:\Users\YourName\AppData\Local\FoundryVTT\Data\systems\deathwatch
+```
 
 **See [.claude/docs/build-deploy.md](.claude/docs/build-deploy.md) for detailed build commands and deployment setup.**
 
@@ -113,6 +116,11 @@ This project uses Claude Code's persistent memory system to capture:
 - [testing_standards.md](.claude/memory/testing_standards.md) — TDD workflow and test coverage goals
 - [feedback_code_quality.md](.claude/memory/feedback_code_quality.md) — Logger usage, import discipline
 - [project_tdd_example.md](.claude/memory/project_tdd_example.md) — Reference TDD implementation (XP calculator)
+- [architecture.md](.claude/memory/architecture.md) — TypeDataModel pattern, helper organization, FoundryAdapter
+- [development_workflow.md](.claude/memory/development_workflow.md) — Git conventions, build/test commands
+- [compendium_system.md](.claude/memory/compendium_system.md) — Pack workflow, ID conventions, validation
+- [macro_system.md](.claude/memory/macro_system.md) — Three-tier macro architecture, RollExecutor pattern
+- [feedback_characteristic_damage_migration.md](.claude/memory/feedback_characteristic_damage_migration.md) — Use system.modifiers for characteristic penalties
 
 **When to update memory:**
 - Capture significant implementation patterns
@@ -149,7 +157,7 @@ This project uses Claude Code's persistent memory system to capture:
 - **Item Keys** — Never match by ID/name, use `key` field ([item-patterns.md](.claude/docs/item-patterns.md))
 - **Constants** — No magic numbers, use constants from `src/module/helpers/constants/` ([constants.md](.claude/docs/constants.md))
 - **Error Handling** — Wrap event listeners with `ErrorHandler.wrap()` ([coding-standards.md](.claude/docs/coding-standards.md))
-- **Logging** — Use `Logger.debug/info/warn/error()` not `console.*` ([coding-standards.md](.claude/docs/coding-standards.md))
+- **Logging** — Use `Logger.category('X.Y').debug()` for subsystem logs or `Logger.debug()` for one-off messages. Never use `console.*` ([coding-standards.md](.claude/docs/coding-standards.md))
 
 ---
 
@@ -162,7 +170,7 @@ This project uses Claude Code's persistent memory system to capture:
 3. Verify all tests pass
 4. Refactor if needed
 
-**Expected results:** 110 test suites, 1822 passing tests (as of 2026-04-14)
+**Expected results:** 121 test suites, 2129 passing tests (as of 2026-04-28)
 
 **See [.claude/docs/testing.md](.claude/docs/testing.md) and [.claude/memory/testing_standards.md](.claude/memory/testing_standards.md) for complete testing documentation.**
 

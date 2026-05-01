@@ -30,26 +30,28 @@
   "items": [
     {
       "_id": "eityranid2200001",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. The character is immune to the effects of Fear and Pinning, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid2200002",
+      "_sourceId": "tal00000000271",
       "name": "Warp Sense",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "129",
         "prerequisite": "Psy Rating, Psyniscience Skill, Perception 30",
         "benefit": "Use Psyniscience Skill as Half Action instead of Full Action",
@@ -60,11 +62,12 @@
     },
     {
       "_id": "eityranid2200003",
+      "_sourceId": "tal00000000134",
       "name": "Improved Warp Sense",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "120",
         "prerequisite": "Warp Sense",
         "benefit": "Use Psyniscience Skill as Free Action",

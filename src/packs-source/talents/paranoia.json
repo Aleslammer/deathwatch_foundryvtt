@@ -16,6 +16,7 @@
         "_id": "paranoia-init-mod",
         "name": "Paranoia",
         "modifier": 2,
+        "type": "talent",
         "effectType": "initiative",
         "enabled": true
       }

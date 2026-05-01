@@ -31,66 +31,71 @@
   "items": [
     {
       "_id": "eityranid1700001",
+      "_sourceId": "tal00000000011",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "113",
         "prerequisite": "Agility 30",
         "benefit": "No penalty for using off-hand",
-        "description": "<p>The character may use either hand equally well without the –20 penalty for actions using the off hand.</p>",
+        "description": "<p>This Talent does not represent true ambidexterity so much as sufficient training with both hands to make the distinction moot. The character may use either hand equally well for any task, and does not suffer the <b>–20 penalty for actions using his off hand</b>.</p><p>Special: When combined with a Two-Weapon Wielder Talent, the penalty for making attacks with both weapons in the same turn drops to –10.</p>",
         "compendiumId": "tal00000000011",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1700002",
+      "_sourceId": "tal00000000038",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "115",
         "prerequisite": "Weapon Skill 30",
         "benefit": "Opponents get no bonus for outnumbering",
-        "description": "<p>The character's weapon mastery is such that opponents get no bonus for outnumbering the character in close combat.</p>",
+        "description": "<p>The character's weapon seems to be everywhere at once, keeping many more opponents at bay in close combat than would seem possible. <b>Opponents fighting the character in hand-to-hand combat gain no bonuses for outnumbering him.</b></p>",
         "compendiumId": "tal00000000038",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1700003",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. The character is immune to the effects of Fear and Pinning, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1700004",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "119",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Spend Reaction for extra melee attack after All Out Attack",
-        "description": "<p>If the character successfully hits with an All Out Attack action, the character may spend a Reaction to make an additional melee attack with the same weapon at the same target using the same modifiers as the original attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1700005",
+      "_sourceId": "tal00000000131",
       "name": "Heightened Senses (Touch)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -106,30 +111,32 @@
     },
     {
       "_id": "eityranid1700006",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1700007",
+      "_sourceId": "tal00000000263",
       "name": "Two-Weapon Wielder (Melee)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "128",
         "prerequisite": "Weapon Skill 35, Ballistic Skill 35, Ambidextrous",
         "benefit": "Attack with two melee weapons",
-        "description": "<p>When armed with two single-handed melee weapons, the character may attack with both weapons as part of a Full Action. Both attacks suffer a –20 penalty to Weapon Skill.</p>",
+        "description": "<p>Years of training allow the character to use a weapon in each hand when needed. <b>When armed with two weapons of the same type, the character may spend a Full Action to attack with both. Both tests made to attack with the weapons suffer a –20 penalty (see Chapter VIII: Combat for more details on fighting with two weapons). The character must possess Two-Weapon Wielder (Melee) and Two-Weapon Wielder (Ballistic) if he wishes to use a gun and hand weapon with this Talent.</b></p>",
         "compendiumId": "tal00000000263",
         "modifiers": []
       }
@@ -227,6 +234,7 @@
             "_id": "29dcf414f9344eb5",
             "name": "Multiple Arms",
             "modifier": 10,
+            "type": "trait",
             "effectType": "characteristic",
             "valueAffected": "tg",
             "enabled": true

@@ -29,21 +29,23 @@
   "items": [
     {
       "_id": "eichaos090000001",
+      "_sourceId": "tal00000000027",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "113",
+        "page": "114",
         "prerequisite": "",
         "benefit": "+10 WS when charging",
-        "description": "<p>When the character charges, he gains a +10 bonus to Weapon Skill Tests.</p>",
+        "description": "<p>The character has learned to put the whole force of his momentum behind his weapon blows. When the character charges into combat, few can stand before him. If the character uses the Charge Action, he gains a <b>+20 bonus to Weapon Skill instead of +10</b>.</p>",
         "compendiumId": "tal00000000027",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos090000002",
+      "_sourceId": "tal00000000090",
       "name": "Frenzy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

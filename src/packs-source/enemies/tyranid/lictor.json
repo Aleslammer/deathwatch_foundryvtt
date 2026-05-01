@@ -39,6 +39,7 @@
   "items": [
     {
       "_id": "eityranid1300001",
+      "_sourceId": "tal00000000011",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -47,13 +48,14 @@
         "page": "113",
         "prerequisite": "Agility 30",
         "benefit": "No penalty for using off-hand",
-        "description": "<p>The character may use either hand equally well without the -20 penalty for actions using the off hand.</p>",
+        "description": "<p>This Talent does not represent true ambidexterity so much as sufficient training with both hands to make the distinction moot. The character may use either hand equally well for any task, and does not suffer the <b>–20 penalty for actions using his off hand</b>.</p><p>Special: When combined with a Two-Weapon Wielder Talent, the penalty for making attacks with both weapons in the same turn drops to –10.</p>",
         "compendiumId": "tal00000000011",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300002",
+      "_sourceId": "tal00000000013",
       "name": "Assassin Strike",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -62,13 +64,14 @@
         "page": "113",
         "prerequisite": "Agility 40, Acrobatics",
         "benefit": "Move after melee attack with Acrobatics Test",
-        "description": "<p>The character's natural agility and graceful martial forms turn him into a dervish of death on the battlefield. After making a melee attack, a successful Acrobatics Test allows the character to move at half rate as a Free Action. Opponents do not receive free attacks resulting from this move. The character may only make this move once per Round.</p>",
+        "description": "<p>The character’s natural agility and graceful martial forms turn him into a dervish of death on the battlefield. After making a melee attack, a successful Acrobatics Test allows the character to move at half rate as a Free Action. Opponents do not receive free attacks resulting from this move. The character may only make this move once per Round.</p>",
         "compendiumId": "tal00000000013",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300003",
+      "_sourceId": "tal00000000027",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -77,13 +80,14 @@
         "page": "114",
         "prerequisite": "",
         "benefit": "+20 to WS when charging",
-        "description": "<p>The character may make a Charge action and gain a +20 bonus to Weapon Skill instead of the normal +10.</p>",
+        "description": "<p>The character has learned to put the whole force of his momentum behind his weapon blows. When the character charges into combat, few can stand before him. If the character uses the Charge Action, he gains a <b>+20 bonus to Weapon Skill instead of +10</b>.</p>",
         "compendiumId": "tal00000000027",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300004",
+      "_sourceId": "tal00000000030",
       "name": "Blind Fighting",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -92,28 +96,30 @@
         "page": "114",
         "prerequisite": "Perception 30",
         "benefit": "Suffer half penalty for obscured vision in melee",
-        "description": "<p>Through extrasensory perception or uncanny awareness, the character can fight in close combat without the benefit of sight. The character suffers only half the normal penalty for fighting in obscured conditions in melee combat.</p>",
+        "description": "<p>Years of practice and development of other senses allows the character to fight in close combat without the benefit of sight. This Talent reduces all penalties for obscured vision by half, permitting the character to fight in fog, smoke, or darkness more effectively</p>",
         "compendiumId": "tal00000000030",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300005",
+      "_sourceId": "tal00000000034",
       "name": "Catfall",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "114",
+        "page": "115",
         "prerequisite": "Agility 30",
         "benefit": "Reduce falling distance by AG Bonus per DoS",
-        "description": "<p>Gymnastic ability and natural balance enables the character to fall great distances without harm. Whenever he falls, the character may take an Agility Test as a Free Action. Success, and each additional Degree of Success, reduces the distance fallen by a number of metres equal to the character's Agility Bonus for the purposes of determining Damage from the fall.</p>",
+        "description": "<p>Gymnastic ability and natural balance enables the character to fall great distances without harm. Whenever he falls, the character may take an Agility Test as a Free Action. Success, and each additional Degree of Success, reduces the distance fallen by a number of metres equal to the character’s Agility Bonus for the purposes of determining Damage from the fall.</p>",
         "compendiumId": "tal00000000034",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300006",
+      "_sourceId": "tal00000000038",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -122,13 +128,14 @@
         "page": "115",
         "prerequisite": "Weapon Skill 30",
         "benefit": "Opponents get no bonus for outnumbering",
-        "description": "<p>The character's weapon mastery is such that opponents get no bonus for outnumbering the character in close combat.</p>",
+        "description": "<p>The character's weapon seems to be everywhere at once, keeping many more opponents at bay in close combat than would seem possible. <b>Opponents fighting the character in hand-to-hand combat gain no bonuses for outnumbering him.</b></p>",
         "compendiumId": "tal00000000038",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300007",
+      "_sourceId": "tal00000000055",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -137,13 +144,14 @@
         "page": "116",
         "prerequisite": "Strength 40",
         "benefit": "+2 melee damage",
-        "description": "<p>The character has learned how to focus the force of his blows. The character adds +2 to his damage rolls in melee.</p>",
+        "description": "<p>The character's will or faith can sustain him when his flesh fails. <b>He ignores the effects of injury, Fatigue, and Stunning during combat.</b> This Talent does not prevent the Damage, but allows the character to temporarily ignore its effects for the duration of the combat. Death still affects him normally.</p>",
         "compendiumId": "tal00000000055",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300008",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -152,13 +160,14 @@
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. The character is immune to the effects of Fear and Pinning, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300009",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -167,13 +176,14 @@
         "page": "119",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Spend Reaction for extra melee attack after All Out Attack",
-        "description": "<p>If the character successfully hits with an All Out Attack action, the character may spend a Reaction to make an additional melee attack with the same weapon at the same target using the same modifiers as the original attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300010",
+      "_sourceId": "tal00000000115",
       "name": "Hard Target",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -182,28 +192,94 @@
         "page": "119",
         "prerequisite": "Agility 40",
         "benefit": "Enemies suffer -20 BS when shooting at you during Charge or Run",
-        "description": "<p>When the character performs a Charge or Run Action, opponents suffer a -20 penalty to Ballistic Skill Tests made to hit the character with a ranged weapon. This penalty continues until the start of the character's next turn.</p>",
+        "description": "<p>Light on his feet, the character dodges and weaves as he moves, skills learned from long years in the line of fire. <b>When the character performs a Charge or Run Action, opponents suffer a –20 penalty to Ballistic Skill Tests made to hit the character with a ranged weapon. This penalty continues until the start of the character's next turn.</b></p>",
         "compendiumId": "tal00000000115",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300011",
-      "name": "Heightened Senses (All)",
+      "_sourceId": "tal00000000127",
+      "name": "Heightened Senses (Sight)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
-        "prerequisite": "",
-        "benefit": "+10 to Awareness tests involving any sense",
-        "description": "<p>The character gains a +10 bonus to any Awareness tests involving any of the five senses.</p>",
-        "compendiumId": "",
+        "prerequisite": "PER 30",
+        "benefit": "+10 to Awareness Tests involving sight",
+        "description": "<p>Either genetics or augmetics have made one of the character’s senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sight) would apply to an Awareness Test to see a distant flock of shale crows, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his eyes</b>.</p>",
+        "compendiumId": "tal00000000127",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "eityranid1300030",
+      "_sourceId": "tal00000000129",
+      "name": "Heightened Senses (Sound)",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "Deathwatch Core Rulebook",
+        "page": "120",
+        "prerequisite": "PER 30",
+        "benefit": "+10 to Awareness Tests involving sound",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sound) would apply to an Awareness Test to hear distant footsteps, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his ears</b>.</p>",
+        "compendiumId": "tal00000000129",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "eityranid1300031",
+      "_sourceId": "tal00000000128",
+      "name": "Heightened Senses (Smell)",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "Deathwatch Core Rulebook",
+        "page": "120",
+        "prerequisite": "PER 30",
+        "benefit": "+10 to Awareness Tests involving smell",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Smell) would apply to an Awareness Test to detect a faint odor, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his nose</b>.</p>",
+        "compendiumId": "tal00000000128",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "eityranid1300032",
+      "_sourceId": "tal00000000130",
+      "name": "Heightened Senses (Taste)",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "Deathwatch Core Rulebook",
+        "page": "120",
+        "prerequisite": "PER 30",
+        "benefit": "+10 to Awareness Tests involving taste",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Taste) would apply to an Awareness Test to detect poison in food, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his tongue</b>.</p>",
+        "compendiumId": "tal00000000130",
+        "modifiers": []
+      }
+    },
+    {
+      "_id": "eityranid1300033",
+      "_sourceId": "tal00000000131",
+      "name": "Heightened Senses (Touch)",
+      "type": "talent",
+      "img": "systems/deathwatch/icons/talents/generic.webp",
+      "system": {
+        "book": "Deathwatch Core Rulebook",
+        "page": "120",
+        "prerequisite": "PER 30",
+        "benefit": "+10 to Awareness Tests involving touch",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Touch) would apply to an Awareness Test to feel vibrations or textures, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his hands</b>.</p>",
+        "compendiumId": "tal00000000131",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300012",
+      "_sourceId": "tal00000000143",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -212,13 +288,14 @@
         "page": "121",
         "prerequisite": "Agility 30",
         "benefit": "Stand up as Free Action",
-        "description": "<p>The character may stand up as a Free Action.</p>",
+        "description": "<p>A combination of athletic ability and speed allow the character to spring to his feet in virtually any circumstance. <b>The character may stand up as a Free Action.</b></p>",
         "compendiumId": "tal00000000143",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300013",
+      "_sourceId": "tal00000000145",
       "name": "Lightning Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -227,28 +304,30 @@
         "page": "121",
         "prerequisite": "Swift Attack",
         "benefit": "Make three melee attacks as Full Action",
-        "description": "<p>The character's speed with weapons is legendary, allowing him to launch flurries of attacks in melee. As a Full Action, the character may make three melee attacks on his turn.</p>",
+        "description": "<p>The character's speed with weapons is legendary, allowing him to launch flurries of attacks in melee. <b>As a Full Action, the character may make three melee attacks on his turn. The effects of this Talent replace those of Swift Attack rather than adding to them. The use of Lightning Attack may not be combined with Dual Strike.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Lightning Attack with only one of the weapons, and a single attack with the other. If the character has the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, they gain the advantage of Lightning Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000145",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300014",
+      "_sourceId": "tal00000000245",
       "name": "Sprint",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "127",
+        "page": "126",
         "prerequisite": "",
         "benefit": "Move triple speed when running",
-        "description": "<p>The character is a swift runner. When taking a Full Move Action, the character may move an extra number of metres equal to his Agility Bonus. When taking the Run Action, the character may double his movement for one Round. The character gains one level of Fatigue if he uses this Talent two turns in a row.</p>",
+        "description": "<p>The character can move at great speeds. <b>When taking a Full Move Action, the character can move an extra number of metres equal to his Agility Bonus. When taking the Run Action, the character may double his movement for one Round. The character gains one level of Fatigue if he uses this Talent two Turns in a row.</b></p>",
         "compendiumId": "tal00000000245",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300015",
+      "_sourceId": "tal00000000247",
       "name": "Step Aside",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -257,13 +336,14 @@
         "page": "127",
         "prerequisite": "Agility 40, Dodge",
         "benefit": "Make one additional Dodge per Round",
-        "description": "<p>The character may make an additional Dodge once per Round. In effect, this gives the character a second Reaction that may only be used to Dodge.</p>",
+        "description": "<p>The character can sway his body out of the path of an attack, causing it to pass through thin air. <b>The character may make an additional Dodge once per Round. In effect, this gives the character a second Reaction that may only be used to Dodge, allowing two Dodges in a Turn. However, the character may still only attempt a single Dodge against one attack.</b></p>",
         "compendiumId": "tal00000000247",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1300016",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -272,7 +352,7 @@
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
@@ -353,6 +433,7 @@
             "_id": "29dcf414f9344eb5",
             "name": "Multiple Arms",
             "modifier": 10,
+            "type": "trait",
             "effectType": "characteristic",
             "valueAffected": "tg",
             "enabled": true

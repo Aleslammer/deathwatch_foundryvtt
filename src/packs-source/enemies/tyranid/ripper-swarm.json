@@ -34,6 +34,7 @@
   "items": [
     {
       "_id": "eityranid1500001",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -42,22 +43,23 @@
         "page": "118",
         "prerequisite": "",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>The character is immune to the effects of Fear and Pinning, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid1500002",
+      "_sourceId": "tal00000000128",
       "name": "Heightened Senses (Smell)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
         "prerequisite": "",
         "benefit": "+10 to Awareness tests involving smell",
-        "description": "<p>The character gains a +10 bonus to any tests specifically involving smell.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Smell) would apply to an Awareness Test to detect a faint odor, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his nose</b>.</p>",
         "compendiumId": "tal00000000128",
         "modifiers": []
       }

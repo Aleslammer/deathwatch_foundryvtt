@@ -39,51 +39,55 @@
   "items": [
     {
       "_id": "eichaos020000001",
+      "_sourceId": "tal00000000015",
       "name": "Astartes Weapon Training",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "111",
+        "page": "113",
         "prerequisite": "",
         "benefit": "Proficient with all Astartes weapons",
-        "description": "<p>The character is trained in the use of all Space Marine weapons.</p>",
+        "description": "<p>Battle-Brothers of the Adeptus Astartes spend years becoming proficient with all manner of weapons. By the time that a Battle-Brother has entered service in a squad, he will have not only trained with both heavy and melee weapons, but used those weapons on countless battlefields. The Battle-Brother is proficient with bolt, chain, melta, plasma, power, flame, primitive (ranged and melee), las weapons, launchers, solid projectile, and thrown weapons of all Classes. In essence, the only weapons that the Battle-Brother is not proficient with are exotic weapons; for these, he must acquire individual proficiencies as normal.</p>",
         "compendiumId": "tal00000000015",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000002",
+      "_sourceId": "tal00000000031",
       "name": "Bolter Drill",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "113",
+        "page": "114",
         "prerequisite": "Ballistic Skill 40, Astartes Weapon Training",
         "benefit": "+10 to hit with bolter weapons in Semi-Auto and Full Auto",
-        "description": "<p>The character is an expert with boltguns and related weapons. When firing any bolter weapon in Semi-Auto or Full Auto, the character gains a +10 bonus to hit.</p>",
+        "description": "<p>The skill of an Adeptus Astartes with bolters of all types can be honed by training and combat, allowing Space Marines to unleash devastating volleys of disciplined fire that cut down their enemies like the sweep of a scythe. When firing any class of Bolt weapon on Full or Semi-Auto, the Battle-Brother may opt to increase the weapon’s rate of fire by +1 (this bonus applies to any and all bolt weapons wielded by the Space Marine, meaning that if he is firing more than one bolt weapon at a time, the bonus will apply to all such weapons). This Talent only applies to personal weaponry and <b>does not impact vehicle-mounted weapons of any kind.</b></p>",
         "compendiumId": "tal00000000031",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000003",
+      "_sourceId": "tal00000000049",
       "name": "Die Hard",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "117",
+        "page": "116",
         "prerequisite": "Willpower 40",
         "benefit": "Ignore Stunned condition effects",
-        "description": "<p>The character can spend a Fate Point to ignore the effects of being Stunned until the end of his next turn.</p>",
+        "description": "<p>Through either willpower or sheer stubbornness, the character refuses to cross into shadow. <b>When the character suffers from blood loss, he may roll twice to avoid death.</b></p>",
         "compendiumId": "tal00000000049",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000004",
+      "_sourceId": "tal00000000002",
       "name": "Fearless",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -92,7 +96,7 @@
         "page": "118",
         "prerequisite": "Willpower 30",
         "benefit": "Immune to Fear and Pinning",
-        "description": "<p>The character is immune to the effects of Fear and Pinning.</p>",
+        "description": "<p>Through hard experience with horrifying situations, fear no longer commands the character's actions. <b>The character is immune to the effects of Fear and Pinning</b>, but disengaging from combat or backing down from a fight requires a successful Willpower Test.</p>",
         "compendiumId": "tal00000000002",
         "modifiers": []
       }
@@ -114,51 +118,55 @@
     },
     {
       "_id": "eichaos020000006",
+      "_sourceId": "tal00000000127",
       "name": "Heightened Senses (Sight)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
         "prerequisite": "Perception 30",
         "benefit": "+10 to Perception Tests involving sight",
-        "description": "<p>The character's sense of sight is exceptionally acute.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character’s senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sight) would apply to an Awareness Test to see a distant flock of shale crows, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his eyes</b>.</p>",
         "compendiumId": "tal00000000127",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000007",
+      "_sourceId": "tal00000000129",
       "name": "Heightened Senses (Sound)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
         "prerequisite": "Perception 30",
         "benefit": "+10 to Perception Tests involving sound",
-        "description": "<p>The character's sense of hearing is exceptionally acute.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Sound) would apply to an Awareness Test to hear distant footsteps, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his ears</b>.</p>",
         "compendiumId": "tal00000000129",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000008",
+      "_sourceId": "tal00000000128",
       "name": "Heightened Senses (Smell)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
+        "book": "Deathwatch Core Rulebook",
         "page": "120",
         "prerequisite": "Perception 30",
         "benefit": "+10 to Perception Tests involving smell",
-        "description": "<p>The character's sense of smell is exceptionally acute.</p>",
+        "description": "<p>Either genetics or augmetics have made one of the character's senses are superior to others. When the character gains this Talent, select one of the five senses. The character gains a <b>+10 bonus to any tests specifically involving this sense</b>. Thus, Heightened Senses (Smell) would apply to an Awareness Test to detect a faint odor, but <b>not to a Ballistic Skill Test or a Weapon Skill Test simply because the character is using his nose</b>.</p>",
         "compendiumId": "tal00000000128",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000009",
+      "_sourceId": "tal00000000140",
       "name": "Jaded",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -167,13 +175,14 @@
         "page": "121",
         "prerequisite": "Willpower 30",
         "benefit": "Immune to mundane fear",
-        "description": "<p>The character is jaded and has seen horrors beyond imagination. He is immune to mundane sources of fear (but not supernatural fear such as from daemons or xenos).</p>",
+        "description": "<p>The character's wide travels have shown him both wonders and horrors beyond the ken of most. The galaxy has thrown its worst at the character, and he has yet to flinch. <b>Mundane events, from death's horrific visage to xenos abominations, do not cause Insanity Points, nor Fear Tests. Terrors of the warp still affects the character normally.</b></p>",
         "compendiumId": "tal00000000140",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000010",
+      "_sourceId": "tal00000000141",
       "name": "Killing Strike",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -182,13 +191,14 @@
         "page": "121",
         "prerequisite": "Weapon Skill 50",
         "benefit": "Righteous Fury on 9 or 10",
-        "description": "<p>The character triggers Righteous Fury on a roll of 9 or 10 (instead of just 10).</p>",
+        "description": "<p>Space Marines are amongst the deadliest warriors in the galaxy, and they have learned how best to place their blows for maximum effect. <b>When taking the All-Out Attack action, a Space Marine may spend a Fate Point (before rolling the dice) to make his melee attacks for that round impossible to parry or dodge.</b></p>",
         "compendiumId": "tal00000000141",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000011",
+      "_sourceId": "tal00000000206",
       "name": "Quick Draw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -197,28 +207,30 @@
         "page": "124",
         "prerequisite": "Agility 30",
         "benefit": "Ready weapon as Free Action",
-        "description": "<p>The character can ready a pistol or basic weapon as a Free Action instead of a Half Action.</p>",
+        "description": "<p>The character has practiced so frequently with his weapons that they practically leap into his hands in response to a simple thought. <b>The character can Ready as a Free Action when armed with a pistol or basic ranged weapon, or a melee weapon that can be wielded in one hand.</b></p>",
         "compendiumId": "tal00000000206",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000012",
+      "_sourceId": "tal00000000208",
       "name": "Rapid Reload",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "DeathWatch Core Rulebook",
-        "page": "124",
+        "book": "Deathwatch Core Rulebook",
+        "page": "125",
         "prerequisite": "",
         "benefit": "Reduce reload time by one step",
-        "description": "<p>The character can reload weapons one step faster (Full Action becomes Half Action, Half Action becomes Free Action).</p>",
+        "description": "<p>The firing ranges and weapon drill chambers are the character’s constant abode, and hours of reloading countless magazines or power cells means that he can replace them without looking and without thinking. The character <b>halves all reload times, rounding down</b>. Thus, Half Action reload become a Free Action, a Full Action reload becomes a Half Action and so on.</p>",
         "compendiumId": "tal00000000208",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000013",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -227,13 +239,14 @@
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos020000014",
+      "_sourceId": "tal00000000261",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -242,7 +255,7 @@
         "page": "128",
         "prerequisite": "Toughness 40",
         "benefit": "Halve Critical Damage taken (round up)",
-        "description": "<p>Whenever the character suffers Critical Damage, halve the amount (rounding up).</p>",
+        "description": "<p>The character is able to shrug off wounds that would fell lesser men. <b>Whenever the character suffers Critical Damage, halve the result (rounding up).</b></p><p><b>Example:</b> Agamemnon takes a grievous wound from a tyranid warrior. After reduction for Armour and Toughness, the Scything Talon strike still does 8 Damage. Unfortunately, it's been tough going and Agamemnon only has 4 Wounds remaining, which would normally result in 4 points of Critical Damage. However, since he has the True Grit Talent, he only takes 2 points of Critical Damage.</p>",
         "compendiumId": "tal00000000261",
         "modifiers": []
       }

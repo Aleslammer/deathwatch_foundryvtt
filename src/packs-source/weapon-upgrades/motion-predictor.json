@@ -14,6 +14,7 @@
         "_id": "db52508da870e73e",
         "name": "Motion Predictor",
         "modifier": "10",
+        "type": "equipment",
         "effectType": "characteristic",
         "valueAffected": "bs",
         "enabled": true,

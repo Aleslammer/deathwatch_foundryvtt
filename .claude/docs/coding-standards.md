@@ -84,15 +84,30 @@ Defined in `src/styles/components/characteristics.css`:
 
 **Location**: `src/module/helpers/logger.mjs`
 
-**Pattern**: Use `Logger` for all logging instead of direct `console.*` calls. Integrates with Foundry's logging infrastructure and provides user-configurable log levels.
+**Pattern**: Use `Logger` for all logging instead of direct `console.*` calls. Supports both direct logging and category-based filtering for granular control.
 
-### Methods
+### Logging Methods
+
+#### Direct Logging (Always Logged)
 
 - `Logger.debug(context, ...args)` — Debug messages (verbose, for developers)
 - `Logger.info(context, ...args)` — Important events (system initialization, etc.)
 - `Logger.warn(context, ...args)` — Warnings (recoverable errors, deprecated usage)
 - `Logger.error(context, ...args)` — Errors (unrecoverable failures)
 - `Logger.compatibility(message, { since, until })` — Deprecation warnings
+
+#### Category-Based Logging (User-Configurable)
+
+For granular control, use category loggers that can be toggled on/off in settings:
+
+```javascript
+Logger.category('COMBAT.RANGED').debug('Hit roll:', result);
+Logger.category('CHARACTER.MODIFIERS').info('Applied modifier:', mod);
+```
+
+**Categories are hierarchical** (e.g., `COMBAT.RANGED`, `CHARACTER.WOUNDS`). See `CATEGORY_REGISTRY` in `logger.mjs` for all available categories.
+
+**Performance**: Categories return no-op stubs when disabled (zero runtime overhead).
 
 ### Log Levels
 
@@ -104,31 +119,52 @@ Configurable in Foundry settings:
 - `WARN` — Shows warnings and errors only
 - `ERROR` — Shows errors only
 
-### When to Use
+### Log Categories
 
+Users can enable/disable specific categories in settings. Categories are grouped by subsystem:
+
+- **Combat**: `COMBAT.RANGED`, `COMBAT.MELEE`, `COMBAT.DAMAGE`, `COMBAT.RIGHTEOUS_FURY`, `COMBAT.WEAPON_QUALITIES`, `COMBAT.JAMMING`
+- **Character**: `CHARACTER.MODIFIERS`, `CHARACTER.XP`, `CHARACTER.WOUNDS`, `CHARACTER.SKILLS`, `CHARACTER.CHARACTERISTICS`, `CHARACTER.INSANITY`
+- **Psychic**: `PSYCHIC.POWERS`, `PSYCHIC.PHENOMENA`, `PSYCHIC.PERILS`
+- **Squad**: `SQUAD.COHESION`, `SQUAD.MODES`
+- **Items**: `ITEMS.WEAPONS`, `ITEMS.ARMOR`, `ITEMS.CYBERNETICS`, `ITEMS.EQUIPMENT`
+- **System**: `SYSTEM.INIT`, `SYSTEM.SETTINGS`, `SYSTEM.MIGRATION`, `SYSTEM.ERROR`
+
+### When to Use Direct vs Category Logging
+
+**Use direct logging** (`Logger.debug(context, ...args)`):
 - ✅ System initialization/shutdown events
-- ✅ Error conditions (use `Logger.error()`)
-- ✅ Deprecation warnings (use `Logger.compatibility()`)
-- ✅ Debug information for developers (use `Logger.debug()`)
+- ✅ Critical errors that should always be logged
+- ✅ Deprecation warnings
+- ✅ One-off debug messages during development
+
+**Use category logging** (`Logger.category('X.Y').debug(...)`):
+- ✅ Detailed subsystem logic (combat calculations, modifier application)
+- ✅ Recurring events that could spam logs (weapon quality applications, damage rolls)
+- ✅ Debug information that users might want to selectively enable
+- ✅ Performance-sensitive hot paths (category check is fast, disabled categories have zero overhead)
+
+**Never use**:
 - ❌ User-facing notifications (use `ui.notifications` instead)
 - ❌ Chat messages (use `ChatMessage.create()`)
+- ❌ Direct `console.*` calls (use Logger instead)
 
 ### Example Usage
 
 ```javascript
 import { Logger } from "../helpers/logger.mjs";
 
-// System events
-Logger.info("INIT", "System initialized");
+// Direct logging (always respects log level)
+Logger.info("SYSTEM.INIT", "System initialized");
+Logger.error("SYSTEM.ERROR", "Failed to load skills", error);
 
-// Debug information (only shown at DEBUG level)
-Logger.debug("COMBAT", "Applying damage", { damage: 15, penetration: 4 });
+// Category logging (user can disable entire categories)
+const combatLogger = Logger.category('COMBAT.RANGED');
+combatLogger.debug("Calculating hit roll", { target, modifiers });
+combatLogger.info("Attack result:", { success: true, degrees: 3 });
 
-// Warnings
-Logger.warn("MODIFIERS", "Deprecated modifier type used");
-
-// Errors
-Logger.error("SKILLS", "Skills not loaded. Call SkillLoader.init() first.");
+// One-liner for infrequent logs
+Logger.category('CHARACTER.WOUNDS').warn("Wound threshold exceeded");
 
 // Deprecation warnings
 Logger.compatibility("rollItemMacro() is deprecated", {
@@ -136,6 +172,22 @@ Logger.compatibility("rollItemMacro() is deprecated", {
   until: "3.0.0"
 });
 ```
+
+### Adding New Categories
+
+To add a new category:
+
+1. Add entry to `CATEGORY_REGISTRY` in `logger.mjs`:
+   ```javascript
+   'COMBAT.NEW_FEATURE': { group: 'combat', key: 'new-feature', label: 'New Feature' }
+   ```
+
+2. Use the category in code:
+   ```javascript
+   Logger.category('COMBAT.NEW_FEATURE').debug('Feature activated');
+   ```
+
+3. Users can enable/disable it in System Settings → Log Categories
 
 **Migration note**: The old `debug()` function from `debug.mjs` is deprecated and now delegates to `Logger.debug()`. Update code to use `Logger` directly.
 

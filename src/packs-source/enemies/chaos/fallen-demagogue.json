@@ -36,6 +36,7 @@
   "items": [
     {
       "_id": "eichaos170000001",
+      "_sourceId": "tal00000000010",
       "name": "Air of Authority",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -44,13 +45,14 @@
         "page": "113",
         "prerequisite": "Fel 30",
         "benefit": "Affect more targets with test",
-        "description": "<p>The character was born to command, either motivating or terrifying those under his charge. On a successful Command Test, the character may affect a number of targets equal to <b>1d10 plus his Fellowship Bonus</b>. Furthermore the character's voice commands such respect that even those not in his retinue pay heed. The character may make a Command Test on those not under his authority with a –10 penalty. This Talent has no effect on hostile targets, and only affects NPCs.</p>",
+        "description": "<p>The character was born to command, either motivating or terrifying those under his charge. On a successful Command Test, the character may affect a number of targets equal to <b>1d10 plus his Fellowship Bonus</b>. Furthermore the character’s voice commands such respect that even those not in his retinue pay heed. The character may make a Command Test on those not under his authority with a –10 penalty. This Talent has no effect on hostile targets, and only affects NPCs.</p>",
         "compendiumId": "tal00000000010",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos170000002",
+      "_sourceId": "tal00000000006",
       "name": "Inspire Wrath",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

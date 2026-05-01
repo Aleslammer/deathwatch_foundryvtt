@@ -36,6 +36,7 @@
   "items": [
     {
       "_id": "eitau02000000001",
+      "_sourceId": "tal00000000115",
       "name": "Hard Target",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -51,6 +52,7 @@
     },
     {
       "_id": "eitau02000000002",
+      "_sourceId": "tal00000000207",
       "name": "Rapid Reaction",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -66,6 +68,7 @@
     },
     {
       "_id": "eitau02000000003",
+      "_sourceId": "tal00000000245",
       "name": "Sprint",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

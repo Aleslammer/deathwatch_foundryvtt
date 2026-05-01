@@ -42,21 +42,23 @@
   "items": [
     {
       "_id": "hitau03000000001",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "118",
+        "page": "119",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Spend Reaction for +10 WS on Charge",
-        "description": "<p>The warrior launches himself at foes with reckless abandon, driving his enemies back. <b>When making a Charge Action, the character may choose to spend a Reaction. If he does so, he gains a +10 bonus on his WS Test and his foes gain a +0 bonus to WS Tests to hit him (instead of the normal penalty) for one Round.</b></p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "hitau03000000002",
+      "_sourceId": "tal00000000284",
       "name": "Hyperactive Nymune Organ",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -72,6 +74,7 @@
     },
     {
       "_id": "hitau03000000003",
+      "_sourceId": "tal00000000283",
       "name": "Kroot Leap",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -80,13 +83,14 @@
         "page": "15",
         "prerequisite": "Kroot",
         "benefit": "Leap horizontally or vertically equal to Agility Bonus in metres",
-        "description": "<p>The Kroot's powerful legs allow them to make prodigious leaps. <b>As a Half Action, the Kroot may make a leap horizontally or vertically equal to his Agility Bonus in metres. This does not require an Acrobatics Test under normal circumstances.</b> The Kroot may also use this ability to leap over obstacles, gaps, or enemies during movement.</p>",
+        "description": "<p>Kroot are adept at using their long legs to jump, hop, and leap long distances. The Kroot has learned to use this advantage whilst rushing an enemy in close combat.</p><p><strong>When making a Charge action, the Kroot can ignore obstacles between him and his target by making a Running Vertical Jump (see page 207 of the Deathwatch Rulebook). This Talent may only be used if there is room for the Kroot to land next to his target and if there is enough overhead space for the Kroot to leap over the obstacles.</strong> For example, a wall that goes from floor to ceiling may not be leapt over, nor would something taller than the Kroot's vertical jump distance.</p><p><strong>If the Kroot successfully strikes his target whilst using this Talent, the Kroot may make a Knock-Down Action against the target (see page 241 of the Deathwatch Rulebook) as a Free Action.</strong></p>",
         "compendiumId": "tal00000000283",
         "modifiers": []
       }
     },
     {
       "_id": "hitau03000000004",
+      "_sourceId": "tal00000000143",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -102,6 +106,7 @@
     },
     {
       "_id": "hitau03000000005",
+      "_sourceId": "tal00000000146",
       "name": "Lightning Reflexes",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -110,13 +115,14 @@
         "page": "121",
         "prerequisite": "Agility 30",
         "benefit": "+1 Initiative",
-        "description": "<p>The character's speed of thought and action is lightning-fast. <b>The character adds a +2 bonus to his Initiative.</b></p>",
+        "description": "<p>The character always expects trouble, even in the most innocuous situations, allowing him to act quickly when needed. <b>Add twice the character's Agility Bonus when rolling for Initiative. If the character has Unnatural Agility, then add one to the multiplier before factoring the bonus into the character's Initiative roll.</b></p>",
         "compendiumId": "tal00000000146",
         "modifiers": []
       }
     },
     {
       "_id": "hitau03000000006",
+      "_sourceId": "tal00000000210",
       "name": "Resistance (Fear)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -132,15 +138,16 @@
     },
     {
       "_id": "hitau03000000007",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "126",
+        "page": "127",
         "prerequisite": "Weapon Skill 30",
         "benefit": "Make additional melee attacks",
-        "description": "<p>The warrior's skill at melee combat is such that he strikes much faster than most. <b>As a Full Action, the character may make the indicated number of attacks with a melee weapon according to the Swift Attack (X) entry. The character rolls to hit separately for each attack, starting with his lowest bonus modifier and working up.</b></p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
@@ -288,7 +295,7 @@
       "_id": "hitau03000000015",
       "name": "Kroot Beak",
       "type": "weapon",
-      "img": "systems/deathwatch/icons/weapons/natural-weapon.webp",
+      "img": "systems/deathwatch/icons/generic/generic-melee.webp",
       "system": {
         "class": "Melee",
         "dmg": "1d5",

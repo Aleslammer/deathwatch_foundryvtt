@@ -13,6 +13,7 @@
         "_id": "mod000000007",
         "name": "Bionic Heart Body Armor",
         "modifier": 1,
+        "type": "equipment",
         "effectType": "armor",
         "valueAffected": "body",
         "enabled": true

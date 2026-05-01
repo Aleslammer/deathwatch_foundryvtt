@@ -32,6 +32,7 @@
   "items": [
     {
       "_id": "eiork08000000001",
+      "_sourceId": "tal00000000010",
       "name": "Air of Authority",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -40,13 +41,14 @@
         "page": "113",
         "prerequisite": "Fel 30",
         "benefit": "Affect more targets with test",
-        "description": "<p>On a successful Command Test, the character may affect a number of targets equal to <b>1d10 plus his Fellowship Bonus</b>.</p>",
+        "description": "<p>The character was born to command, either motivating or terrifying those under his charge. On a successful Command Test, the character may affect a number of targets equal to <b>1d10 plus his Fellowship Bonus</b>. Furthermore the character’s voice commands such respect that even those not in his retinue pay heed. The character may make a Command Test on those not under his authority with a –10 penalty. This Talent has no effect on hostile targets, and only affects NPCs.</p>",
         "compendiumId": "tal00000000010",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000002",
+      "_sourceId": "tal00000000032",
       "name": "Bulging Biceps",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -55,13 +57,14 @@
         "page": "114",
         "prerequisite": "Str 45",
         "benefit": "Remove Bracing",
-        "description": "<p>The character can fire heavy weapons using Semi-Auto Burst or Full Auto Burst without bracing, and he does not suffer the –30 penalty for failing to brace.</p>",
+        "description": "<p>Whereas a weaker man would be sent flying when using heavy weapons, the character’s strong physique allows him to remain standing . <b>The character can fire heavy weapons using Semi-Auto Burst or Full Auto Burst without bracing, and he does not suffer the –30 penalty for failing to brace</b>.</p>",
         "compendiumId": "tal00000000032",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000003",
+      "_sourceId": "tal00000000044",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -70,13 +73,23 @@
         "page": "115",
         "prerequisite": "STR 40",
         "benefit": "+2 melee damage",
-        "description": "<p>The character adds +2 to damage inflicted in melee.</p>",
+        "description": "<p>The character has the ability to focus his entire body into close combat attacks. <b>The character adds +2 to damage inflicted in melee.</b></p>",
         "compendiumId": "tal00000000044",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "crushingblow0001",
+            "name": "Crushing Blow - Melee Damage",
+            "modifier": 2,
+            "type": "talent",
+            "effectType": "weapon-damage",
+            "enabled": true
+          }
+        ]
       }
     },
     {
       "_id": "eiork08000000004",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -85,13 +98,14 @@
         "page": "119",
         "prerequisite": "WS 35",
         "benefit": "Extra attack on All Out Attack hit",
-        "description": "<p>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000005",
+      "_sourceId": "tal00000000116",
       "name": "Hardy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -100,13 +114,14 @@
         "page": "119",
         "prerequisite": "Toughness 40",
         "benefit": "Recover damage as if Lightly Damaged",
-        "description": "<p>When undergoing medical treatment or healing from injuries, the character recovers Damage as if Lightly Damaged.</p>",
+        "description": "<p>The character's constitution rebounds quickly from shock or injury. <b>When undergoing medical treatment or healing from injures, the character recovers Damage as if Lightly Damaged.</b></p>",
         "compendiumId": "tal00000000116",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000006",
+      "_sourceId": "tal00000000138",
       "name": "Iron Discipline",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -115,13 +130,14 @@
         "page": "120",
         "prerequisite": "WIL 30, Command",
         "benefit": "Reroll failed Willpower Tests",
-        "description": "<p>If the character is visible to his followers, they may <b>re-roll failed Willpower Tests made to resist Fear and Pinning</b>.</p>",
+        "description": "<p>Iron sharpens iron. The character does not coddle his subordinates nor motivate them through kindness. The character’s stalwart example and stern leadership exhorts them with steel instead of spoils. If the character is visible to his followers, either in person or via vox- or pict-caster, they may <b>re-roll failed Willpower Tests made to resist Fear and Pinning</b>. Iron Discipline can affect a number of targets equal to the character’s Willpower Bonus, who must be under the character’s command. Player characters can benefit from Iron Discipline if the character with this Talent is the official group leader.</p>",
         "compendiumId": "tal00000000138",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000007",
+      "_sourceId": "tal00000000139",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -130,13 +146,14 @@
         "page": "121",
         "prerequisite": "Toughness 40",
         "benefit": "Toughness Test to ignore Stunned effects",
-        "description": "<p>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</p>",
+        "description": "<p>The character has taken blows from Orks and given back as good as he got. The character can bounce back from most strikes without ill effects. <b>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</b></p>",
         "compendiumId": "tal00000000139",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000008",
+      "_sourceId": "tal00000000146",
       "name": "Lightning Reflexes",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -145,13 +162,14 @@
         "page": "121",
         "prerequisite": "",
         "benefit": "Add twice Agility Bonus to Initiative",
-        "description": "<p>Add twice the character's Agility Bonus when rolling for Initiative.</p>",
+        "description": "<p>The character always expects trouble, even in the most innocuous situations, allowing him to act quickly when needed. <b>Add twice the character's Agility Bonus when rolling for Initiative. If the character has Unnatural Agility, then add one to the multiplier before factoring the bonus into the character's Initiative roll.</b></p>",
         "compendiumId": "tal00000000146",
         "modifiers": []
       }
     },
     {
       "_id": "eiork08000000009",
+      "_sourceId": "tal00000000155",
       "name": "Master Chirurgeon",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -160,13 +178,24 @@
         "page": "122",
         "prerequisite": "Medicae +10",
         "benefit": "+10 Medicae, heal 2 Wounds on Heavily/Critically Damaged, +20 to prevent limb loss",
-        "description": "<p>The character gains a <b>+10 bonus on all Medicae Tests</b>. If treating a Heavily or Critically Damaged patient, a successful test heals 2 Wounds instead of 1.</p>",
+        "description": "<p>The character's advanced medical skills enable him to knit flesh with deft same mastery. The character's exceptional education in use of the Narthecium, med-slate, and supplemental drugs give his patients an enormous advantage. <b>The character gains a +10 bonus on all Medicae Tests. If treating a Heavily or Critically Damaged patient, a successful test heals 2 Wounds instead of 1. If the patient is in danger of losing a limb from a Critical Hit (see Chapter VIII: Combat), the character provides the patient with a +20 bonus to the Toughness Test to prevent limb loss.</b></p>",
         "compendiumId": "tal00000000155",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "master-chirurgeon-mod",
+            "name": "Master Chirurgeon",
+            "modifier": 10,
+            "type": "talent",
+            "effectType": "skill",
+            "valueAffected": "medicae",
+            "enabled": true
+          }
+        ]
       }
     },
     {
       "_id": "eiork08000000010",
+      "_sourceId": "tal00000000261",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -175,7 +204,7 @@
         "page": "128",
         "prerequisite": "Toughness 40",
         "benefit": "Halve Critical Damage (rounding up)",
-        "description": "<p>Whenever the character suffers Critical Damage, halve the result (rounding up).</p>",
+        "description": "<p>The character is able to shrug off wounds that would fell lesser men. <b>Whenever the character suffers Critical Damage, halve the result (rounding up).</b></p><p><b>Example:</b> Agamemnon takes a grievous wound from a tyranid warrior. After reduction for Armour and Toughness, the Scything Talon strike still does 8 Damage. Unfortunately, it's been tough going and Agamemnon only has 4 Wounds remaining, which would normally result in 4 points of Critical Damage. However, since he has the True Grit Talent, he only takes 2 points of Critical Damage.</p>",
         "compendiumId": "tal00000000261",
         "modifiers": []
       }

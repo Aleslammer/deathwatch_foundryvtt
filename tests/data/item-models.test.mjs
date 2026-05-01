@@ -110,6 +110,40 @@ describe('DeathwatchGear', () => {
   });
 });
 
+describe('DeathwatchGear quantity field', () => {
+  it('should include quantity field', () => {
+    const schema = DeathwatchGear.defineSchema();
+    expect(schema.quantity).toBeDefined();
+  });
+
+  it('should default quantity to 1', () => {
+    const schema = DeathwatchGear.defineSchema();
+    expect(schema.quantity.options.initial).toBe(1);
+  });
+
+  it('should enforce minimum quantity of 0', () => {
+    const schema = DeathwatchGear.defineSchema();
+    expect(schema.quantity.options.min).toBe(0);
+  });
+
+  it('should enforce integer quantity values', () => {
+    const schema = DeathwatchGear.defineSchema();
+    expect(schema.quantity.options.integer).toBe(true);
+  });
+});
+
+describe('DeathwatchGear stackable field', () => {
+  it('should include stackable field', () => {
+    const schema = DeathwatchGear.defineSchema();
+    expect(schema.stackable).toBeDefined();
+  });
+
+  it('should default stackable to false', () => {
+    const schema = DeathwatchGear.defineSchema();
+    expect(schema.stackable.options.initial).toBe(false);
+  });
+});
+
 describe('DeathwatchDemeanour', () => {
   it('includes base fields and chapter', () => {
     const schema = DeathwatchDemeanour.defineSchema();

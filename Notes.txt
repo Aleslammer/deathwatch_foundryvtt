@@ -1,8 +1,5 @@
 System:
-
-    TODO: System template.json is deprecated. System-provided Document types should be defined in system.json, and optionally be associated with a system data model. Please see the KB article on System Data Models for more details: https://foundryvtt.com/article/system-data-models/. Support for template.json will be removed in V16.
     TODO: need to add official module installation from GitHub
-    TODO: Implement Standard Character values.   
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -12,16 +9,11 @@ Skills:
 Traits
 
 Talents:
-    Modify the Critical Damage talent search (like crack shot) and change that to a modifier (can be applied to Death Is Joy)
-    
 
 Weapon Upgrade:
 
 Gear:
-    Chapter Trappings (Many players have these)
-
-    TODO: Missles should be ammo for the launchers  (Otho has some)
-    Relics
+    TODO:Relics
     Deathwatch Relics
     Chapter Relics
     Force Fields (Iron Halo, Rosarius, Conversion Field) — percentage-based damage negation with overload
@@ -36,8 +28,7 @@ TODO: Automated Animations - Can we use this for things?  Need to look at tutori
 
 Enemies:
     TODO: add dark eldar
-    todo: add eldar
-    
+    TODO: add eldar
 
 Armor:
     TODO: 163 - Artificer Armor acts like a MIU (CYbernetcis not implemented yet)
@@ -46,9 +37,9 @@ Armor:
 
 Psychic Powers:
     TODO: Add powers from Black Crusade
+    TODO: Add chapter specific psychic Powers from First Founding and Honor the Chapter
 
 Modifier-System:
-    TODO: we need to standardize one single logic flow and ALL items go through this...
 
 Orks:
 
@@ -60,51 +51,10 @@ Campaign Systems
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
 
-Hadarr - Need to address his gear Also alot of skills pete took I think fall into cant take route but need to validate with class and speciality
-    Gear Powered modifiers (narthecium +20 medicae is not being show on the modifiers tab.)
-    Drugs shoudl be stackable...
-    
 
-Here is what is standard
 
-Skills  
-    Basic
-        Awareness
-        Climb
-        Concealment
-        Dodge
-        Intimidate
-        Silent Move
-    Advanced
-        Chipher - Chapter Runes
-        Drive - Ground
-        Literacy
-        Lore Common - Adeptus Astartes
-        Lore Common - Deathwatch
-        Lore Common - Imperium
-        Lore Common - War
-        Lore Forbidden - Xenos
-        Lore Scholastic - Codex Astartes
-        Navigation - Surface
-        Speak Language - High Gothic
-        Speak Language - Low Gothic
-        Tracking
-        
-        Tactics (Pick One)
 
-Talents
-    Ambidextrous
-    Astartes Weapons Training
-    Bulging Biceps
-    Deathwatch Training Talent
-    Heightened Senses (Sound)
-    Heightened Senses (Sight)
-    Killing Strike
-    Nerves of Steel
-    Quick Draw
-    Resistance (Psychic Powers)
-    True Grit
-    Unarmed Master
-Traits
-    Unnatural Strength (x2)
-    Unnatural Toughness (x2)
+Please create a token image for foundry vtt an imperial themed circular border.  And outside the circle is transparent. Inside the circle should be a warhammer 40k Charron Pattern Battle Servitor.  They are 
+The Charron Pattern is a light battle servitor, humanoid in shape, found often in the service of the Imperial Navy and numerous other star vessels as shock troops and defenders in boarding actions. Those found in the Koronus Expanse are often very old, their inorganic components having been recycled through numerous bodies and recovered from the fallen of the battlefield. As a result they have a reputation for their machine spirits being unreliable in combat and not knowing friend from foe on occasion. This makes some captains reluctant to employ them save in the direst need.
+
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\human\renegade-militia.png"

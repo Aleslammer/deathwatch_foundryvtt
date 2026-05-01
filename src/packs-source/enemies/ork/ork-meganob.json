@@ -32,6 +32,7 @@
   "items": [
     {
       "_id": "eiork02000000001",
+      "_sourceId": "tal00000000032",
       "name": "Bulging Biceps",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -40,13 +41,14 @@
         "page": "114",
         "prerequisite": "Strength 45",
         "benefit": "Remove bracing requirement for Heavy weapons",
-        "description": "<p>The character can wield Heavy weapons as if they were Basic weapons.</p>",
+        "description": "<p>Whereas a weaker man would be sent flying when using heavy weapons, the character’s strong physique allows him to remain standing . <b>The character can fire heavy weapons using Semi-Auto Burst or Full Auto Burst without bracing, and he does not suffer the –30 penalty for failing to brace</b>.</p>",
         "compendiumId": "tal00000000032",
         "modifiers": []
       }
     },
     {
       "_id": "eiork02000000002",
+      "_sourceId": "tal00000000055",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -55,13 +57,14 @@
         "page": "116",
         "prerequisite": "Strength 40",
         "benefit": "+2 melee damage",
-        "description": "<p>The character adds +2 to his damage rolls in melee.</p>",
+        "description": "<p>The character's will or faith can sustain him when his flesh fails. <b>He ignores the effects of injury, Fatigue, and Stunning during combat.</b> This Talent does not prevent the Damage, but allows the character to temporarily ignore its effects for the duration of the combat. Death still affects him normally.</p>",
         "compendiumId": "tal00000000055",
         "modifiers": []
       }
     },
     {
       "_id": "eiork02000000003",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -70,13 +73,14 @@
         "page": "119",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Spend Reaction for extra melee attack after All Out Attack",
-        "description": "<p>If the character successfully hits with an All Out Attack action, the character may spend a Reaction to make an additional melee attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eiork02000000004",
+      "_sourceId": "tal00000000116",
       "name": "Hardy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -85,13 +89,14 @@
         "page": "119",
         "prerequisite": "Toughness 40",
         "benefit": "Recover damage as if Lightly Damaged",
-        "description": "<p>The character's constitution rebounds quickly from shock or injury. When undergoing medical treatment or healing from injuries, the character recovers Damage as if Lightly Damaged.</p>",
+        "description": "<p>The character's constitution rebounds quickly from shock or injury. <b>When undergoing medical treatment or healing from injures, the character recovers Damage as if Lightly Damaged.</b></p>",
         "compendiumId": "tal00000000116",
         "modifiers": []
       }
     },
     {
       "_id": "eiork02000000005",
+      "_sourceId": "tal00000000139",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -100,13 +105,14 @@
         "page": "121",
         "prerequisite": "Toughness 40",
         "benefit": "Test Toughness to overcome Stunning",
-        "description": "<p>If the character is ever Stunned, the character may make a Toughness Test to overcome the effects. If the character succeeds, the Stunned condition is removed.</p>",
+        "description": "<p>The character has taken blows from Orks and given back as good as he got. The character can bounce back from most strikes without ill effects. <b>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</b></p>",
         "compendiumId": "tal00000000139",
         "modifiers": []
       }
     },
     {
       "_id": "eiork02000000006",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -115,13 +121,14 @@
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
     },
     {
       "_id": "eiork02000000007",
+      "_sourceId": "tal00000000249",
       "name": "Street Fighting",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -130,13 +137,25 @@
         "page": "127",
         "prerequisite": "Weapon Skill 30",
         "benefit": "+2 Critical Damage in melee",
-        "description": "<p>The character has been schooled in the art of dirty fighting. When the character makes a melee attack and scores a hit, he may add +2 to the Critical Damage result.</p>",
+        "description": "<p>The character is an experienced survivor of the kind of murderous fights that occur in the depths of an underhive or stinking alleys of a sink hab. <b>When dealing Critical Damage with an unarmed attack or knife, the character deals an additional +2 points of Damage.</b></p>",
         "compendiumId": "tal00000000249",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "streetfight00001",
+            "name": "Street Fighting - Critical Damage",
+            "modifier": 2,
+            "type": "talent",
+            "effectType": "critical-damage",
+            "valueAffected": "melee",
+            "enabled": true,
+            "weaponRestriction": "unarmed-or-knife"
+          }
+        ]
       }
     },
     {
       "_id": "eiork02000000008",
+      "_sourceId": "tal00000000261",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -145,7 +164,7 @@
         "page": "128",
         "prerequisite": "Toughness 40",
         "benefit": "Halve Critical Damage taken (round up)",
-        "description": "<p>Whenever the character suffers Critical Damage, halve the amount (rounding up).</p>",
+        "description": "<p>The character is able to shrug off wounds that would fell lesser men. <b>Whenever the character suffers Critical Damage, halve the result (rounding up).</b></p><p><b>Example:</b> Agamemnon takes a grievous wound from a tyranid warrior. After reduction for Armour and Toughness, the Scything Talon strike still does 8 Damage. Unfortunately, it's been tough going and Agamemnon only has 4 Wounds remaining, which would normally result in 4 points of Critical Damage. However, since he has the True Grit Talent, he only takes 2 points of Critical Damage.</p>",
         "compendiumId": "tal00000000261",
         "modifiers": []
       }

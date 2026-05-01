@@ -11,7 +11,25 @@
     "description": "<p>Vowing to battle the beyond, the character has marked the warp-spawned for death. <b>The character gains a +10 to his Weapon Skill and +2 to melee weapon Damage when combating daemons.</b></p>",
     "cost": 1000,
     "compendiumId": "tal00000000243",
-    "modifiers": [],
+    "modifiers": [
+      {
+        "_id": "slayerdaemon001",
+        "name": "Slayer of Daemons - WS Bonus",
+        "modifier": 10,
+        "type": "talent",
+        "effectType": "characteristic",
+        "valueAffected": "ws",
+        "enabled": true
+      },
+      {
+        "_id": "slayerdaemon002",
+        "name": "Slayer of Daemons - Melee Damage",
+        "modifier": 2,
+        "type": "talent",
+        "effectType": "weapon-damage",
+        "enabled": true
+      }
+    ],
     "rankRequired": 5
   }
 }

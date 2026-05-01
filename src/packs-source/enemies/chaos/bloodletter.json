@@ -35,6 +35,7 @@
   "items": [
     {
       "_id": "eichaos050000001",
+      "_sourceId": "tal00000000026",
       "name": "Battle Rage",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -50,21 +51,23 @@
     },
     {
       "_id": "eichaos050000002",
+      "_sourceId": "tal00000000027",
       "name": "Berserk Charge",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "113",
+        "page": "114",
         "prerequisite": "",
         "benefit": "+10 WS when charging",
-        "description": "<p>When the character charges, he gains a +10 bonus to Weapon Skill Tests.</p>",
+        "description": "<p>The character has learned to put the whole force of his momentum behind his weapon blows. When the character charges into combat, few can stand before him. If the character uses the Charge Action, he gains a <b>+20 bonus to Weapon Skill instead of +10</b>.</p>",
         "compendiumId": "tal00000000027",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos050000003",
+      "_sourceId": "tal00000000029",
       "name": "Blademaster",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -73,13 +76,14 @@
         "page": "114",
         "prerequisite": "WS 30, Melee Weapon Training (any) ",
         "benefit": "Re-roll missed attack",
-        "description": "<p>The character's mastery of bladed weapons and martial disciplines has no peer. When attacking with any bladed weapon, including chainswords and power swords, the character may re-roll one missed attack per Round.</p>",
+        "description": "<p>The character’s mastery of bladed weapons and martial disciplines has no peer. When attacking with any bladed weapon, including chainswords and power swords, the character may re-roll one missed attack per Round.</p>",
         "compendiumId": "tal00000000029",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos050000004",
+      "_sourceId": "tal00000000038",
       "name": "Combat Master",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -88,13 +92,14 @@
         "page": "114",
         "prerequisite": "WS 30",
         "benefit": "No ganging up bonus against you",
-        "description": "<p>The character has proven himself in desperate melees where he is assailed by a swarm of foes. When outnumbered in melee combat, the character never counts as outnumbered when being attacked.</p>",
+        "description": "<p>The character's weapon seems to be everywhere at once, keeping many more opponents at bay in close combat than would seem possible. <b>Opponents fighting the character in hand-to-hand combat gain no bonuses for outnumbering him.</b></p>",
         "compendiumId": "tal00000000038",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos050000005",
+      "_sourceId": "tal00000000043",
       "name": "Crippling Strike",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -105,26 +110,38 @@
         "benefit": "+4 Critical Damage",
         "description": "<p>The character can land his blows precisely where they inflict the most harm, cutting into seams or hammering at weak points. <b>When the character's melee attack causes Critical Damage add +4 Damage.</b></p>",
         "compendiumId": "tal00000000043",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "crippstrike00001",
+            "name": "Crippling Strike - Critical Damage",
+            "modifier": 4,
+            "type": "talent",
+            "effectType": "critical-damage",
+            "valueAffected": "melee",
+            "enabled": true
+          }
+        ]
       }
     },
     {
       "_id": "eichaos050000006",
+      "_sourceId": "tal00000000055",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "115",
+        "page": "116",
         "prerequisite": "Strength 40",
         "benefit": "Stunned results become normal hits",
-        "description": "<p>After making a successful melee attack, the character may spend a Fate Point and immediately count the result as if he had rolled a 10 for location, though the amount of damage caused is unchanged.</p>",
+        "description": "<p>The character's will or faith can sustain him when his flesh fails. <b>He ignores the effects of injury, Fatigue, and Stunning during combat.</b> This Talent does not prevent the Damage, but allows the character to temporarily ignore its effects for the duration of the combat. Death still affects him normally.</p>",
         "compendiumId": "tal00000000055",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos050000007",
+      "_sourceId": "tal00000000090",
       "name": "Frenzy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -140,6 +157,7 @@
     },
     {
       "_id": "eichaos050000008",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -148,22 +166,23 @@
         "page": "119",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Spend Reaction for extra melee attack after All Out Attack",
-        "description": "<p>If the character successfully hits with an All Out Attack action, the character may spend a Reaction to make an additional melee attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eichaos050000009",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "128",
+        "page": "127",
         "prerequisite": "WS 35",
         "benefit": "Half Action melee attack twice",
-        "description": "<p>The character may make a Half Action to make two melee attacks this turn, each with a -10 penalty to hit.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }

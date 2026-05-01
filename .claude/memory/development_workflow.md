@@ -21,7 +21,7 @@ Always create NEW commits (don't amend unless explicitly requested). Never skip 
 
 ```bash
 # Testing
-npm test                    # Run all 1813 tests across 110 suites
+npm test                    # Run all 2129 tests across 121 suites
 npm run test:watch          # Watch mode
 npm run test:coverage       # Coverage report at coverage/lcov-report/index.html
 

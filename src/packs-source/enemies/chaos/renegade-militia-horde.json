@@ -2,7 +2,7 @@
   "_id": "hordchaos0000001",
   "name": "Renegade Militia Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/chaos/renegade-militia_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/chaos/renegade-militia-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 35 },
@@ -34,36 +34,39 @@
   "items": [
     {
       "_id": "hichaos010000001",
+      "_sourceId": "tal00000000018",
       "name": "Basic Weapon Training (Las)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "112",
+        "page": "113",
         "prerequisite": "",
         "benefit": "Use Las basic weapons",
-        "description": "<p>The character is trained in the use of basic weapons that fire laser-based projectiles.</p>",
+        "description": "<p>The character has received Basic Weapon Training in Las weapons, and can use them without penalty. <b>Weapon Skill or Ballistic Skill Tests used with a weapon that a character does not have training for suffer a –20 penalty.</b></p>",
         "compendiumId": "tal00000000018",
         "modifiers": []
       }
     },
     {
       "_id": "hichaos010000002",
+      "_sourceId": "tal00000000023",
       "name": "Basic Weapon Training (SP)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
         "book": "DeathWatch Core Rulebook",
-        "page": "112",
+        "page": "113",
         "prerequisite": "",
         "benefit": "Use solid projectile basic weapons",
-        "description": "<p>The character is trained in the use of basic weapons that fire solid projectiles.</p>",
+        "description": "<p>The character has received Basic Weapon Training in Solid Projectile weapons, and can use them without penalty. <b>Weapon Skill or Ballistic Skill Tests used with a weapon that a character does not have training for suffer a –20 penalty.</b></p>",
         "compendiumId": "tal00000000023",
         "modifiers": []
       }
     },
     {
       "_id": "hichaos010000003",
+      "_sourceId": "tal00000000164",
       "name": "Melee Weapon Training (Primitive)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -72,13 +75,14 @@
         "page": "123",
         "prerequisite": "",
         "benefit": "Use primitive melee weapons",
-        "description": "<p>The character is trained in the use of primitive melee weapons.</p>",
+        "description": "<p>The character has trained extensively with hand-to-hand weaponry, becoming proficient in the use of virtually all hand-held close combat arms. <b>When a character attempts to use a weapon he does not have the correct Weapon Training Talent for, he suffers a –20 penalty to any relevant Weapon Skill or Ballistic Skill Test.</b></p>",
         "compendiumId": "tal00000000164",
         "modifiers": []
       }
     },
     {
       "_id": "hichaos010000004",
+      "_sourceId": "tal00000000198",
       "name": "Pistol Weapon Training (SP)",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -87,7 +91,7 @@
         "page": "124",
         "prerequisite": "",
         "benefit": "Use solid projectile pistols",
-        "description": "<p>The character is trained in the use of pistols that fire solid projectiles.</p>",
+        "description": "<p>The character has practised with nearly every single-handed ranged weapon within the confines of the Imperium, and no small number without. <b>When a character attempts to use a weapon he does not have the correct Weapon Training Talent for, he suffers a –20 penalty to any relevant Weapon Skill or Ballistic Skill Test.</b></p>",
         "compendiumId": "tal00000000198",
         "modifiers": []
       }

@@ -33,6 +33,7 @@
   "items": [
     {
       "_id": "eiork07000000001",
+      "_sourceId": "tal00000000032",
       "name": "Bulging Biceps",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -41,13 +42,14 @@
         "page": "114",
         "prerequisite": "Str 45",
         "benefit": "Remove Bracing",
-        "description": "<p>The character can fire heavy weapons using Semi-Auto Burst or Full Auto Burst without bracing, and he does not suffer the –30 penalty for failing to brace.</p>",
+        "description": "<p>Whereas a weaker man would be sent flying when using heavy weapons, the character’s strong physique allows him to remain standing . <b>The character can fire heavy weapons using Semi-Auto Burst or Full Auto Burst without bracing, and he does not suffer the –30 penalty for failing to brace</b>.</p>",
         "compendiumId": "tal00000000032",
         "modifiers": []
       }
     },
     {
       "_id": "eiork07000000002",
+      "_sourceId": "tal00000000044",
       "name": "Crushing Blow",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -56,13 +58,23 @@
         "page": "115",
         "prerequisite": "STR 40",
         "benefit": "+2 melee damage",
-        "description": "<p>The character adds +2 to damage inflicted in melee.</p>",
+        "description": "<p>The character has the ability to focus his entire body into close combat attacks. <b>The character adds +2 to damage inflicted in melee.</b></p>",
         "compendiumId": "tal00000000044",
-        "modifiers": []
+        "modifiers": [
+          {
+            "_id": "crushingblow0001",
+            "name": "Crushing Blow - Melee Damage",
+            "modifier": 2,
+            "type": "talent",
+            "effectType": "weapon-damage",
+            "enabled": true
+          }
+        ]
       }
     },
     {
       "_id": "eiork07000000003",
+      "_sourceId": "tal00000000091",
       "name": "Furious Assault",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -71,13 +83,14 @@
         "page": "119",
         "prerequisite": "WS 35",
         "benefit": "Extra attack on All Out Attack hit",
-        "description": "<p>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</p>",
+        "description": "<p>The character's speed and martial prowess allow him to land several blows where lesser combatants land one. <b>If the character successfully hits his target using the All Out Attack Action, he may spend his Reaction to make an additional attack using the same bonuses or penalties as the original attack.</b></p>",
         "compendiumId": "tal00000000091",
         "modifiers": []
       }
     },
     {
       "_id": "eiork07000000004",
+      "_sourceId": "tal00000000116",
       "name": "Hardy",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -86,13 +99,14 @@
         "page": "119",
         "prerequisite": "Toughness 40",
         "benefit": "Recover damage as if Lightly Damaged",
-        "description": "<p>When undergoing medical treatment or healing from injuries, the character recovers Damage as if Lightly Damaged.</p>",
+        "description": "<p>The character's constitution rebounds quickly from shock or injury. <b>When undergoing medical treatment or healing from injures, the character recovers Damage as if Lightly Damaged.</b></p>",
         "compendiumId": "tal00000000116",
         "modifiers": []
       }
     },
     {
       "_id": "eiork07000000005",
+      "_sourceId": "tal00000000139",
       "name": "Iron Jaw",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -101,13 +115,14 @@
         "page": "121",
         "prerequisite": "Toughness 40",
         "benefit": "Toughness Test to ignore Stunned effects",
-        "description": "<p>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</p>",
+        "description": "<p>The character has taken blows from Orks and given back as good as he got. The character can bounce back from most strikes without ill effects. <b>If ever Stunned, a successful Toughness Test allows the character to ignore the effects.</b></p>",
         "compendiumId": "tal00000000139",
         "modifiers": []
       }
     },
     {
       "_id": "eiork07000000006",
+      "_sourceId": "tal00000000261",
       "name": "True Grit",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -116,7 +131,7 @@
         "page": "128",
         "prerequisite": "Toughness 40",
         "benefit": "Halve Critical Damage (rounding up)",
-        "description": "<p>Whenever the character suffers Critical Damage, halve the result (rounding up).</p>",
+        "description": "<p>The character is able to shrug off wounds that would fell lesser men. <b>Whenever the character suffers Critical Damage, halve the result (rounding up).</b></p><p><b>Example:</b> Agamemnon takes a grievous wound from a tyranid warrior. After reduction for Armour and Toughness, the Scything Talon strike still does 8 Damage. Unfortunately, it's been tough going and Agamemnon only has 4 Wounds remaining, which would normally result in 4 points of Critical Damage. However, since he has the True Grit Talent, he only takes 2 points of Critical Damage.</p>",
         "compendiumId": "tal00000000261",
         "modifiers": []
       }

@@ -231,5 +231,39 @@ describe('ItemHandlers', () => {
       expect(result.gear).toBe('0 items, 0 kg');
       expect(result.ammunition).toBe('0 types, 0 loaded');
     });
+
+    it('should count grouped gear items by quantity', () => {
+      const categories = {
+        weapons: [],
+        armor: [],
+        gear: [
+          { system: { wt: 1 }, quantity: 3, ids: ['g1', 'g2', 'g3'] }, // Grouped: 3 De-Tox
+          { system: { wt: 2 } }, // Non-grouped item
+          { system: { wt: 0.5 }, quantity: 2, ids: ['g4', 'g5'] } // Grouped: 2 Stimms
+        ],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.gear).toBe('6 items, 6 kg'); // 3 + 1 + 2 = 6 items, (3*1) + (1*2) + (2*0.5) = 6 kg
+    });
+
+    it('should multiply weight by quantity for grouped items', () => {
+      const categories = {
+        weapons: [],
+        armor: [],
+        gear: [
+          { system: { wt: 1 }, quantity: 3, ids: ['g1', 'g2', 'g3'] }, // 3 kg total
+          { system: { wt: 2 }, quantity: 1, ids: ['g4'] }, // 2 kg total
+          { system: { wt: 0.5 } } // 0.5 kg (non-grouped)
+        ],
+        ammunition: []
+      };
+
+      const result = ItemHandlers.buildSummaries(categories);
+
+      expect(result.gear).toBe('5 items, 5.5 kg'); // 3+1+1=5 items, 3+2+0.5=5.5 kg
+    });
   });
 });

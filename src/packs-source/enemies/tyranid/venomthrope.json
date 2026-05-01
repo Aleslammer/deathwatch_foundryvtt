@@ -31,30 +31,32 @@
   "items": [
     {
       "_id": "eityranid2100001",
+      "_sourceId": "tal00000000011",
       "name": "Ambidextrous",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "113",
         "prerequisite": "Agility 30",
         "benefit": "No penalty for using off-hand",
-        "description": "<p>The character may use either hand equally well without the –20 penalty for actions using the off hand.</p>",
+        "description": "<p>This Talent does not represent true ambidexterity so much as sufficient training with both hands to make the distinction moot. The character may use either hand equally well for any task, and does not suffer the <b>–20 penalty for actions using his off hand</b>.</p><p>Special: When combined with a Two-Weapon Wielder Talent, the penalty for making attacks with both weapons in the same turn drops to –10.</p>",
         "compendiumId": "tal00000000011",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid2100002",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
       "system": {
-        "book": "Deathwatch Core Rulebook",
+        "book": "DeathWatch Core Rulebook",
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }
@@ -126,6 +128,7 @@
             "_id": "29dcf414f9344eb5",
             "name": "Multiple Arms",
             "modifier": 10,
+            "type": "trait",
             "effectType": "characteristic",
             "valueAffected": "tg",
             "enabled": true

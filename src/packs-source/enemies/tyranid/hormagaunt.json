@@ -33,6 +33,7 @@
   "items": [
     {
       "_id": "eityranid0100001",
+      "_sourceId": "tal00000000143",
       "name": "Leap Up",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -41,13 +42,14 @@
         "page": "121",
         "prerequisite": "Agility 30",
         "benefit": "Stand up as Free Action",
-        "description": "<p>The character may stand up as a Free Action.</p>",
+        "description": "<p>A combination of athletic ability and speed allow the character to spring to his feet in virtually any circumstance. <b>The character may stand up as a Free Action.</b></p>",
         "compendiumId": "tal00000000143",
         "modifiers": []
       }
     },
     {
       "_id": "eityranid0100002",
+      "_sourceId": "tal00000000252",
       "name": "Swift Attack",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -56,7 +58,7 @@
         "page": "127",
         "prerequisite": "Weapon Skill 35",
         "benefit": "Make two melee attacks as Full Action",
-        "description": "<p>As a Full Action, the character may make two melee attacks.</p>",
+        "description": "<p>The character's speed and martial ability allows him to land flurries of blows. <b>As a Full Action, the character may make two melee attacks.</b> If the character has the Two-Weapon Wielder Talent and is wielding two melee weapons, the character gains the advantage of Swift Attack with only one of the weapons, and a single attack with the other. If the character had the Two-Weapon Wielder Talent and is wielding a melee weapon in one hand and a gun in the other, the character gets the advantage of Swift Attack with the melee weapon and a single attack with the gun.</p>",
         "compendiumId": "tal00000000252",
         "modifiers": []
       }

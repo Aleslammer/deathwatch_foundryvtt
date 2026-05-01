@@ -32,6 +32,7 @@
   "items": [
     {
       "_id": "eichaos160000001",
+      "_sourceId": "tal00000000250",
       "name": "Strong Minded",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",
@@ -47,6 +48,7 @@
     },
     {
       "_id": "eichaos160000002",
+      "_sourceId": "tal00000000271",
       "name": "Warp Sense",
       "type": "talent",
       "img": "systems/deathwatch/icons/talents/generic.webp",

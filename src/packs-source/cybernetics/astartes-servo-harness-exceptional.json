@@ -13,6 +13,7 @@
         "_id": "mod000000002",
         "name": "Harness WS Bonus",
         "modifier": 5,
+        "type": "equipment",
         "effectType": "characteristic",
         "valueAffected": "ws",
         "enabled": true
@@ -21,6 +22,7 @@
         "_id": "mod000000003",
         "name": "Harness BS Bonus",
         "modifier": 5,
+        "type": "equipment",
         "effectType": "characteristic",
         "valueAffected": "bs",
         "enabled": true

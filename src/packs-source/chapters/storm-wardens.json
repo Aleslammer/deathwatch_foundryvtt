@@ -22,6 +22,7 @@
         "_id": "15d760dc5ad70312",
         "name": "Chapter Bonus",
         "modifier": 5,
+        "type": "chapter",
         "effectType": "characteristic",
         "valueAffected": "str",
         "enabled": true
@@ -30,6 +31,7 @@
         "_id": "0191d1f8b3d0a133",
         "name": "Chapter Wounds",
         "modifier": 2,
+        "type": "chapter",
         "effectType": "wounds",
         "enabled": true
       }

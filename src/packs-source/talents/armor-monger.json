@@ -15,6 +15,7 @@
         "_id": "armor-monger-mod",
         "name": "Armor-Monger",
         "modifier": 2,
+        "type": "talent",
         "effectType": "armor",
         "enabled": true
       }

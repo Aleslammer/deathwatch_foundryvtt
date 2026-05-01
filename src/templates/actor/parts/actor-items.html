@@ -179,6 +179,7 @@
           <div class="item-equipped"></div>
           <div class="item-name">Name</div>
           <div class="item-description">Description</div>
+          <div class="item-stat">Qty</div>
           <div class="item-stat">Wt</div>
           <div class="item-stat">Req</div>
           <div class="item-stat">Renown</div>
@@ -202,6 +203,7 @@
               <h4>{{item.name}}</h4>
             </div>
             <div class="item-description">{{item.system.shortDescription}}</div>
+            <div class="item-stat">{{#if item.quantity}}{{item.quantity}}{{else}}{{item.system.quantity}}{{/if}}</div>
             <div class="item-stat">{{item.system.wt}}</div>
             <div class="item-stat">{{item.system.req}}</div>
             <div class="item-stat">{{substring item.system.renown 0 4}}</div>

@@ -11,6 +11,7 @@ import { HordeCombatHelper } from "./horde-combat.mjs";
 import { Sanitizer } from "../sanitizer.mjs";
 import { CyberneticHelper } from "../cybernetic-helper.mjs";
 import { WeaponModifierCollector } from "./weapon-modifier-collector.mjs";
+import { ModifierCollector } from "../character/modifier-collector.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -419,33 +420,43 @@ export class CombatHelper {
   }
 
   /**
-   * Get the Crushing Blow bonus (+2 melee damage) if the actor has the talent.
+   * Get weapon damage bonus from talents.
    *
-   * Crushing Blow (Deathwatch Core p. 207) grants +2 damage to melee attacks.
+   * Calculates total weapon damage bonus from:
+   * - Crushing Blow (+2 melee damage)
+   * - Mighty Shot (+2 ranged damage)
+   * - Hunter of Aliens (+2 melee damage)
+   * - Scourge of Heretics (+2 melee damage)
+   * - Slayer of Daemons (+2 melee damage)
    *
    * @param {Actor} actor - Actor document
-   * @returns {number} +2 if actor has Crushing Blow, 0 otherwise
+   * @param {boolean} isMelee - Whether the attack is melee
+   * @returns {number} Total weapon damage bonus
    * @example
-   * const bonus = CombatHelper.getCrushingBlowBonus(actor);
+   * const bonus = CombatHelper.getWeaponDamageBonus(actor, true);
    * // Returns: 2 if actor has Crushing Blow talent
    */
-  static getCrushingBlowBonus(actor) {
-    return this.hasTalent(actor, 'Crushing Blow') ? 2 : 0;
-  }
+  static getWeaponDamageBonus(actor, isMelee) {
+    if (!actor?.items || !actor?.system) return 0;
 
-  /**
-   * Get the Mighty Shot bonus (+2 ranged damage) if the actor has the talent.
-   *
-   * Mighty Shot (Deathwatch Core p. 211) grants +2 damage to ranged attacks.
-   *
-   * @param {Actor} actor - Actor document
-   * @returns {number} +2 if actor has Mighty Shot, 0 otherwise
-   * @example
-   * const bonus = CombatHelper.getMightyShotBonus(actor);
-   * // Returns: 2 if actor has Mighty Shot talent
-   */
-  static getMightyShotBonus(actor) {
-    return this.hasTalent(actor, 'Mighty Shot') ? 2 : 0;
+    // Collect all modifiers from actor
+    const modifiers = ModifierCollector.collectAllModifiers(actor, actor.items);
+
+    // Filter for weapon-damage modifiers
+    // Note: conditional modifiers (Hunter of Aliens, etc.) apply unconditionally for now
+    // Future enhancement: add enemy-type detection
+    const weaponDamageMods = modifiers.filter(m => {
+      if (m.effectType !== 'weapon-damage' || m.enabled === false) {
+        return false;
+      }
+      // No attack type filtering - weapon-damage applies to all attacks from that talent
+      return true;
+    });
+
+    // Sum up the bonuses
+    const bonus = weaponDamageMods.reduce((sum, m) => sum + parseInt(m.modifier), 0);
+
+    return bonus;
   }
 
   /**
@@ -465,16 +476,30 @@ export class CombatHelper {
    * // Returns: 6 if actor has both Crippling Strike and Street Fighting
    */
   static getCriticalDamageBonus(actor, isMelee, weaponName = '') {
-    if (!actor?.items) return 0;
-    let bonus = 0;
-    if (isMelee) {
-      if (this.hasTalent(actor, 'Crippling Strike')) bonus += 4;
-      const name = weaponName.toLowerCase();
-      const isUnarmedOrKnife = name.includes('unarmed') || name.includes('knife') || name.includes('combat knife');
-      if (isUnarmedOrKnife && this.hasTalent(actor, 'Street Fighting')) bonus += 2;
-    } else {
-      if (this.hasTalent(actor, 'Crack Shot')) bonus += 2;
-    }
+    if (!actor?.items || !actor?.system) return 0;
+
+    // Collect all modifiers from actor
+    const modifiers = ModifierCollector.collectAllModifiers(actor, actor.items);
+
+    // Filter for critical-damage modifiers matching attack type
+    const attackType = isMelee ? 'melee' : 'ranged';
+    const critDamageMods = modifiers.filter(m => {
+      if (m.effectType !== 'critical-damage' || m.valueAffected !== attackType || m.enabled === false) {
+        return false;
+      }
+
+      // Check weapon restriction if specified
+      if (m.weaponRestriction === 'unarmed-or-knife') {
+        const name = weaponName.toLowerCase();
+        return name.includes('unarmed') || name.includes('knife') || name.includes('combat knife');
+      }
+
+      return true;
+    });
+
+    // Sum up the bonuses
+    const bonus = critDamageMods.reduce((sum, m) => sum + parseInt(m.modifier), 0);
+
     return bonus;
   }
 
@@ -617,8 +642,7 @@ export class CombatHelper {
                 isPowerFist,
                 isLightningClaw,
                 hasLightningClawPair,
-                crushingBlowBonus: this.getCrushingBlowBonus(actor),
-                mightyShotBonus: this.getMightyShotBonus(actor)
+                weaponDamageBonus: this.getWeaponDamageBonus(actor, isMelee)
               });
               const combatDamageFormula = damageFormula;
 

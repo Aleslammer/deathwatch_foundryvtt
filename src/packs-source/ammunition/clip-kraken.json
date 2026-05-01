@@ -16,6 +16,7 @@
         "_id": "38c3bb31af5c685f",
         "name": "Kraken Penetration",
         "modifier": "8",
+        "type": "equipment",
         "effectType": "weapon-penetration",
         "enabled": true
       },
@@ -23,6 +24,7 @@
         "_id": "3b7bd270f0c43bdc",
         "name": "Kraken Range",
         "modifier": "x1.5",
+        "type": "equipment",
         "effectType": "weapon-range",
         "enabled": true
       }

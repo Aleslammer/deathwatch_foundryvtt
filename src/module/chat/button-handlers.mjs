@@ -7,6 +7,7 @@ import { ErrorHandler } from "../helpers/error-handler.mjs";
 import { Validation } from "../helpers/validation.mjs";
 import { Sanitizer } from "../helpers/sanitizer.mjs";
 import { ROLL_CONSTANTS } from "../helpers/constants/index.mjs";
+import { MODIFIER_TYPES } from "../helpers/constants/modifier-constants.mjs";
 
 /**
  * Handles chat message button event listeners.
@@ -221,7 +222,7 @@ export class ChatButtonHandlers {
           _id: foundry.utils.randomID(),
           name: effectName,
           modifier: -charDamage, // Negative for penalty
-          type: 'untyped',
+          type: MODIFIER_TYPES.CIRCUMSTANCE,
           modifierType: 'constant',
           effectType: 'characteristic',
           valueAffected: characteristic,

@@ -15,6 +15,7 @@
         "_id": "machinator-str-mod",
         "name": "Machinator Array (STR)",
         "modifier": 10,
+        "type": "talent",
         "effectType": "characteristic",
         "valueAffected": "str",
         "enabled": true
@@ -23,6 +24,7 @@
         "_id": "machinator-tg-mod",
         "name": "Machinator Array (TG)",
         "modifier": 10,
+        "type": "talent",
         "effectType": "characteristic",
         "valueAffected": "tg",
         "enabled": true
@@ -31,6 +33,7 @@
         "_id": "machinator-ag-mod",
         "name": "Machinator Array (AG)",
         "modifier": -5,
+        "type": "talent",
         "effectType": "characteristic",
         "valueAffected": "ag",
         "enabled": true
@@ -39,6 +42,7 @@
         "_id": "machinator-fs-mod",
         "name": "Machinator Array (FEL)",
         "modifier": -5,
+        "type": "talent",
         "effectType": "characteristic",
         "valueAffected": "fs",
         "enabled": true

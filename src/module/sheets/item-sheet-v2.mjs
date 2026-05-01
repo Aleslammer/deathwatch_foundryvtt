@@ -1,4 +1,5 @@
 import { ModifierHelper } from "../helpers/character/modifiers.mjs";
+import { MODIFIER_TYPES } from '../helpers/constants/modifier-constants.mjs';
 
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -46,6 +47,19 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
 
   /** @override — render using per-instance template to avoid static PARTS sharing */
   async _renderHTML(context, options) {
+    // Save scroll position before re-render
+    const el = this.element;
+    if (el) {
+      // Try multiple selectors to find the actual scrollable container
+      // In ApplicationV2, the scrollable container is usually .window-content or the parent of .sheet-body
+      const scrollable = el.querySelector(".window-content") ||
+                         el.querySelector(".sheet-body")?.parentElement ||
+                         el.querySelector(".sheet-body");
+      if (scrollable && scrollable.scrollTop !== undefined) {
+        this._sheetScrollTop = scrollable.scrollTop;
+      }
+    }
+
     const template = this._itemTemplate;
     const compiled = await foundry.applications.handlebars.getTemplate(template);
     const htmlString = compiled(context, { allowProtoMethodsByDefault: true, allowProtoPropertiesByDefault: true });
@@ -199,11 +213,37 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
   /*  Action Handlers                             */
   /* -------------------------------------------- */
 
+  /**
+   * Determine the default modifier type for a new modifier based on item type.
+   * @returns {string} The appropriate MODIFIER_TYPES constant
+   */
+  getDefaultModifierType() {
+    const itemType = this.item.type;
+
+    switch (itemType) {
+      case 'talent':
+        return MODIFIER_TYPES.TALENT;
+      case 'trait':
+        return MODIFIER_TYPES.TRAIT;
+      case 'armor':
+        return MODIFIER_TYPES.EQUIPMENT;
+      case 'gear':
+        // Check if this is a chapter trapping (key contains 'chapter-')
+        const key = this.item.system?.key || '';
+        if (key.includes('chapter-')) {
+          return MODIFIER_TYPES.CHAPTER;
+        }
+        return MODIFIER_TYPES.EQUIPMENT;
+      default:
+        return MODIFIER_TYPES.CIRCUMSTANCE;
+    }
+  }
+
   static async _onModifierCreate(event, target) {
     const modifiers = Array.isArray(this.item.system.modifiers) ? [...this.item.system.modifiers] : [];
     modifiers.push({
       _id: foundry.utils.randomID(),
-      name: "New Modifier", modifier: "0", type: "untyped",
+      name: "New Modifier", modifier: "0", type: this.getDefaultModifierType(),
       effectType: "characteristic", valueAffected: "", enabled: true
     });
     await this.item.update({ "system.modifiers": modifiers });
@@ -306,6 +346,17 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
       html.querySelectorAll('.sheet-tabs .item').forEach(tab => {
         tab.addEventListener('click', () => { this._activeTab = tab.dataset.tab; });
       });
+    }
+
+    // Restore scroll position
+    if (this._sheetScrollTop !== undefined) {
+      // Try multiple selectors to find the actual scrollable container
+      const scrollable = html.querySelector(".window-content") ||
+                         html.querySelector(".sheet-body")?.parentElement ||
+                         html.querySelector(".sheet-body");
+      if (scrollable && scrollable.scrollTop !== undefined) {
+        scrollable.scrollTop = this._sheetScrollTop;
+      }
     }
 
     // Quality value change
