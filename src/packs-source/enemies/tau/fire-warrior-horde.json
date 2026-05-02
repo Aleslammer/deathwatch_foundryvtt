@@ -2,7 +2,7 @@
   "_id": "hordtau000000002",
   "name": "Fire Warrior Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/tau/fire-warrior_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/tau/fire-warrior-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 25 },

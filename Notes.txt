@@ -60,6 +60,10 @@ WOW:
 
 
 
-Please create a token image for foundry vtt an imperial themed circular border.  And outside the circle is transparent. Inside the circle should be a warhammer 40k Gun Servitor.  They are 
-Gun servitors are military-grade units equipped with enhanced sensors, programmed with targeting cants and fitted with heavy weaponry. These heavily armed cyborgs provide devastating suppressing fire, their twin-linked autoguns capable of shredding enemy infantry formations. The combination of enhanced sensors and programmed firing solutions makes them surprisingly effective gunners despite their limited intelligence.
 
+
+Please create a token image for foundry vtt.  This is based in the Warhammer 40k universe and has a tau themed circular border.  And outside the circle is transparent. Inside the circle should be Gun Drone.  They are 
+The Tau make use of a staggering range of artificial intelligences, a fact that damns the entire race in the eyes of the Adeptus Mechanicus and much of the Imperial hierarchy. Such machine intelligences that have been imbued into a mobile device are referred to as Drones, and these can take many different forms. Some Drones are able to interact with their Masters, obeying simple instructions and even anticipating what duties are required of them. The Tau appear to value these Drone intelligences, and while they are not regarded as having an equal status to a Tau, they are treated with a degree of respect, perhaps akin to a favoured animal companion.</p><p>Gun Drones are disk-shaped machines that move around by way of a small anti-gravitic generator and are fitted with a pair of pulse carbines. While some Gun Drones serve individual Masters, they are most deadly when operating in a larger, independent squadron. When operating in such a capacity, the Gun Drones are able to network their processing, targeting and sensor systems together, making the whole far more deadly than the sum of the parts.
+
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\tau\gun-drone-horde.png"
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\tau\gun-drone.png"
