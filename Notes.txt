@@ -1,5 +1,7 @@
 System:
     TODO: need to add official module installation from GitHub
+    TODO: Merge Status Effects and the foundry native system effect.   Need to investigate that.
+    TODO: Redesign the psychic power edit form.   Maybe let claude take a stab.   I like it however its hard to see.
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -51,10 +53,13 @@ Campaign Systems
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
 
+WOW:
+    TODO: Investigate adding a module for the HUD (https://github.com/Larkinabout/fvtt-token-action-hud-core/wiki/Developing-a-System-Module)
+    TODO: Automated Animations.   need to investigate (https://foundryvtt.com/packages/autoanimations)
 
 
 
-Please create a token image for foundry vtt an imperial themed circular border.  And outside the circle is transparent. Inside the circle should be a warhammer 40k Charron Pattern Battle Servitor.  They are 
-The Charron Pattern is a light battle servitor, humanoid in shape, found often in the service of the Imperial Navy and numerous other star vessels as shock troops and defenders in boarding actions. Those found in the Koronus Expanse are often very old, their inorganic components having been recycled through numerous bodies and recovered from the fallen of the battlefield. As a result they have a reputation for their machine spirits being unreliable in combat and not knowing friend from foe on occasion. This makes some captains reluctant to employ them save in the direst need.
 
-/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\human\renegade-militia.png"
+Please create a token image for foundry vtt an imperial themed circular border.  And outside the circle is transparent. Inside the circle should be a warhammer 40k Gun Servitor.  They are 
+Gun servitors are military-grade units equipped with enhanced sensors, programmed with targeting cants and fitted with heavy weaponry. These heavily armed cyborgs provide devastating suppressing fire, their twin-linked autoguns capable of shredding enemy infantry formations. The combination of enhanced sensors and programmed firing solutions makes them surprisingly effective gunners despite their limited intelligence.
+

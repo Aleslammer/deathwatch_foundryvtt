@@ -167,5 +167,17 @@ export const DW_STATUS_EFFECTS = [
     name: "Vacuum Exposure",
     img: "icons/svg/hazard.svg",
     description: "1d10+3 Explosive Damage/Round from depressurization. 1d10 Energy from cold."
+  },
+  {
+    id: "crippled",
+    name: "Crippled",
+    img: "icons/svg/blood.svg",
+    description: "If takes more than a Half Action, must manually apply Rending Damage (not reduced by armor/TB). Check effect flags for damage amount."
+  },
+  {
+    id: "snared",
+    name: "Snared",
+    img: "icons/svg/net.svg",
+    description: "Movement restricted. Check effect flags for penalty amount (in metres)."
   }
 ];
