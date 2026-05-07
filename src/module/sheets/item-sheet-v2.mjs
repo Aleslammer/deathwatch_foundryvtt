@@ -72,7 +72,7 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
 
   _onFirstRender(context, options) {
     if (this.document.type === 'psychic-power' || this.document.type === 'special-ability') {
-      this.setPosition({ height: 624 });
+      this.setPosition({ width: 780, height: 624 });
     }
     if (this.document.type === 'gear' || this.document.type === 'armor-history' || this.document.type === 'cybernetic') {
       this.setPosition({ width: 620 });

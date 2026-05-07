@@ -275,6 +275,52 @@ export class PsychicCombatHelper {
   }
 
   /**
+   * Extract status effect suggestions from attached weapon qualities.
+   *
+   * CRITICAL: This method identifies status effects but does NOT auto-apply them.
+   * Status effects are manually enforced by the GM. The system provides information
+   * for GM decision-making only.
+   *
+   * Supported status effects:
+   * - Crippling(X): Target takes X Rending damage if taking more than a Half Action
+   * - Snared(X): Target's movement is reduced by X meters
+   *
+   * @param {Array<{key: string, name: string, value: number}>} attachedQualities - Power's attached qualities
+   * @returns {Array<{effect: string, value: number, description: string}>} Status effect suggestions for GM
+   * @example
+   * const qualities = [{ key: 'crippling', name: 'Crippling', value: 3 }];
+   * const suggestions = PsychicCombatHelper.getStatusEffectSuggestions(qualities);
+   * // Returns: [{ effect: 'crippled', value: 3, description: 'Crippling(3) - Target takes 3 Rending damage...' }]
+   */
+  static getStatusEffectSuggestions(attachedQualities) {
+    if (!attachedQualities || !Array.isArray(attachedQualities)) {
+      return [];
+    }
+
+    const suggestions = [];
+
+    const crippling = attachedQualities.find(q => q.key === 'crippling');
+    if (crippling) {
+      suggestions.push({
+        effect: 'crippled',
+        value: crippling.value,
+        description: `Crippling(${crippling.value}) - Target takes ${crippling.value} Rending damage if taking more than Half Action`
+      });
+    }
+
+    const snare = attachedQualities.find(q => q.key === 'snared');
+    if (snare) {
+      suggestions.push({
+        effect: 'snared',
+        value: snare.value,
+        description: `Snared(${snare.value}) - Movement reduced by ${snare.value}m`
+      });
+    }
+
+    return suggestions;
+  }
+
+  /**
    * Look up a roll table by name from world tables or compendium.
    * @param {string} tableName
    * @returns {Promise<RollTable|null>}
@@ -530,6 +576,11 @@ export class PsychicCombatHelper {
 
   /**
    * Roll psychic power damage after a successful Focus Power Test.
+   *
+   * Supports weapon qualities attached to psychic powers:
+   * - Tearing: Roll damage twice and take the higher result
+   * - Tainted: Add actor's Corruption Bonus to damage
+   *
    * @param {Object} actor - Actor document
    * @param {Object} power - Psychic power item
    * @param {number} effectivePR - Effective Psy Rating used
@@ -548,6 +599,10 @@ export class PsychicCombatHelper {
     const targetActor = targetToken?.actor;
     const tokenInfo = targetToken?.document ? { sceneId: targetToken.document.parent.id, tokenId: targetToken.document.id } : null;
 
+    // Check for weapon qualities
+    const hasTearing = power.system.attachedQualities?.some(q => q.key === 'tearing');
+    const hasTainted = power.system.attachedQualities?.some(q => q.key === 'tainted');
+
     // Horde hit calculation
     let numHits = 1;
     if (targetActor?.type === "horde") {
@@ -561,11 +616,26 @@ export class PsychicCombatHelper {
     const hordeHitResults = [];
 
     for (let i = 0; i < numHits; i++) {
-      const roll = await FoundryAdapter.evaluateRoll(damageFormula);
-      let totalDamage = roll.total;
+      let damageRoll = await FoundryAdapter.evaluateRoll(damageFormula);
+
+      // Apply Tearing: roll twice, take higher
+      if (hasTearing) {
+        const roll2 = await FoundryAdapter.evaluateRoll(damageFormula);
+        if (roll2.total > damageRoll.total) {
+          damageRoll = roll2;
+        }
+      }
+
+      let totalDamage = damageRoll.total;
+
+      // Apply Tainted: add Corruption Bonus
+      if (hasTainted) {
+        const corruptionBonus = Math.floor((actor.system.corruption?.current || 0) / 10);
+        totalDamage += corruptionBonus;
+      }
 
       // Righteous Fury check
-      if (actor.system.canRighteousFury?.() && RighteousFuryHelper.hasNaturalTen(roll, 10) && targetNumber > 0) {
+      if (actor.system.canRighteousFury?.() && RighteousFuryHelper.hasNaturalTen(damageRoll, 10) && targetNumber > 0) {
         const { totalDamage: furyDamage } = await RighteousFuryHelper.processFuryChain(
           actor, null, damageFormula, targetNumber, "Body", false, 10, targetActor
         );
@@ -584,7 +654,7 @@ export class PsychicCombatHelper {
         const safePowerName = Sanitizer.escape(power.name);
         const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${safePowerName}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
         const speaker = FoundryAdapter.getChatSpeaker(actor);
-        await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+        await FoundryAdapter.sendRollToChat(damageRoll, speaker, flavor);
       }
     }
 

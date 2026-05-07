@@ -89,4 +89,37 @@ export class WeaponQualityHelper {
   static async getDevastatingValue(weapon) {
     return this._getNumericQualityValue(weapon, 'devastating');
   }
+
+  /**
+   * Extract the Crippling value from attached qualities array.
+   * Used for psychic powers that apply weapon qualities.
+   * @param {Array<Object>} attachedQualities - Array of quality objects with key and value
+   * @returns {number|null} Crippling value or null if not found
+   */
+  static getCripplingValue(attachedQualities) {
+    const quality = attachedQualities?.find(q => q.key === 'crippling');
+    return quality?.value || null;
+  }
+
+  /**
+   * Extract the Snare value from attached qualities array.
+   * Used for psychic powers that apply weapon qualities.
+   * @param {Array<Object>} attachedQualities - Array of quality objects with key and value
+   * @returns {number|null} Snare value or null if not found
+   */
+  static getSnareValue(attachedQualities) {
+    const quality = attachedQualities?.find(q => q.key === 'snared');
+    return quality?.value || null;
+  }
+
+  /**
+   * Extract the Felling value from attached qualities array.
+   * Used for psychic powers that apply weapon qualities.
+   * @param {Array<Object>} attachedQualities - Array of quality objects with key and value
+   * @returns {number|null} Felling value or null if not found
+   */
+  static getFellingValue(attachedQualities) {
+    const quality = attachedQualities?.find(q => q.key === 'felling');
+    return quality?.value || null;
+  }
 }

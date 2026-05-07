@@ -1,5 +1,6 @@
 System:
     TODO: need to add official module installation from GitHub
+    TODO: Merge Status Effects and the foundry native system effect.   Need to investigate that.
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -22,9 +23,7 @@ Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 
-Ammmunition 
-
-TODO: Automated Animations - Can we use this for things?  Need to look at tutorial and look into it some more....
+Ammmunition:
 
 Enemies:
     TODO: add dark eldar
@@ -51,10 +50,15 @@ Campaign Systems
     Distinction & Honors — earned titles
     Rank advancement UI — visual progression through Deathwatch ranks
 
+WOW:
+    TODO: Investigate adding a module for the HUD (https://github.com/Larkinabout/fvtt-token-action-hud-core/wiki/Developing-a-System-Module)
+    TODO: Automated Animations.   need to investigate (https://foundryvtt.com/packages/autoanimations)
 
 
+Powers:
+    We need to add Exalted Psychic Powers.   They are located in @src/rules/powers-Exalted.md  
 
-Please create a token image for foundry vtt an imperial themed circular border.  And outside the circle is transparent. Inside the circle should be a warhammer 40k Charron Pattern Battle Servitor.  They are 
-The Charron Pattern is a light battle servitor, humanoid in shape, found often in the service of the Imperial Navy and numerous other star vessels as shock troops and defenders in boarding actions. Those found in the Koronus Expanse are often very old, their inorganic components having been recycled through numerous bodies and recovered from the fallen of the battlefield. As a result they have a reputation for their machine spirits being unreliable in combat and not knowing friend from foe on occasion. This makes some captains reluctant to employ them save in the direst need.
+Please create a token image for foundry vtt.  This is based in the Warhammer 40k universe and has a tau themed circular border.  And outside the circle is transparent. Inside the circle should be Kroot Carnivore.  They are 
+The Kroot are a species of almost limitless variety, having travelled countless evolutionary paths. While the form most associated with the species is referred to by the Imperium as the Kroot Carnivore, it is postulated that almost every single animal life form on their home world of Pech is related, albeit distantly, to the genus. Evolution in the Kroot has become a matter of rapid adaptation. The Kroot evolve so quickly that they are in danger of overtaking their own development and becoming so specialised that they are led down dead-end evolutionary paths. This has happened to many members of the genus, who have devolved into creatures only able to exist in a very specific environment or to eat only a particular prey. Even the slightest alteration in environmental factors can result in the extinction of these hyper-specialised sub-species
 
-/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\human\renegade-militia.png"
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\psychic-powers\telekinesis.png"
