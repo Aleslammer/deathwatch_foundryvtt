@@ -1,7 +1,6 @@
 System:
     TODO: need to add official module installation from GitHub
     TODO: Merge Status Effects and the foundry native system effect.   Need to investigate that.
-    TODO: Redesign the psychic power edit form.   Maybe let claude take a stab.   I like it however its hard to see.
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -24,9 +23,7 @@ Rites of Battle
     TODO: GEAR - Completed up to Camo-Cloak
     There are all sorts of additions that can be added here. Melee wepaons, Ammo, Armors
 
-Ammmunition 
-
-TODO: Automated Animations - Can we use this for things?  Need to look at tutorial and look into it some more....
+Ammmunition:
 
 Enemies:
     TODO: add dark eldar
@@ -58,12 +55,10 @@ WOW:
     TODO: Automated Animations.   need to investigate (https://foundryvtt.com/packages/autoanimations)
 
 
+Powers:
+    We need to add Exalted Psychic Powers.   They are located in @src/rules/powers-Exalted.md  
 
+Please create a token image for foundry vtt.  This is based in the Warhammer 40k universe and has a tau themed circular border.  And outside the circle is transparent. Inside the circle should be Kroot Carnivore.  They are 
+The Kroot are a species of almost limitless variety, having travelled countless evolutionary paths. While the form most associated with the species is referred to by the Imperium as the Kroot Carnivore, it is postulated that almost every single animal life form on their home world of Pech is related, albeit distantly, to the genus. Evolution in the Kroot has become a matter of rapid adaptation. The Kroot evolve so quickly that they are in danger of overtaking their own development and becoming so specialised that they are led down dead-end evolutionary paths. This has happened to many members of the genus, who have devolved into creatures only able to exist in a very specific environment or to eat only a particular prey. Even the slightest alteration in environmental factors can result in the extinction of these hyper-specialised sub-species
 
-
-
-Please create a token image for foundry vtt.  This is based in the Warhammer 40k universe and has a tau themed circular border.  And outside the circle is transparent. Inside the circle should be Gun Drone.  They are 
-The Tau make use of a staggering range of artificial intelligences, a fact that damns the entire race in the eyes of the Adeptus Mechanicus and much of the Imperial hierarchy. Such machine intelligences that have been imbued into a mobile device are referred to as Drones, and these can take many different forms. Some Drones are able to interact with their Masters, obeying simple instructions and even anticipating what duties are required of them. The Tau appear to value these Drone intelligences, and while they are not regarded as having an equal status to a Tau, they are treated with a degree of respect, perhaps akin to a favoured animal companion.</p><p>Gun Drones are disk-shaped machines that move around by way of a small anti-gravitic generator and are fitted with a pair of pulse carbines. While some Gun Drones serve individual Masters, they are most deadly when operating in a larger, independent squadron. When operating in such a capacity, the Gun Drones are able to network their processing, targeting and sensor systems together, making the whole far more deadly than the sum of the parts.
-
-/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\tau\gun-drone-horde.png"
-/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\tau\gun-drone.png"
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\psychic-powers\telekinesis.png"
