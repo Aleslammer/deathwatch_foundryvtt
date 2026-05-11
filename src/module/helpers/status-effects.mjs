@@ -179,5 +179,11 @@ export const DW_STATUS_EFFECTS = [
     name: "Snared",
     img: "icons/svg/net.svg",
     description: "Movement restricted. Check effect flags for penalty amount (in metres)."
+  },
+  {
+    id: "broken",
+    name: "Broken (Horde)",
+    img: "icons/svg/unconscious.svg",
+    description: "Horde has broken and scattered. Individual creatures flee, lurk, or stalk according to their nature."
   }
 ];

@@ -1,5 +1,6 @@
 import { CohesionPanel } from "../ui/cohesion-panel.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
+import { HordeBreakingHelper } from "../helpers/combat/horde-breaking.mjs";
 
 /**
  * Handles socket communication for player-initiated world setting changes.
@@ -22,6 +23,9 @@ export class SocketHandler {
 
     // Register hooks for actor updates
     this._registerActorUpdateHooks();
+
+    // Register hooks for horde breaking checks
+    this._registerHordeBreakingHooks();
   }
 
   /**
@@ -44,6 +48,20 @@ export class SocketHandler {
           active.splice(data.index, 1);
           await game.settings.set('deathwatch', 'activeSquadAbilities', active);
           await ChatMessage.create({ content: ModeHelper.buildDeactivationMessage(removed.abilityName) });
+        }
+      }
+
+      if (data.type === 'applyActorDamage' && game.user.isGM) {
+        const actor = game.actors.get(data.actorId);
+        if (actor) {
+          await actor.system.receiveDamage(data.damageOptions);
+        }
+      }
+
+      if (data.type === 'applyHordeBatchDamage' && game.user.isGM) {
+        const actor = game.actors.get(data.actorId);
+        if (actor && actor.type === 'horde') {
+          await actor.system.receiveBatchDamage(data.hits);
         }
       }
     });
@@ -79,6 +97,38 @@ export class SocketHandler {
         const panel = CohesionPanel.getInstance();
         if (panel.rendered) panel.render(false);
       }
+    });
+  }
+
+  /**
+   * Check for horde breaking at start of horde's turn (GM only)
+   */
+  static _registerHordeBreakingHooks() {
+    Hooks.on('updateCombat', async (combat, changed, options, userId) => {
+      // Only GM processes horde breaking checks
+      if (!game.user.isGM) return;
+
+      // Only check when turn changes (not round changes or other updates)
+      if (!("turn" in changed)) return;
+
+      const combatant = combat.combatants.get(combat.current.combatantId);
+      if (!combatant?.actor || combatant.actor.type !== 'horde') return;
+
+      const actor = combatant.actor;
+      const checkResult = await HordeBreakingHelper.checkBreaking(actor);
+
+      if (checkResult.shouldCheck) {
+        if (checkResult.autoBreaks) {
+          // Auto-break (magnitude < 25%)
+          await HordeBreakingHelper.applyBroken(actor, true);
+        } else if (checkResult.needsTest) {
+          // Prompt WP test
+          await HordeBreakingHelper.promptBreakingTest(actor, checkResult);
+        }
+      }
+
+      // Reset counter for new turn
+      await HordeBreakingHelper.resetTurnCounter(actor);
     });
   }
 }

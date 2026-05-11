@@ -32,6 +32,7 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
   static defineSchema() {
     const schema = super.defineSchema();
     schema.gearArmor = new fields.NumberField({ initial: 0, min: 0, integer: true });
+    schema.magnitudeThisTurn = new fields.NumberField({ initial: 0, min: 0, integer: true });
     return schema;
   }
 
@@ -78,6 +79,23 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
    */
   async receiveBatchDamage(hits) {
     const actor = this.parent;
+
+    // Check permissions - if player lacks permission, route through socket
+    const canUpdate = game.user.isGM || actor.testUserPermission(game.user, "OWNER");
+
+    if (!canUpdate) {
+      // Route through socket - GM will execute with their permissions
+      game.socket.emit('system.deathwatch', {
+        type: 'applyHordeBatchDamage',
+        actorId: actor.id,
+        hits: hits,
+        userId: game.user.id,
+        userName: game.user.name
+      });
+      return;
+    }
+
+    // Direct execution - user has permission
     const baseArmorValue = (this.gearArmor || 0) + (this.naturalArmorValue || 0);
     const toughnessBonus = this.characteristics?.tg?.baseMod || 0;
     const unnaturalMultiplier = this.characteristics?.tg?.unnaturalMultiplier || 1;
@@ -109,7 +127,11 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
 
     if (totalMagnitudeLost > 0) {
       const newMagnitude = currentMagnitude + totalMagnitudeLost;
-      await FoundryAdapter.updateDocument(actor, { "system.wounds.value": newMagnitude });
+      const newMagnitudeThisTurn = (this.magnitudeThisTurn || 0) + totalMagnitudeLost;
+      await FoundryAdapter.updateDocument(actor, {
+        "system.wounds.value": newMagnitude,
+        "system.magnitudeThisTurn": newMagnitudeThisTurn
+      });
 
       const destroyed = newMagnitude >= maxMagnitude;
       const magnitudeBonusDamage = hits[0]?.magnitudeBonusDamage || 0;

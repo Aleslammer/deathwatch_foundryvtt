@@ -276,6 +276,43 @@ export class CombatHelper {
   }
 
   /**
+   * Apply damage with permission check and socket routing.
+   *
+   * If the current user is GM or owns the target actor, applies damage directly.
+   * If the current user is a player attacking a GM-owned actor, routes through
+   * socket messaging so the GM executes the update with their permissions.
+   *
+   * @param {Actor} targetActor - Target actor document
+   * @param {Object} options - Damage options (same as applyDamage)
+   * @returns {Promise<void>}
+   * @example
+   * // Player attacking GM-owned horde (routes through socket)
+   * await CombatHelper.applyDamageWithPermissionCheck(hordeActor, damageOptions);
+   *
+   * @example
+   * // GM attacking any actor (direct update)
+   * await CombatHelper.applyDamageWithPermissionCheck(enemyActor, damageOptions);
+   */
+  static async applyDamageWithPermissionCheck(targetActor, options) {
+    // Check if current user can update the actor
+    const canUpdate = game.user.isGM || targetActor.testUserPermission(game.user, "OWNER");
+
+    if (canUpdate) {
+      // Direct update - user has permission
+      return await targetActor.system.receiveDamage(options);
+    } else {
+      // Route through socket - GM will execute with their permissions
+      game.socket.emit('system.deathwatch', {
+        type: 'applyActorDamage',
+        actorId: targetActor.id,
+        damageOptions: options,
+        userId: game.user.id,
+        userName: game.user.name
+      });
+    }
+  }
+
+  /**
    * Check if a damage roll contains a natural 10 (for Righteous Fury).
    * @param {Roll} roll - Foundry Roll object
    * @returns {boolean} True if any d10 in the roll rolled a natural 10
