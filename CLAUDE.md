@@ -134,7 +134,41 @@ This project uses Claude Code's persistent memory system to capture:
 
 ## Architecture Quick Reference
 
-### Foundry v13 TypeDataModel Pattern
+### Socket Communication Pattern
+
+**Player actions on GM-owned actors** require socket routing (Foundry document permissions):
+
+```javascript
+// Check permissions first
+const canUpdate = game.user.isGM || actor.testUserPermission(game.user, "OWNER");
+
+if (!canUpdate) {
+  // Route through socket - GM will execute with their permissions
+  game.socket.emit('system.deathwatch', {
+    type: 'actionType',
+    actorId: actor.id,
+    data: { /* action data */ }
+  });
+  return;
+}
+
+// Direct execution (user has permission)
+await actor.system.doSomething(data);
+```
+
+**Socket handler (GM-only):**
+```javascript
+game.socket.on('system.deathwatch', async (data) => {
+  if (data.type === 'actionType' && game.user.isGM) {
+    const actor = game.actors.get(data.actorId);
+    await actor.system.doSomething(data.data);
+  }
+});
+```
+
+See `src/module/init/socket.mjs` for registered handlers.
+
+### Foundry v13-v14 TypeDataModel Pattern
 
 - **DataModel classes** (`src/module/data/`) define schemas and derived data
 - **Document classes** (`src/module/documents/`) are thin shells that delegate to DataModels
