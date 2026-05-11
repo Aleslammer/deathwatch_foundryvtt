@@ -1,6 +1,5 @@
 System:
     TODO: need to add official module installation from GitHub
-    TODO: Merge Status Effects and the foundry native system effect.   Need to investigate that.
 
 Mental State:
     TODO: still need to test the form out in combat.
@@ -58,7 +57,7 @@ WOW:
 Powers:
     We need to add Exalted Psychic Powers.   They are located in @src/rules/powers-Exalted.md  
 
-Please create a token image for foundry vtt.  This is based in the Warhammer 40k universe and has a tau themed circular border.  And outside the circle is transparent. Inside the circle should be Kroot Carnivore.  They are 
-The Kroot are a species of almost limitless variety, having travelled countless evolutionary paths. While the form most associated with the species is referred to by the Imperium as the Kroot Carnivore, it is postulated that almost every single animal life form on their home world of Pech is related, albeit distantly, to the genus. Evolution in the Kroot has become a matter of rapid adaptation. The Kroot evolve so quickly that they are in danger of overtaking their own development and becoming so specialised that they are led down dead-end evolutionary paths. This has happened to many members of the genus, who have devolved into creatures only able to exist in a very specific environment or to eat only a particular prey. Even the slightest alteration in environmental factors can result in the extinction of these hyper-specialised sub-species
+Please create a token image for foundry vtt.  This is based in the Warhammer 40k universe and has a Tyranid themed circular border.  And outside the circle is transparent. Inside the circle should be Zoanthrope.  They are 
+Zoanthropes are amongst the strangest and most bizarre of all Tyranid creatures. Their feeble atrophied bodies hang limp and seemingly lifeless beneath their massive craniums, far too large for their weak limbs to support. Only their immense psychic power allows them to move at all, drifting across the battlefield on a cushion of psychic energy. This vast store of energy and their ability to focus it makes them terrible foes, for a Zoanthrope is capable of conjuring up earth-shattering bolts of warp energy with the strength to smash apart even the most heavily armoured troops or vehicles.
 
-/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\psychic-powers\telekinesis.png"
+/webp-conversion "C:\Source\deathwatch_foundryvtt\src\icons\enemies\tyranid\tyrant-guard.png"

@@ -7,20 +7,29 @@ class MockActor {
     this._createdEffects = [];
     this._deletedEffects = [];
     this.system = { modifiers: [] };
+    this.statuses = new Set();
   }
 
   async createEmbeddedDocuments(type, data) {
     if (type !== 'ActiveEffect') return [];
-    const effects = data.map(d => ({
-      ...d,
-      statuses: new Set(d.statuses || []),
-      delete: jest.fn(async () => {
+    const effects = data.map(d => {
+      const effect = {
+        ...d,
+        statuses: new Set(d.statuses || []),
+        delete: null // Will be set below
+      };
+      effect.delete = jest.fn(async () => {
         this.effects = this.effects.filter(e => e !== effect);
         this._deletedEffects.push(effect);
-      })
-    }));
+        // Remove from statuses set
+        d.statuses?.forEach(s => this.statuses.delete(s));
+      });
+      return effect;
+    });
     this.effects.push(...effects);
     this._createdEffects.push(...effects);
+    // Add to statuses set
+    data.forEach(d => d.statuses?.forEach(s => this.statuses.add(s)));
     return effects;
   }
 
@@ -32,6 +41,37 @@ class MockActor {
 
   getActiveTokens() {
     return [];
+  }
+
+  // Mock Foundry's native toggleStatusEffect
+  async toggleStatusEffect(statusId, options = {}) {
+    const effect = CONFIG.statusEffects?.find(e => e.id === statusId);
+    if (!effect) return null;
+
+    const hadEffect = this.statuses.has(statusId);
+
+    if (hadEffect) {
+      // Remove effect
+      const existing = this.effects.find(e => e.statuses.has(statusId));
+      if (existing) {
+        await existing.delete();
+      }
+      return false;
+    } else {
+      // Create effect
+      const effectData = {
+        name: effect.name,
+        icon: effect.img,
+        statuses: [statusId]
+      };
+
+      if (options.overlay) {
+        effectData.flags = { core: { overlay: true } };
+      }
+
+      const created = await this.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      return created[0];
+    }
   }
 }
 
@@ -102,14 +142,13 @@ describe('ActorConditionsMixin', () => {
     });
 
     it('deletes Active Effect when disabling condition', async () => {
-      const effect = {
-        statuses: new Set(['prone']),
-        delete: jest.fn()
-      };
-      actor.effects.push(effect);
-      
+      // First enable the condition
+      await actor.setCondition('prone', true);
+      expect(actor.effects.length).toBe(1);
+
+      // Then disable it
       await actor.setCondition('prone', false);
-      expect(effect.delete).toHaveBeenCalled();
+      expect(actor.effects.length).toBe(0);
     });
 
     it('does nothing when enabling already enabled condition', async () => {
@@ -145,15 +184,11 @@ describe('ActorConditionsMixin', () => {
     });
 
     it('removes modifiers when disabling condition', async () => {
-      actor.system.modifiers = [
-        { name: 'Prone Penalty', modifier: -20, effectType: 'characteristic', valueAffected: 'ws', _statusId: 'prone' }
-      ];
-      const effect = {
-        statuses: new Set(['prone']),
-        delete: jest.fn()
-      };
-      actor.effects.push(effect);
-      
+      // First enable the condition with modifiers
+      await actor.setCondition('prone', true);
+      expect(actor.system.modifiers.length).toBeGreaterThan(0);
+
+      // Then disable it - modifiers should be removed
       await actor.setCondition('prone', false);
       expect(actor.system.modifiers).toHaveLength(0);
     });
@@ -173,16 +208,13 @@ describe('ActorConditionsMixin', () => {
     });
 
     it('disables condition when already set', async () => {
-      const effect = {
-        statuses: new Set(['blinded']),
-        delete: jest.fn(async () => {
-          actor.effects = actor.effects.filter(e => e !== effect);
-        })
-      };
-      actor.effects.push(effect);
-      
+      // First enable the condition
       await actor.toggleStatusEffect('blinded');
-      expect(effect.delete).toHaveBeenCalled();
+      expect(actor.effects.length).toBe(1);
+
+      // Toggle again to disable
+      await actor.toggleStatusEffect('blinded');
+      expect(actor.effects.length).toBe(0);
       expect(actor.hasCondition('blinded')).toBe(false);
     });
   });

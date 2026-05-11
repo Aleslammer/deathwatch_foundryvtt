@@ -125,7 +125,7 @@ describe('HordeBreakingHelper', () => {
   });
 
   describe('applyBroken', () => {
-    it('applies both broken and dead conditions', async () => {
+    it('applies broken condition only (not dead)', async () => {
       const setCondition = jest.fn();
       const actor = {
         name: 'Ork Mob',
@@ -140,8 +140,7 @@ describe('HordeBreakingHelper', () => {
       await HordeBreakingHelper.applyBroken(actor, false);
 
       expect(setCondition).toHaveBeenCalledWith('broken', true);
-      expect(setCondition).toHaveBeenCalledWith('dead', true);
-      expect(setCondition).toHaveBeenCalledTimes(2);
+      expect(setCondition).toHaveBeenCalledTimes(1);
     });
 
     it('posts chat message for failed WP test', async () => {

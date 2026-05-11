@@ -60,5 +60,13 @@ export class ConfigRegistrar {
 
     // Register status effects
     CONFIG.statusEffects = DW_STATUS_EFFECTS;
+
+    // Register special status effects
+    CONFIG.specialStatusEffects = CONFIG.specialStatusEffects || {};
+    for (const effect of DW_STATUS_EFFECTS) {
+      if (effect.special) {
+        CONFIG.specialStatusEffects[effect.special] = effect.id;
+      }
+    }
   }
 }

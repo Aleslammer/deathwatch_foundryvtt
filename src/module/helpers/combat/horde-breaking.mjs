@@ -174,10 +174,9 @@ export class HordeBreakingHelper {
    * @returns {Promise<void>}
    */
   static async applyBroken(actor, autoBreak = false) {
-    // Apply Broken and Dead conditions (Dead triggers combat tracker defeated state)
+    // Apply Broken condition (horde scattered but not dead)
     if (actor.setCondition) {
       await actor.setCondition('broken', true);
-      await actor.setCondition('dead', true);
     }
 
     const safeActorName = Sanitizer.escape(actor.name);
@@ -202,7 +201,7 @@ export class HordeBreakingHelper {
       speaker: FoundryAdapter.getChatSpeaker(actor)
     });
 
-    // Mark defeated in combat tracker
+    // Mark defeated in combat tracker (optional - combat tracker syncs with dead status automatically)
     if (game.combat) {
       const combatant = game.combat.combatants.find(c => c.actorId === actor.id);
       if (combatant) {

@@ -237,9 +237,11 @@ describe('CombatHelper.applyDamage with horde', () => {
     horde.gearArmor = 0;
     horde.wounds = { value: 29, max: 30 };
     horde.characteristics = { tg: { baseMod: 2, unnaturalMultiplier: 1 } };
+    const setCondition = jest.fn();
     const hordeActor = {
       name: 'Dying Horde',
-      system: horde
+      system: horde,
+      setCondition
     };
     horde.parent = hordeActor;
 
@@ -256,6 +258,7 @@ describe('CombatHelper.applyDamage with horde', () => {
         content: expect.stringContaining('HORDE DESTROYED')
       })
     );
+    expect(setCondition).toHaveBeenCalledWith('dead', true);
   });
 
   it('batch applies multiple hits with single update', async () => {

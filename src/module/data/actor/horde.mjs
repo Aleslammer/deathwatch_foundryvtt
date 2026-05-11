@@ -166,6 +166,11 @@ export default class DeathwatchHorde extends DeathwatchEnemy {
         content: message,
         speaker: FoundryAdapter.getChatSpeaker(actor)
       });
+
+      // Apply defeated condition when destroyed
+      if (destroyed && actor.setCondition) {
+        await actor.setCondition('dead', true);
+      }
     } else {
       const safeActorName = Sanitizer.escape(actor.name);
       const message = `<strong>${safeActorName}</strong> takes <strong>${hits.length}</strong> hit${hits.length > 1 ? 's' : ''} — armor and toughness absorb all damage<br><em>Armor: ${baseArmorValue} | TB: ${effectiveTB}</em>`;

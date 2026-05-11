@@ -24,7 +24,8 @@ export const DW_STATUS_EFFECTS = [
     id: "dead",
     name: "Dead",
     img: "icons/svg/skull.svg",
-    description: "Character has died. May only be restored through extraordinary means."
+    description: "Character has died. May only be restored through extraordinary means.",
+    special: "DEFEATED"
   },
   {
     id: "deafened",
