@@ -34,7 +34,7 @@ npm test -- --testPathPattern="weapon-qualities"
 
 ```bash
 npm run format:json         # Compact and format all compendium JSON files
-npm run build:packs         # Validate + compile packs to LevelDB
+npm run build:packs         # Validate + compile packs to LevelDB (merges .js into macros)
 npm run build:copy          # Copy src/ to local Foundry installation (see .env)
 npm run build:all           # Run build:packs + build:copy
 node builds/scripts/convertToWebp.mjs <file-or-dir>  # Convert PNG/JPG to WebP (⚠️ auto-deletes originals)
@@ -69,7 +69,25 @@ LOCAL_DIR=\\thebrewery\Foundry\Data\systems\deathwatch
 1. **Source files** → `src/packs-source/*.json` (version controlled)
 2. **Validation** → `npm run build:packs` checks for duplicate IDs, valid schemas
 3. **Compilation** → Generates LevelDB files in `src/packs/` (not version controlled)
+   - For macros: Reads `.js` files and merges into compiled pack (JSON source stays clean)
 4. **Deployment** → `npm run build:copy` copies `src/` to `LOCAL_DIR`
+
+### Macro Development Pattern
+
+**Edit macros with syntax highlighting:**
+
+Macros use a two-file pattern for better developer experience:
+- **Source code**: `src/packs-source/macros/macro-name.js` (editable JavaScript with syntax highlighting)
+- **Metadata**: `src/packs-source/macros/macro-name.json` (Foundry metadata, empty `command` field)
+- **Compilation**: `compilePacks.mjs` reads `.js` files and merges into LevelDB pack
+
+**Workflow:**
+1. Edit `macro-name.js` (full JavaScript syntax support)
+2. Run `npm run build:packs` (compilation reads `.js` file)
+3. The compiled pack contains merged JS (JSON source stays clean)
+4. Deploy with `npm run build:copy`
+
+**Important:** The `.json` file's `command` field MUST remain empty (`""`). The compilation step reads from `.js` files and merges at compile time. This keeps the source JSON files clean in version control.
 
 ---
 

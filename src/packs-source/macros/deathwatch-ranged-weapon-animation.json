@@ -1,8 +1,8 @@
 {
-  "_id": "macro-quick-dodge",
-  "name": "Quick Dodge",
+  "_id": "macro-ranged-animation",
+  "name": "Deathwatch Ranged Weapon Animation",
   "type": "script",
-  "img": "icons/svg/combat.svg",
+  "img": "icons/svg/dice-target.svg",
   "flags": {},
   "folder": null,
   "sort": 0,

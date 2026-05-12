@@ -87,6 +87,15 @@ async function compilePackFile(packName) {
     for (const filePath of sourceFiles) {
         const doc = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const id = doc._id || randomID();
+
+        // For macros, merge in the .js source file
+        if (isMacroPack) {
+            const baseName = path.basename(filePath, '.json');
+            const jsFilePath = path.join(path.dirname(filePath), `${baseName}.js`);
+            if (fs.existsSync(jsFilePath)) {
+                doc.command = fs.readFileSync(jsFilePath, 'utf8');
+            }
+        }
         
         let folderId = null;
         const relativePath = path.relative(srcPath, path.dirname(filePath));

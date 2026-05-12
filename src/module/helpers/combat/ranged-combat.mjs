@@ -796,12 +796,29 @@ export class RangedCombatHelper {
             CombatHelper.lastAttackDistance = attackerToken && targetToken ? CombatHelper.getTokenDistance(attackerToken, targetToken) : null;
             CombatHelper.lastCalledShotLocation = (calledShot !== 0 && hitsTotal > 0) ? el.querySelector('#calledShotLocation').value : null;
 
-            // Post chat message
+            // Post chat message with data attributes for Automated Animations module
             const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
             const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
-            hitRoll.toMessage({
+
+            // Create message with data attributes in content area (not just flavor)
+            const rollHtml = await hitRoll.render();
+            const content = `<div class="dw-attack-roll"
+  data-actor-id="${actor.id}"
+  data-item-id="${weapon.id}"
+  data-item-uuid="${weapon.uuid}"
+  data-rounds-fired="${result.roundsFired}"
+  data-fire-mode="${autoFire === 0 ? 'single' : autoFire === 10 ? 'semi' : 'full'}"
+  data-animation-key="${Sanitizer.escape(weapon.system.animationKey || '')}"
+  data-damage-type="${Sanitizer.escape(weapon.system.dmgType || '')}"
+  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}">
+  <div class="attack-flavor">${flavor}</div>
+  ${rollHtml}
+</div>`;
+
+            await ChatMessage.create({
               speaker: ChatMessage.getSpeaker({ actor }),
-              flavor: flavor,
+              content: content,
+              rolls: [hitRoll],
               rollMode: game.settings.get('core', 'rollMode')
             });
 
@@ -968,9 +985,26 @@ export class RangedCombatHelper {
 
     const label = CombatDialogHelper.buildAttackLabel(weapon.name, targetNumber, hitsTotal, isJammed || hasPrematureDetonation, isOverheated);
     const flavor = CombatDialogHelper.buildAttackFlavor(label, modifierParts, hitsParts);
-    hitRoll.toMessage({
+
+    // Embed animation data attributes in chat message content
+    const rollHtml = await hitRoll.render();
+    const content = `<div class="dw-attack-roll"
+  data-actor-id="${actor.id}"
+  data-item-id="${weapon.id}"
+  data-item-uuid="${weapon.uuid}"
+  data-rounds-fired="${result.roundsFired}"
+  data-fire-mode="${autoFire === 0 ? 'single' : autoFire === 10 ? 'semi' : 'full'}"
+  data-animation-key="${Sanitizer.escape(weapon.system.animationKey || '')}"
+  data-damage-type="${Sanitizer.escape(weapon.system.dmgType || '')}"
+  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}">
+  <div class="attack-flavor">${flavor}</div>
+  ${rollHtml}
+</div>`;
+
+    await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: flavor,
+      content: content,
+      rolls: [hitRoll],
       rollMode: game.settings.get('core', 'rollMode')
     });
 

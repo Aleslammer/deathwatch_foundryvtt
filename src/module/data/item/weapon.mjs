@@ -32,6 +32,12 @@ export default class DeathwatchWeapon extends DeathwatchItemBase {
     schema.wt = new fields.NumberField({ initial: 0, min: 0 });
     // Cybernetic weapon source (e.g., servo-arm uses cybernetic's Str, not character's)
     schema.cyberneticSource = new fields.StringField({ initial: "", blank: true });
+    schema.animationKey = new fields.StringField({
+      blank: true,
+      initial: "",
+      label: "Animation Key",
+      hint: "Override animation type (e.g., 'bolt', 'las', 'plasma', 'melta', 'flame'). Leave blank for automatic detection."
+    });
     return schema;
   }
 
