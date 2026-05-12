@@ -24,6 +24,7 @@ export default class DeathwatchSpecialAbility extends DeathwatchItemBase {
     schema.sustained = new fields.BooleanField({ initial: false });
     schema.action = new fields.StringField({ initial: "", blank: true });
     schema.chapterImg = new fields.StringField({ initial: "", blank: true });
+    schema.specialtyImg = new fields.StringField({ initial: "", blank: true });
     return schema;
   }
 }

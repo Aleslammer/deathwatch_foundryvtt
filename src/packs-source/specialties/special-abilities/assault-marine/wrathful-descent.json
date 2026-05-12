@@ -8,6 +8,7 @@
     "page": "73",
     "key": "wrathful-descent",
     "description": "<p>When making a Charge against a Horde, the Assault Marine may inflict an additional 1d10 damage to the Horde’s Magnitude on his first successful attack. This ability only functions when in Squad Mode.</p>",
-    "specialty": "Assault Marine"
+    "specialty": "Assault Marine",
+    "specialtyImg": "systems/deathwatch/icons/specialty/assaultmarine.webp"
   }
 }
