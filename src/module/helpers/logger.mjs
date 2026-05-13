@@ -52,7 +52,10 @@ export class Logger {
     'SYSTEM.INIT': { group: 'system', key: 'initialization', label: 'Initialization' },
     'SYSTEM.SETTINGS': { group: 'system', key: 'settings', label: 'Settings' },
     'SYSTEM.MIGRATION': { group: 'system', key: 'data-migration', label: 'Data Migration' },
-    'SYSTEM.ERROR': { group: 'system', key: 'error-handling', label: 'Error Handling' }
+    'SYSTEM.ERROR': { group: 'system', key: 'error-handling', label: 'Error Handling' },
+
+    // Hooks
+    'HOOKS.ANIMATION': { group: 'hooks', key: 'animations', label: 'Animations' }
   };
 
   static _enabledCategories = new Set();

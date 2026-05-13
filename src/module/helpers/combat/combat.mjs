@@ -12,6 +12,7 @@ import { Sanitizer } from "../sanitizer.mjs";
 import { CyberneticHelper } from "../cybernetic-helper.mjs";
 import { WeaponModifierCollector } from "./weapon-modifier-collector.mjs";
 import { ModifierCollector } from "../character/modifier-collector.mjs";
+import { flameAttack } from "../../macros/flame-attack.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -565,6 +566,13 @@ export class CombatHelper {
    */
   /* istanbul ignore next */
   static async weaponDamageRoll(actor, weapon) {
+    // Check if weapon has Flame quality - redirect to flame attack
+    const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
+    if (isFlame) {
+      // Pre-fill flame attack dialog with weapon data
+      return await flameAttack(weapon);
+    }
+
     const dmg = weapon.system.effectiveDamage || weapon.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
 

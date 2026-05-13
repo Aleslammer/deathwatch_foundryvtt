@@ -16,6 +16,33 @@ describe('flameAttack', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Mock animation modules
+    global.game = {
+      modules: {
+        get: jest.fn((id) => {
+          if (id === 'sequencer') return { active: false };
+          if (id === 'jb2a_patreon') return { active: false };
+          if (id === 'JB2A_DnD5e') return { active: false };
+          return null;
+        })
+      },
+      user: {
+        targets: {
+          first: jest.fn(() => mockTargetToken)
+        }
+      },
+      settings: {
+        get: jest.fn(() => 'roll')
+      }
+    };
+
+    global.canvas = {
+      tokens: {
+        controlled: [],
+        get: jest.fn(() => null)
+      }
+    };
+
     // Mock DOM elements
     mockDialogElement = {
       querySelector: jest.fn((selector) => {
@@ -67,18 +94,8 @@ describe('flameAttack', () => {
       return roll;
     });
     global.ChatMessage = {
-      getSpeaker: jest.fn(() => ({ alias: 'GM' })),
+      getSpeaker: jest.fn(() => ({ alias: 'GM', token: null })),
       create: jest.fn().mockResolvedValue({})
-    };
-    global.game = {
-      user: {
-        targets: {
-          first: jest.fn(() => mockTargetToken)
-        }
-      },
-      settings: {
-        get: jest.fn(() => 'roll')
-      }
     };
     global.ui = {
       notifications: {

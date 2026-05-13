@@ -1,6 +1,7 @@
 import { CohesionPanel } from "../ui/cohesion-panel.mjs";
 import { ModeHelper } from "../helpers/mode-helper.mjs";
 import { HordeBreakingHelper } from "../helpers/combat/horde-breaking.mjs";
+import { handleFlameDodgePrompt } from "../macros/flame-attack.mjs";
 
 /**
  * Handles socket communication for player-initiated world setting changes.
@@ -63,6 +64,10 @@ export class SocketHandler {
         if (actor && actor.type === 'horde') {
           await actor.system.receiveBatchDamage(data.hits);
         }
+      }
+
+      if (data.type === 'flameDodgePrompt' && game.user.isGM) {
+        await handleFlameDodgePrompt(data);
       }
     });
   }

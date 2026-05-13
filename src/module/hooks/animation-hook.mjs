@@ -1,0 +1,86 @@
+import { AnimationHelper } from '../helpers/ui/animation-helper.mjs';
+import { Logger } from '../helpers/logger.mjs';
+
+const logger = Logger.category('HOOKS.ANIMATION');
+
+/**
+ * Hook handler for ranged weapon animations.
+ * Listens to chat message creation and triggers weapon animations when ranged attacks are made.
+ */
+export class AnimationHook {
+  /**
+   * Register the animation hook.
+   */
+  static register() {
+    Hooks.on('createChatMessage', this.onCreateChatMessage.bind(this));
+    logger.debug('Animation hook registered');
+  }
+
+  /**
+   * Handle chat message creation to trigger weapon animations.
+   *
+   * @param {ChatMessage} message - The created chat message
+   * @returns {Promise<void>}
+   */
+  static async onCreateChatMessage(message) {
+    // Validate animation libraries available
+    if (!AnimationHelper.areAnimationLibrariesAvailable()) {
+      return;
+    }
+
+    // Parse message content for attack data
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(message.content, 'text/html');
+    const attackDiv = doc.querySelector('.dw-attack-roll');
+
+    if (!attackDiv) {
+      return; // Not a ranged attack message
+    }
+
+    // Extract metadata
+    const actorId = attackDiv.dataset.actorId;
+    const itemId = attackDiv.dataset.itemId;
+    const roundsFired = parseInt(attackDiv.dataset.roundsFired) || 1;
+    const animationKey = attackDiv.dataset.animationKey || '';
+    const attackType = attackDiv.dataset.attackType || 'ranged'; // 'ranged' or 'melee'
+
+    // Only handle ranged attacks - melee uses Automated Animations directly
+    if (attackType === 'melee') {
+      return;
+    }
+
+    // Get source token
+    const actor = game.actors.get(actorId);
+    if (!actor) {
+      return;
+    }
+
+    const sourceToken = actor.getActiveTokens()[0];
+    if (!sourceToken) {
+      logger.debug('No source token found for animation');
+      return;
+    }
+
+    // Get target token
+    const targetToken = game.user.targets.first();
+    if (!targetToken) {
+      logger.debug('No target selected for animation');
+      return;
+    }
+
+    // Get weapon item
+    const weapon = actor.items.get(itemId);
+    if (!weapon) {
+      return;
+    }
+
+    // Classify weapon and get animation config
+    const weaponType = AnimationHelper.classifyWeapon(weapon, animationKey);
+    const animConfig = AnimationHelper.getAnimationConfig(weaponType);
+
+    // Play animation
+    await AnimationHelper.playWeaponAnimation(sourceToken, targetToken, animConfig, roundsFired);
+
+    logger.debug(`Played ${weaponType} ranged animation (${roundsFired} rounds)`);
+  }
+}

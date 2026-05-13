@@ -1,5 +1,6 @@
 import { CombatHelper } from '../helpers/combat/combat.mjs';
 import { FireHelper } from '../helpers/combat/fire-helper.mjs';
+import { AnimationHelper } from '../helpers/ui/animation-helper.mjs';
 
 /**
  * Handle flame attack against a horde target.
@@ -9,8 +10,20 @@ import { FireHelper } from '../helpers/combat/fire-helper.mjs';
  * @param {string} damageFormula - Damage formula (e.g., "1d10+4")
  * @param {number} penetration - Armor penetration value
  * @param {string} damageType - Damage type (e.g., "Energy")
+ * @param {Token} sourceToken - Source token for animation
+ * @param {Token} targetToken - Target token for animation
  */
-async function handleHordeFlameAttack(targetActor, targetName, weaponRange, damageFormula, penetration, damageType) {
+async function handleHordeFlameAttack(targetActor, targetName, weaponRange, damageFormula, penetration, damageType, sourceToken, targetToken) {
+    // Play flame animation
+    const librariesAvailable = AnimationHelper.areAnimationLibrariesAvailable();
+    console.log('[Flame Animation] Libraries available:', librariesAvailable, 'Source token:', sourceToken?.id, 'Target token:', targetToken?.id);
+
+    if (librariesAvailable && sourceToken && targetToken) {
+        const flameConfig = AnimationHelper.getAnimationConfig('flame');
+        await AnimationHelper.playWeaponAnimation(sourceToken, targetToken, flameConfig, 1);
+        console.log('[Flame Animation] Animation triggered for horde attack');
+    }
+
     const staticHits = Math.ceil(weaponRange / 4);
     const flameRoll = await new Roll('1d5').evaluate();
     const totalHits = staticHits + flameRoll.total;
@@ -37,8 +50,19 @@ async function handleHordeFlameAttack(targetActor, targetName, weaponRange, dama
  * @param {string} damageFormula - Damage formula
  * @param {number} penetration - Armor penetration
  * @param {string} damageType - Damage type
+ * @param {Token} sourceToken - Source token for animation
+ * @param {Token} targetToken - Target token for animation
  */
-async function handleFlameDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType) {
+async function handleFlameDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType, sourceToken, targetToken) {
+    // Play flame animation when dodge is rolled
+    const librariesAvailable = AnimationHelper.areAnimationLibrariesAvailable();
+    console.log('[Flame Animation] Libraries available:', librariesAvailable, 'Source token:', sourceToken?.id, 'Target token:', targetToken?.id);
+
+    if (librariesAvailable && sourceToken && targetToken) {
+        const flameConfig = AnimationHelper.getAnimationConfig('flame');
+        await AnimationHelper.playWeaponAnimation(sourceToken, targetToken, flameConfig, 1);
+        console.log('[Flame Animation] Animation triggered for individual attack');
+    }
     const dodgeMod = parseInt(dodgeDialog.element.querySelector('#dodgeMod').value) || 0;
     const dodgeRoll = await new Roll('1d100').evaluate();
     const dodgeResult = FireHelper.resolveDodgeFlameTest(ag, dodgeRoll.total, dodgeMod);
@@ -82,15 +106,25 @@ async function handleFlameDodgeRoll(targetActor, targetName, ag, dodgeDialog, da
 }
 
 /**
- * Handle flame attack against an individual target (non-horde).
- * Shows dodge dialog and processes results.
- * @param {Actor} targetActor - The target actor
- * @param {string} targetName - Name of the target
- * @param {string} damageFormula - Damage formula
- * @param {number} penetration - Armor penetration
- * @param {string} damageType - Damage type
+ * GM-only handler for flame dodge prompt.
+ * Invoked via socket when player initiates flame attack against individual target.
+ * @param {Object} data - Socket data
  */
-async function handleIndividualFlameAttack(targetActor, targetName, damageFormula, penetration, damageType) {
+export async function handleFlameDodgePrompt(data) {
+    const { targetActorId, targetName, damageFormula, penetration, damageType, sourceTokenId, targetTokenId, sceneId } = data;
+
+    // Resolve tokens
+    const scene = game.scenes.get(sceneId);
+    if (!scene) return;
+
+    const sourceTokenDoc = scene.tokens.get(sourceTokenId);
+    const targetTokenDoc = scene.tokens.get(targetTokenId);
+    if (!sourceTokenDoc || !targetTokenDoc) return;
+
+    const sourceToken = sourceTokenDoc.object;
+    const targetToken = targetTokenDoc.object;
+    const targetActor = targetTokenDoc.actor;
+    if (!targetActor) return;
     const ag = targetActor.system.characteristics?.ag?.value || 0;
 
     const dodgeContent = `
@@ -104,6 +138,7 @@ async function handleIndividualFlameAttack(targetActor, targetName, damageFormul
       </div>
     `;
 
+    // GM sees dodge dialog
     foundry.applications.api.DialogV2.wait({
         window: { title: `🔥 Dodge Flame: ${targetName}` },
         content: dodgeContent,
@@ -111,7 +146,7 @@ async function handleIndividualFlameAttack(targetActor, targetName, damageFormul
             {
                 label: 'Roll Dodge', action: 'roll',
                 callback: (event, button, dodgeDialog) =>
-                    handleFlameDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType)
+                    handleFlameDodgeRoll(targetActor, targetName, ag, dodgeDialog, damageFormula, penetration, damageType, sourceToken, targetToken)
             },
             { label: 'Cancel', action: 'cancel' }
         ]
@@ -119,27 +154,75 @@ async function handleIndividualFlameAttack(targetActor, targetName, damageFormul
 }
 
 /**
+ * Handle flame attack against an individual target (non-horde).
+ * Emits socket message for GM to show dodge dialog.
+ * @param {Actor} targetActor - The target actor
+ * @param {string} targetName - Name of the target
+ * @param {string} damageFormula - Damage formula
+ * @param {number} penetration - Armor penetration
+ * @param {string} damageType - Damage type
+ * @param {Token} sourceToken - Source token for animation
+ * @param {Token} targetToken - Target token for animation
+ */
+async function handleIndividualFlameAttack(targetActor, targetName, damageFormula, penetration, damageType, sourceToken, targetToken) {
+    // If GM, show dialog directly
+    if (game.user.isGM) {
+        await handleFlameDodgePrompt({
+            targetActorId: targetActor.id,
+            targetName,
+            damageFormula,
+            penetration,
+            damageType,
+            sourceTokenId: sourceToken?.id,
+            targetTokenId: targetToken?.id,
+            sceneId: targetToken?.scene?.id || canvas.scene?.id
+        });
+    } else {
+        // Emit socket for GM to handle
+        game.socket.emit('system.deathwatch', {
+            type: 'flameDodgePrompt',
+            targetActorId: targetActor.id,
+            targetName,
+            damageFormula,
+            penetration,
+            damageType,
+            sourceTokenId: sourceToken?.id,
+            targetTokenId: targetToken?.id,
+            sceneId: targetToken?.scene?.id || canvas.scene?.id
+        });
+
+        ui.notifications.info(`Flame attack sent to GM. Awaiting ${targetName}'s dodge roll.`);
+    }
+}
+
+/**
  * GM macro for flame weapon attacks. Opens a dialog for damage/pen,
  * GM targets a token and clicks Burn. Applies damage, rolls catch fire
  * Agility test, and applies On Fire status if failed.
+ * @param {Item} [weapon=null] - Optional weapon item to pre-fill dialog values
  */
-export async function flameAttack() {
+export async function flameAttack(weapon = null) {
+    // Pre-fill values from weapon if provided
+    const defaultDamage = weapon ? (weapon.system.effectiveDamage || weapon.system.dmg || '') : '';
+    const defaultPen = weapon ? (weapon.system.effectivePenetration ?? weapon.system.penetration ?? weapon.system.pen ?? 0) : 0;
+    const defaultDmgType = weapon ? (weapon.system.dmgType || 'Energy') : 'Energy';
+    const defaultRange = weapon ? (parseInt(weapon.system.effectiveRange || weapon.system.range) || 20) : 20;
     const content = `
       <div class="form-group">
         <label>Damage:</label>
-        <input type="text" id="flameDamage" placeholder="e.g., 1d10+4" />
+        <input type="text" id="flameDamage" placeholder="e.g., 1d10+4" value="${defaultDamage}" />
       </div>
       <div class="form-group">
         <label>Penetration:</label>
-        <input type="number" id="flamePen" value="0" />
+        <input type="number" id="flamePen" value="${defaultPen}" />
       </div>
       <div class="form-group">
         <label>Damage Type:</label>
-        <input type="text" id="flameDmgType" value="Energy" />
+        <input type="text" id="flameDmgType" value="${defaultDmgType}" />
       </div>
       <div class="form-group">
         <label>Weapon Range (m):</label>
-        <input type="number" id="flameRange" value="20" min="1" />
+        <input type="number" id="flameRange" value="${defaultRange}" min="1" />
       </div>
     `;
 
@@ -169,10 +252,19 @@ export async function flameAttack() {
                     const targetName = targetActor.name;
                     const isHorde = targetActor.type === 'horde';
 
+                    // Get source token (controlled or speaker's token)
+                    let sourceToken = canvas.tokens.controlled[0];
+                    if (!sourceToken) {
+                        const speaker = ChatMessage.getSpeaker();
+                        if (speaker.token) {
+                            sourceToken = canvas.tokens.get(speaker.token);
+                        }
+                    }
+
                     if (isHorde) {
-                        await handleHordeFlameAttack(targetActor, targetName, weaponRange, damageFormula, penetration, damageType);
+                        await handleHordeFlameAttack(targetActor, targetName, weaponRange, damageFormula, penetration, damageType, sourceToken, targetToken);
                     } else {
-                        await handleIndividualFlameAttack(targetActor, targetName, damageFormula, penetration, damageType);
+                        await handleIndividualFlameAttack(targetActor, targetName, damageFormula, penetration, damageType, sourceToken, targetToken);
                     }
                 }
             },
