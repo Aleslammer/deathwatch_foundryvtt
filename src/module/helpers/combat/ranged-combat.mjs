@@ -802,6 +802,8 @@ export class RangedCombatHelper {
 
             // Create message with data attributes in content area (not just flavor)
             const rollHtml = await hitRoll.render();
+            const sourceTokenId = attackerToken?.id || '';
+            const targetTokenId = targetToken?.id || '';
             const content = `<div class="dw-attack-roll"
   data-actor-id="${actor.id}"
   data-item-id="${weapon.id}"
@@ -810,7 +812,9 @@ export class RangedCombatHelper {
   data-fire-mode="${autoFire === 0 ? 'single' : autoFire === 10 ? 'semi' : 'full'}"
   data-animation-key="${Sanitizer.escape(weapon.system.animationKey || '')}"
   data-damage-type="${Sanitizer.escape(weapon.system.dmgType || '')}"
-  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}">
+  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}"
+  data-source-token-id="${sourceTokenId}"
+  data-target-token-id="${targetTokenId}">
   <div class="attack-flavor">${flavor}</div>
   ${rollHtml}
 </div>`;
@@ -988,6 +992,8 @@ export class RangedCombatHelper {
 
     // Embed animation data attributes in chat message content
     const rollHtml = await hitRoll.render();
+    const sourceTokenId = attackerToken?.id || '';
+    const targetTokenId = targetToken?.id || '';
     const content = `<div class="dw-attack-roll"
   data-actor-id="${actor.id}"
   data-item-id="${weapon.id}"
@@ -996,7 +1002,9 @@ export class RangedCombatHelper {
   data-fire-mode="${autoFire === 0 ? 'single' : autoFire === 10 ? 'semi' : 'full'}"
   data-animation-key="${Sanitizer.escape(weapon.system.animationKey || '')}"
   data-damage-type="${Sanitizer.escape(weapon.system.dmgType || '')}"
-  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}">
+  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}"
+  data-source-token-id="${sourceTokenId}"
+  data-target-token-id="${targetTokenId}">
   <div class="attack-flavor">${flavor}</div>
   ${rollHtml}
 </div>`;

@@ -39,7 +39,7 @@ await import('../src/module/deathwatch.mjs');
 describe('deathwatch.mjs', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     global.game = {
       user: { isGM: false, assignHotbarMacro: jest.fn() },
       tables: { getName: jest.fn() },
@@ -54,6 +54,9 @@ describe('deathwatch.mjs', () => {
       socket: {
         on: jest.fn(),
         emit: jest.fn()
+      },
+      modules: {
+        get: jest.fn()
       }
     };
   });

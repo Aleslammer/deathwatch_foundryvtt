@@ -367,6 +367,7 @@ export class MeleeCombatHelper {
             const hitRoll = await new Roll('1d100').evaluate();
             const hitValue = hitRoll.total;
 
+            const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
             const targetToken = game.user.targets.first();
             const targetActor = targetToken?.actor;
             const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
@@ -390,6 +391,8 @@ export class MeleeCombatHelper {
 
             // Create message with data attributes for animation system
             const rollHtml = await hitRoll.render();
+            const sourceTokenId = attackerToken?.id || '';
+            const targetTokenId = targetToken?.id || '';
             const content = `<div class="dw-attack-roll"
   data-actor-id="${actor.id}"
   data-item-id="${weapon.id}"
@@ -397,7 +400,9 @@ export class MeleeCombatHelper {
   data-attack-type="melee"
   data-animation-key="${Sanitizer.escape(weapon.system.animationKey || '')}"
   data-damage-type="${Sanitizer.escape(weapon.system.dmgType || '')}"
-  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}">
+  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}"
+  data-source-token-id="${sourceTokenId}"
+  data-target-token-id="${targetTokenId}">
   <div class="attack-flavor">${flavor}</div>
   ${rollHtml}
 </div>`;
@@ -433,6 +438,7 @@ export class MeleeCombatHelper {
     const hitRoll = await new Roll('1d100').evaluate();
     const hitValue = hitRoll.total;
 
+    const attackerToken = actor.getActiveTokens()[0] || canvas.tokens.controlled[0];
     const targetToken = game.user.targets.first();
     const targetActor = targetToken?.actor;
     const { modifier: sizeModifier, label: sizeLabel } = CombatDialogHelper.getTargetSizeModifier(targetActor);
@@ -456,6 +462,8 @@ export class MeleeCombatHelper {
 
     // Create message with data attributes for animation system
     const rollHtml = await hitRoll.render();
+    const sourceTokenId = attackerToken?.id || '';
+    const targetTokenId = targetToken?.id || '';
     const content = `<div class="dw-attack-roll"
   data-actor-id="${actor.id}"
   data-item-id="${weapon.id}"
@@ -463,7 +471,9 @@ export class MeleeCombatHelper {
   data-attack-type="melee"
   data-animation-key="${Sanitizer.escape(weapon.system.animationKey || '')}"
   data-damage-type="${Sanitizer.escape(weapon.system.dmgType || '')}"
-  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}">
+  data-weapon-class="${Sanitizer.escape(weapon.system.class || '')}"
+  data-source-token-id="${sourceTokenId}"
+  data-target-token-id="${targetTokenId}">
   <div class="attack-flavor">${flavor}</div>
   ${rollHtml}
 </div>`;

@@ -1,4 +1,5 @@
 import { createItemMacro } from "../macros/hotbar.mjs";
+import { shouldLoadTAH, initialize as initializeTAH } from '../token-action-hud/init.mjs';
 
 /**
  * Handles initialization that must occur on the 'ready' hook.
@@ -11,6 +12,7 @@ export class ReadyHook {
     await this._registerHotbarHook();
     await this._configureCombatTracker();
     await this._createSystemMacros();
+    await this._initializeTokenActionHUD();
   }
 
   /**
@@ -46,5 +48,14 @@ export class ReadyHook {
    */
   static async _createSystemMacros() {
     // No longer auto-creates macros - they are now available in the Macros compendium
+  }
+
+  /**
+   * Initialize Token Action HUD integration if enabled
+   */
+  static async _initializeTokenActionHUD() {
+    if (shouldLoadTAH()) {
+      initializeTAH();
+    }
   }
 }

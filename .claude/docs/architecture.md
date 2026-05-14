@@ -159,6 +159,95 @@ The system uses a clean modular initialization pattern (refactored 2026-04-05):
 
 ---
 
+## Token Action HUD Integration
+
+The system integrates with **Token Action HUD Core** to provide quick access to actions from selected tokens.
+
+### Architecture
+
+**Location**: `src/module/token-action-hud/` (4 files)
+
+- `action-handler.mjs` — Main integration point, implements `ActionHandler` interface required by TAH Core
+- `action-builder.mjs` — Constructs action data structures (Combat, Skills, Characteristics)
+- `roll-executor.mjs` — Executes actions (dispatches to macros, dialogs, combat methods)
+- `socket-router.mjs` — Routes unpermissioned actions through GM via sockets
+
+### Integration Points
+
+**Activation**: Setting `enableTokenActionHud` must be enabled (default: `false`)
+
+**Registration**: `src/module/init/token-action-hud.mjs` registers the action handler with TAH Core during `ready` hook
+
+**Action Flow**:
+1. TAH Core calls `actionHandler.buildSystemActions(tokens)`
+2. `ActionBuilder` collects actions from actor items/skills/characteristics
+3. User clicks action → TAH Core calls `actionHandler.handleAction(token, actionId)`
+4. `RollExecutor` decodes actionId and dispatches to appropriate system method
+5. If user lacks permission, `SocketRouter` routes through GM
+
+### Action Encoding
+
+Actions use pipe-delimited format: `category|type|id|extra`
+
+**Examples**:
+- `combat|weapon|<itemId>|attack` — Attack roll for weapon
+- `combat|weapon|<itemId>|damage` — Damage roll for weapon
+- `combat|action|reload` — Reload action
+- `skill|basic|awareness` — Awareness skill test
+- `characteristic|ws` — WS characteristic test
+
+### Action Groups
+
+```javascript
+{
+  combat: {
+    weapons: [
+      { id: 'combat|weapon|abc123|attack', name: 'Bolter (Attack)' },
+      { id: 'combat|weapon|abc123|damage', name: 'Bolter (Damage)' }
+    ],
+    actions: [
+      { id: 'combat|action|reload', name: 'Reload' },
+      { id: 'combat|action|unjam', name: 'Un-Jam' },
+      { id: 'combat|action|extinguish', name: 'Extinguish' }
+    ]
+  },
+  skills: {
+    basic: [...],
+    advanced: [...]
+  },
+  characteristics: [...]
+}
+```
+
+### Testing
+
+**Roll parity enforcement**: `tests/token-action-hud/roll-parity.test.mjs` ensures TAH actions produce identical rolls to:
+- Macro system (`/ra`, `/rd`, `/rs`, `/rt`)
+- Actor sheet UI (click attack/damage/skill buttons)
+- Combat tracker (initiative, special actions)
+
+**Anti-duplication**: Tests verify no duplicate actions appear in HUD (regression prevention)
+
+### Socket Routing
+
+When user lacks permission on actor:
+1. `RollExecutor.canExecute(actor)` returns `false`
+2. `SocketRouter.routeAction(actor, actionData)` emits socket event
+3. GM receives socket event and executes action with their permissions
+4. Result appears in chat (visible to all players)
+
+**Security**: Socket handler verifies GM status before execution
+
+### Future Phases
+
+Planned additions:
+- **Talents** — One-click talent activation (Phase 2)
+- **Psychic Powers** — Focus Power tests and power activation (Phase 2)
+- **Squad Mode** — Solo/Squad Mode ability toggles (Phase 3)
+- **Custom Actions** — User-defined macro shortcuts (Phase 3)
+
+---
+
 ## System Notes
 
 - **Foundry version**: System is locked to Foundry v13 (compatibility minimum/verified/maximum all set to "13")

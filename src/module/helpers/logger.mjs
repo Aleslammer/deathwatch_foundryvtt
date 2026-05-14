@@ -55,7 +55,10 @@ export class Logger {
     'SYSTEM.ERROR': { group: 'system', key: 'error-handling', label: 'Error Handling' },
 
     // Hooks
-    'HOOKS.ANIMATION': { group: 'hooks', key: 'animations', label: 'Animations' }
+    'HOOKS.ANIMATION': { group: 'hooks', key: 'animations', label: 'Animations' },
+
+    // Token Action HUD
+    'TAH.INIT': { group: 'tah', key: 'tah-initialization', label: 'TAH Initialization' }
   };
 
   static _enabledCategories = new Set();

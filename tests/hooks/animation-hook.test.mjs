@@ -23,6 +23,8 @@ describe('AnimationHook', () => {
               const itemIdMatch = content.match(/data-item-id="([^"]*)"/);
               const roundsFiredMatch = content.match(/data-rounds-fired="([^"]*)"/);
               const animationKeyMatch = content.match(/data-animation-key="([^"]*)"/);
+              const sourceTokenIdMatch = content.match(/data-source-token-id="([^"]*)"/);
+              const targetTokenIdMatch = content.match(/data-target-token-id="([^"]*)"/);
 
               if (actorIdMatch) {
                 return {
@@ -30,7 +32,9 @@ describe('AnimationHook', () => {
                     actorId: actorIdMatch[1],
                     itemId: itemIdMatch ? itemIdMatch[1] : '',
                     roundsFired: roundsFiredMatch ? roundsFiredMatch[1] : '1',
-                    animationKey: animationKeyMatch ? animationKeyMatch[1] : ''
+                    animationKey: animationKeyMatch ? animationKeyMatch[1] : '',
+                    sourceTokenId: sourceTokenIdMatch ? sourceTokenIdMatch[1] : '',
+                    targetTokenId: targetTokenIdMatch ? targetTokenIdMatch[1] : ''
                   }
                 };
               }
@@ -219,6 +223,180 @@ describe('AnimationHook', () => {
 
       // Plasma config has specific file
       expect(mockEffect.file).toHaveBeenCalledWith('jb2a.lasershot.blue');
+    });
+
+    it('uses source token ID from message data instead of actor.getActiveTokens()', async () => {
+      // Setup: Message contains explicit source-token-id
+      mockMessage.content = `<div class="dw-attack-roll"
+        data-actor-id="actor123"
+        data-item-id="item456"
+        data-source-token-id="source-token-999"
+        data-target-token-id="target-token-888"
+        data-rounds-fired="1">
+      </div>`;
+
+      global.game.modules.get = jest.fn((id) => {
+        if (id === 'sequencer') return { active: true };
+        if (id === 'jb2a_patreon') return { active: true };
+        return null;
+      });
+
+      const mockActor = {
+        items: {
+          get: jest.fn(() => ({
+            name: 'Bolter',
+            system: { dmgType: 'Explosive' }
+          }))
+        }
+      };
+
+      global.game.actors.get = jest.fn(() => mockActor);
+
+      // Mock canvas.tokens.get to return specific tokens by ID
+      const mockSourceTokenFromCanvas = { id: 'source-token-999', x: 100, y: 100 };
+      const mockTargetTokenFromCanvas = { id: 'target-token-888', x: 200, y: 200 };
+
+      global.canvas.tokens.get = jest.fn((tokenId) => {
+        if (tokenId === 'source-token-999') return mockSourceTokenFromCanvas;
+        if (tokenId === 'target-token-888') return mockTargetTokenFromCanvas;
+        return null;
+      });
+
+      const mockEffect = {
+        file: jest.fn().mockReturnThis(),
+        atLocation: jest.fn().mockReturnThis(),
+        stretchTo: jest.fn().mockReturnThis(),
+        repeats: jest.fn().mockReturnValue(null)
+      };
+
+      const mockSequence = {
+        effect: jest.fn(() => mockEffect),
+        play: jest.fn()
+      };
+
+      global.Sequence = jest.fn(() => mockSequence);
+
+      await AnimationHook.onCreateChatMessage(mockMessage);
+
+      // Verify: Animation uses tokens from canvas.tokens.get(), not actor.getActiveTokens()
+      expect(global.canvas.tokens.get).toHaveBeenCalledWith('source-token-999');
+      expect(global.canvas.tokens.get).toHaveBeenCalledWith('target-token-888');
+      expect(mockEffect.atLocation).toHaveBeenCalledWith(mockSourceTokenFromCanvas);
+      expect(mockEffect.stretchTo).toHaveBeenCalledWith(mockTargetTokenFromCanvas);
+    });
+
+    it('uses target token ID from message data instead of game.user.targets', async () => {
+      // Setup: GM has PC targeted, but message says attack targeted Enemy
+      mockMessage.content = `<div class="dw-attack-roll"
+        data-actor-id="actor123"
+        data-item-id="item456"
+        data-source-token-id="pc-token-123"
+        data-target-token-id="enemy-token-456"
+        data-rounds-fired="1">
+      </div>`;
+
+      global.game.modules.get = jest.fn((id) => {
+        if (id === 'sequencer') return { active: true };
+        if (id === 'jb2a_patreon') return { active: true };
+        return null;
+      });
+
+      const mockActor = {
+        items: {
+          get: jest.fn(() => ({
+            name: 'Bolter',
+            system: { dmgType: 'Explosive' }
+          }))
+        }
+      };
+
+      global.game.actors.get = jest.fn(() => mockActor);
+
+      // GM currently has PC targeted (wrong!)
+      const gmCurrentTarget = { id: 'pc-token-999-WRONG', x: 50, y: 50 };
+      global.game.user.targets.first = jest.fn(() => gmCurrentTarget);
+
+      // Correct tokens from canvas
+      const correctSourceToken = { id: 'pc-token-123', x: 100, y: 100 };
+      const correctTargetToken = { id: 'enemy-token-456', x: 200, y: 200 };
+
+      global.canvas.tokens.get = jest.fn((tokenId) => {
+        if (tokenId === 'pc-token-123') return correctSourceToken;
+        if (tokenId === 'enemy-token-456') return correctTargetToken;
+        return null;
+      });
+
+      const mockEffect = {
+        file: jest.fn().mockReturnThis(),
+        atLocation: jest.fn().mockReturnThis(),
+        stretchTo: jest.fn().mockReturnThis(),
+        repeats: jest.fn().mockReturnValue(null)
+      };
+
+      const mockSequence = {
+        effect: jest.fn(() => mockEffect),
+        play: jest.fn()
+      };
+
+      global.Sequence = jest.fn(() => mockSequence);
+
+      await AnimationHook.onCreateChatMessage(mockMessage);
+
+      // Verify: Uses correct target from message, NOT game.user.targets
+      expect(mockEffect.stretchTo).toHaveBeenCalledWith(correctTargetToken);
+      expect(mockEffect.stretchTo).not.toHaveBeenCalledWith(gmCurrentTarget);
+    });
+
+    it('falls back to actor.getActiveTokens() if source-token-id not in message', async () => {
+      // Backward compatibility: Old messages without token IDs
+      mockMessage.content = `<div class="dw-attack-roll"
+        data-actor-id="actor123"
+        data-item-id="item456"
+        data-rounds-fired="1">
+      </div>`;
+
+      global.game.modules.get = jest.fn((id) => {
+        if (id === 'sequencer') return { active: true };
+        if (id === 'jb2a_patreon') return { active: true };
+        return null;
+      });
+
+      const fallbackSourceToken = { id: 'fallback-source', x: 100, y: 100 };
+      const mockActor = {
+        getActiveTokens: jest.fn(() => [fallbackSourceToken]),
+        items: {
+          get: jest.fn(() => ({
+            name: 'Bolter',
+            system: { dmgType: 'Explosive' }
+          }))
+        }
+      };
+
+      global.game.actors.get = jest.fn(() => mockActor);
+
+      const fallbackTargetToken = { id: 'fallback-target', x: 200, y: 200 };
+      global.game.user.targets.first = jest.fn(() => fallbackTargetToken);
+
+      const mockEffect = {
+        file: jest.fn().mockReturnThis(),
+        atLocation: jest.fn().mockReturnThis(),
+        stretchTo: jest.fn().mockReturnThis(),
+        repeats: jest.fn().mockReturnValue(null)
+      };
+
+      const mockSequence = {
+        effect: jest.fn(() => mockEffect),
+        play: jest.fn()
+      };
+
+      global.Sequence = jest.fn(() => mockSequence);
+
+      await AnimationHook.onCreateChatMessage(mockMessage);
+
+      // Verify: Falls back to old behavior
+      expect(mockActor.getActiveTokens).toHaveBeenCalled();
+      expect(mockEffect.atLocation).toHaveBeenCalledWith(fallbackSourceToken);
+      expect(mockEffect.stretchTo).toHaveBeenCalledWith(fallbackTargetToken);
     });
   });
 });

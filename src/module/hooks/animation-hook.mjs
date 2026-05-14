@@ -43,28 +43,55 @@ export class AnimationHook {
     const roundsFired = parseInt(attackDiv.dataset.roundsFired) || 1;
     const animationKey = attackDiv.dataset.animationKey || '';
     const attackType = attackDiv.dataset.attackType || 'ranged'; // 'ranged' or 'melee'
+    const sourceTokenId = attackDiv.dataset.sourceTokenId || '';
+    const targetTokenId = attackDiv.dataset.targetTokenId || '';
 
     // Only handle ranged attacks - melee uses Automated Animations directly
     if (attackType === 'melee') {
       return;
     }
 
-    // Get source token
+    // Get source token (prioritize stored token ID, fall back to actor's active tokens)
+    let sourceToken;
+    if (sourceTokenId) {
+      sourceToken = canvas.tokens.get(sourceTokenId);
+      if (!sourceToken) {
+        logger.debug(`Source token ${sourceTokenId} not found on canvas`);
+        return;
+      }
+    } else {
+      // Backward compatibility: use actor's active tokens
+      const actor = game.actors.get(actorId);
+      if (!actor) {
+        return;
+      }
+      sourceToken = actor.getActiveTokens()[0];
+      if (!sourceToken) {
+        logger.debug('No source token found for animation');
+        return;
+      }
+    }
+
+    // Get target token (prioritize stored token ID, fall back to current user targets)
+    let targetToken;
+    if (targetTokenId) {
+      targetToken = canvas.tokens.get(targetTokenId);
+      if (!targetToken) {
+        logger.debug(`Target token ${targetTokenId} not found on canvas`);
+        return;
+      }
+    } else {
+      // Backward compatibility: use current user's targets
+      targetToken = game.user.targets.first();
+      if (!targetToken) {
+        logger.debug('No target selected for animation');
+        return;
+      }
+    }
+
+    // Get weapon item
     const actor = game.actors.get(actorId);
     if (!actor) {
-      return;
-    }
-
-    const sourceToken = actor.getActiveTokens()[0];
-    if (!sourceToken) {
-      logger.debug('No source token found for animation');
-      return;
-    }
-
-    // Get target token
-    const targetToken = game.user.targets.first();
-    if (!targetToken) {
-      logger.debug('No target selected for animation');
       return;
     }
 
