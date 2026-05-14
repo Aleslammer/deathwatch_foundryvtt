@@ -109,13 +109,14 @@ describe('TAH Socket Handler', () => {
       const mockJammedWeapon = {
         id: 'weapon456',
         name: 'Jammed Bolter',
-        type: 'rangedWeapon',
+        type: 'weapon',
         system: { jammed: true }
       };
       const mockActor = {
         id: 'actor123',
         name: 'Test Actor',
         items: {
+          get: jest.fn((id) => id === 'weapon456' ? mockJammedWeapon : null),
           filter: jest.fn(() => [mockJammedWeapon])
         }
       };

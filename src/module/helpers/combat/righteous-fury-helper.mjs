@@ -36,7 +36,7 @@ export class RighteousFuryHelper {
     
     const speaker = FoundryAdapter.getChatSpeaker(actor);
     const flavor = ChatMessageBuilder.createRighteousFuryFlavor(targetNumber, confirmed);
-    await FoundryAdapter.sendRollToChat(confirmRoll, speaker, flavor);
+    await FoundryAdapter.sendRollToChat(confirmRoll, { speaker, flavor });
     
     return confirmed;
   }

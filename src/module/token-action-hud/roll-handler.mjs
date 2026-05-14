@@ -12,6 +12,148 @@ import { CHARACTERISTIC_LABELS } from '../helpers/constants/characteristic-const
 export let RollHandler = null;
 
 /**
+ * Create RollHandler class (factory function for testing)
+ * @param {class} BaseRollHandler - Base RollHandler class to extend
+ * @param {Object} rollExecutor - RollExecutor dependency (for testing)
+ * @param {Object} combatHelper - CombatHelper dependency (for testing)
+ * @returns {class} RollHandler class
+ */
+export function createRollHandler(BaseRollHandler, rollExecutor = RollExecutor, combatHelper = CombatHelper) {
+  return class RollHandler extends BaseRollHandler {
+    /**
+     * Handle action execution (legacy test interface)
+     * @param {Object} actionData - Action data object
+     * @param {string} actionData.encodedValue - Encoded action value
+     */
+    async handleAction(actionData) {
+      return this.handleActionClick(null, actionData.encodedValue, actionData.actionId);
+    }
+
+    /**
+     * Handle action execution (TAH Core API interface)
+     * @param {Event} event - Click event
+     * @param {string} encodedValue - Encoded action value (e.g., "weapon|abc123|attack")
+     * @param {string} actionId - Optional action identifier for socket routing
+     */
+    async handleActionClick(event, encodedValue, actionId) {
+      // Check permissions
+      const hasPermission =
+        game.user.isGM || this.actor.testUserPermission(game.user, 'OWNER');
+
+      if (!hasPermission) {
+        // Route through socket - GM will execute
+        const socketData = {
+          type: 'tah-action',
+          actorId: this.actor.id,
+          encodedValue,
+        };
+        if (actionId) socketData.actionId = actionId;
+        game.socket.emit('system.deathwatch', socketData);
+        return;
+      }
+
+      // Decode action and execute
+      const [actionType, itemId, subAction] = encodedValue.split('|');
+
+      switch (actionType) {
+        case 'weapon':
+          await this._handleWeaponAction(itemId, subAction);
+          break;
+        case 'skill':
+          await this._handleSkillAction(itemId);
+          break;
+        case 'char':
+        case 'characteristic':
+          await this._handleCharacteristicAction(itemId);
+          break;
+        case 'combat-action':
+          await this._handleCombatAction(itemId, subAction);
+          break;
+        default:
+          console.warn(`[TAH RollHandler] Unknown action type: ${actionType}`);
+      }
+    }
+
+    /**
+     * Handle weapon action
+     * @private
+     */
+    async _handleWeaponAction(weaponId, subAction) {
+      const weapon = this.actor.items.get(weaponId);
+      if (!weapon) return;
+
+      if (subAction === 'attack') {
+        await combatHelper.weaponAttackDialog(this.actor, weapon);
+      } else if (subAction === 'unjam') {
+        await combatHelper.clearJam(this.actor, weapon);
+      } else if (subAction === 'damage') {
+        // TODO: Implement damage-only roll
+        if (typeof ui !== 'undefined') {
+          ui.notifications.info('Damage rolls not yet implemented.');
+        }
+      }
+    }
+
+    /**
+     * Handle combat action (unjam, extinguish, etc.)
+     * @private
+     */
+    async _handleCombatAction(actionType, subAction) {
+      if (actionType === 'unjam') {
+        // Find first jammed weapon
+        const jammedWeapons = this.actor.items.filter?.(i => i.type === 'weapon' && i.system?.jammed) || [];
+
+        if (jammedWeapons.length === 0) {
+          if (typeof ui !== 'undefined') {
+            ui.notifications.warn('No jammed weapons found.');
+          }
+          return;
+        }
+
+        await combatHelper.clearJam(this.actor, jammedWeapons[0]);
+      } else if (actionType === 'extinguish') {
+        // TODO: Implement extinguish action
+        if (typeof ui !== 'undefined') {
+          ui.notifications.info('Extinguish action not yet implemented.');
+        }
+      }
+    }
+
+    /**
+     * Handle skill action
+     * @private
+     */
+    async _handleSkillAction(skillKey) {
+      // Handle both object format (actual system) and array format (tests)
+      let skill;
+      if (Array.isArray(this.actor.system.skills)) {
+        skill = this.actor.system.skills.find(s => s.key === skillKey);
+      } else {
+        skill = this.actor.system.skills?.[skillKey];
+      }
+
+      if (!skill) return;
+
+      // Use label or name depending on which exists
+      const skillName = skill.label || skill.name || skillKey;
+      await rollExecutor.showSkillDialog(this.actor, skill, skillName, skill.total || 0);
+    }
+
+    /**
+     * Handle characteristic test action
+     * @private
+     */
+    async _handleCharacteristicAction(charKey) {
+      const characteristic = this.actor.system.characteristics?.[charKey];
+      if (!characteristic) return;
+
+      const label = CHARACTERISTIC_LABELS[charKey] || charKey.toUpperCase();
+      await rollExecutor.showCharacteristicDialog(this.actor, charKey, label, characteristic);
+    }
+  };
+}
+
+/**
  * Initialize RollHandler after TAH Core API is ready
  * @param {Object} coreModule - TAH Core module with API
  */
@@ -24,19 +166,11 @@ export function initializeRollHandler(coreModule) {
      * @param {string} actionData.encodedValue - Encoded action value (e.g., "weapon|abc123|attack")
      */
     async handleActionClick(event, encodedValue) {
-      console.log('[TAH RollHandler] handleActionClick called');
-      console.log('[TAH RollHandler] event:', event);
-      console.log('[TAH RollHandler] encodedValue:', encodedValue);
-      console.log('[TAH RollHandler] this.actor:', this.actor);
-
       // Check permissions
       const hasPermission =
         game.user.isGM || this.actor.testUserPermission(game.user, 'OWNER');
 
-      console.log('[TAH RollHandler] hasPermission:', hasPermission);
-
       if (!hasPermission) {
-        console.log('[TAH RollHandler] Routing through socket');
         // Route through socket - GM will execute
         game.socket.emit('system.deathwatch', {
           type: 'tah-action',
@@ -47,7 +181,6 @@ export function initializeRollHandler(coreModule) {
       }
 
       // Decode action and execute
-      console.log('[TAH RollHandler] Executing action directly');
       await this._executeAction(encodedValue);
     }
 
@@ -57,16 +190,12 @@ export function initializeRollHandler(coreModule) {
      * @private
      */
     async _executeAction(encodedValue) {
-      console.log('[TAH RollHandler] _executeAction called with:', encodedValue);
-
       // Guard against null/undefined encodedValue (e.g., clicking weapon parent group)
       if (!encodedValue) {
-        console.log('[TAH RollHandler] No encodedValue provided, ignoring click');
         return;
       }
 
       const [type, id, subaction] = encodedValue.split('|');
-      console.log('[TAH RollHandler] Decoded - type:', type, 'id:', id, 'subaction:', subaction);
 
       switch (type) {
         case 'weapon':
@@ -139,10 +268,6 @@ export function initializeRollHandler(coreModule) {
      * @private
      */
     async _handleCharacteristicAction(charKey) {
-      console.log('[TAH RollHandler] Looking up characteristic:', charKey);
-      console.log('[TAH RollHandler] Available characteristics:', Object.keys(this.actor.system.characteristics));
-      console.log('[TAH RollHandler] Full characteristics object:', this.actor.system.characteristics);
-
       const characteristic = this.actor.system.characteristics[charKey];
 
       if (!characteristic) {

@@ -159,10 +159,12 @@ describe('RollHandler', () => {
       const mockWeapon = {
         id: weaponId,
         name: 'Bolter',
-        type: 'rangedWeapon',
+        type: 'weapon',
         system: { jammed: true },
       };
-      mockActor.items = [mockWeapon];
+      mockActor.items = {
+        filter: jest.fn(() => [mockWeapon]),
+      };
 
       // Grant permission
       game.user.isGM = true;
@@ -177,7 +179,9 @@ describe('RollHandler', () => {
       const encodedValue = `combat-action|unjam`;
 
       // No jammed weapons
-      mockActor.items = [];
+      mockActor.items = {
+        filter: jest.fn(() => []),
+      };
 
       // Grant permission
       game.user.isGM = true;

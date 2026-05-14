@@ -387,9 +387,10 @@ export class PsychicCombatHelper {
         });
         const speaker = FoundryAdapter.getChatSpeaker(actor);
         const safeActorName = Sanitizer.escape(actor.name);
-        await FoundryAdapter.sendRollToChat(backlashRoll, speaker,
-          `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${safeActorName}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
-        );
+        await FoundryAdapter.sendRollToChat(backlashRoll, {
+          speaker,
+          flavor: `<strong>\uD83D\uDC1B Hive Mind Backlash \u2014 ${safeActorName}</strong><br><strong style="color: red;">1d10 Energy Damage (ignores armor & TB): ${backlashDamage}</strong><br><em>Tyranid psyker loses control \u2014 no Phenomena or Perils table roll.</em>`
+        });
       } else {
         const draw = await this.rollPhenomena();
 
@@ -498,7 +499,7 @@ export class PsychicCombatHelper {
       </div>
     `;
 
-    foundry.applications.api.DialogV2.wait({
+    await foundry.applications.api.DialogV2.wait({
       window: { title: `Focus Power: ${safePowerName}` },
       content,
       render: (event, dialog) => {
@@ -545,7 +546,43 @@ export class PsychicCombatHelper {
             const flavor = this.buildFocusPowerFlavor(label, modifierParts, phenomenaLine);
 
             const speaker = FoundryAdapter.getChatSpeaker(actor);
-            await FoundryAdapter.sendRollToChat(hitRoll, speaker, flavor);
+
+            // Wrap successful manifestations with animation metadata
+            if (success) {
+              // Render roll to HTML
+              const rollHtml = await hitRoll.render();
+
+              // Capture token information for animation
+              const sourceToken = actor.getActiveTokens()[0];
+              const sourceTokenId = sourceToken?.id || '';
+              const targetToken = game.user.targets?.first();
+              const targetTokenId = targetToken?.id || '';
+
+              // Wrap in .dw-attack-roll div with animation metadata
+              const content = `<div class="dw-attack-roll"
+  data-attack-type="psychic"
+  data-actor-id="${actor.id}"
+  data-item-id="${power.id}"
+  data-item-uuid="${power.uuid}"
+  data-animation-key="${Sanitizer.escape(power.system.key || '')}"
+  data-source-token-id="${sourceTokenId}"
+  data-target-token-id="${targetTokenId}"
+  data-power-level="${powerLevel}">
+  <div class="attack-flavor">${flavor}</div>
+  ${rollHtml}
+</div>`;
+
+              // Create chat message with structured content
+              await FoundryAdapter.createChatMessage({
+                speaker,
+                content,
+                rolls: [hitRoll],
+                rollMode: game.settings.get('core', 'rollMode')
+              });
+            } else {
+              // Failed manifestation - no wrapper, no animation
+              await FoundryAdapter.sendRollToChat(hitRoll, { speaker, flavor });
+            }
 
             // Add Oppose button for opposed powers when psyker succeeds
             if (success && power.system.opposed?.toLowerCase() === "yes") {
@@ -654,7 +691,7 @@ export class PsychicCombatHelper {
         const safePowerName = Sanitizer.escape(power.name);
         const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD2E ${safePowerName}${hitInfo}</strong><br><strong>Penetration:</strong> ${penetration} | <strong>Type:</strong> ${damageType}<br>${applyButton}`;
         const speaker = FoundryAdapter.getChatSpeaker(actor);
-        await FoundryAdapter.sendRollToChat(damageRoll, speaker, flavor);
+        await FoundryAdapter.sendRollToChat(damageRoll, { speaker, flavor });
       }
     }
 

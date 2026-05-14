@@ -114,7 +114,7 @@ export class CombatHelper {
 
     const flavor = CombatDialogHelper.buildClearJamFlavor(weapon.name, targetNumber, success);
     const speaker = FoundryAdapter.getChatSpeaker(actor);
-    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+    await FoundryAdapter.sendRollToChat(roll, { speaker, flavor });
   }
 
   /**
@@ -168,7 +168,7 @@ export class CombatHelper {
     const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD25 ${safeWeaponName}</strong><br><strong>Range:</strong> ${range}m | <strong>Damage:</strong> ${roll.total} | <strong>Pen:</strong> ${penetration} | <strong>Type:</strong> ${dmgType}<br><em>No attack roll — all targets in 30° cone must test Agility to dodge. Use \uD83D\uDD25 Flame Attack macro to apply damage per target.</em>`;
 
     const speaker = FoundryAdapter.getChatSpeaker(actor);
-    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+    await FoundryAdapter.sendRollToChat(roll, { speaker, flavor });
   }
 
   /**

@@ -243,17 +243,16 @@ describe('Token Action HUD - ActionHandler', () => {
     });
 
     test('encodes skill actions correctly', () => {
-      mockActor.items = [
-        {
-          id: 'skill1',
-          type: 'skill',
+      // Skills in Deathwatch are stored in system.skills, not as items
+      mockActor.system.skills = {
+        awareness: {
           name: 'Awareness',
-          system: {
-            isAdvanced: false,
-            rating: 3
-          }
+          isBasic: true,
+          trained: true,
+          characteristic: 'per',
+          total: 45
         }
-      ];
+      };
 
       const handler = new ActionHandler('test-token-456');
       handler.actors = [mockActor];
@@ -267,7 +266,7 @@ describe('Token Action HUD - ActionHandler', () => {
       );
 
       expect(skillAction).toBeDefined();
-      expect(skillAction[1].encodedValue).toBe('skill|skill1');
+      expect(skillAction[1].encodedValue).toBe('skill|awareness');
     });
 
     test('encodes characteristic actions correctly', () => {
@@ -289,20 +288,23 @@ describe('Token Action HUD - ActionHandler', () => {
 
   describe('Skills', () => {
     test('separates basic and advanced skills', () => {
-      mockActor.items = [
-        {
-          id: 'skill1',
-          type: 'skill',
+      // Skills in Deathwatch are stored in system.skills, not as items
+      mockActor.system.skills = {
+        awareness: {
           name: 'Awareness',
-          system: { isAdvanced: false, rating: 3 }
+          isBasic: true,
+          trained: true,
+          characteristic: 'per',
+          total: 45
         },
-        {
-          id: 'skill2',
-          type: 'skill',
+        scholasticLore: {
           name: 'Scholastic Lore',
-          system: { isAdvanced: true, rating: 2 }
+          isBasic: false,
+          trained: true,
+          characteristic: 'int',
+          total: 38
         }
-      ];
+      };
 
       const handler = new ActionHandler('test-token-456');
       handler.actors = [mockActor];

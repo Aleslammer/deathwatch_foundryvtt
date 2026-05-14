@@ -50,8 +50,6 @@ Campaign Systems
     Rank advancement UI — visual progression through Deathwatch ranks
 
 WOW:
-    TODO: Investigate adding a module for the HUD (https://github.com/Larkinabout/fvtt-token-action-hud-core/wiki/Developing-a-System-Module)
-
 
 Powers:
     We need to add Exalted Psychic Powers.   They are located in @src/rules/powers-Exalted.md  
@@ -73,8 +71,3 @@ A Trygon Prime can be easily spotted by their elongated jaws and the containment
         Swarm of tgaunts
         horde of ripper?
         Maybe a couple biggun outside approaching?
-
-
-Automated Animations
-
-1. Lets see what is actually posted in the name field.   What if we have bolter 1,2,3,4,5,6,7,8,9?

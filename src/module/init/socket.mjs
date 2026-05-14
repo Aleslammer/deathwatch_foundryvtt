@@ -179,6 +179,9 @@ export async function handleTAHSocketAction(data) {
     case 'characteristic':
       await _handleCharacteristicAction(actor, decoded);
       break;
+    case 'combat-action':
+      await _handleCombatAction(actor, decoded);
+      break;
     default:
       Logger.debug(`TAH Socket: Unknown action type: ${decoded.type}`);
   }
@@ -186,7 +189,7 @@ export async function handleTAHSocketAction(data) {
 
 /**
  * Decode TAH encoded value string
- * Format: "type|id" or "type|id|subaction"
+ * Format: "type|id" or "type|id|subaction" or "combat-action|unjam|weaponId"
  *
  * @param {string} encodedValue - Encoded value string
  * @returns {Object} Decoded action object with type, id, and optional subaction
@@ -203,6 +206,41 @@ function _decodeValue(encodedValue) {
   }
 
   return { type: 'unknown', id: null, subaction: null };
+}
+
+/**
+ * Handle combat action (unjam, etc.)
+ * Format: "combat-action|unjam|weaponId"
+ *
+ * @param {Actor} actor - Actor performing action
+ * @param {Object} decoded - Decoded action { type: 'combat-action', id: 'unjam', subaction: weaponId }
+ */
+async function _handleCombatAction(actor, decoded) {
+  const actionType = decoded.id;
+  const weaponId = decoded.subaction;
+
+  if (actionType === 'unjam') {
+    // Find jammed weapon
+    const jammedWeapons = actor.items.filter(i => i.type === 'weapon' && i.system.jammed);
+
+    // If weaponId provided, use that specific weapon
+    let weapon;
+    if (weaponId) {
+      weapon = actor.items.get(weaponId);
+      if (!weapon || !weapon.system.jammed) {
+        Logger.debug(`TAH Socket: Weapon ${weaponId} not found or not jammed`);
+        return;
+      }
+    } else if (jammedWeapons.length > 0) {
+      // Use first jammed weapon
+      weapon = jammedWeapons[0];
+    } else {
+      Logger.debug('TAH Socket: No jammed weapons found');
+      return;
+    }
+
+    await CombatHelper.clearJam(actor, weapon);
+  }
 }
 
 /**

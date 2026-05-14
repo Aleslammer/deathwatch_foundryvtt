@@ -12,8 +12,10 @@ import { TAHSkillSelector, DEFAULT_TAH_SKILLS } from './skill-selector.mjs';
 const logger = Logger.category('TAH.INIT');
 
 // Register hook at module load time (not in initialize function)
-console.log('[TAH INIT] Registering tokenActionHudCoreApiReady hook at module load');
-Hooks.on('tokenActionHudCoreApiReady', async (coreModule) => {
+// Skip if Hooks is not available (e.g., in test environment)
+if (typeof Hooks !== 'undefined') {
+  console.log('[TAH INIT] Registering tokenActionHudCoreApiReady hook at module load');
+  Hooks.on('tokenActionHudCoreApiReady', async (coreModule) => {
   console.log('[TAH INIT] tokenActionHudCoreApiReady hook fired');
   console.log('[TAH INIT] coreModule:', coreModule);
   logger.debug('TAH Core API ready hook fired');
@@ -50,7 +52,8 @@ Hooks.on('tokenActionHudCoreApiReady', async (coreModule) => {
     console.error('[TAH INIT] Failed to register:', error);
     logger.error('Failed to register with TAH Core:', error);
   }
-});
+  });
+}
 
 /**
  * Register Token Action HUD settings
@@ -59,8 +62,8 @@ export function registerSettings() {
   console.log('[TAH INIT] registerSettings called');
   try {
     game.settings.register('deathwatch', 'enableTokenActionHUD', {
-      name: 'Enable Token Action HUD Support',
-      hint: 'Enables integration with Token Action HUD Core module. Requires Token Action HUD Core to be installed and active. Reload required after changing this setting.',
+      name: 'DEATHWATCH.Settings.EnableTokenActionHUD.Name',
+      hint: 'DEATHWATCH.Settings.EnableTokenActionHUD.Hint',
       scope: 'world',
       config: true,
       type: Boolean,

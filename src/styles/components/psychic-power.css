@@ -485,3 +485,27 @@
   z-index: 10;
   opacity: 0.3;
 }
+
+/* Animation Key Display */
+.key-display {
+  font-family: var(--dw-font-mono);
+  color: var(--dw-color-text-bright);
+  font-size: 0.9em;
+  padding: 4px 8px;
+  background: rgba(10, 10, 15, 0.6);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.key-display span {
+  font-style: italic;
+  color: var(--dw-color-text-dim);
+}
+
+.source-hint {
+  font-size: 0.85em;
+  font-style: italic;
+  color: var(--dw-color-text-dim);
+  margin-top: 4px;
+  line-height: 1.4;
+}

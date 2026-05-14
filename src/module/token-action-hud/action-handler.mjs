@@ -15,6 +15,245 @@ import {
 export let ActionHandler = null;
 
 /**
+ * Create ActionHandler class (factory function for testing)
+ * @param {class} BaseActionHandler - Base ActionHandler class to extend
+ * @returns {class} ActionHandler class
+ */
+export function createActionHandler(BaseActionHandler) {
+  return class ActionHandler extends BaseActionHandler {
+    /**
+     * Build system-specific actions for requested groups
+     * @param {Object} groupIds - Object with group IDs as keys and boolean values
+     */
+    async buildSystemActions(groupIds) {
+      // Get first actor from token (TAH Core sets this.actors)
+      if (!this.actors || this.actors.length === 0) {
+        return;
+      }
+      const actor = this.actors[0];
+
+      // Build actions for each requested group
+      // groupIds is an object like { rangedWeapons: true, meleeWeapons: false }
+      if (groupIds.rangedWeapons) {
+        this._buildRangedWeapons(actor);
+      }
+      if (groupIds.meleeWeapons) {
+        this._buildMeleeWeapons(actor);
+      }
+      if (groupIds.grenades) {
+        this._buildGrenades(actor);
+      }
+      if (groupIds.basicSkills) {
+        this._buildBasicSkills(actor);
+      }
+      if (groupIds.advancedSkills) {
+        this._buildAdvancedSkills(actor);
+      }
+
+      // Handle characteristics - either all at once or individually
+      if (groupIds.characteristics) {
+        // Build all characteristics when "characteristics" group is requested
+        this._buildCharacteristic(actor, "ws", "Weapon Skill", "characteristics");
+        this._buildCharacteristic(actor, "bs", "Ballistic Skill", "characteristics");
+        this._buildCharacteristic(actor, "s", "Strength", "characteristics");
+        this._buildCharacteristic(actor, "t", "Toughness", "characteristics");
+        this._buildCharacteristic(actor, "ag", "Agility", "characteristics");
+        this._buildCharacteristic(actor, "int", "Intelligence", "characteristics");
+        this._buildCharacteristic(actor, "per", "Perception", "characteristics");
+        this._buildCharacteristic(actor, "wp", "Willpower", "characteristics");
+        this._buildCharacteristic(actor, "fs", "Fellowship", "characteristics");
+      } else {
+        // Handle individual characteristic groups
+        if (groupIds['char-ws']) {
+          this._buildCharacteristic(actor, "ws", "Weapon Skill", "char-ws");
+        }
+        if (groupIds['char-bs']) {
+          this._buildCharacteristic(actor, "bs", "Ballistic Skill", "char-bs");
+        }
+        if (groupIds['char-s']) {
+          this._buildCharacteristic(actor, "s", "Strength", "char-s");
+        }
+        if (groupIds['char-t']) {
+          this._buildCharacteristic(actor, "t", "Toughness", "char-t");
+        }
+        if (groupIds['char-ag']) {
+          this._buildCharacteristic(actor, "ag", "Agility", "char-ag");
+        }
+        if (groupIds['char-int']) {
+          this._buildCharacteristic(actor, "int", "Intelligence", "char-int");
+        }
+        if (groupIds['char-per']) {
+          this._buildCharacteristic(actor, "per", "Perception", "char-per");
+        }
+        if (groupIds['char-wp']) {
+          this._buildCharacteristic(actor, "wp", "Willpower", "char-wp");
+        }
+        if (groupIds['char-fs']) {
+          this._buildCharacteristic(actor, "fs", "Fellowship", "char-fs");
+        }
+      }
+    }
+
+    /**
+     * Build ranged weapon actions
+     * @private
+     */
+    _buildRangedWeapons(actor) {
+      const rangedWeapons = actor.items.filter(
+        i => i.type === 'weapon' &&
+        i.system.equipped &&
+        !i.system.class?.toLowerCase().includes('melee') &&
+        !i.system.class?.toLowerCase().includes('thrown') &&
+        !i.system.class?.toLowerCase().includes('grenade')
+      );
+
+      for (const weapon of rangedWeapons) {
+        // Add weapon as a group with nested attack/damage actions
+        this.addAction("rangedWeapons", {
+          id: `weapon-${weapon.id}`,
+          name: weapon.name,
+          img: weapon.img,
+          actions: [
+            {
+              id: `${weapon.id}-attack`,
+              name: 'Attack',
+              encodedValue: `weapon|${weapon.id}|attack`,
+              img: weapon.img
+            },
+            {
+              id: `${weapon.id}-damage`,
+              name: 'Damage',
+              encodedValue: `weapon|${weapon.id}|damage`,
+              img: weapon.img
+            }
+          ]
+        });
+      }
+    }
+
+    /**
+     * Build melee weapon actions
+     * @private
+     */
+    _buildMeleeWeapons(actor) {
+      const meleeWeapons = actor.items.filter(
+        i => i.type === 'weapon' &&
+        i.system.equipped &&
+        i.system.class?.toLowerCase().includes('melee')
+      );
+
+      for (const weapon of meleeWeapons) {
+        // Add weapon as a group with nested attack/damage actions
+        this.addAction("meleeWeapons", {
+          id: `weapon-${weapon.id}`,
+          name: weapon.name,
+          img: weapon.img,
+          actions: [
+            {
+              id: `${weapon.id}-attack`,
+              name: 'Attack',
+              encodedValue: `weapon|${weapon.id}|attack`,
+              img: weapon.img
+            },
+            {
+              id: `${weapon.id}-damage`,
+              name: 'Damage',
+              encodedValue: `weapon|${weapon.id}|damage`,
+              img: weapon.img
+            }
+          ]
+        });
+      }
+    }
+
+    /**
+     * Build grenade actions
+     * @private
+     */
+    _buildGrenades(actor) {
+      const grenades = actor.items.filter(
+        i => i.type === 'weapon' &&
+        i.system.equipped &&
+        (i.system.class?.toLowerCase().includes('thrown') ||
+         i.system.class?.toLowerCase().includes('grenade'))
+      );
+
+      for (const grenade of grenades) {
+        // Add grenade as a group with nested attack/damage actions
+        this.addAction("grenades", {
+          id: `weapon-${grenade.id}`,
+          name: grenade.name,
+          img: grenade.img,
+          actions: [
+            {
+              id: `${grenade.id}-attack`,
+              name: 'Attack',
+              encodedValue: `weapon|${grenade.id}|attack`,
+              img: grenade.img
+            },
+            {
+              id: `${grenade.id}-damage`,
+              name: 'Damage',
+              encodedValue: `weapon|${grenade.id}|damage`,
+              img: grenade.img
+            }
+          ]
+        });
+      }
+    }
+
+    /**
+     * Build basic skill actions
+     * @private
+     */
+    _buildBasicSkills(actor) {
+      const skills = actor.system.skills || {};
+      for (const [key, skill] of Object.entries(skills)) {
+        if (skill.isBasic) {
+          this.addAction("basicSkills", {
+            id: key,
+            name: skill.name || key,
+            encodedValue: `skill|${key}`,
+            img: `systems/deathwatch/icons/skills/${key}.webp`
+          });
+        }
+      }
+    }
+
+    /**
+     * Build advanced skill actions
+     * @private
+     */
+    _buildAdvancedSkills(actor) {
+      const skills = actor.system.skills || {};
+      for (const [key, skill] of Object.entries(skills)) {
+        if (!skill.isBasic && skill.trained) {
+          this.addAction("advancedSkills", {
+            id: key,
+            name: skill.name || key,
+            encodedValue: `skill|${key}`,
+            img: `systems/deathwatch/icons/skills/${key}.webp`
+          });
+        }
+      }
+    }
+
+    /**
+     * Build characteristic test action
+     * @private
+     */
+    _buildCharacteristic(actor, charKey, charName, groupId) {
+      this.addAction(groupId, {
+        id: charKey,
+        name: charName,
+        encodedValue: `characteristic|${charKey}`,
+        img: `systems/deathwatch/icons/characteristics/${charKey}.webp`
+      });
+    }
+  };
+}
+
+/**
  * Initialize ActionHandler after TAH Core API is ready
  * @param {Object} coreModule - TAH Core module with API
  */

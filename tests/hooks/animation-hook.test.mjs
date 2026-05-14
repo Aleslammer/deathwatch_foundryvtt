@@ -23,6 +23,7 @@ describe('AnimationHook', () => {
               const itemIdMatch = content.match(/data-item-id="([^"]*)"/);
               const roundsFiredMatch = content.match(/data-rounds-fired="([^"]*)"/);
               const animationKeyMatch = content.match(/data-animation-key="([^"]*)"/);
+              const attackTypeMatch = content.match(/data-attack-type="([^"]*)"/);
               const sourceTokenIdMatch = content.match(/data-source-token-id="([^"]*)"/);
               const targetTokenIdMatch = content.match(/data-target-token-id="([^"]*)"/);
 
@@ -33,6 +34,7 @@ describe('AnimationHook', () => {
                     itemId: itemIdMatch ? itemIdMatch[1] : '',
                     roundsFired: roundsFiredMatch ? roundsFiredMatch[1] : '1',
                     animationKey: animationKeyMatch ? animationKeyMatch[1] : '',
+                    attackType: attackTypeMatch ? attackTypeMatch[1] : '',
                     sourceTokenId: sourceTokenIdMatch ? sourceTokenIdMatch[1] : '',
                     targetTokenId: targetTokenIdMatch ? targetTokenIdMatch[1] : ''
                   }
@@ -397,6 +399,28 @@ describe('AnimationHook', () => {
       expect(mockActor.getActiveTokens).toHaveBeenCalled();
       expect(mockEffect.atLocation).toHaveBeenCalledWith(fallbackSourceToken);
       expect(mockEffect.stretchTo).toHaveBeenCalledWith(fallbackTargetToken);
+    });
+
+    it('exits early for psychic attacks (lets Automated Animations handle them)', async () => {
+      // Arrange
+      mockMessage.content = `<div class="dw-attack-roll"
+        data-attack-type="psychic"
+        data-actor-id="actor123"
+        data-item-id="item456"
+        data-animation-key="smite"
+        data-source-token-id="token1"
+        data-target-token-id="token2">
+        <div>Focus Power result</div>
+      </div>`;
+
+      global.game.modules.get = jest.fn(() => ({ active: true }));
+
+      // Act
+      await AnimationHook.onCreateChatMessage(mockMessage);
+
+      // Assert - should exit early, not call canvas.tokens.get
+      expect(global.canvas.tokens.get).not.toHaveBeenCalled();
+      expect(global.Sequence).not.toHaveBeenCalled();
     });
   });
 });
