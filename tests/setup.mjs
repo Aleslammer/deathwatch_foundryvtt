@@ -21,6 +21,9 @@ global.game = {
   socket: {
     on: jest.fn(),
     emit: jest.fn()
+  },
+  modules: {
+    get: jest.fn()
   }
 };
 

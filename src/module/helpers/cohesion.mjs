@@ -228,7 +228,7 @@ export class CohesionHelper {
     const safeActorName = Sanitizer.escape(actor.name);
     const flavor = `<strong>Cohesion Challenge — ${safeActorName}</strong><br>Rolled ${result.roll} vs Cohesion ${result.target}<br>${status}`;
     const speaker = FoundryAdapter.getChatSpeaker(actor);
-    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+    await FoundryAdapter.sendRollToChat(roll, { speaker, flavor });
     return result;
   }
 }

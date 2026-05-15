@@ -162,7 +162,10 @@ describe('CombatHelper.applyDamage with horde', () => {
       damage: 15, penetration: 2, location: 'Body', damageType: 'Impact'
     });
 
-    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 6 });
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, {
+      "system.wounds.value": 6,
+      "system.magnitudeThisTurn": 1
+    });
   });
 
   it('applies magnitudeBonusDamage for extra magnitude loss per hit', async () => {
@@ -181,7 +184,10 @@ describe('CombatHelper.applyDamage with horde', () => {
       magnitudeBonusDamage: 1
     });
 
-    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 7 });
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, {
+      "system.wounds.value": 7,
+      "system.magnitudeThisTurn": 2
+    });
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         content: expect.stringContaining('bonus Magnitude')
@@ -231,9 +237,11 @@ describe('CombatHelper.applyDamage with horde', () => {
     horde.gearArmor = 0;
     horde.wounds = { value: 29, max: 30 };
     horde.characteristics = { tg: { baseMod: 2, unnaturalMultiplier: 1 } };
+    const setCondition = jest.fn();
     const hordeActor = {
       name: 'Dying Horde',
-      system: horde
+      system: horde,
+      setCondition
     };
     horde.parent = hordeActor;
 
@@ -241,12 +249,16 @@ describe('CombatHelper.applyDamage with horde', () => {
       damage: 10, penetration: 0, location: 'Body', damageType: 'Impact'
     });
 
-    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 30 });
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, {
+      "system.wounds.value": 30,
+      "system.magnitudeThisTurn": 1
+    });
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         content: expect.stringContaining('HORDE DESTROYED')
       })
     );
+    expect(setCondition).toHaveBeenCalledWith('dead', true);
   });
 
   it('batch applies multiple hits with single update', async () => {
@@ -265,7 +277,10 @@ describe('CombatHelper.applyDamage with horde', () => {
 
     // 2 penetrating hits, 1 absorbed = magnitude +2
     expect(FoundryAdapter.updateDocument).toHaveBeenCalledTimes(1);
-    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 2 });
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, {
+      "system.wounds.value": 2,
+      "system.magnitudeThisTurn": 2
+    });
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledTimes(1);
     expect(FoundryAdapter.createChatMessage).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -346,7 +361,10 @@ describe('CombatHelper.applyDamage with horde', () => {
     ]);
 
     // 2 penetrating × (1 + 1 bonus) = 4 magnitude
-    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, { "system.wounds.value": 4 });
+    expect(FoundryAdapter.updateDocument).toHaveBeenCalledWith(hordeActor, {
+      "system.wounds.value": 4,
+      "system.magnitudeThisTurn": 4
+    });
   });
 
   it('still uses wound-based damage for non-horde actors', async () => {

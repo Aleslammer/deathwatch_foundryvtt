@@ -8,6 +8,7 @@
     "page": "89",
     "key": "blessed-by-the-omnissiah",
     "description": "<p>The Techmarine begins the game with the Mechanicus Implants Trait and the Electro-Graft Use and Mechadendrite Use (Servo-Arm) Talents.</p>",
-    "specialty": "Techmarine"
+    "specialty": "Techmarine",
+    "specialtyImg": "systems/deathwatch/icons/specialty/techmarine.webp"
   }
 }

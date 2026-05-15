@@ -235,7 +235,7 @@ describe('ChatButtonHandlers', () => {
         }))
       };
 
-      jest.spyOn(CombatHelper, 'applyDamage').mockResolvedValue(undefined);
+      jest.spyOn(CombatHelper, 'applyDamageWithPermissionCheck').mockResolvedValue(undefined);
       jest.spyOn(CohesionHelper, 'shouldTriggerCohesionDamage').mockReturnValue(false);
     });
 
@@ -246,13 +246,13 @@ describe('ChatButtonHandlers', () => {
       expect(mockButton.addEventListener).toHaveBeenCalledWith('click', expect.any(Function));
     });
 
-    it('should call CombatHelper.applyDamage with correct parameters on click', async () => {
+    it('should call CombatHelper.applyDamageWithPermissionCheck with correct parameters on click', async () => {
       ChatButtonHandlers._registerApplyDamageButton(mockHtml);
 
       const clickHandler = mockButton.addEventListener.mock.calls[0][1];
       await clickHandler({ currentTarget: mockButton });
 
-      expect(CombatHelper.applyDamage).toHaveBeenCalledWith(
+      expect(CombatHelper.applyDamageWithPermissionCheck).toHaveBeenCalledWith(
         expect.objectContaining({ id: 'actor-123' }),
         expect.objectContaining({
           damage: 15,
@@ -299,7 +299,7 @@ describe('ChatButtonHandlers', () => {
       const clickHandler = mockButton.addEventListener.mock.calls[0][1];
       await clickHandler({ currentTarget: mockButton });
 
-      expect(CombatHelper.applyDamage).toHaveBeenCalledWith(
+      expect(CombatHelper.applyDamageWithPermissionCheck).toHaveBeenCalledWith(
         mockTokenActor,
         expect.objectContaining({
           tokenInfo: { sceneId: 'scene-456', tokenId: 'token-789' }
@@ -317,7 +317,7 @@ describe('ChatButtonHandlers', () => {
       const clickHandler = mockButton.addEventListener.mock.calls[0][1];
       await clickHandler({ currentTarget: mockButton });
 
-      expect(CombatHelper.applyDamage).toHaveBeenCalledWith(
+      expect(CombatHelper.applyDamageWithPermissionCheck).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           charDamageEffect: {
@@ -339,7 +339,7 @@ describe('ChatButtonHandlers', () => {
       const clickHandler = mockButton.addEventListener.mock.calls[0][1];
       await clickHandler({ currentTarget: mockButton });
 
-      expect(CombatHelper.applyDamage).toHaveBeenCalledWith(
+      expect(CombatHelper.applyDamageWithPermissionCheck).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
           forceWeaponData: {

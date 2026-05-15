@@ -1,6 +1,12 @@
-# Foundry VTT v13 API Reference
+# Foundry VTT API Reference
 
-**Official API Documentation**: https://foundryvtt.com/api/v13/
+**System Compatibility**: Foundry VTT v13-v14 (minimum v13, verified v14)
+
+**Official API Documentation**: 
+- v13: https://foundryvtt.com/api/v13/
+- v14: https://foundryvtt.com/api/v14/
+
+**Version notation**: APIs without version tags work across all supported versions. Version-specific APIs are marked with **(v13)** or **(v14)** tags.
 
 ---
 
@@ -195,6 +201,117 @@ If converting an ApplicationV1 sheet to ApplicationV2:
 3. Add enriched HTML support for non-editable views
 4. Remove manual editor activation code from `activateListeners()`
 5. Test saving and loading of rich text content
+
+---
+
+## Combat Hooks
+
+### Turn Change Detection
+
+**Pattern**: Detect when combat turn advances (not round changes or other updates)
+
+```javascript
+Hooks.on('updateCombat', async (combat, changed, options, userId) => {
+  if (!("turn" in changed)) return; // Only fire when turn advances
+  
+  const combatant = combat.combatants.get(combat.current.combatantId);
+  if (!combatant?.actor) return;
+  
+  // Process turn start logic for current combatant
+});
+```
+
+### Combat Pause
+
+**Pattern**: Pause combat programmatically
+
+```javascript
+await combat.update({ paused: true }); // Correct
+// NOT: await game.combat.pause(); // Does not exist
+```
+
+---
+
+## DialogV2
+
+### Access DOM Elements
+
+**Pattern**: DialogV2 callbacks receive application instance, not DOM element directly
+
+```javascript
+const result = await foundry.applications.api.DialogV2.wait({
+  content: `<input id="my-input" type="text" />`,
+  buttons: [{
+    label: "Submit",
+    action: "submit",
+    callback: async (event, button, dialog) => {
+      // Access DOM via dialog.element
+      const input = dialog.element.querySelector('#my-input');
+      const value = input?.value || '';
+      return value;
+    }
+  }]
+});
+```
+
+**Common mistake**: `dialog.querySelector()` does not exist - use `dialog.element.querySelector()`.
+
+---
+
+## Chat Messages
+
+### Whisper to GM Only
+
+**Pattern**: Private message visible only to GM
+
+```javascript
+await roll.toMessage({
+  speaker: ChatMessage.getSpeaker({ actor }),
+  flavor: "GM-only information",
+  whisper: [game.user.id] // Current user only (GM in this case)
+});
+```
+
+### Cross-Theme Styling
+
+**Pattern**: Chat messages that work in both light and dark Foundry themes
+
+```javascript
+await ChatMessage.create({
+  content: `
+    <div style="border: 3px solid #cc0000; padding: 12px; background: rgba(139, 0, 0, 0.2);">
+      <h3 style="color: #ff0000; font-weight: bold;">Header</h3>
+      <p><strong style="color: #ffffff;">Body text</strong></p>
+    </div>
+  `
+});
+```
+
+**Guidelines:**
+- Use pure white (`#ffffff`) or light colors for text
+- Avoid solid dark backgrounds (conflict with dark chat themes)
+- Prefer translucent backgrounds: `background: rgba(R, G, B, 0.2);`
+- Test in both light and dark themes
+
+---
+
+## Combat Tracker
+
+### Marking Defeated
+
+**Pattern**: Requires BOTH conditions for proper UI sync
+
+```javascript
+// Mark combatant as defeated in tracker (shows skull icon)
+await combatant.update({ defeated: true });
+
+// Apply dead condition to actor (persists defeated state, shows on sheet)
+if (actor.setCondition) {
+  await actor.setCondition('dead', true);
+}
+```
+
+**Why both?** Foundry's combat tracker links defeated state to the "dead" active effect. Without the effect, the defeated flag won't persist across reloads.
 
 ---
 

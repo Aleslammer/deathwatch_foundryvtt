@@ -92,7 +92,7 @@ export class ChatButtonHandlers {
       const targetActor = this._resolveActor(button);
       Validation.requireDocument(targetActor, 'Target Actor', 'Apply Damage');
 
-      await CombatHelper.applyDamage(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour, criticalDamageBonus });
+      await CombatHelper.applyDamageWithPermissionCheck(targetActor, { damage, penetration, location, damageType, felling: 0, isPrimitive, isRazorSharp, degreesOfSuccess, isScatter, isLongOrExtremeRange, isShocking, isToxic, isMeltaRange, charDamageEffect, forceWeaponData, tokenInfo, magnitudeBonusDamage, ignoresNaturalArmour, criticalDamageBonus });
 
       const weaponQualitiesRaw = d.weaponQualities;
       const weaponQualities = weaponQualitiesRaw ? (typeof weaponQualitiesRaw === 'string' ? Validation.parseJSON(weaponQualitiesRaw, 'Weapon Qualities') : weaponQualitiesRaw) : [];

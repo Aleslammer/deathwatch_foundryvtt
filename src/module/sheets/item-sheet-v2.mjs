@@ -25,7 +25,8 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
       weaponAttack: DeathwatchItemSheetV2._onWeaponAttack,
       weaponDamage: DeathwatchItemSheetV2._onWeaponDamage,
       removeHistory: DeathwatchItemSheetV2._onHistoryRemove,
-      removeQuality: DeathwatchItemSheetV2._onQualityRemove
+      removeQuality: DeathwatchItemSheetV2._onQualityRemove,
+      toggleBadgeDropdown: DeathwatchItemSheetV2._onToggleBadgeDropdown
     }
   };
 
@@ -73,6 +74,9 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
   _onFirstRender(context, options) {
     if (this.document.type === 'psychic-power' || this.document.type === 'special-ability') {
       this.setPosition({ width: 780, height: 624 });
+    }
+    if (this.document.type === 'specialty') {
+      this.setPosition({ width: 910, height: 624 });
     }
     if (this.document.type === 'gear' || this.document.type === 'armor-history' || this.document.type === 'cybernetic') {
       this.setPosition({ width: 620 });
@@ -127,6 +131,25 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     }
     if (itemData.type === 'weapon') {
       this._prepareWeaponData(context, actor);
+    }
+
+    // Special ability context preparation
+    if (this.item.type === 'special-ability') {
+      // Determine background image based on Category
+      let backgroundImage = this.item.img;
+      if (context.system.abilityCategory === 'chapter' && context.system.chapterImg) {
+        backgroundImage = context.system.chapterImg;
+      } else if (context.system.abilityCategory === 'specialty' && context.system.specialtyImg) {
+        backgroundImage = context.system.specialtyImg;
+      }
+      context.backgroundImage = backgroundImage;
+
+      // Determine glow color based on Mode
+      const mode = context.system.modeRequirement;
+      context.glowColor = mode === 'solo' ? 'solo' : mode === 'squad' ? 'squad' : 'none';
+
+      // Note: chapterImg and specialtyImg lookup would go here if needed
+      // For now, these fields need to be manually populated on the item
     }
 
     return context;
@@ -415,5 +438,83 @@ export class DeathwatchItemSheetV2 extends HandlebarsApplicationMixin(
     }
 
     return super._onDrop?.(event);
+  }
+
+  /**
+   * Toggle badge dropdown for Mode/Category/Type fields.
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The badge element
+   */
+  static async _onToggleBadgeDropdown(event, target) {
+    const field = target.dataset.field;
+
+    // Close any existing dropdowns
+    this.element.querySelectorAll('.badge-dropdown').forEach(d => d.remove());
+
+    // Define options for each field
+    const optionSets = {
+      modeRequirement: [
+        { value: '', label: 'None' },
+        { value: 'solo', label: 'Solo Mode' },
+        { value: 'squad', label: 'Squad Mode' }
+      ],
+      abilityCategory: [
+        { value: '', label: 'Specialty' },
+        { value: 'codex', label: 'Codex' },
+        { value: 'chapter', label: 'Chapter' }
+      ],
+      abilityType: [
+        { value: '', label: '—' },
+        { value: 'attack-pattern', label: 'Attack Pattern' },
+        { value: 'defensive-stance', label: 'Defensive Stance' }
+      ]
+    };
+
+    const options = optionSets[field];
+    if (!options) return;
+
+    // Create dropdown
+    const dropdown = document.createElement('div');
+    dropdown.className = 'badge-dropdown';
+    dropdown.style.position = 'absolute';
+    dropdown.style.top = `${target.offsetHeight + 4}px`;
+    dropdown.style.left = '0';
+
+    options.forEach(opt => {
+      const option = document.createElement('div');
+      option.className = 'badge-dropdown-option';
+      option.textContent = opt.label;
+      option.dataset.value = opt.value;
+
+      option.addEventListener('click', async () => {
+        try {
+          await this.item.update({ [`system.${field}`]: opt.value });
+          dropdown.remove();
+        } catch (error) {
+          console.error(`Failed to update ${field}:`, error);
+          ui.notifications.error(`Failed to update ${field}`);
+        }
+      });
+
+      dropdown.appendChild(option);
+    });
+
+    // Ensure target has position context for absolute dropdown
+    if (!target.style.position && getComputedStyle(target).position === 'static') {
+      target.style.position = 'relative';
+    }
+    target.appendChild(dropdown);
+
+    // Close on outside click (use requestAnimationFrame for better timing)
+    const outsideClickHandler = (e) => {
+      if (!dropdown.contains(e.target) && e.target !== target) {
+        dropdown.remove();
+        document.removeEventListener('click', outsideClickHandler);
+      }
+    };
+
+    requestAnimationFrame(() => {
+      document.addEventListener('click', outsideClickHandler);
+    });
   }
 }

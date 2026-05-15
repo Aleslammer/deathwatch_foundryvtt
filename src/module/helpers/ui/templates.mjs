@@ -53,5 +53,8 @@ export const preloadHandlebarsTemplates = async function () {
 
     // UI panels.
     "systems/deathwatch/templates/ui/cohesion-panel.html",
+
+    // Token Action HUD.
+    "systems/deathwatch/templates/token-action-hud/skill-selector.hbs",
   ]);
 };

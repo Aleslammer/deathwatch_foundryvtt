@@ -12,6 +12,7 @@ import { Sanitizer } from "../sanitizer.mjs";
 import { CyberneticHelper } from "../cybernetic-helper.mjs";
 import { WeaponModifierCollector } from "./weapon-modifier-collector.mjs";
 import { ModifierCollector } from "../character/modifier-collector.mjs";
+import { flameAttack } from "../../macros/flame-attack.mjs";
 
 /**
  * Main combat helper providing attack resolution, damage application, and combat utilities.
@@ -113,7 +114,7 @@ export class CombatHelper {
 
     const flavor = CombatDialogHelper.buildClearJamFlavor(weapon.name, targetNumber, success);
     const speaker = FoundryAdapter.getChatSpeaker(actor);
-    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+    await FoundryAdapter.sendRollToChat(roll, { speaker, flavor });
   }
 
   /**
@@ -167,7 +168,7 @@ export class CombatHelper {
     const flavor = `<strong style="font-size: 1.1em;">\uD83D\uDD25 ${safeWeaponName}</strong><br><strong>Range:</strong> ${range}m | <strong>Damage:</strong> ${roll.total} | <strong>Pen:</strong> ${penetration} | <strong>Type:</strong> ${dmgType}<br><em>No attack roll — all targets in 30° cone must test Agility to dodge. Use \uD83D\uDD25 Flame Attack macro to apply damage per target.</em>`;
 
     const speaker = FoundryAdapter.getChatSpeaker(actor);
-    await FoundryAdapter.sendRollToChat(roll, speaker, flavor);
+    await FoundryAdapter.sendRollToChat(roll, { speaker, flavor });
   }
 
   /**
@@ -273,6 +274,43 @@ export class CombatHelper {
    */
   static async applyDamage(targetActor, options) {
     return targetActor.system.receiveDamage(options);
+  }
+
+  /**
+   * Apply damage with permission check and socket routing.
+   *
+   * If the current user is GM or owns the target actor, applies damage directly.
+   * If the current user is a player attacking a GM-owned actor, routes through
+   * socket messaging so the GM executes the update with their permissions.
+   *
+   * @param {Actor} targetActor - Target actor document
+   * @param {Object} options - Damage options (same as applyDamage)
+   * @returns {Promise<void>}
+   * @example
+   * // Player attacking GM-owned horde (routes through socket)
+   * await CombatHelper.applyDamageWithPermissionCheck(hordeActor, damageOptions);
+   *
+   * @example
+   * // GM attacking any actor (direct update)
+   * await CombatHelper.applyDamageWithPermissionCheck(enemyActor, damageOptions);
+   */
+  static async applyDamageWithPermissionCheck(targetActor, options) {
+    // Check if current user can update the actor
+    const canUpdate = game.user.isGM || targetActor.testUserPermission(game.user, "OWNER");
+
+    if (canUpdate) {
+      // Direct update - user has permission
+      return await targetActor.system.receiveDamage(options);
+    } else {
+      // Route through socket - GM will execute with their permissions
+      game.socket.emit('system.deathwatch', {
+        type: 'applyActorDamage',
+        actorId: targetActor.id,
+        damageOptions: options,
+        userId: game.user.id,
+        userName: game.user.name
+      });
+    }
   }
 
   /**
@@ -528,6 +566,13 @@ export class CombatHelper {
    */
   /* istanbul ignore next */
   static async weaponDamageRoll(actor, weapon) {
+    // Check if weapon has Flame quality - redirect to flame attack
+    const isFlame = await WeaponQualityHelper.hasQuality(weapon, 'flame');
+    if (isFlame) {
+      // Pre-fill flame attack dialog with weapon data
+      return await flameAttack(weapon);
+    }
+
     const dmg = weapon.system.effectiveDamage || weapon.system.dmg;
     if (!dmg) return ui.notifications.warn("This weapon has no damage value.");
 

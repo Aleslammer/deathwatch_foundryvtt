@@ -8,6 +8,7 @@
     "page": "69",
     "key": "enhance-healing",
     "description": "<p>The Apothecary may restore 1d5 additional Wounds with any successful Medicae Test for First Aid (see page 102).</p>",
-    "specialty": "Apothecary"
+    "specialty": "Apothecary",
+    "specialtyImg": "systems/deathwatch/icons/specialty/apothecary.webp"
   }
 }

@@ -2,7 +2,7 @@
   "_id": "hordtau000000003",
   "name": "Kroot Carnivore Horde",
   "type": "horde",
-  "img": "systems/deathwatch/icons/enemies/tau/kroot-carnivore_horde.webp",
+  "img": "systems/deathwatch/icons/enemies/tau/kroot-carnivore-horde.webp",
   "system": {
     "characteristics": {
       "ws": { "base": 42 },

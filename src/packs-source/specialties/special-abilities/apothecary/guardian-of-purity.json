@@ -8,6 +8,7 @@
     "page": "72",
     "key": "guardian-of-purity",
     "description": "<p>The Apothecary's careful monitoring of his Battle-Brothers' gene-seed means that any Space Marine in a Kill-team that includes the Apothecary reduces all Corruption Points he suffers by 2 (to a minimum of 1), as long as the Apothecary has access to his narthecium—a special tool that assists with battlefield surgery (see page 173).</p>",
-    "specialty": "Apothecary"
+    "specialty": "Apothecary",
+    "specialtyImg": "systems/deathwatch/icons/specialty/apothecary.webp"
   }
 }

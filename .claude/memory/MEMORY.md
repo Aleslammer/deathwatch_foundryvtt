@@ -32,12 +32,14 @@ When starting work on this project, read CLAUDE.md first for quick start, then c
 
 - [Code Quality Standards](feedback_code_quality.md) — Logger usage, missing imports, test-first development
 - [Characteristic Damage Migration](feedback_characteristic_damage_migration.md) — Use system.modifiers array not Active Effects
+- [Socket Permissions Pattern](socket_permissions.md) — Player-to-GM action routing via socket for document permission bypass
 
 ## Projects
 
 - [WebP Conversion](project_webp_conversion.md) — Ongoing icon optimization initiative (10 weapons converted)
 - [TDD Example: XP Calculator](project_tdd_example.md) — Reference implementation of test-driven development workflow
 - [Legacy Weapon Modifier Removal](project_legacy_weapon_modifier_removal.md) — Consolidated duplicate modifier logic into WeaponModifierCollector (~170 lines removed)
+- [Horde Breaking Implementation](horde_breaking_implementation.md) — Turn-based breaking mechanics, combat hook timing, dual condition application
 
 ## Reference
 

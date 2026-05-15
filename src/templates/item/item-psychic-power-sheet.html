@@ -145,6 +145,22 @@
               <label class="source-label">Page Reference</label>
               <input type="text" name="system.page" value="{{system.page}}" placeholder="e.g., 194" class="source-input" />
             </div>
+            <div class="source-field">
+              <label class="source-label">
+                Animation Key
+                <i class="fas fa-info-circle" data-tooltip="Used by Automated Animations to identify this power for visual effects"></i>
+              </label>
+              <div class="key-display">
+                {{#if system.key}}
+                  {{system.key}}
+                {{else}}
+                  <span>(no key defined)</span>
+                {{/if}}
+              </div>
+              <p class="source-hint">
+                Configure this key in Automated Animations to set up custom effects for this power
+              </p>
+            </div>
           </div>
         </div>
       </div>

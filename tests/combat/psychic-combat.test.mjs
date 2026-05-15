@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import { PsychicCombatHelper } from '../../src/module/helpers/combat/psychic-combat.mjs';
 import { POWER_LEVELS } from "../../src/module/helpers/constants/index.mjs";
+import { FoundryAdapter } from '../../src/module/helpers/foundry-adapter.mjs';
 
 describe('PsychicCombatHelper', () => {
   beforeEach(() => {
@@ -748,6 +749,285 @@ describe('PsychicCombatHelper', () => {
       const result = PsychicCombatHelper.getStatusEffectSuggestions(qualities);
       expect(result).toHaveLength(1);
       expect(result[0].effect).toBe('crippled');
+    });
+  });
+
+  // ── focusPowerDialog - animation metadata wrapper ────────────────────────
+
+  describe('focusPowerDialog - animation metadata wrapper', () => {
+    let mockActor;
+    let mockPower;
+    let mockCreateChatMessage;
+    let mockWait;
+    let originalGame;
+    let originalFoundry;
+
+    beforeEach(() => {
+      originalGame = global.game;
+      originalFoundry = global.foundry;
+      jest.clearAllMocks();
+
+      // Create mock actor
+      mockActor = {
+        id: 'actor-123',
+        name: 'Test Librarian',
+        type: 'character',
+        system: {
+          characteristics: {
+            wil: { value: 45 }
+          },
+          psyRating: { value: 4 }
+        },
+        items: [],
+        getActiveTokens: jest.fn().mockReturnValue([
+          { id: 'source-token-123' }
+        ])
+      };
+
+      // Create mock power
+      mockPower = {
+        id: 'power-456',
+        name: 'Smite',
+        img: 'icons/smite.png',
+        uuid: 'Item.power-456',
+        system: {
+          key: 'smite',
+          action: 'Half Action',
+          range: '100m',
+          opposed: 'No',
+          sustained: 'No'
+        }
+      };
+
+      // Mock game globals
+      global.game = {
+        user: {
+          targets: {
+            first: jest.fn().mockReturnValue({
+              id: 'target-token-456'
+            })
+          }
+        },
+        settings: {
+          get: jest.fn((module, setting) => {
+            if (module === 'core' && setting === 'rollMode') return 'roll';
+            return null;
+          })
+        }
+      };
+
+      // Mock FoundryAdapter methods
+      mockCreateChatMessage = jest.fn().mockResolvedValue({});
+      FoundryAdapter.createChatMessage = mockCreateChatMessage;
+      FoundryAdapter.sendRollToChat = jest.fn().mockResolvedValue({});
+      FoundryAdapter.evaluateRoll = jest.fn().mockResolvedValue({ total: 25 });
+      FoundryAdapter.getChatSpeaker = jest.fn().mockReturnValue({ alias: 'Test Librarian' });
+      FoundryAdapter.showNotification = jest.fn();
+
+      // Mock PsychicCombatHelper.handlePhenomenaAndFatigue to avoid side effects
+      jest.spyOn(PsychicCombatHelper, 'handlePhenomenaAndFatigue').mockResolvedValue();
+
+      // Mock DialogV2.wait
+      mockWait = jest.fn();
+      global.foundry = {
+        applications: {
+          api: {
+            DialogV2: {
+              wait: mockWait
+            }
+          }
+        },
+        utils: {
+          escapeHTML: jest.fn((text) => text) // Simple pass-through for testing
+        }
+      };
+    });
+
+    it('wraps successful Focus Power message in .dw-attack-roll div with animation metadata', async () => {
+      // Arrange
+      mockPower.system.key = 'smite';
+      mockActor.system.psyRating = { value: 4 };
+
+      // Mock dialog to immediately click "Focus Power" with Unfettered
+      mockWait.mockImplementation(async ({ buttons }) => {
+        const focusButton = buttons.find(b => b.action === 'focus');
+        // Mock dialog element
+        const mockElement = {
+          querySelector: (selector) => {
+            if (selector === '#powerLevel') return { value: 'unfettered' };
+            if (selector === '#miscModifier') return { value: '0' };
+            if (selector === '#wpBonus') return { value: '20' };
+            return null;
+          }
+        };
+        await focusButton.callback(null, null, { element: mockElement });
+      });
+
+      // Mock successful roll (roll 42, target 50)
+      FoundryAdapter.evaluateRoll = jest.fn()
+        .mockResolvedValueOnce({ total: 42, render: async () => '<div>Roll: 42</div>' });
+
+      // Act
+      await PsychicCombatHelper.focusPowerDialog(mockActor, mockPower);
+
+      // Assert
+      expect(mockCreateChatMessage).toHaveBeenCalledTimes(1);
+      const callArgs = mockCreateChatMessage.mock.calls[0][0];
+
+      expect(callArgs.content).toContain('<div class="dw-attack-roll"');
+      expect(callArgs.content).toContain('data-attack-type="psychic"');
+      expect(callArgs.content).toContain('data-actor-id="actor-123"');
+      expect(callArgs.content).toContain('data-item-id="power-456"');
+      expect(callArgs.content).toContain('data-item-uuid="Item.power-456"');
+      expect(callArgs.content).toContain('data-animation-key="smite"');
+      expect(callArgs.content).toContain('data-source-token-id="source-token-123"');
+      expect(callArgs.content).toContain('data-target-token-id="target-token-456"');
+      expect(callArgs.content).toContain('data-power-level="unfettered"');
+      expect(callArgs.content).toContain('<div class="attack-flavor">');
+      expect(callArgs.content).toContain('Roll: 42');
+      expect(callArgs.rolls).toEqual([{ total: 42, render: expect.any(Function) }]);
+    });
+
+    it('does NOT wrap failed Focus Power message (uses normal sendRollToChat)', async () => {
+      // Arrange
+      mockPower.system.key = 'smite';
+      mockActor.system.psyRating = { value: 4 };
+
+      mockWait.mockImplementation(async ({ buttons }) => {
+        const focusButton = buttons.find(b => b.action === 'focus');
+        const mockElement = {
+          querySelector: (selector) => {
+            if (selector === '#powerLevel') return { value: 'unfettered' };
+            if (selector === '#miscModifier') return { value: '0' };
+            if (selector === '#wpBonus') return { value: '20' };
+            return null;
+          }
+        };
+        await focusButton.callback(null, null, { element: mockElement });
+      });
+
+      // Mock failed roll (roll 85, target 50)
+      FoundryAdapter.evaluateRoll = jest.fn()
+        .mockResolvedValueOnce({ total: 85, render: async () => '<div>Roll: 85</div>' });
+
+      const mockSendRollToChat = jest.fn().mockResolvedValue({});
+      FoundryAdapter.sendRollToChat = mockSendRollToChat;
+
+      // Act
+      await PsychicCombatHelper.focusPowerDialog(mockActor, mockPower);
+
+      // Assert - should use sendRollToChat (no wrapper), NOT createChatMessage
+      expect(mockCreateChatMessage).not.toHaveBeenCalled();
+      expect(mockSendRollToChat).toHaveBeenCalledTimes(1);
+      const [roll, options] = mockSendRollToChat.mock.calls[0];
+      expect(roll.total).toBe(85);
+      expect(options.flavor).toContain('FAILED');
+    });
+
+    it('does NOT wrap automatic failure 91+ (uses normal sendRollToChat)', async () => {
+      // Arrange
+      mockPower.system.key = 'smite';
+      mockActor.system.psyRating = { value: 4 };
+
+      mockWait.mockImplementation(async ({ buttons }) => {
+        const focusButton = buttons.find(b => b.action === 'focus');
+        const mockElement = {
+          querySelector: (selector) => {
+            if (selector === '#powerLevel') return { value: 'unfettered' };
+            if (selector === '#miscModifier') return { value: '0' };
+            if (selector === '#wpBonus') return { value: '20' };
+            return null;
+          }
+        };
+        await focusButton.callback(null, null, { element: mockElement });
+      });
+
+      // Mock auto-fail roll (roll 95)
+      FoundryAdapter.evaluateRoll = jest.fn()
+        .mockResolvedValueOnce({ total: 95, render: async () => '<div>Roll: 95</div>' });
+
+      const mockSendRollToChat = jest.fn().mockResolvedValue({});
+      FoundryAdapter.sendRollToChat = mockSendRollToChat;
+
+      // Act
+      await PsychicCombatHelper.focusPowerDialog(mockActor, mockPower);
+
+      // Assert
+      expect(mockCreateChatMessage).not.toHaveBeenCalled();
+      expect(mockSendRollToChat).toHaveBeenCalledTimes(1);
+      const [roll, options] = mockSendRollToChat.mock.calls[0];
+      expect(roll.total).toBe(95);
+      expect(options.flavor).toContain('Automatic failure: 91+');
+    });
+
+    it('gracefully handles missing source/target tokens (empty strings in metadata)', async () => {
+      // Arrange
+      mockPower.system.key = 'smite';
+      mockActor.system.psyRating = { value: 4 };
+
+      // No tokens available
+      mockActor.getActiveTokens = jest.fn().mockReturnValue([]);
+      global.game.user.targets = { first: jest.fn().mockReturnValue(null) };
+
+      mockWait.mockImplementation(async ({ buttons }) => {
+        const focusButton = buttons.find(b => b.action === 'focus');
+        const mockElement = {
+          querySelector: (selector) => {
+            if (selector === '#powerLevel') return { value: 'unfettered' };
+            if (selector === '#miscModifier') return { value: '0' };
+            if (selector === '#wpBonus') return { value: '20' };
+            return null;
+          }
+        };
+        await focusButton.callback(null, null, { element: mockElement });
+      });
+
+      FoundryAdapter.evaluateRoll = jest.fn()
+        .mockResolvedValueOnce({ total: 42, render: async () => '<div>Roll: 42</div>' });
+
+      // Act
+      await PsychicCombatHelper.focusPowerDialog(mockActor, mockPower);
+
+      // Assert - should still create wrapper, but with empty token IDs
+      expect(mockCreateChatMessage).toHaveBeenCalledTimes(1);
+      const callArgs = mockCreateChatMessage.mock.calls[0][0];
+      expect(callArgs.content).toContain('data-source-token-id=""');
+      expect(callArgs.content).toContain('data-target-token-id=""');
+    });
+
+    it('handles missing key field gracefully (empty animation-key)', async () => {
+      // Arrange
+      mockPower.system.key = undefined; // No key field
+      mockActor.system.psyRating = { value: 4 };
+
+      mockWait.mockImplementation(async ({ buttons }) => {
+        const focusButton = buttons.find(b => b.action === 'focus');
+        const mockElement = {
+          querySelector: (selector) => {
+            if (selector === '#powerLevel') return { value: 'unfettered' };
+            if (selector === '#miscModifier') return { value: '0' };
+            if (selector === '#wpBonus') return { value: '20' };
+            return null;
+          }
+        };
+        await focusButton.callback(null, null, { element: mockElement });
+      });
+
+      FoundryAdapter.evaluateRoll = jest.fn()
+        .mockResolvedValueOnce({ total: 42, render: async () => '<div>Roll: 42</div>' });
+
+      // Act
+      await PsychicCombatHelper.focusPowerDialog(mockActor, mockPower);
+
+      // Assert
+      expect(mockCreateChatMessage).toHaveBeenCalledTimes(1);
+      const callArgs = mockCreateChatMessage.mock.calls[0][0];
+      expect(callArgs.content).toContain('data-animation-key=""');
+    });
+
+    afterEach(() => {
+      global.game = originalGame;
+      global.foundry = originalFoundry;
     });
   });
 });

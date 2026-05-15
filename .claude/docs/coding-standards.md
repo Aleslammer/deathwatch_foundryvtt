@@ -238,4 +238,42 @@ To add a new category:
 
 ---
 
+## Chat Message Styling
+
+### Cross-Theme Compatibility
+
+**Problem**: Chat messages with dark backgrounds + dark text are unreadable in dark Foundry themes.
+
+**Solution**: Use bright text colors and translucent backgrounds that work across themes.
+
+```javascript
+// ✅ GOOD: Bright text with translucent background
+await ChatMessage.create({
+  content: `
+    <div style="border: 3px solid #cc0000; padding: 12px; background: rgba(139, 0, 0, 0.2);">
+      <h3 style="color: #ff0000; font-weight: bold;">Header</h3>
+      <p><strong style="color: #ffffff;">White text body</strong></p>
+      <p style="color: #dddddd;">Light gray supplemental text</p>
+    </div>
+  `
+});
+
+// ❌ BAD: Dark background with dark or insufficiently bright text
+await ChatMessage.create({
+  content: `
+    <div style="background: #1a0000; color: #666;">
+      <p>Can't read this in dark themes</p>
+    </div>
+  `
+});
+```
+
+**Guidelines:**
+- Use pure white (`#ffffff`) for primary text
+- Use light gray (`#dddddd` - `#f0f0f0`) for secondary text
+- Avoid solid dark backgrounds (use `rgba(R, G, B, 0.2)` instead)
+- Test messages in both light and dark Foundry themes
+
+---
+
 _Code quality protocols sanctified. Praise the Omnissiah._ ⚙️

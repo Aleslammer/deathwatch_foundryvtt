@@ -1,5 +1,6 @@
 import { Logger } from '../helpers/logger.mjs';
 import { CategoryLoggingConfig } from '../ui/category-logging-config.mjs';
+import { registerSettings as registerTAHSettings } from '../token-action-hud/init.mjs';
 
 /**
  * Registers all world and client settings for the Deathwatch system.
@@ -92,5 +93,8 @@ export class SettingsRegistrar {
       type: CategoryLoggingConfig,
       restricted: false
     });
+
+    // Token Action HUD settings
+    registerTAHSettings();
   }
 }
