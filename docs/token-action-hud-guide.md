@@ -52,6 +52,14 @@ The HUD organizes actions into the following groups:
   - **WS** (Weapon Skill), **BS** (Ballistic Skill), **S** (Strength), **T** (Toughness)
   - **Ag** (Agility), **Int** (Intelligence), **Per** (Perception), **WP** (Willpower), **Fel** (Fellowship)
 
+#### **Psychic Powers**
+
+- **Powers** — Focus Power tests for manifesting psychic abilities
+  - Opens Focus Power dialog with power level selection (Fettered/Unfettered/Push)
+  - Applies modifiers and rolls Focus Power Test
+  - Handles Psychic Phenomena and Perils of the Warp
+  - All actor types with psychic power items display their powers
+
 ---
 
 ## Combat Actions Explained
@@ -148,10 +156,9 @@ When a player uses the HUD on a GM-owned token:
 
 ## Future Phases
 
-The current implementation includes **Combat Actions, Skills, and Characteristics**. Future phases will add:
+The current implementation includes **Combat Actions, Skills, Characteristics, and Psychic Powers**. Future phases will add:
 
 - **Talents** — One-click activation of active talents
-- **Psychic Powers** — Focus Power tests and power activation
 - **Squad Mode Abilities** — Solo Mode and Squad Mode ability toggles
 - **Custom Actions** — Macros and special abilities
 

@@ -7,6 +7,7 @@
 
 import { RollExecutor } from '../helpers/roll-executor.mjs';
 import { CombatHelper } from '../helpers/combat/combat.mjs';
+import { PsychicCombatHelper } from '../helpers/combat/psychic-combat.mjs';
 import { CHARACTERISTIC_LABELS } from '../helpers/constants/characteristic-constants.mjs';
 
 export let RollHandler = null;
@@ -16,9 +17,10 @@ export let RollHandler = null;
  * @param {class} BaseRollHandler - Base RollHandler class to extend
  * @param {Object} rollExecutor - RollExecutor dependency (for testing)
  * @param {Object} combatHelper - CombatHelper dependency (for testing)
+ * @param {Object} psychicCombatHelper - PsychicCombatHelper dependency (for testing)
  * @returns {class} RollHandler class
  */
-export function createRollHandler(BaseRollHandler, rollExecutor = RollExecutor, combatHelper = CombatHelper) {
+export function createRollHandler(BaseRollHandler, rollExecutor = RollExecutor, combatHelper = CombatHelper, psychicCombatHelper = PsychicCombatHelper) {
   return class RollHandler extends BaseRollHandler {
     /**
      * Handle action execution (legacy test interface)
@@ -68,6 +70,9 @@ export function createRollHandler(BaseRollHandler, rollExecutor = RollExecutor, 
           break;
         case 'combat-action':
           await this._handleCombatAction(itemId, subAction);
+          break;
+        case 'psychic-power':
+          await this._handlePsychicPowerAction(itemId);
           break;
         default:
           console.warn(`[TAH RollHandler] Unknown action type: ${actionType}`);
@@ -150,6 +155,23 @@ export function createRollHandler(BaseRollHandler, rollExecutor = RollExecutor, 
       const label = CHARACTERISTIC_LABELS[charKey] || charKey.toUpperCase();
       await rollExecutor.showCharacteristicDialog(this.actor, charKey, label, characteristic);
     }
+
+    /**
+     * Handle psychic power action
+     * @private
+     */
+    async _handlePsychicPowerAction(powerId) {
+      const power = this.actor.items.get(powerId);
+
+      if (!power) {
+        if (typeof ui !== 'undefined') {
+          ui.notifications.warn('Psychic power not found.');
+        }
+        return;
+      }
+
+      await psychicCombatHelper.focusPowerDialog(this.actor, power);
+    }
   };
 }
 
@@ -208,6 +230,10 @@ export function initializeRollHandler(coreModule) {
 
         case 'characteristic':
           await this._handleCharacteristicAction(id);
+          break;
+
+        case 'psychic-power':
+          await this._handlePsychicPowerAction(id);
           break;
 
         default:
@@ -290,6 +316,22 @@ export function initializeRollHandler(coreModule) {
      */
     _charKeyToLabel(key) {
       return CHARACTERISTIC_LABELS[key] || key;
+    }
+
+    /**
+     * Handle psychic power action
+     * @param {string} powerId - Psychic power item ID
+     * @private
+     */
+    async _handlePsychicPowerAction(powerId) {
+      const power = this.actor.items.get(powerId);
+
+      if (!power) {
+        ui.notifications.warn(`Psychic power not found: ${powerId}`);
+        return;
+      }
+
+      await PsychicCombatHelper.focusPowerDialog(this.actor, power);
     }
   };
 }

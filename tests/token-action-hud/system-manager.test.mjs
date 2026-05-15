@@ -69,12 +69,13 @@ describe('Token Action HUD - SystemManager', () => {
         expect(defaults.groups).toBeDefined();
       });
 
-      it('should have 3 top-level layout groups', () => {
+      it('should have 4 top-level layout groups', () => {
         const defaults = manager.registerDefaults();
-        expect(defaults.layout).toHaveLength(3);
+        expect(defaults.layout).toHaveLength(4);
         expect(defaults.layout[0].id).toBe('combat');
         expect(defaults.layout[1].id).toBe('skills');
         expect(defaults.layout[2].id).toBe('characteristics');
+        expect(defaults.layout[3].id).toBe('psychic-powers');
       });
 
       it('should have Combat group with 4 subgroups', () => {
@@ -114,6 +115,29 @@ describe('Token Action HUD - SystemManager', () => {
         expect(characteristics.groups[6].id).toBe('char-per');
         expect(characteristics.groups[7].id).toBe('char-wp');
         expect(characteristics.groups[8].id).toBe('char-fs');
+      });
+
+      it('should include psychic-powers group in groups', () => {
+        const defaults = manager.registerDefaults();
+        const psychicPowersGroup = defaults.groups.find(g => g.id === 'psychic-powers');
+        expect(psychicPowersGroup).toBeDefined();
+        expect(psychicPowersGroup.name).toBe('Psychic Powers');
+        expect(psychicPowersGroup.type).toBe('system');
+      });
+
+      it('should have Psychic Powers as 4th top-level layout group', () => {
+        const defaults = manager.registerDefaults();
+        expect(defaults.layout).toHaveLength(4);
+        expect(defaults.layout[3].id).toBe('psychic-powers');
+        expect(defaults.layout[3].name).toBe('Psychic Powers');
+      });
+
+      it('should have Psychic Powers group with psychic-powers subgroup', () => {
+        const defaults = manager.registerDefaults();
+        const psychicPowersLayout = defaults.layout[3];
+        expect(psychicPowersLayout.groups).toHaveLength(1);
+        expect(psychicPowersLayout.groups[0].id).toBe('psychic-powers');
+        expect(psychicPowersLayout.groups[0].nestId).toBe('psychic-powers_psychic-powers');
       });
     });
   });

@@ -14,6 +14,7 @@ describe('Token Action HUD - ActionHandler', () => {
       }
       addGroup(groupId, groupName) {}
       addAction(groupId, action) {}
+      addActions(actions, groupData) {}
     };
 
     // Import our factory function
@@ -347,6 +348,121 @@ describe('Token Action HUD - ActionHandler', () => {
       expect(charNames).toContain('Perception');
       expect(charNames).toContain('Willpower');
       expect(charNames).toContain('Fellowship');
+    });
+  });
+
+  describe('Psychic Powers', () => {
+    test('should build psychic power actions for actor with powers', () => {
+      mockActor.items = [
+        {
+          id: 'power1',
+          type: 'psychic-power',
+          name: 'Smite',
+          img: 'icons/powers/smite.webp'
+        },
+        {
+          id: 'power2',
+          type: 'psychic-power',
+          name: 'Gate of Infinity',
+          img: 'icons/powers/gate.webp'
+        }
+      ];
+
+      const handler = new ActionHandler('test-token-456');
+      handler.actors = [mockActor];
+
+      const addActionsSpy = jest.spyOn(handler, 'addActions');
+      handler._buildPsychicPowers(mockActor);
+
+      expect(addActionsSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: 'psychic-power-power1',
+            name: 'Smite',
+            encodedValue: 'psychic-power|power1',
+            icon1: '<i class="fas fa-brain"></i>',
+            img: 'icons/powers/smite.webp',
+            tooltip: 'Smite'
+          }),
+          expect.objectContaining({
+            id: 'psychic-power-power2',
+            name: 'Gate of Infinity',
+            encodedValue: 'psychic-power|power2'
+          })
+        ]),
+        { id: 'psychic-powers' }
+      );
+    });
+
+    test('should handle actors with no psychic powers', () => {
+      mockActor.items = [
+        {
+          id: 'weapon1',
+          type: 'weapon',
+          name: 'Bolter',
+          system: { equipped: true, class: 'basic' }
+        }
+      ];
+
+      const handler = new ActionHandler('test-token-456');
+      handler.actors = [mockActor];
+
+      const addActionsSpy = jest.spyOn(handler, 'addActions');
+      handler._buildPsychicPowers(mockActor);
+
+      expect(addActionsSpy).toHaveBeenCalledWith([], { id: 'psychic-powers' });
+    });
+
+    test('should only include psychic-power type items', () => {
+      mockActor.items = [
+        {
+          id: 'power1',
+          type: 'psychic-power',
+          name: 'Smite',
+          img: 'icons/powers/smite.webp'
+        },
+        {
+          id: 'talent1',
+          type: 'talent',
+          name: 'Iron Will',
+          img: 'icons/talents/iron-will.webp'
+        },
+        {
+          id: 'weapon1',
+          type: 'weapon',
+          name: 'Force Sword',
+          system: { equipped: true, class: 'melee' }
+        }
+      ];
+
+      const handler = new ActionHandler('test-token-456');
+      handler.actors = [mockActor];
+
+      const addActionsSpy = jest.spyOn(handler, 'addActions');
+      handler._buildPsychicPowers(mockActor);
+
+      const actions = addActionsSpy.mock.calls[0][0];
+      expect(actions).toHaveLength(1);
+      expect(actions[0].id).toBe('psychic-power-power1');
+    });
+
+    test('should call _buildPsychicPowers when psychic-powers group requested', () => {
+      mockActor.items = [
+        {
+          id: 'power1',
+          type: 'psychic-power',
+          name: 'Smite',
+          img: 'icons/powers/smite.webp'
+        }
+      ];
+
+      const handler = new ActionHandler('test-token-456');
+      handler.actors = [mockActor];
+
+      const buildSpy = jest.spyOn(handler, '_buildPsychicPowers');
+      handler.buildSystemActions(['psychic-powers']);
+
+      expect(buildSpy).toHaveBeenCalledWith(mockActor);
     });
   });
 });

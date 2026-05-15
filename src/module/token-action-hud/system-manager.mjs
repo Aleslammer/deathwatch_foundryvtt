@@ -69,7 +69,8 @@ export function createSystemManager(BaseSystemManager) {
         charInt: { id: 'char-int', name: 'Intelligence', type: 'system' },
         charPer: { id: 'char-per', name: 'Perception', type: 'system' },
         charWP: { id: 'char-wp', name: 'Willpower', type: 'system' },
-        charFS: { id: 'char-fs', name: 'Fellowship', type: 'system' }
+        charFS: { id: 'char-fs', name: 'Fellowship', type: 'system' },
+        psychicPowers: { id: 'psychic-powers', name: 'Psychic Powers', type: 'system' }
       };
 
       return {
@@ -111,6 +112,15 @@ export function createSystemManager(BaseSystemManager) {
               { ...groups.charPer, nestId: 'characteristics_char-per' },
               { ...groups.charWP, nestId: 'characteristics_char-wp' },
               { ...groups.charFS, nestId: 'characteristics_char-fs' }
+            ]
+          },
+          {
+            nestId: 'psychic-powers',
+            id: 'psychic-powers',
+            name: 'Psychic Powers',
+            type: 'system',
+            groups: [
+              { ...groups.psychicPowers, nestId: 'psychic-powers_psychic-powers' }
             ]
           }
         ],
@@ -179,7 +189,8 @@ export function initializeSystemManager(coreModule) {
         charInt: { id: 'char-int', name: 'Intelligence', type: 'system' },
         charPer: { id: 'char-per', name: 'Perception', type: 'system' },
         charWP: { id: 'char-wp', name: 'Willpower', type: 'system' },
-        charFS: { id: 'char-fs', name: 'Fellowship', type: 'system' }
+        charFS: { id: 'char-fs', name: 'Fellowship', type: 'system' },
+        psychicPowers: { id: 'psychic-powers', name: 'Psychic Powers', type: 'system' }
       };
 
       const defaults = {
@@ -220,6 +231,15 @@ export function initializeSystemManager(coreModule) {
               { ...groups.charPer, nestId: 'characteristics_char-per' },
               { ...groups.charWP, nestId: 'characteristics_char-wp' },
               { ...groups.charFS, nestId: 'characteristics_char-fs' }
+            ]
+          },
+          {
+            nestId: 'psychic-powers',
+            id: 'psychic-powers',
+            name: 'Psychic Powers',
+            type: 'system',
+            groups: [
+              { ...groups.psychicPowers, nestId: 'psychic-powers_psychic-powers' }
             ]
           }
         ],

@@ -225,4 +225,96 @@ describe('RollHandler', () => {
       );
     });
   });
+
+  describe('Psychic Power Actions', () => {
+    let mockPsychicCombatHelper;
+
+    beforeEach(async () => {
+      // Mock PsychicCombatHelper
+      mockPsychicCombatHelper = {
+        focusPowerDialog: jest.fn(),
+      };
+
+      // Re-import RollHandler with PsychicCombatHelper mock
+      const module = await import('../../src/module/token-action-hud/roll-handler.mjs');
+      const BaseRollHandler = class {
+        constructor(actor, token) {
+          this.actor = actor;
+          this.token = token;
+        }
+      };
+      // Inject all mocks including psychic helper
+      RollHandler = module.createRollHandler(
+        BaseRollHandler,
+        mockRollExecutor,
+        mockCombatHelper,
+        mockPsychicCombatHelper
+      );
+    });
+
+    test('should call PsychicCombatHelper.focusPowerDialog with correct args', async () => {
+      const handler = new RollHandler(mockActor, mockToken);
+      const powerId = 'power-abc123';
+      const encodedValue = `psychic-power|${powerId}`;
+
+      const mockPower = {
+        id: powerId,
+        name: 'Smite',
+        type: 'psychic-power',
+        system: { cost: 5 },
+      };
+      mockActor.items = {
+        get: jest.fn(() => mockPower),
+      };
+
+      game.user.isGM = true;
+
+      await handler.handleAction({ actionId: 'psychicPower', encodedValue });
+
+      expect(mockPsychicCombatHelper.focusPowerDialog).toHaveBeenCalledWith(
+        mockActor,
+        mockPower
+      );
+    });
+
+    test('should show warning if power not found', async () => {
+      const handler = new RollHandler(mockActor, mockToken);
+      const powerId = 'nonexistent-power';
+      const encodedValue = `psychic-power|${powerId}`;
+
+      mockActor.items = {
+        get: jest.fn(() => null),
+      };
+
+      game.user.isGM = true;
+
+      await handler.handleAction({ actionId: 'psychicPower', encodedValue });
+
+      expect(ui.notifications.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Psychic power not found')
+      );
+      expect(mockPsychicCombatHelper.focusPowerDialog).not.toHaveBeenCalled();
+    });
+
+    test('should route through socket for non-OWNER permissions', async () => {
+      const handler = new RollHandler(mockActor, mockToken);
+      const powerId = 'power-abc123';
+      const encodedValue = `psychic-power|${powerId}`;
+
+      mockActor.testUserPermission = jest.fn(() => false);
+      game.user.isGM = false;
+
+      await handler.handleAction({ actionId: 'psychicPower', encodedValue });
+
+      expect(game.socket.emit).toHaveBeenCalledWith(
+        'system.deathwatch',
+        expect.objectContaining({
+          type: 'tah-action',
+          actorId: mockActor.id,
+          encodedValue,
+        })
+      );
+      expect(mockPsychicCombatHelper.focusPowerDialog).not.toHaveBeenCalled();
+    });
+  });
 });

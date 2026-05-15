@@ -34,6 +34,7 @@ export function createActionHandler(BaseActionHandler) {
 
       // Build actions for each requested group
       // groupIds is an object like { rangedWeapons: true, meleeWeapons: false }
+      // OR an array like ['psychic-powers', 'ranged-weapons']
       if (groupIds.rangedWeapons) {
         this._buildRangedWeapons(actor);
       }
@@ -48,6 +49,10 @@ export function createActionHandler(BaseActionHandler) {
       }
       if (groupIds.advancedSkills) {
         this._buildAdvancedSkills(actor);
+      }
+      // Handle array format (used by TAH Core in production)
+      if (Array.isArray(groupIds) && groupIds.includes('psychic-powers')) {
+        this._buildPsychicPowers(actor);
       }
 
       // Handle characteristics - either all at once or individually
@@ -250,6 +255,26 @@ export function createActionHandler(BaseActionHandler) {
         img: `systems/deathwatch/icons/characteristics/${charKey}.webp`
       });
     }
+
+    /**
+     * Build psychic power actions
+     * @param {Object} actor - The actor
+     * @private
+     */
+    _buildPsychicPowers(actor) {
+      const powers = actor.items.filter(item => item.type === 'psychic-power');
+
+      const actions = powers.map(power => ({
+        id: `psychic-power-${power.id}`,
+        name: power.name,
+        encodedValue: `psychic-power|${power.id}`,
+        icon1: '<i class="fas fa-brain"></i>',
+        img: power.img,
+        tooltip: power.name
+      }));
+
+      this.addActions(actions, { id: 'psychic-powers' });
+    }
   };
 }
 
@@ -313,6 +338,11 @@ export function initializeActionHandler(coreModule) {
       if (charGroups.some((id) => groupIds.includes(id))) {
         console.log("[TAH ActionHandler] Building characteristics");
         this._buildCharacteristics(actor);
+      }
+      // Psychic Powers
+      if (groupIds.includes("psychic-powers")) {
+        console.log("[TAH ActionHandler] Building psychic powers");
+        this._buildPsychicPowers(actor);
       }
 
       console.log("[TAH ActionHandler] buildSystemActions complete");
@@ -690,6 +720,26 @@ export function initializeActionHandler(coreModule) {
 
         this.addActions(actions, { id: `char-${key}` });
       });
+    }
+
+    /**
+     * Build psychic power actions
+     * @param {Object} actor - The actor
+     * @private
+     */
+    _buildPsychicPowers(actor) {
+      const powers = actor.items.filter(item => item.type === 'psychic-power');
+
+      const actions = powers.map(power => ({
+        id: `psychic-power-${power.id}`,
+        name: power.name,
+        encodedValue: `psychic-power|${power.id}`,
+        icon1: '<i class="fas fa-brain"></i>',
+        img: power.img,
+        tooltip: power.name
+      }));
+
+      this.addActions(actions, { id: 'psychic-powers' });
     }
   };
 }
